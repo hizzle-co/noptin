@@ -716,9 +716,9 @@ abstract class Collection {
 						$key        => $filters[ $date ],
 					);
 				}
-
-				unset( $filters[ $date ] );
 			}
+
+			unset( $filters[ $date ] );
 		}
 
 		if ( ! empty( $date_query ) ) {

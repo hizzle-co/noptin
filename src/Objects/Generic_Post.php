@@ -92,6 +92,16 @@ class Generic_Post extends Record {
 			return $this->external->ID;
 		}
 
+		// Language.
+		if ( 'language' === strtolower( $field ) ) {
+			$language = noptin_get_post_locale( $this->external->ID );
+
+			if ( empty( $language ) && ! empty( $this->external->post_parent ) ) {
+				$language = noptin_get_post_locale( $this->external->post_parent );
+			}
+			return $language;
+		}
+
 		// Prefix by post_.
 		if ( in_array( $field, array( 'author', 'date', 'status', 'parent' ), true ) ) {
 			return $this->external->{'post_' . $field};

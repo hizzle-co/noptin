@@ -1343,6 +1343,25 @@ function noptin_convert_language_locale_to_slug( $locale ) {
 }
 
 /**
+ * Returns the locale for a given post.
+ *
+ * @param int|WP_Post $post Post ID or post object.
+ * @return string The post locale or empty string if not found.
+ */
+function noptin_get_post_locale( $post ) {
+
+	if ( empty( $post ) ) {
+		return '';
+	}
+
+	// Get post ID.
+	$post_id = is_object( $post ) ? $post->ID : $post;
+
+	// Get locale.
+	return apply_filters( 'noptin_post_locale', '', $post_id );
+}
+
+/**
  * Formats a date for display.
  *
  * @param string $date_time.

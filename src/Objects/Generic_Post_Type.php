@@ -84,10 +84,12 @@ class Generic_Post_Type extends Post_Type {
 			$this->generate_taxonomy_filters( $this->type, $this->taxonomies() ),
 			array(
 				'lang'          => array(
-					'label'       => __( 'Language', 'newsletter-optin-box' ),
-					'el'          => 'select',
-					'description' => __( 'The language to filter posts by.', 'newsletter-optin-box' ),
-					'options'     => noptin_get_available_languages(),
+					'label'                => __( 'Language', 'newsletter-optin-box' ),
+					'el'                   => 'select',
+					'description'          => __( 'The language to filter posts by.', 'newsletter-optin-box' ),
+					'options'              => noptin_get_available_languages(),
+					'canSelectPlaceholder' => true,
+					'placeholder'          => __( 'Any', 'newsletter-optin-box' ),
 				),
 				'author'        => array(
 					'label'       => __( 'Author', 'newsletter-optin-box' ),
@@ -166,12 +168,22 @@ class Generic_Post_Type extends Post_Type {
 		$filters = $this->prepare_date_query_filter( $filters );
 
 		if ( ! empty( $filters['lang'] ) ) {
-			$filters['lang'] = noptin_convert_language_locale_to_slug( $filters['lang'] );
+			$code = noptin_convert_language_locale_to_slug( $filters['lang'] );
+			$filters['lang'] = empty( $code ) ? substr( $filters['lang'], 0, 2 ) : $code;
+
+			if ( ! empty( $filters['lang'] ) ) {
+				$filters['suppress_filters'] = false;
+			}
 		}
 
 		$filters = apply_filters( 'noptin_post_type_get_all_filters', $filters, $this->type );
-		$filters = array_filter( $filters );
-		$posts   = get_posts( $filters );
+		$filters = array_filter( $filters, function( $value ) {
+			return $value !== '' && $value !== null;
+		} );
+
+		do_action( 'noptin_post_type_get_all_before_query', $filters, $this->type );
+		$posts = get_posts( $filters );
+		do_action( 'noptin_post_type_get_all_after_query', $posts, $this->type, $filters );
 
 		// Debug the query later.
 		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
@@ -372,6 +384,11 @@ class Generic_Post_Type extends Post_Type {
 						),
 					),
 				),
+			),
+			'language'       => array(
+				'label'   => __( 'Language (Locale)', 'newsletter-optin-box' ),
+				'type'    => 'string',
+				'options' => noptin_get_available_languages(),
 			),
 			'meta'           => $this->meta_key_tag_config(),
 		);
