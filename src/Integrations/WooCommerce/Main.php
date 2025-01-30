@@ -157,6 +157,7 @@ class Main {
 				'billing_email' => $customer_id_or_email,
 				'return'        => 'ids',
 				'type'          => 'shop_order',
+				'status'        => wc_get_is_paid_statuses(),
 			)
 		);
 

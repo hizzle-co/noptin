@@ -369,7 +369,7 @@ class Task extends \Hizzle\Store\Record {
 			do_action( $hook, $this, $args );
 		}
 
-		unset( $GLOBALS['noptin_current_task_user'] );
+		$noptin_current_task_user = $old_user;
 	}
 
 	/**
