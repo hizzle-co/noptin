@@ -568,7 +568,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$other_sections  = array();
 
 			// Map fields.
-			$map_fields = array();
+			$map_fields               = array();
+			$original_action_settings = $action_settings;
 
 			foreach ( $action_settings as $key => $data ) {
 				if ( isset( $data['description'] ) && isset( $data['label'] ) && $data['description'] === $data['label'] ) {
@@ -582,13 +583,13 @@ class Automation_Rule extends \Hizzle\Store\Record {
 					$data['prop'] = $data['prop'] ?? 'action_settings';
 					$other_sections[ $key ] = $data;
 					unset( $action_settings[ $key ] );
+					unset( $original_action_settings[ $key ] );
 				}
 			}
 
 			// If less than 3 map fields, include them in action settings instead of separate section
 			if ( count( $map_fields ) > 0 && count( $map_fields ) < 3 ) {
 				$action_settings = array_merge(
-					$action_settings,
 					array(
 						'map_field_tip' => array(
 							'content' => sprintf(
@@ -600,7 +601,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 							'raw'     => true,
 						),
 					),
-					$map_fields
+					$original_action_settings
 				);
 				$map_fields      = array();
 			}

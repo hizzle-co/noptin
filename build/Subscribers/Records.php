@@ -995,7 +995,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 						'description'    => sprintf(
 							/* translators: %s: field label */
-							__( 'Updates %s', 'newsletter-optin-box' ),
+							__( 'Update the subscriber\'s %s', 'newsletter-optin-box' ),
 							strtolower( $field['label'] )
 						),
 						'icon'           => array(
@@ -1029,7 +1029,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 						'description'    => sprintf(
 							/* translators: %s: field label */
-							__( 'Adds the subscriber to %s', 'newsletter-optin-box' ),
+							__( 'Add the subscriber to %s', 'newsletter-optin-box' ),
 							strtolower( $field['label'] )
 						),
 						'icon'           => array(
@@ -1049,7 +1049,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'label'    => $field['label'],
 								'options'  => $field['options'],
 								'required' => true,
-								'default'  => array(),
+								'default'  => 'tags' === $merge_tag ? '' : array(),
 							),
 						),
 					);
@@ -1063,7 +1063,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 						'description' => sprintf(
 							/* translators: %s: field label */
-							__( 'Removes the subscriber from %s', 'newsletter-optin-box' ),
+							__( 'Remove the subscriber from %s', 'newsletter-optin-box' ),
 							strtolower( $field['label'] )
 						),
 						'icon'        => array(
@@ -1083,7 +1083,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'label'    => $field['label'],
 								'options'  => $field['options'],
 								'required' => true,
-								'default'  => array(),
+								'default'  => 'tags' === $merge_tag ? '' : array(),
 							),
 						),
 					);
