@@ -88,7 +88,7 @@ class Test_Generic_Post_Type extends \WP_UnitTestCase {
         // Delete the post
         $result = $this->post_type->delete_post(['id' => $post_id, 'force_delete' => true]);
 
-        $this->assertTrue($result);
+        $this->assertInstanceOf(\WP_Post::class, $result);
         $this->assertNull(get_post($post_id));
     }
 
