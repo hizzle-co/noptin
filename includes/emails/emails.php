@@ -105,13 +105,14 @@ function noptin_convert_html_to_text( $html ) {
 		return '';
 	}
 
-	// Abort if DOMDocument not loaded.
-	if ( ! class_exists( 'DOMDocument' ) ) {
+	// Abort if DOMDocument not loaded or mbstring not enabled.
+	if ( ! class_exists( 'DOMDocument' ) || ! function_exists( 'mb_convert_encoding' ) ) {
 		return wp_strip_all_tags( $html );
 	}
 
 	try {
-		return Noptin_HTML_Text::convert( $html );
+		$converter = new Noptin_HTML_Text( $html );
+		return $converter->getText();
 	} catch ( Exception $e ) {
 		return wp_strip_all_tags( $html );
 	}
