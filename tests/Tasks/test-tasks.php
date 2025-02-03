@@ -12,7 +12,7 @@ class Test_Tasks extends WP_UnitTestCase {
 
     public function setUp(): void {
         parent::setUp();
-        $this->task = Main::schedule_task('test_hook', ['Test_Tasks']);
+        $this->task = Main::get(0);
     }
 
     public function test_get_set_hook() {
@@ -89,6 +89,7 @@ class Test_Tasks extends WP_UnitTestCase {
         $this->task->set_hook('test_hook');
         $this->task->set_status('pending');
         $this->task->set_args(wp_json_encode(['test' => 'value']));
+        $this->task->save();
 
         $cloned_task = $this->task->clone();
 
