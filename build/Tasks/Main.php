@@ -204,20 +204,8 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public static function retry_task( $task, $after = HOUR_IN_SECONDS ) {
 
-		$new_task = self::get( 0 );
-
-		if ( is_wp_error( $new_task ) ) {
-			return $new_task;
-		}
-
-		// Set the props.
-		$new_task->set_hook( $task->get_hook() );
-		$new_task->set_subject( $task->get_subject() );
-		$new_task->set_primary_id( $task->get_primary_id() );
-		$new_task->set_secondary_id( $task->get_secondary_id() );
+		$new_task = $task->clone();
 		$new_task->set_status( 'pending' );
-		$new_task->set_args( $task->get_args() );
-		$new_task->set_args_hash( $task->get_args_hash() );
 		$new_task->set_date_scheduled( time() + $after );
 		$new_task->add_log( "Task was retried from task {$task->get_id()}" );
 		$new_task->save();

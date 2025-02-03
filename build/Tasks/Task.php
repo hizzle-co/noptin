@@ -343,7 +343,7 @@ class Task extends \Hizzle\Store\Record {
 		global $noptin_current_task_user;
 		$old_user = $noptin_current_task_user;
 
-		$noptin_current_task_user = $this->get_arg( 'current_task_user' );
+		$noptin_current_task_user = $this->get_meta( 'current_task_user' );
 
 		// Abort if no hook.
 		$hook = $this->get_hook();
@@ -436,8 +436,8 @@ class Task extends \Hizzle\Store\Record {
 	 */
 	public function save() {
 
-		if ( ! $this->exists() && is_null( $this->get_arg( 'current_task_user' ) ) ) {
-			$this->set_arg( 'current_task_user', get_current_user_id() );
+		if ( ! $this->exists() && is_null( $this->get_meta( 'current_task_user' ) ) ) {
+			$this->update_meta( 'current_task_user', get_current_user_id() );
 		}
 
 		$result = parent::save();
@@ -533,7 +533,7 @@ class Task extends \Hizzle\Store\Record {
 
 	public function clone() {
 		$new_task = Main::get( 0 );
-		$data     = $this->get_data();
+		$data     = $this->get_data( 'edit' );
 
 		unset( $data['id'] );
 		unset( $data['date_created'] );
