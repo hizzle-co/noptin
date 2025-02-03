@@ -855,7 +855,7 @@ class Table extends \WP_List_Table {
 		// Remove tracking stats.
 		$track_campaign_stats = get_noptin_option( 'track_campaign_stats', true );
 
-		if ( empty( $track_campaign_stats ) ) {
+		if ( empty( $track_campaign_stats ) || 'email_template' === $this->email_type->type ) {
 			unset( $columns['opens'] );
 			unset( $columns['clicks'] );
 			unset( $columns['revenue'] );
