@@ -5,7 +5,7 @@ namespace Hizzle\Noptin\Tests\Tasks;
 use Hizzle\Noptin\Tasks\Main;
 use WP_UnitTestCase;
 
-class MainTest extends WP_UnitTestCase {
+class Test_Main extends WP_UnitTestCase {
 
     /** @var \Hizzle\Noptin\Tasks\Main */
     protected $main;
@@ -39,7 +39,7 @@ class MainTest extends WP_UnitTestCase {
         $args = ['value'];
 
         // Schedule a task
-        Main::schedule_task($hook, $args);
+        Main::schedule_task($hook, $args, HOUR_IN_SECONDS);
 
         // Get next scheduled task
         $next_task = Main::get_next_scheduled_task($hook, $args);
@@ -79,7 +79,7 @@ class MainTest extends WP_UnitTestCase {
 
     public function test_retry_task() {
         // Create and save original task
-        $original_task = Main::schedule_task('test_hook', ['test' => 'value']);
+        $original_task = Main::schedule_task('test_hook', ['value']);
 
         // Retry the task
         $retried_task = Main::retry_task($original_task, 0);

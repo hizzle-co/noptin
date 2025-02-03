@@ -5,7 +5,7 @@ namespace Hizzle\Noptin\Tests\Tasks;
 use Hizzle\Noptin\Tasks\Main;
 use WP_UnitTestCase;
 
-class TaskTest extends WP_UnitTestCase {
+class Test_Tasks extends WP_UnitTestCase {
 
     /** @var \Hizzle\Noptin\Tasks\Task */
     protected $task;

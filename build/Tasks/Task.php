@@ -539,8 +539,13 @@ class Task extends \Hizzle\Store\Record {
 		unset( $data['date_created'] );
 		unset( $data['date_modified'] );
 		unset( $data['date_scheduled'] );
-		unset( $data['metadata']['logs'] );
 
+		$metadata = $this->get_metadata();
+		if ( isset( $metadata['logs'] ) ) {
+			unset( $metadata['logs'] );
+		}
+
+		$data['metadata'] = $metadata;
 		$new_task->set_props( $data );
 		return $new_task;
 	}
