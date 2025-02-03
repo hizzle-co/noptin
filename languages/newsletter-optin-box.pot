@@ -2,14 +2,14 @@
 # This file is distributed under the GPLv3.
 msgid ""
 msgstr ""
-"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.7.4\n"
+"Project-Id-Version: Noptin - WordPress Newsletter Plugin 3.7.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/noptin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-21T12:49:06+00:00\n"
+"POT-Creation-Date: 2025-02-03T09:34:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: newsletter-optin-box\n"
@@ -69,7 +69,7 @@ msgid "Trigger"
 msgstr ""
 
 #: build/Automation_Rules/Admin/Table.php:223
-#: build/Automation_Rules/Automation_Rule.php:605
+#: build/Automation_Rules/Automation_Rule.php:611
 #: build/Subscribers/Records.php:201
 msgid "Action"
 msgstr ""
@@ -118,7 +118,7 @@ msgstr ""
 
 #: build/Automation_Rules/Automation_Rule.php:540
 #: build/Automation_Rules/Automation_Rule.php:544
-#: build/Emails/Main.php:152
+#: build/Emails/Main.php:153
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Emails/assets/js/blocks.js:46
 #: build/Emails/assets/js/email-editor.js:51
@@ -131,12 +131,12 @@ msgid "Conditional Logic"
 msgstr ""
 
 #. translators: %s: The merge tag button.
-#: build/Automation_Rules/Automation_Rule.php:591
+#: build/Automation_Rules/Automation_Rule.php:597
 msgid "Click the %s button to add dynamic values. You can combine multiple values in a single field."
 msgstr ""
 
 #. translators: %s: The merge tag button.
-#: build/Automation_Rules/Automation_Rule.php:627
+#: build/Automation_Rules/Automation_Rule.php:633
 msgid "Click the %s button to add dynamic values from your trigger. You can add multiple values to a single field."
 msgstr ""
 
@@ -204,8 +204,8 @@ msgstr ""
 
 #: build/Emails/Admin/Main.php:300
 #: build/Emails/Admin/Main.php:301
-#: build/Emails/Main.php:258
-#: build/Emails/Main.php:277
+#: build/Emails/Main.php:259
+#: build/Emails/Main.php:278
 #: build/Emails/Records.php:32
 msgid "Email Campaigns"
 msgstr ""
@@ -259,7 +259,7 @@ msgid "Duplicate"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:206
-#: build/Emails/Main.php:264
+#: build/Emails/Main.php:265
 #: includes/class-noptin-post-types.php:57
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Preview"
@@ -278,8 +278,8 @@ msgid "Are you sure you want to trash this campaign?"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:220
-#: build/Emails/Main.php:439
 #: build/Emails/Main.php:440
+#: build/Emails/Main.php:441
 msgid "Trash"
 msgstr ""
 
@@ -294,7 +294,7 @@ msgstr ""
 
 #: build/Emails/Admin/Table.php:259
 #: build/Emails/Admin/Table.php:674
-#: build/Tasks/Task.php:442
+#: build/Tasks/Task.php:521
 #: src/DB/Subscriber.php:815
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
@@ -450,15 +450,15 @@ msgid "Campaign"
 msgstr ""
 
 #: build/Emails/Admin/Table.php:834
-#: build/Tasks/Main.php:608
+#: build/Tasks/Main.php:602
 #: src/Integrations/EDD/Customers.php:139
 #: src/Integrations/EDD/Orders.php:95
 #: src/Integrations/EDD/Orders.php:252
 #: src/Integrations/WooCommerce/Orders.php:377
-#: src/Integrations/WooCommerce/Orders.php:787
+#: src/Integrations/WooCommerce/Orders.php:793
 #: src/Integrations/WooCommerce/Products.php:582
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
-#: src/Objects/Generic_Post_Type.php:272
+#: src/Objects/Generic_Post_Type.php:301
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Status"
@@ -491,7 +491,7 @@ msgstr ""
 #: includes/subscriber.php:1117
 #: src/DB/Main.php:510
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
-#: src/Objects/Generic_Post_Type.php:213
+#: src/Objects/Generic_Post_Type.php:242
 msgid "Date"
 msgstr ""
 
@@ -582,142 +582,142 @@ msgstr ""
 msgid "The email is unsubscribed"
 msgstr ""
 
-#: build/Emails/Main.php:143
+#: build/Emails/Main.php:144
 msgid "Your website does not support that trigger."
 msgstr ""
 
-#: build/Emails/Main.php:155
+#: build/Emails/Main.php:156
 msgid "Optional. Send this email only if certain conditions are met."
 msgstr ""
 
 #. translators: %s: Trigger description.
-#: build/Emails/Main.php:176
+#: build/Emails/Main.php:177
 msgid "Noptin will send this email %s"
 msgstr ""
 
-#: build/Emails/Main.php:259
+#: build/Emails/Main.php:260
 #: build/Emails/Records.php:33
 msgid "Email Campaign"
 msgstr ""
 
-#: build/Emails/Main.php:260
 #: build/Emails/Main.php:261
+#: build/Emails/Main.php:262
 msgid "Add New Campaign"
 msgstr ""
 
-#: build/Emails/Main.php:262
+#: build/Emails/Main.php:263
 msgid "Edit Campaign"
 msgstr ""
 
-#: build/Emails/Main.php:263
-#: build/Emails/Main.php:385
+#: build/Emails/Main.php:264
+#: build/Emails/Main.php:386
 msgid "New Campaign"
 msgstr ""
 
-#: build/Emails/Main.php:265
+#: build/Emails/Main.php:266
 msgid "View Campaigns"
 msgstr ""
 
-#: build/Emails/Main.php:266
+#: build/Emails/Main.php:267
 msgid "Search Campaigns"
 msgstr ""
 
-#: build/Emails/Main.php:267
+#: build/Emails/Main.php:268
 msgid "Insert into campaign"
 msgstr ""
 
-#: build/Emails/Main.php:268
+#: build/Emails/Main.php:269
 msgid "Uploaded to this campaign"
 msgstr ""
 
-#: build/Emails/Main.php:269
+#: build/Emails/Main.php:270
 msgid "Filter campaigns list"
 msgstr ""
 
-#: build/Emails/Main.php:270
+#: build/Emails/Main.php:271
 msgid "Email campaigns list"
 msgstr ""
 
-#: build/Emails/Main.php:271
+#: build/Emails/Main.php:272
 msgid "Email campaign published."
 msgstr ""
 
-#: build/Emails/Main.php:272
+#: build/Emails/Main.php:273
 msgid "Email campaign reverted to draft."
 msgstr ""
 
-#: build/Emails/Main.php:273
+#: build/Emails/Main.php:274
 msgid "Email campaign trashed."
 msgstr ""
 
-#: build/Emails/Main.php:274
+#: build/Emails/Main.php:275
 msgid "Email campaign scheduled."
 msgstr ""
 
-#: build/Emails/Main.php:275
+#: build/Emails/Main.php:276
 msgid "Email campaign updated."
 msgstr ""
 
-#: build/Emails/Main.php:383
+#: build/Emails/Main.php:384
 #: build/Forms/Widgets/Form.php:122
 msgid "Newsletter"
 msgstr ""
 
-#: build/Emails/Main.php:384
+#: build/Emails/Main.php:385
 msgid "Newsletters"
 msgstr ""
 
-#: build/Emails/Main.php:386
+#: build/Emails/Main.php:387
 msgid "Click the button below to send your first newsletter campaign"
 msgstr ""
 
-#: build/Emails/Main.php:395
+#: build/Emails/Main.php:396
 msgid "Automated Email"
 msgstr ""
 
-#: build/Emails/Main.php:396
+#: build/Emails/Main.php:397
 msgid "Automated Emails"
 msgstr ""
 
-#: build/Emails/Main.php:397
+#: build/Emails/Main.php:398
 msgid "New Automated Email"
 msgstr ""
 
-#: build/Emails/Main.php:398
+#: build/Emails/Main.php:399
 msgid "Click the button below to set-up your first automated email"
 msgstr ""
 
-#: build/Emails/Main.php:411
+#: build/Emails/Main.php:412
 msgid "Sequence / Course"
 msgstr ""
 
-#: build/Emails/Main.php:412
+#: build/Emails/Main.php:413
 #: build/Extensions/Menu.php:169
 msgid "Sequences / Courses"
 msgstr ""
 
-#: build/Emails/Main.php:414
+#: build/Emails/Main.php:415
 msgid "Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc."
 msgstr ""
 
-#: build/Emails/Main.php:423
+#: build/Emails/Main.php:424
 #: build/Emails/assets/js/email-editor.js:53
 msgid "Template"
 msgstr ""
 
-#: build/Emails/Main.php:424
+#: build/Emails/Main.php:425
 msgid "Templates"
 msgstr ""
 
-#: build/Emails/Main.php:425
+#: build/Emails/Main.php:426
 msgid "New Email Template"
 msgstr ""
 
-#: build/Emails/Main.php:426
+#: build/Emails/Main.php:427
 msgid "Click the button below to set-up your first email template"
 msgstr ""
 
-#: build/Emails/Main.php:427
+#: build/Emails/Main.php:428
 msgid "Create your own reusable email templates."
 msgstr ""
 
@@ -729,11 +729,11 @@ msgstr ""
 #: src/Integrations/GeoDirectory/Listings.php:248
 #: src/Integrations/PMPro/Membership_Levels.php:44
 #: src/Integrations/WooCommerce/Customers.php:96
-#: src/Integrations/WooCommerce/Orders.php:763
+#: src/Integrations/WooCommerce/Orders.php:769
 #: src/Integrations/WooCommerce/Order_Items.php:43
 #: src/Integrations/WooCommerce/Products.php:551
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:182
-#: src/Objects/Generic_Post_Type.php:179
+#: src/Objects/Generic_Post_Type.php:208
 #: src/Objects/Users.php:215
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "ID"
@@ -894,7 +894,7 @@ msgstr ""
 #: build/Emails/Types/Recurring.php:281
 #: build/Emails/Types/Recurring.php:293
 #: build/Emails/Types/Recurring.php:314
-#: includes/emails/emails.php:446
+#: includes/emails/emails.php:447
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Day"
 msgstr ""
@@ -913,7 +913,7 @@ msgstr ""
 
 #: build/Emails/Types/Recurring.php:307
 #: build/Emails/Types/Recurring.php:314
-#: includes/emails/emails.php:436
+#: includes/emails/emails.php:437
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Days"
 msgstr ""
@@ -927,7 +927,7 @@ msgid "Number of days between each email."
 msgstr ""
 
 #: build/Emails/Types/Recurring.php:325
-#: build/Tasks/Main.php:707
+#: build/Tasks/Main.php:709
 #: templates/debug-log.php:13
 msgid "Time"
 msgstr ""
@@ -1590,7 +1590,7 @@ msgid "Background Image"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:531
-#: src/Objects/Collection.php:430
+#: src/Objects/Collection.php:431
 msgid "Avatar URL"
 msgstr ""
 
@@ -1787,7 +1787,7 @@ msgid "We'll send you the best business news and informed analysis on what matte
 msgstr ""
 
 #: build/Forms/Admin/optin-templates.php:141
-#: includes/emails/emails.php:261
+#: includes/emails/emails.php:262
 msgid "Classic"
 msgstr ""
 
@@ -2038,7 +2038,7 @@ msgid "Subscription Form"
 msgstr ""
 
 #: build/Forms/Main.php:90
-#: build/Tasks/Main.php:555
+#: build/Tasks/Main.php:549
 #: src/DB/Schema.php:212
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Misc/assets/js/collection.js:123
@@ -2271,8 +2271,8 @@ msgstr ""
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1816
-#: includes/functions.php:2085
+#: includes/functions.php:1849
+#: includes/functions.php:2118
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -2675,7 +2675,7 @@ msgid "%s addon"
 msgstr ""
 
 #: build/Subscribers/Records.php:32
-#: includes/emails/emails.php:188
+#: includes/emails/emails.php:189
 msgid "Noptin Subscribers"
 msgstr ""
 
@@ -2732,7 +2732,7 @@ msgstr ""
 
 #: build/Subscribers/Records.php:190
 #: src/Integrations/EDD/Orders.php:151
-#: src/Integrations/WooCommerce/Orders.php:857
+#: src/Integrations/WooCommerce/Orders.php:867
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "New"
 msgstr ""
@@ -2810,6 +2810,7 @@ msgid "Status set to %1$s"
 msgstr ""
 
 #: build/Subscribers/Records.php:643
+#: src/Objects/Generic_Post_Type.php:92
 #: build/Misc/assets/js/collection.js:216
 msgid "Any"
 msgstr ""
@@ -2821,7 +2822,7 @@ msgstr ""
 #. translators: %s is the filter label, e.g, "Tags".
 #. translators: %s: Field label.
 #: build/Subscribers/Records.php:659
-#: src/Objects/Collection.php:804
+#: src/Objects/Collection.php:805
 #: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr ""
@@ -2858,13 +2859,13 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:876
-#: src/Objects/Generic_Post_Type.php:498
+#: src/Objects/Generic_Post_Type.php:532
 msgid "%s > Create or Update"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:881
-#: src/Objects/Generic_Post_Type.php:509
+#: src/Objects/Generic_Post_Type.php:543
 msgid "Create or update a %s"
 msgstr ""
 
@@ -2874,13 +2875,13 @@ msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:901
-#: src/Objects/Generic_Post_Type.php:520
+#: src/Objects/Generic_Post_Type.php:554
 msgid "%s > Delete"
 msgstr ""
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:906
-#: src/Objects/Generic_Post_Type.php:531
+#: src/Objects/Generic_Post_Type.php:565
 msgid "Delete a %s"
 msgstr ""
 
@@ -2944,12 +2945,12 @@ msgstr ""
 
 #. translators: %s: field label
 #: build/Subscribers/Records.php:998
-msgid "Updates %s"
+msgid "Update the subscriber's %s"
 msgstr ""
 
 #. translators: %s: field label
 #: build/Subscribers/Records.php:1032
-msgid "Adds the subscriber to %s"
+msgid "Add the subscriber to %s"
 msgstr ""
 
 #. translators: %1$s: Object type label, %2$s: Field label.
@@ -2959,133 +2960,133 @@ msgstr ""
 
 #. translators: %s: field label
 #: build/Subscribers/Records.php:1066
-msgid "Removes the subscriber from %s"
+msgid "Remove the subscriber from %s"
 msgstr ""
 
 #: build/Tasks/Main.php:81
 msgid "Every minute"
 msgstr ""
 
-#: build/Tasks/Main.php:235
+#: build/Tasks/Main.php:223
 msgctxt "Status"
 msgid "Pending"
 msgstr ""
 
-#: build/Tasks/Main.php:236
+#: build/Tasks/Main.php:224
 msgctxt "Status"
 msgid "Running"
 msgstr ""
 
-#: build/Tasks/Main.php:237
+#: build/Tasks/Main.php:225
 msgctxt "Status"
 msgid "Failed"
 msgstr ""
 
-#: build/Tasks/Main.php:238
+#: build/Tasks/Main.php:226
 msgctxt "Status"
 msgid "Canceled"
 msgstr ""
 
-#: build/Tasks/Main.php:239
+#: build/Tasks/Main.php:227
 msgctxt "Status"
 msgid "Complete"
 msgstr ""
 
-#: build/Tasks/Main.php:527
+#: build/Tasks/Main.php:521
 msgid "Scheduled Tasks"
 msgstr ""
 
-#: build/Tasks/Main.php:528
+#: build/Tasks/Main.php:522
 #: includes/admin/class-noptin-tools.php:85
 msgid "View"
 msgstr ""
 
-#: build/Tasks/Main.php:529
+#: build/Tasks/Main.php:523
 msgid "View a list of scheduled tasks."
 msgstr ""
 
-#: build/Tasks/Main.php:553
-#: build/Tasks/Main.php:764
-#: build/Tasks/Main.php:765
+#: build/Tasks/Main.php:547
+#: build/Tasks/Main.php:766
+#: build/Tasks/Main.php:767
 msgid "Tasks"
 msgstr ""
 
-#: build/Tasks/Main.php:554
+#: build/Tasks/Main.php:548
 msgid "Task"
 msgstr ""
 
-#: build/Tasks/Main.php:556
+#: build/Tasks/Main.php:550
 msgid "Add New Task"
 msgstr ""
 
-#: build/Tasks/Main.php:557
+#: build/Tasks/Main.php:551
 msgid "Edit Task"
 msgstr ""
 
-#: build/Tasks/Main.php:558
+#: build/Tasks/Main.php:552
 msgid "New Task"
 msgstr ""
 
-#: build/Tasks/Main.php:559
+#: build/Tasks/Main.php:553
 msgid "View Task"
 msgstr ""
 
-#: build/Tasks/Main.php:560
+#: build/Tasks/Main.php:554
 msgid "View Tasks"
 msgstr ""
 
-#: build/Tasks/Main.php:561
+#: build/Tasks/Main.php:555
 msgid "Search Tasks"
 msgstr ""
 
-#: build/Tasks/Main.php:562
+#: build/Tasks/Main.php:556
 msgid "No tasks found."
 msgstr ""
 
-#: build/Tasks/Main.php:563
+#: build/Tasks/Main.php:557
 msgid "Import Tasks"
 msgstr ""
 
-#: build/Tasks/Main.php:571
+#: build/Tasks/Main.php:565
 #: src/DB/Schema.php:70
 #: src/DB/Schema.php:173
 msgid "Unique identifier for this resource."
 msgstr ""
 
-#: build/Tasks/Main.php:580
+#: build/Tasks/Main.php:574
 msgid "The hook ID."
 msgstr ""
 
-#: build/Tasks/Main.php:587
+#: build/Tasks/Main.php:581
 msgid "The subject ID, email, etc."
 msgstr ""
 
-#: build/Tasks/Main.php:614
+#: build/Tasks/Main.php:615
 msgid "The args to pass to the hook."
 msgstr ""
 
-#: build/Tasks/Main.php:621
+#: build/Tasks/Main.php:622
 msgid "The args hash."
 msgstr ""
 
-#: build/Tasks/Main.php:641
+#: build/Tasks/Main.php:642
 msgid "Scheduled date"
 msgstr ""
 
-#: build/Tasks/Main.php:703
+#: build/Tasks/Main.php:705
 msgid "Log"
 msgstr ""
 
-#: build/Tasks/Main.php:712
+#: build/Tasks/Main.php:714
 #: templates/debug-log.php:14
 msgid "Message"
 msgstr ""
 
-#: build/Tasks/Task.php:392
+#: build/Tasks/Task.php:471
 msgid "Run"
 msgstr ""
 
-#: build/Tasks/Task.php:408
+#: build/Tasks/Task.php:487
 #: includes/class-noptin-scripts.php:188
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
@@ -3095,11 +3096,11 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: build/Tasks/Task.php:424
+#: build/Tasks/Task.php:503
 msgid "Re-run"
 msgstr ""
 
-#: build/Tasks/Task.php:443
+#: build/Tasks/Task.php:522
 #: build/Misc/assets/js/collection.js:178
 msgid "Are you sure you want to delete this record?"
 msgstr ""
@@ -3194,7 +3195,7 @@ msgid "Go back to tools page"
 msgstr ""
 
 #: includes/admin/class-noptin-tools.php:215
-#: src/Objects/Generic_Post_Type.php:184
+#: src/Objects/Generic_Post_Type.php:213
 msgid "Post ID"
 msgstr ""
 
@@ -3614,6 +3615,7 @@ msgstr ""
 #: includes/subscriber.php:1085
 #: includes/subscriber.php:1239
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
+#: src/Objects/Generic_Post_Type.php:87
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
 msgstr ""
@@ -3654,7 +3656,7 @@ msgid "Property of the current page or post."
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:565
-#: includes/functions.php:1152
+#: includes/functions.php:1151
 #: includes/subscriber.php:1400
 #: includes/subscriber.php:1459
 #: src/DB/Main.php:551
@@ -3667,7 +3669,7 @@ msgid "Yes"
 msgstr ""
 
 #: includes/class-noptin-dynamic-content-tags.php:565
-#: includes/functions.php:1148
+#: includes/functions.php:1147
 #: includes/subscriber.php:1401
 #: includes/subscriber.php:1460
 #: src/Integrations/WooCommerce/Products.php:220
@@ -3872,13 +3874,13 @@ msgid "New post published on [[blog_name]]"
 msgstr ""
 
 #: includes/emails/automated-email-types/class-post_notifications.php:116
-#: src/Objects/Post_Type.php:94
+#: src/Objects/Post_Type.php:95
 msgid "Continue Reading"
 msgstr ""
 
 #: includes/emails/automated-email-types/class-post_notifications.php:117
-#: src/Objects/Post_Type.php:95
-#: src/Objects/Post_Type.php:102
+#: src/Objects/Post_Type.php:96
+#: src/Objects/Post_Type.php:103
 msgid "If that doesn't work, copy and paste the following link into your browser:"
 msgstr ""
 
@@ -4039,114 +4041,114 @@ msgstr ""
 msgid "Newsletter - %s"
 msgstr ""
 
-#: includes/emails/emails.php:189
+#: includes/emails/emails.php:190
 msgid "Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields."
 msgstr ""
 
-#: includes/emails/emails.php:256
+#: includes/emails/emails.php:257
 msgid "Visual"
 msgstr ""
 
-#: includes/emails/emails.php:257
+#: includes/emails/emails.php:258
 msgid "Compose your email using the block editor"
 msgstr ""
 
-#: includes/emails/emails.php:262
+#: includes/emails/emails.php:263
 msgid "Your email will be embedded inside a template"
 msgstr ""
 
-#: includes/emails/emails.php:266
+#: includes/emails/emails.php:267
 msgid "Plain Text"
 msgstr ""
 
-#: includes/emails/emails.php:267
+#: includes/emails/emails.php:268
 msgid "Send a plain text email. It will contain no HTML which means open tracking and click tracking will not work."
 msgstr ""
 
-#: includes/emails/emails.php:271
+#: includes/emails/emails.php:272
 msgid "Raw HTML"
 msgstr ""
 
-#: includes/emails/emails.php:272
+#: includes/emails/emails.php:273
 msgid "This is useful if you're using a drag and drop email builder. Please note that you should include an unsubscribe link by using the [[unsubscribe_url]] merge tag."
 msgstr ""
 
-#: includes/emails/emails.php:299
+#: includes/emails/emails.php:300
 msgid "No template"
 msgstr ""
 
-#: includes/emails/emails.php:300
+#: includes/emails/emails.php:301
 msgid "Paste"
 msgstr ""
 
-#: includes/emails/emails.php:301
+#: includes/emails/emails.php:302
 msgid "Plain"
 msgstr ""
 
-#: includes/emails/emails.php:302
+#: includes/emails/emails.php:303
 msgid "Merriweather"
-msgstr ""
-
-#: includes/emails/emails.php:434
-#: build/Emails/assets/js/email-editor.js:54
-msgid "Minutes"
 msgstr ""
 
 #: includes/emails/emails.php:435
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Hours"
+msgid "Minutes"
 msgstr ""
 
-#: includes/emails/emails.php:437
+#: includes/emails/emails.php:436
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Weeks"
+msgid "Hours"
 msgstr ""
 
 #: includes/emails/emails.php:438
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Months"
+msgid "Weeks"
 msgstr ""
 
 #: includes/emails/emails.php:439
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Years"
+msgid "Months"
 msgstr ""
 
-#: includes/emails/emails.php:444
+#: includes/emails/emails.php:440
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Minute"
+msgid "Years"
 msgstr ""
 
 #: includes/emails/emails.php:445
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Hour"
+msgid "Minute"
 msgstr ""
 
-#: includes/emails/emails.php:447
+#: includes/emails/emails.php:446
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Week"
+msgid "Hour"
 msgstr ""
 
 #: includes/emails/emails.php:448
 #: build/Emails/assets/js/email-editor.js:54
-msgid "Month"
+msgid "Week"
 msgstr ""
 
 #: includes/emails/emails.php:449
+#: build/Emails/assets/js/email-editor.js:54
+msgid "Month"
+msgstr ""
+
+#: includes/emails/emails.php:450
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Year"
 msgstr ""
 
 #. Translators: %1$s Opening link tag, %2$s Closing link tag.
-#: includes/emails/emails.php:477
+#: includes/emails/emails.php:478
 msgid "[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s"
 msgstr ""
 
-#: includes/emails/emails.php:615
+#: includes/emails/emails.php:616
 msgid "Add footer text here"
 msgstr ""
 
-#: includes/emails/emails.php:624
+#: includes/emails/emails.php:625
 msgid "Add heading text here"
 msgstr ""
 
@@ -4606,84 +4608,84 @@ msgid "Time Zone"
 msgstr ""
 
 #. translators: %s: Human-readable time difference.
-#: includes/functions.php:1349
+#: includes/functions.php:1382
 #: src/DB/Main.php:566
 #: src/DB/Main.php:592
 #: src/DB/Main.php:639
 msgid "%s ago"
 msgstr ""
 
-#: includes/functions.php:1647
+#: includes/functions.php:1680
 msgid "is"
 msgstr ""
 
-#: includes/functions.php:1651
+#: includes/functions.php:1684
 msgid "is not"
 msgstr ""
 
-#: includes/functions.php:1655
+#: includes/functions.php:1688
 msgid "contains"
 msgstr ""
 
-#: includes/functions.php:1659
+#: includes/functions.php:1692
 msgid "does not contain"
 msgstr ""
 
-#: includes/functions.php:1663
+#: includes/functions.php:1696
 msgid "begins with"
 msgstr ""
 
-#: includes/functions.php:1667
+#: includes/functions.php:1700
 msgid "ends with"
 msgstr ""
 
-#: includes/functions.php:1671
+#: includes/functions.php:1704
 msgid "is empty"
 msgstr ""
 
-#: includes/functions.php:1675
+#: includes/functions.php:1708
 msgid "is not empty"
 msgstr ""
 
-#: includes/functions.php:1679
+#: includes/functions.php:1712
 msgid "is greater than"
 msgstr ""
 
-#: includes/functions.php:1683
+#: includes/functions.php:1716
 msgid "is less than"
 msgstr ""
 
-#: includes/functions.php:1687
-#: includes/functions.php:1699
+#: includes/functions.php:1720
+#: includes/functions.php:1732
 msgid "is between"
 msgstr ""
 
-#: includes/functions.php:1691
+#: includes/functions.php:1724
 msgid "is before"
 msgstr ""
 
-#: includes/functions.php:1695
+#: includes/functions.php:1728
 msgid "is after"
 msgstr ""
 
 #. translators: %s is a number.
-#: includes/functions.php:1825
+#: includes/functions.php:1858
 msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr ""
 
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1837
-#: includes/functions.php:2061
+#: includes/functions.php:1870
+#: includes/functions.php:2094
 msgid "%1$s and %2$s"
 msgstr ""
 
-#: includes/functions.php:1867
+#: includes/functions.php:1900
 msgid "OR"
 msgstr ""
 
-#: includes/functions.php:1869
+#: includes/functions.php:1902
 msgid "AND"
 msgstr ""
 
@@ -5118,7 +5120,7 @@ msgid "No emails have been sent yet."
 msgstr ""
 
 #: src/DB/Main.php:465
-#: src/Objects/Generic_Post_Type.php:217
+#: src/Objects/Generic_Post_Type.php:246
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Title"
 msgstr ""
@@ -5412,7 +5414,7 @@ msgstr ""
 #: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1047
+#: src/Objects/Collection.php:1048
 msgid "Meta Value"
 msgstr ""
 
@@ -5463,42 +5465,42 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:126
 #: src/Integrations/WooCommerce/Products.php:436
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:77
-#: src/Objects/Generic_Post_Type.php:337
+#: src/Objects/Generic_Post_Type.php:366
 msgid "Featured Image"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:127
 #: src/Integrations/WooCommerce/Products.php:437
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:78
-#: src/Objects/Generic_Post_Type.php:338
+#: src/Objects/Generic_Post_Type.php:367
 msgid "Displays the featured image."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:139
 #: src/Integrations/WooCommerce/Products.php:449
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:90
-#: src/Objects/Generic_Post_Type.php:350
+#: src/Objects/Generic_Post_Type.php:379
 msgid "Resolution"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:141
 #: src/Integrations/WooCommerce/Products.php:451
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:92
-#: src/Objects/Generic_Post_Type.php:352
+#: src/Objects/Generic_Post_Type.php:381
 msgid "Select the image size to display."
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:142
 #: src/Integrations/WooCommerce/Products.php:452
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:93
-#: src/Objects/Generic_Post_Type.php:353
+#: src/Objects/Generic_Post_Type.php:382
 msgid "Select image size"
 msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:149
 #: src/Integrations/WooCommerce/Products.php:468
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:100
-#: src/Objects/Generic_Post_Type.php:291
+#: src/Objects/Generic_Post_Type.php:320
 #: src/Objects/Users.php:266
 msgid "URL"
 msgstr ""
@@ -5509,8 +5511,8 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:482
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:103
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:114
-#: src/Objects/Generic_Post_Type.php:294
-#: src/Objects/Generic_Post_Type.php:305
+#: src/Objects/Generic_Post_Type.php:323
+#: src/Objects/Generic_Post_Type.php:334
 msgid "Read More"
 msgstr ""
 
@@ -5518,7 +5520,7 @@ msgstr ""
 #: src/Integrations/EDD/Downloads.php:155
 #: src/Integrations/WooCommerce/Products.php:474
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:106
-#: src/Objects/Generic_Post_Type.php:297
+#: src/Objects/Generic_Post_Type.php:326
 msgid "Displays a button link to the %s."
 msgstr ""
 
@@ -5538,8 +5540,8 @@ msgstr ""
 
 #: src/Integrations/EDD/Downloads.php:182
 #: src/Integrations/EDD/Downloads.php:185
-#: src/Objects/Generic_Post_Type.php:241
-#: src/Objects/Generic_Post_Type.php:245
+#: src/Objects/Generic_Post_Type.php:270
+#: src/Objects/Generic_Post_Type.php:274
 msgid "Excerpt"
 msgstr ""
 
@@ -5562,7 +5564,7 @@ msgstr ""
 #: src/Integrations/WooCommerce/Products.php:534
 #: src/Integrations/WooCommerce/Products.php:544
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:303
-#: src/Objects/Generic_Post_Type.php:385
+#: src/Objects/Generic_Post_Type.php:419
 msgid "Displays the %1$s %2$s."
 msgstr ""
 
@@ -5610,7 +5612,7 @@ msgstr ""
 
 #: src/Integrations/EDD/Orders.php:84
 #: src/Integrations/WooCommerce/Orders.php:366
-#: src/Integrations/WooCommerce/Orders.php:698
+#: src/Integrations/WooCommerce/Orders.php:704
 #: build/Misc/assets/js/collection.js:123
 msgid "Items"
 msgstr ""
@@ -5635,15 +5637,15 @@ msgid "When an EDD order is %s"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:148
-#: src/Integrations/WooCommerce/Orders.php:854
+#: src/Integrations/WooCommerce/Orders.php:864
 msgid "The previous order status."
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:175
-#: src/Integrations/WooCommerce/Orders.php:767
+#: src/Integrations/WooCommerce/Orders.php:773
 #: src/Integrations/WooCommerce/Products.php:568
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:186
-#: src/Objects/Generic_Post_Type.php:196
+#: src/Objects/Generic_Post_Type.php:225
 msgid "Parent ID"
 msgstr ""
 
@@ -5722,7 +5724,7 @@ msgid "Recovery URL"
 msgstr ""
 
 #: src/Integrations/EDD/Orders.php:265
-#: src/Integrations/WooCommerce/Orders.php:661
+#: src/Integrations/WooCommerce/Orders.php:667
 msgid "Admin URL"
 msgstr ""
 
@@ -5773,7 +5775,7 @@ msgid "Download Links"
 msgstr ""
 
 #: src/Integrations/EDD/Order_Items.php:23
-#: src/Integrations/WooCommerce/Orders.php:701
+#: src/Integrations/WooCommerce/Orders.php:707
 #: src/Integrations/WooCommerce/Order_Items.php:23
 msgid "Order Items"
 msgstr ""
@@ -5810,16 +5812,16 @@ msgstr ""
 msgid "Field Mapping"
 msgstr ""
 
-#: src/Integrations/Elementor/Main.php:123
+#: src/Integrations/Elementor/Main.php:121
 msgid "Page URL"
 msgstr ""
 
-#: src/Integrations/Elementor/Main.php:127
+#: src/Integrations/Elementor/Main.php:125
 #: src/Integrations/Gravity_Forms/Main.php:84
 msgid "User Agent"
 msgstr ""
 
-#: src/Integrations/Elementor/Main.php:131
+#: src/Integrations/Elementor/Main.php:129
 #: src/Integrations/Gravity_Forms/Main.php:76
 msgid "IP Address"
 msgstr ""
@@ -6093,41 +6095,42 @@ msgid "Display name"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:133
+#: src/Integrations/WooCommerce/Orders.php:496
 #: src/Objects/Users.php:229
 msgid "Locale"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:139
-#: src/Integrations/WooCommerce/Orders.php:496
+#: src/Integrations/WooCommerce/Orders.php:502
 msgid "Billing address"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:143
 #: src/Integrations/WooCommerce/Orders.php:149
-#: src/Integrations/WooCommerce/Orders.php:528
+#: src/Integrations/WooCommerce/Orders.php:534
 msgid "Billing city"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:147
 #: src/Integrations/WooCommerce/Orders.php:154
-#: src/Integrations/WooCommerce/Orders.php:532
+#: src/Integrations/WooCommerce/Orders.php:538
 msgid "Billing state"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:151
 #: src/Integrations/WooCommerce/Orders.php:159
-#: src/Integrations/WooCommerce/Orders.php:536
+#: src/Integrations/WooCommerce/Orders.php:542
 msgid "Billing postcode"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:155
 #: src/Integrations/WooCommerce/Orders.php:164
-#: src/Integrations/WooCommerce/Orders.php:540
+#: src/Integrations/WooCommerce/Orders.php:546
 msgid "Billing country"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Customers.php:159
-#: src/Integrations/WooCommerce/Orders.php:549
+#: src/Integrations/WooCommerce/Orders.php:555
 msgid "Billing phone"
 msgstr ""
 
@@ -6190,7 +6193,7 @@ msgid "Currency Code"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:114
-#: src/Integrations/WooCommerce/Orders.php:618
+#: src/Integrations/WooCommerce/Orders.php:624
 msgid "Payment method"
 msgstr ""
 
@@ -6199,12 +6202,12 @@ msgid "Customer ID or email"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:124
-#: src/Integrations/WooCommerce/Orders.php:508
+#: src/Integrations/WooCommerce/Orders.php:514
 msgid "Billing first name"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:129
-#: src/Integrations/WooCommerce/Orders.php:512
+#: src/Integrations/WooCommerce/Orders.php:518
 msgid "Billing last name"
 msgstr ""
 
@@ -6229,12 +6232,12 @@ msgid "Billing phone number"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:179
-#: src/Integrations/WooCommerce/Orders.php:577
+#: src/Integrations/WooCommerce/Orders.php:583
 msgid "Shipping first name"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:184
-#: src/Integrations/WooCommerce/Orders.php:581
+#: src/Integrations/WooCommerce/Orders.php:587
 msgid "Shipping last name"
 msgstr ""
 
@@ -6251,32 +6254,32 @@ msgid "Shipping address line 2"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:204
-#: src/Integrations/WooCommerce/Orders.php:597
+#: src/Integrations/WooCommerce/Orders.php:603
 msgid "Shipping city"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:209
-#: src/Integrations/WooCommerce/Orders.php:601
+#: src/Integrations/WooCommerce/Orders.php:607
 msgid "Shipping state"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:214
-#: src/Integrations/WooCommerce/Orders.php:605
+#: src/Integrations/WooCommerce/Orders.php:611
 msgid "Shipping postcode"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:219
-#: src/Integrations/WooCommerce/Orders.php:609
+#: src/Integrations/WooCommerce/Orders.php:615
 msgid "Shipping country"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:224
-#: src/Integrations/WooCommerce/Orders.php:690
+#: src/Integrations/WooCommerce/Orders.php:696
 msgid "Customer IP address"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:229
-#: src/Integrations/WooCommerce/Orders.php:771
+#: src/Integrations/WooCommerce/Orders.php:777
 #: src/Integrations/WooCommerce/Products.php:305
 #: src/Integrations/WooCommerce/Products.php:574
 msgid "Date created"
@@ -6287,7 +6290,7 @@ msgid "Date order was created, in the site's timezone, with an optional comparis
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:243
-#: src/Integrations/WooCommerce/Orders.php:775
+#: src/Integrations/WooCommerce/Orders.php:781
 #: src/Integrations/WooCommerce/Products.php:578
 msgid "Date modified"
 msgstr ""
@@ -6297,7 +6300,7 @@ msgid "Date order was last modified, in the site's timezone, with an optional co
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:257
-#: src/Integrations/WooCommerce/Orders.php:783
+#: src/Integrations/WooCommerce/Orders.php:789
 msgid "Date completed"
 msgstr ""
 
@@ -6306,7 +6309,7 @@ msgid "Date order was completed, in the site's timezone, with an optional compar
 msgstr ""
 
 #: src/Integrations/WooCommerce/Orders.php:271
-#: src/Integrations/WooCommerce/Orders.php:779
+#: src/Integrations/WooCommerce/Orders.php:785
 msgid "Date paid"
 msgstr ""
 
@@ -6345,183 +6348,183 @@ msgstr ""
 msgid "Item count"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:499
+#: src/Integrations/WooCommerce/Orders.php:505
 msgid "Order Billing address"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:500
+#: src/Integrations/WooCommerce/Orders.php:506
 msgid "Displays the formatted billing address for the order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:516
+#: src/Integrations/WooCommerce/Orders.php:522
 msgid "Billing company"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:520
+#: src/Integrations/WooCommerce/Orders.php:526
 msgid "Billing address 1"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:524
+#: src/Integrations/WooCommerce/Orders.php:530
 msgid "Billing address 2"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:545
+#: src/Integrations/WooCommerce/Orders.php:551
 msgid "Billing email"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:553
-#: src/Integrations/WooCommerce/Orders.php:556
+#: src/Integrations/WooCommerce/Orders.php:559
+#: src/Integrations/WooCommerce/Orders.php:562
 msgid "Shipping method"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:557
+#: src/Integrations/WooCommerce/Orders.php:563
 msgid "Displays the formatted shipping method for the order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:565
+#: src/Integrations/WooCommerce/Orders.php:571
 msgid "Shipping address"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:568
+#: src/Integrations/WooCommerce/Orders.php:574
 msgid "Order Shipping address"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:569
+#: src/Integrations/WooCommerce/Orders.php:575
 msgid "Displays the formatted shipping address for the order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:585
+#: src/Integrations/WooCommerce/Orders.php:591
 msgid "Shipping company"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:589
+#: src/Integrations/WooCommerce/Orders.php:595
 msgid "Shipping address 1"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:593
+#: src/Integrations/WooCommerce/Orders.php:599
 msgid "Shipping address 2"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:614
+#: src/Integrations/WooCommerce/Orders.php:620
 msgid "Shipping phone"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:623
+#: src/Integrations/WooCommerce/Orders.php:629
 msgid "Payment method title"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:627
+#: src/Integrations/WooCommerce/Orders.php:633
 msgid "Payment URL"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:630
+#: src/Integrations/WooCommerce/Orders.php:636
 msgid "Pay Order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:631
+#: src/Integrations/WooCommerce/Orders.php:637
 msgid "Displays a button link to pay for the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:637
+#: src/Integrations/WooCommerce/Orders.php:643
 msgid "Pay Now"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:644
+#: src/Integrations/WooCommerce/Orders.php:650
 msgid "View URL"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:647
-#: src/Integrations/WooCommerce/Orders.php:654
+#: src/Integrations/WooCommerce/Orders.php:653
+#: src/Integrations/WooCommerce/Orders.php:660
 msgid "View order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:648
+#: src/Integrations/WooCommerce/Orders.php:654
 msgid "Displays a button link to view the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:664
-#: src/Integrations/WooCommerce/Orders.php:671
+#: src/Integrations/WooCommerce/Orders.php:670
+#: src/Integrations/WooCommerce/Orders.php:677
 msgid "Edit order"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:665
+#: src/Integrations/WooCommerce/Orders.php:671
 msgid "Displays a button link to edit the order in the admin backend."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:678
-#: src/Integrations/WooCommerce/Orders.php:681
+#: src/Integrations/WooCommerce/Orders.php:684
+#: src/Integrations/WooCommerce/Orders.php:687
 msgid "Customer note"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:682
+#: src/Integrations/WooCommerce/Orders.php:688
 msgid "Displays the customer note for the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:694
+#: src/Integrations/WooCommerce/Orders.php:700
 msgid "Customer user agent"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:702
+#: src/Integrations/WooCommerce/Orders.php:708
 msgid "Displays the items in the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:711
+#: src/Integrations/WooCommerce/Orders.php:717
 #: src/Integrations/WooCommerce/Products.php:790
 msgid "Cross sells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:714
+#: src/Integrations/WooCommerce/Orders.php:720
 msgid "Order Cross sells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:715
+#: src/Integrations/WooCommerce/Orders.php:721
 msgid "Displays the cross sells for the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:724
+#: src/Integrations/WooCommerce/Orders.php:730
 #: src/Integrations/WooCommerce/Products.php:803
 msgid "Upsells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:727
+#: src/Integrations/WooCommerce/Orders.php:733
 msgid "Order Upsells"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:728
+#: src/Integrations/WooCommerce/Orders.php:734
 msgid "Displays the upsells for the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:737
+#: src/Integrations/WooCommerce/Orders.php:743
 msgid "Details"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:740
+#: src/Integrations/WooCommerce/Orders.php:746
 msgid "Order Details"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:741
+#: src/Integrations/WooCommerce/Orders.php:747
 msgid "Displays the details for the order."
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:750
+#: src/Integrations/WooCommerce/Orders.php:756
 msgid "Customer details"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:753
+#: src/Integrations/WooCommerce/Orders.php:759
 msgid "Customer Details"
 msgstr ""
 
-#: src/Integrations/WooCommerce/Orders.php:754
+#: src/Integrations/WooCommerce/Orders.php:760
 msgid "Displays the customer details for the order."
 msgstr ""
 
 #. translators: %s: Order status label.
-#: src/Integrations/WooCommerce/Orders.php:843
+#: src/Integrations/WooCommerce/Orders.php:853
 msgid "Order > %s"
 msgstr ""
 
 #. translators: %s: Order status label.
-#: src/Integrations/WooCommerce/Orders.php:848
+#: src/Integrations/WooCommerce/Orders.php:858
 msgid "When a WooCommerce order is %s"
 msgstr ""
 
@@ -6557,15 +6560,15 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:840
-#: src/Objects/Collection.php:1071
-#: src/Objects/Post_Type.php:447
+#: src/Objects/Collection.php:1072
+#: src/Objects/Post_Type.php:481
 msgid "Default Value"
 msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:843
-#: src/Objects/Collection.php:1074
-#: src/Objects/Post_Type.php:450
+#: src/Objects/Collection.php:1075
+#: src/Objects/Post_Type.php:484
 msgid "The default value to display if not set."
 msgstr ""
 
@@ -6835,7 +6838,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:429
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:70
-#: src/Objects/Generic_Post_Type.php:320
+#: src/Objects/Generic_Post_Type.php:349
 msgid "Slug"
 msgstr ""
 
@@ -6940,7 +6943,7 @@ msgstr ""
 #. translators: %s: Object type label.
 #: src/Integrations/WooCommerce/Products.php:856
 #: src/Integrations/WooCommerce/Products.php:869
-#: src/Objects/Generic_Post_Type.php:401
+#: src/Objects/Generic_Post_Type.php:435
 msgid "Enter a comma-separated list of %1$s %2$s."
 msgstr ""
 
@@ -6990,7 +6993,7 @@ msgid "-- Map Field --"
 msgstr ""
 
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:121
-#: src/Objects/Generic_Post_Type.php:87
+#: src/Objects/Generic_Post_Type.php:95
 msgid "Author"
 msgstr ""
 
@@ -7019,85 +7022,85 @@ msgstr ""
 msgid "%s Information"
 msgstr ""
 
-#: src/Objects/Collection.php:396
+#: src/Objects/Collection.php:397
 msgid "Read more"
 msgstr ""
 
-#: src/Objects/Collection.php:421
+#: src/Objects/Collection.php:422
 msgid "Newsletter subscription status"
 msgstr ""
 
-#: src/Objects/Collection.php:424
+#: src/Objects/Collection.php:425
 msgid "subscribed"
 msgstr ""
 
-#: src/Objects/Collection.php:425
+#: src/Objects/Collection.php:426
 msgid "unsubscribed"
 msgstr ""
 
 #. translators: %s is the object type label, e.g. "orders".
-#: src/Objects/Collection.php:492
-#: src/Objects/Collection.php:924
+#: src/Objects/Collection.php:493
+#: src/Objects/Collection.php:925
 msgid "No %s found."
 msgstr ""
 
-#: src/Objects/Collection.php:629
+#: src/Objects/Collection.php:630
 msgid "Since Last Send"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:634
+#: src/Objects/Collection.php:635
 msgid "Only show %s created since last send"
 msgstr ""
 
-#: src/Objects/Collection.php:641
+#: src/Objects/Collection.php:642
 msgid "Date Before"
 msgstr ""
 
 #. translators: %s: Examples.
-#: src/Objects/Collection.php:646
-#: src/Objects/Collection.php:668
+#: src/Objects/Collection.php:647
+#: src/Objects/Collection.php:669
 msgid "Examples: %s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:658
+#: src/Objects/Collection.php:659
 msgid "Show %s created before this date."
 msgstr ""
 
-#: src/Objects/Collection.php:663
+#: src/Objects/Collection.php:664
 msgid "Date After"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:680
+#: src/Objects/Collection.php:681
 msgid "Show %s created after this date."
 msgstr ""
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:794
+#: src/Objects/Collection.php:795
 msgid "Filter by %s."
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:811
+#: src/Objects/Collection.php:812
 msgid "Exclude %s."
 msgstr ""
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1054
+#: src/Objects/Collection.php:1055
 msgid "%s Meta"
 msgstr ""
 
-#: src/Objects/Collection.php:1057
+#: src/Objects/Collection.php:1058
 msgid "Displays a custom field value."
 msgstr ""
 
-#: src/Objects/Collection.php:1065
+#: src/Objects/Collection.php:1066
 msgid "Meta Key / Field Key"
 msgstr ""
 
-#: src/Objects/Collection.php:1068
+#: src/Objects/Collection.php:1069
 msgid "The meta key or field key to display."
 msgstr ""
 
@@ -7116,132 +7119,140 @@ msgstr ""
 msgid "Check out our latest %s"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:90
+#: src/Objects/Generic_Post_Type.php:89
+msgid "The language to filter posts by."
+msgstr ""
+
+#: src/Objects/Generic_Post_Type.php:98
 msgid "Author ID, or comma-separated list of IDs"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:94
-#: src/Objects/Generic_Post_Type.php:330
+#: src/Objects/Generic_Post_Type.php:102
+#: src/Objects/Generic_Post_Type.php:359
 msgid "Comment Count"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:97
+#: src/Objects/Generic_Post_Type.php:105
 msgid "Number of comments, with an optional comparison operator."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:101
+#: src/Objects/Generic_Post_Type.php:109
 msgid "Search by keyword"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:104
+#: src/Objects/Generic_Post_Type.php:112
 msgid "Prepending a term with a hyphen will exclude posts matching that term."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:105
+#: src/Objects/Generic_Post_Type.php:113
 msgid "For example, pillow -sofa"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:185
+#: src/Objects/Generic_Post_Type.php:214
 msgid "Leave blank to create a new post."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:189
+#: src/Objects/Generic_Post_Type.php:218
 msgid "Post ID or Slug"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:190
+#: src/Objects/Generic_Post_Type.php:219
 msgid "Specify a post ID or slug"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:200
+#: src/Objects/Generic_Post_Type.php:229
 msgid "Author ID"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:206
+#: src/Objects/Generic_Post_Type.php:235
 msgid "Author ID or email address"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:207
+#: src/Objects/Generic_Post_Type.php:236
 msgid "If an email address is provided, the user will be created if they do not already exist."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:224
+#: src/Objects/Generic_Post_Type.php:253
 msgid "%s Title"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:229
+#: src/Objects/Generic_Post_Type.php:258
 msgid "Displays the %s title."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:248
+#: src/Objects/Generic_Post_Type.php:277
 msgid "Displays the %s excerpt."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:257
+#: src/Objects/Generic_Post_Type.php:286
 msgid "Words"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:260
+#: src/Objects/Generic_Post_Type.php:289
 msgid "The maximum number of words to display."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:267
+#: src/Objects/Generic_Post_Type.php:296
 msgid "Content"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:278
+#: src/Objects/Generic_Post_Type.php:307
 msgid "Scheduled"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:283
+#: src/Objects/Generic_Post_Type.php:312
 msgid "Comment Status"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:286
 #: src/Objects/Generic_Post_Type.php:315
+#: src/Objects/Generic_Post_Type.php:344
 msgid "Open"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:287
 #: src/Objects/Generic_Post_Type.php:316
+#: src/Objects/Generic_Post_Type.php:345
 msgid "Closed"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:312
+#: src/Objects/Generic_Post_Type.php:341
 msgid "Ping Status"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:325
+#: src/Objects/Generic_Post_Type.php:354
 msgid "If provided and a post with the same slug exists, the post will be updated."
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:334
+#: src/Objects/Generic_Post_Type.php:363
 msgid "Featured Image URL"
 msgstr ""
 
+#: src/Objects/Generic_Post_Type.php:389
+msgid "Language (Locale)"
+msgstr ""
+
 #. translators: %s: Date and time.
-#: src/Objects/Generic_Post_Type.php:475
+#: src/Objects/Generic_Post_Type.php:509
 msgid "%1$s at %2$s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:504
+#: src/Objects/Generic_Post_Type.php:538
 msgid "Create or update an %s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:526
+#: src/Objects/Generic_Post_Type.php:560
 msgid "Delete an %s"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:537
+#: src/Objects/Generic_Post_Type.php:571
 msgid "Force Delete"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:538
+#: src/Objects/Generic_Post_Type.php:572
 msgid "Whether to bypass the trash and force delete the post."
 msgstr ""
 
@@ -7259,65 +7270,65 @@ msgid "Post Author"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:114
+#: src/Objects/Post_Type.php:115
 msgid "%s > Published"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:120
+#: src/Objects/Post_Type.php:121
 msgid "When an %s is published"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:125
+#: src/Objects/Post_Type.php:126
 msgid "When a %s is published"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:134
+#: src/Objects/Post_Type.php:135
 msgid "New %s notification"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:143
+#: src/Objects/Post_Type.php:144
 msgid "A new %s has been published on [[blog_name]]."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:154
+#: src/Objects/Post_Type.php:155
 msgid "%s > Unpublished"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:160
+#: src/Objects/Post_Type.php:161
 msgid "When an %s is unpublished"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:165
+#: src/Objects/Post_Type.php:166
 msgid "When a %s is unpublished"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:173
+#: src/Objects/Post_Type.php:174
 msgid "%s > Deleted"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:179
+#: src/Objects/Post_Type.php:180
 msgid "When an %s is deleted"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:184
+#: src/Objects/Post_Type.php:185
 msgid "When a %s is deleted"
 msgstr ""
 
-#: src/Objects/Post_Type.php:441
+#: src/Objects/Post_Type.php:475
 msgid "Link"
 msgstr ""
 
-#: src/Objects/Post_Type.php:444
+#: src/Objects/Post_Type.php:478
 msgid "Whether to link to the term."
 msgstr ""
 
@@ -8205,25 +8216,21 @@ msgstr ""
 
 #. translators: accessibility text for the editor settings landmark region.
 #: build/Emails/assets/js/email-editor.js:61
-#: build/Settings/assets/js/settings.js:57
 msgid "Editor settings"
 msgstr ""
 
 #. translators: accessibility text for the editor publish landmark region.
 #: build/Emails/assets/js/email-editor.js:63
-#: build/Settings/assets/js/settings.js:59
 msgid "Editor publish"
 msgstr ""
 
 #. translators: accessibility text for the editor footer landmark region.
 #: build/Emails/assets/js/email-editor.js:65
-#: build/Settings/assets/js/settings.js:61
 msgid "Editor footer"
 msgstr ""
 
 #. translators: accessibility text for the editor secondary sidebar landmark region.
 #: build/Emails/assets/js/email-editor.js:67
-#: build/Settings/assets/js/settings.js:63
 msgid "Document Overview"
 msgstr ""
 
@@ -8731,16 +8738,6 @@ msgstr ""
 
 #: build/Misc/assets/js/list.js:1
 msgid "Yes, deactivate"
-msgstr ""
-
-#. translators: accessibility text for the editor top bar landmark region.
-#: build/Settings/assets/js/settings.js:53
-msgid "Settings top bar"
-msgstr ""
-
-#. translators: accessibility text for the editor content landmark region.
-#: build/Settings/assets/js/settings.js:55
-msgid "Settings content"
 msgstr ""
 
 #: includes/assets/js/dist/blocks-woocommerce-backend.js:1

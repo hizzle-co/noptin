@@ -13,25 +13,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.5\n"
 
-#. translators: %s: field label
-#: build/Subscribers/Records.php:1066
-msgid "Removes the subscriber from %s"
-msgstr "Entfernt den Teilnehmer aus %s"
-
 #. translators: %1$s: Object type label, %2$s: Field label.
 #: build/Subscribers/Records.php:1060
 msgid "%1$s > Remove from %2$s"
 msgstr "%1$s > Entfernen von %2$s"
-
-#. translators: %s: field label
-#: build/Subscribers/Records.php:1032
-msgid "Adds the subscriber to %s"
-msgstr "Fügt den Teilnehmer zu %s hinzu"
-
-#. translators: %s: field label
-#: build/Subscribers/Records.php:998
-msgid "Updates %s"
-msgstr "Aktualisierungen %s"
 
 #. translators: %1$s: Object type label, %2$s: Field label.
 #: build/Subscribers/Records.php:992
@@ -206,11 +191,11 @@ msgstr "Auswahl"
 msgid "This option only works for users using a mouse. It will not work for touch devices."
 msgstr "Diese Option funktioniert nur für Benutzer, die eine Maus verwenden. Sie funktioniert nicht für Touch-Geräte."
 
-#: src/Objects/Generic_Post_Type.php:260
+#: src/Objects/Generic_Post_Type.php:289
 msgid "The maximum number of words to display."
 msgstr "Die maximale Anzahl von Wörtern, die angezeigt werden sollen."
 
-#: src/Objects/Generic_Post_Type.php:257
+#: src/Objects/Generic_Post_Type.php:286
 msgid "Words"
 msgstr "Wörter"
 
@@ -258,109 +243,109 @@ msgstr "Daten bei Deinstallation behalten"
 msgid "The \"View in Browser\" URL."
 msgstr "Die URL \"Im Browser anzeigen\"."
 
-#: build/Tasks/Main.php:641
+#: build/Tasks/Main.php:642
 msgid "Scheduled date"
 msgstr "Geplantes Datum"
 
-#: build/Tasks/Task.php:424
+#: build/Tasks/Task.php:503
 msgid "Re-run"
 msgstr "Re-run"
 
-#: build/Tasks/Task.php:392
+#: build/Tasks/Task.php:471
 msgid "Run"
 msgstr "Ausführen"
 
-#: build/Tasks/Main.php:703
+#: build/Tasks/Main.php:705
 msgid "Log"
 msgstr "Log"
 
-#: build/Tasks/Main.php:621
+#: build/Tasks/Main.php:622
 msgid "The args hash."
 msgstr "Der Args-Hash."
 
-#: build/Tasks/Main.php:614
+#: build/Tasks/Main.php:615
 msgid "The args to pass to the hook."
 msgstr "Die Args, die an den Hook übergeben werden."
 
-#: build/Tasks/Main.php:587
+#: build/Tasks/Main.php:581
 msgid "The subject ID, email, etc."
 msgstr "Die Betreff-ID, E-Mail, etc."
 
-#: build/Tasks/Main.php:580
+#: build/Tasks/Main.php:574
 msgid "The hook ID."
 msgstr "Die Haken-ID."
 
-#: build/Tasks/Main.php:563
+#: build/Tasks/Main.php:557
 msgid "Import Tasks"
 msgstr "Aufgaben Importieren"
 
-#: build/Tasks/Main.php:562
+#: build/Tasks/Main.php:556
 msgid "No tasks found."
 msgstr "Keine Aufgaben gefunden."
 
-#: build/Tasks/Main.php:561
+#: build/Tasks/Main.php:555
 msgid "Search Tasks"
 msgstr "Aufgaben suchen"
 
-#: build/Tasks/Main.php:560
+#: build/Tasks/Main.php:554
 msgid "View Tasks"
 msgstr "Aufgaben anzeigen"
 
-#: build/Tasks/Main.php:559
+#: build/Tasks/Main.php:553
 msgid "View Task"
 msgstr "Aufgabe ansehen"
 
-#: build/Tasks/Main.php:558
+#: build/Tasks/Main.php:552
 msgid "New Task"
 msgstr "Neue Aufgabe"
 
-#: build/Tasks/Main.php:557
+#: build/Tasks/Main.php:551
 msgid "Edit Task"
 msgstr "Aufgabe bearbeiten"
 
-#: build/Tasks/Main.php:556
+#: build/Tasks/Main.php:550
 msgid "Add New Task"
 msgstr "Neue Aufgabe hinzufügen"
 
-#: build/Tasks/Main.php:554
+#: build/Tasks/Main.php:548
 msgid "Task"
 msgstr "Aufgabe"
 
-#: build/Tasks/Main.php:553
-#: build/Tasks/Main.php:764
-#: build/Tasks/Main.php:765
+#: build/Tasks/Main.php:547
+#: build/Tasks/Main.php:766
+#: build/Tasks/Main.php:767
 msgid "Tasks"
 msgstr "Aufgaben"
 
-#: build/Tasks/Main.php:529
+#: build/Tasks/Main.php:523
 msgid "View a list of scheduled tasks."
 msgstr "Zeigen Sie eine Liste der geplanten Aufgaben an."
 
-#: build/Tasks/Main.php:527
+#: build/Tasks/Main.php:521
 msgid "Scheduled Tasks"
 msgstr "Geplante Aufgaben"
 
-#: build/Tasks/Main.php:239
+#: build/Tasks/Main.php:227
 msgctxt "Status"
 msgid "Complete"
 msgstr "Abgeschlossen"
 
-#: build/Tasks/Main.php:238
+#: build/Tasks/Main.php:226
 msgctxt "Status"
 msgid "Canceled"
 msgstr "Abgebrochen"
 
-#: build/Tasks/Main.php:237
+#: build/Tasks/Main.php:225
 msgctxt "Status"
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: build/Tasks/Main.php:236
+#: build/Tasks/Main.php:224
 msgctxt "Status"
 msgid "Running"
 msgstr "Läuft"
 
-#: build/Tasks/Main.php:235
+#: build/Tasks/Main.php:223
 msgctxt "Status"
 msgid "Pending"
 msgstr "Ausstehend"
@@ -375,7 +360,7 @@ msgid "Help us translate Noptin to your language. %1$sLearn how%2$s."
 msgstr "Helfen Sie uns, Noptin in Ihre Sprache zu übersetzen. %1$sErfahren Sie wie%2$s."
 
 #. translators: %s is a number.
-#: includes/functions.php:1825
+#: includes/functions.php:1858
 msgctxt "number"
 msgid "%1$s and %2$s"
 msgstr "%1$s und %2$s"
@@ -451,56 +436,56 @@ msgstr "%s > Abbestellen"
 msgid "Subscriber ID or email address"
 msgstr "Abonnenten-ID oder E-Mail-Adresse"
 
-#: src/Objects/Generic_Post_Type.php:538
+#: src/Objects/Generic_Post_Type.php:572
 msgid "Whether to bypass the trash and force delete the post."
 msgstr "Ob der Papierkorb umgangen und der Beitrag zwangsweise gelöscht werden soll."
 
-#: src/Objects/Generic_Post_Type.php:537
+#: src/Objects/Generic_Post_Type.php:571
 msgid "Force Delete"
 msgstr "Löschen erzwingen"
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:906
-#: src/Objects/Generic_Post_Type.php:531
+#: src/Objects/Generic_Post_Type.php:565
 msgid "Delete a %s"
 msgstr "&#8220;%s&#8221; endgültig löschen"
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:901
-#: src/Objects/Generic_Post_Type.php:520
+#: src/Objects/Generic_Post_Type.php:554
 msgid "%s > Delete"
 msgstr "%s > Löschen"
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:876
-#: src/Objects/Generic_Post_Type.php:498
+#: src/Objects/Generic_Post_Type.php:532
 msgid "%s > Create or Update"
 msgstr "%s > Erstellen oder Aktualisieren"
 
-#: src/Objects/Generic_Post_Type.php:325
+#: src/Objects/Generic_Post_Type.php:354
 msgid "If provided and a post with the same slug exists, the post will be updated."
 msgstr "Wenn dies der Fall ist und ein Beitrag mit demselben Slug existiert, wird der Beitrag aktualisiert."
 
-#: src/Objects/Generic_Post_Type.php:207
+#: src/Objects/Generic_Post_Type.php:236
 msgid "If an email address is provided, the user will be created if they do not already exist."
 msgstr "Wenn eine E-Mail-Adresse angegeben wird, wird der Benutzer erstellt, falls er noch nicht existiert."
 
-#: src/Objects/Generic_Post_Type.php:206
+#: src/Objects/Generic_Post_Type.php:235
 msgid "Author ID or email address"
 msgstr "Autor-ID oder E-Mail-Adresse"
 
-#: src/Objects/Generic_Post_Type.php:190
+#: src/Objects/Generic_Post_Type.php:219
 msgid "Specify a post ID or slug"
 msgstr "Geben Sie eine Post-ID oder einen Slug an"
 
-#: src/Objects/Generic_Post_Type.php:189
+#: src/Objects/Generic_Post_Type.php:218
 msgid "Post ID or Slug"
 msgstr "Post-ID oder Schnecke"
 
 #. translators: %s: Object type label.
 #: src/Integrations/WooCommerce/Products.php:856
 #: src/Integrations/WooCommerce/Products.php:869
-#: src/Objects/Generic_Post_Type.php:401
+#: src/Objects/Generic_Post_Type.php:435
 msgid "Enter a comma-separated list of %1$s %2$s."
 msgstr "Geben Sie eine durch Kommas getrennte Liste von %1$s %2$s ein."
 
@@ -570,7 +555,7 @@ msgid "Form Submitted"
 msgstr "Formular übermittelt"
 
 #: includes/admin/class-noptin-tools.php:215
-#: src/Objects/Generic_Post_Type.php:184
+#: src/Objects/Generic_Post_Type.php:213
 msgid "Post ID"
 msgstr "Beitrags-ID"
 
@@ -862,12 +847,12 @@ msgstr "Ungültige E-Mail-IDs"
 msgid "The IDs of the emails to reorder."
 msgstr "Die IDs der neu zu bestellenden E-Mails."
 
-#: build/Emails/Main.php:412
+#: build/Emails/Main.php:413
 #: build/Extensions/Menu.php:169
 msgid "Sequences / Courses"
 msgstr "Sequenzen / Kurse"
 
-#: build/Emails/Main.php:411
+#: build/Emails/Main.php:412
 msgid "Sequence / Course"
 msgstr "Sequenz / Kurs"
 
@@ -1012,8 +997,8 @@ msgid "Restore"
 msgstr "Wiederherstellen"
 
 #: build/Emails/Admin/Table.php:220
-#: build/Emails/Main.php:439
 #: build/Emails/Main.php:440
+#: build/Emails/Main.php:441
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -1030,7 +1015,7 @@ msgid "The campaign has been trashed."
 msgstr "Die Kampagne ist im Eimer."
 
 #. translators: %s: Date and time.
-#: src/Objects/Generic_Post_Type.php:475
+#: src/Objects/Generic_Post_Type.php:509
 msgid "%1$s at %2$s"
 msgstr "%1$s um %2$s Uhr"
 
@@ -1249,46 +1234,46 @@ msgstr "BIO"
 msgid "Role"
 msgstr "Rolle"
 
-#: src/Objects/Post_Type.php:444
+#: src/Objects/Post_Type.php:478
 msgid "Whether to link to the term."
 msgstr "Ob ein Link zu dem Begriff erstellt werden soll."
 
-#: src/Objects/Post_Type.php:441
+#: src/Objects/Post_Type.php:475
 msgid "Link"
 msgstr "Link"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:184
+#: src/Objects/Post_Type.php:185
 msgid "When a %s is deleted"
 msgstr "Wenn eine %s gelöscht wird"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:173
+#: src/Objects/Post_Type.php:174
 msgid "%s > Deleted"
 msgstr "%s > Gelöscht"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:165
+#: src/Objects/Post_Type.php:166
 msgid "When a %s is unpublished"
 msgstr "Wenn eine %s unveröffentlicht ist"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:154
+#: src/Objects/Post_Type.php:155
 msgid "%s > Unpublished"
 msgstr "%s > Unveröffentlicht"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:143
+#: src/Objects/Post_Type.php:144
 msgid "A new %s has been published on [[blog_name]]."
 msgstr "Eine neue %s wurde auf [[blog_name]] veröffentlicht."
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:134
+#: src/Objects/Post_Type.php:135
 msgid "New %s notification"
 msgstr "Neue %s Benachrichtigung"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:114
+#: src/Objects/Post_Type.php:115
 msgid "%s > Published"
 msgstr "%s > Veröffentlicht"
 
@@ -1297,160 +1282,160 @@ msgstr "%s > Veröffentlicht"
 msgid "Authors"
 msgstr "Autoren"
 
-#: src/Objects/Generic_Post_Type.php:334
+#: src/Objects/Generic_Post_Type.php:363
 msgid "Featured Image URL"
 msgstr "Ausgewählte Bild-URL"
 
-#: src/Objects/Generic_Post_Type.php:312
+#: src/Objects/Generic_Post_Type.php:341
 msgid "Ping Status"
 msgstr "Ping Status"
 
-#: src/Objects/Generic_Post_Type.php:287
 #: src/Objects/Generic_Post_Type.php:316
+#: src/Objects/Generic_Post_Type.php:345
 msgid "Closed"
 msgstr "Geschlossen"
 
-#: src/Objects/Generic_Post_Type.php:286
 #: src/Objects/Generic_Post_Type.php:315
+#: src/Objects/Generic_Post_Type.php:344
 msgid "Open"
 msgstr "Offen"
 
-#: src/Objects/Generic_Post_Type.php:283
+#: src/Objects/Generic_Post_Type.php:312
 msgid "Comment Status"
 msgstr "Kommentarstatus"
 
-#: src/Objects/Generic_Post_Type.php:267
+#: src/Objects/Generic_Post_Type.php:296
 msgid "Content"
 msgstr "Inhalt"
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:248
+#: src/Objects/Generic_Post_Type.php:277
 msgid "Displays the %s excerpt."
 msgstr "Zeigt den %s-Auszug an."
 
 #: src/Integrations/EDD/Downloads.php:182
 #: src/Integrations/EDD/Downloads.php:185
-#: src/Objects/Generic_Post_Type.php:241
-#: src/Objects/Generic_Post_Type.php:245
+#: src/Objects/Generic_Post_Type.php:270
+#: src/Objects/Generic_Post_Type.php:274
 msgid "Excerpt"
 msgstr "Textauszug"
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:229
+#: src/Objects/Generic_Post_Type.php:258
 msgid "Displays the %s title."
 msgstr "Zeigt den Titel %s an."
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:224
+#: src/Objects/Generic_Post_Type.php:253
 msgid "%s Title"
 msgstr "%s Titel"
 
-#: src/Objects/Generic_Post_Type.php:200
+#: src/Objects/Generic_Post_Type.php:229
 msgid "Author ID"
 msgstr "ID des Autors"
 
-#: src/Objects/Generic_Post_Type.php:105
+#: src/Objects/Generic_Post_Type.php:113
 msgid "For example, pillow -sofa"
 msgstr "Zum Beispiel, Kissen -Sofa"
 
-#: src/Objects/Generic_Post_Type.php:104
+#: src/Objects/Generic_Post_Type.php:112
 msgid "Prepending a term with a hyphen will exclude posts matching that term."
 msgstr "Wenn Sie einem Begriff einen Bindestrich voranstellen, werden Beiträge, die diesem Begriff entsprechen, ausgeschlossen."
 
-#: src/Objects/Generic_Post_Type.php:101
+#: src/Objects/Generic_Post_Type.php:109
 msgid "Search by keyword"
 msgstr "Stichwortsuche"
 
-#: src/Objects/Generic_Post_Type.php:97
+#: src/Objects/Generic_Post_Type.php:105
 msgid "Number of comments, with an optional comparison operator."
 msgstr "Anzahl der Kommentare, mit einem optionalen Vergleichsoperator."
 
-#: src/Objects/Generic_Post_Type.php:94
-#: src/Objects/Generic_Post_Type.php:330
+#: src/Objects/Generic_Post_Type.php:102
+#: src/Objects/Generic_Post_Type.php:359
 msgid "Comment Count"
 msgstr "Anzahl Kommentare"
 
-#: src/Objects/Generic_Post_Type.php:90
+#: src/Objects/Generic_Post_Type.php:98
 msgid "Author ID, or comma-separated list of IDs"
 msgstr "Autoren-ID oder kommagetrennte Liste von IDs"
 
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:121
-#: src/Objects/Generic_Post_Type.php:87
+#: src/Objects/Generic_Post_Type.php:95
 msgid "Author"
 msgstr "Autor"
 
-#: src/Objects/Collection.php:1068
+#: src/Objects/Collection.php:1069
 msgid "The meta key or field key to display."
 msgstr "Der anzuzeigende Metaschlüssel oder Feldschlüssel."
 
-#: src/Objects/Collection.php:1065
+#: src/Objects/Collection.php:1066
 msgid "Meta Key / Field Key"
 msgstr "Meta-Schlüssel / Feldschlüssel"
 
-#: src/Objects/Collection.php:1057
+#: src/Objects/Collection.php:1058
 msgid "Displays a custom field value."
 msgstr "Zeigt den Wert eines benutzerdefinierten Feldes an."
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1054
+#: src/Objects/Collection.php:1055
 msgid "%s Meta"
 msgstr "%s Meta"
 
 #: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1047
+#: src/Objects/Collection.php:1048
 msgid "Meta Value"
 msgstr "Meta-Wert"
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:811
+#: src/Objects/Collection.php:812
 msgid "Exclude %s."
 msgstr "Ausschließen %s."
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:794
+#: src/Objects/Collection.php:795
 msgid "Filter by %s."
 msgstr "Nach %s filtern."
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:680
+#: src/Objects/Collection.php:681
 msgid "Show %s created after this date."
 msgstr "Zeige %s erstellt nach diesem Datum."
 
-#: src/Objects/Collection.php:663
+#: src/Objects/Collection.php:664
 msgid "Date After"
 msgstr "Datum Nach"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:658
+#: src/Objects/Collection.php:659
 msgid "Show %s created before this date."
 msgstr "Zeige %s, die vor diesem Datum erstellt wurden."
 
 #. translators: %s: Examples.
-#: src/Objects/Collection.php:646
-#: src/Objects/Collection.php:668
+#: src/Objects/Collection.php:647
+#: src/Objects/Collection.php:669
 msgid "Examples: %s"
 msgstr "Beispiele: %s"
 
-#: src/Objects/Collection.php:641
+#: src/Objects/Collection.php:642
 msgid "Date Before"
 msgstr "Datum vor"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:634
+#: src/Objects/Collection.php:635
 msgid "Only show %s created since last send"
 msgstr "Zeige nur %s erstellt seit dem letzten Senden"
 
-#: src/Objects/Collection.php:629
+#: src/Objects/Collection.php:630
 msgid "Since Last Send"
 msgstr "Seit der letzten Sendung"
 
-#: src/Objects/Collection.php:421
+#: src/Objects/Collection.php:422
 msgid "Newsletter subscription status"
 msgstr "Status des Newsletter-Abonnements"
 
-#: src/Objects/Collection.php:396
+#: src/Objects/Collection.php:397
 msgid "Read more"
 msgstr "Mehr erfahren"
 
@@ -1548,7 +1533,7 @@ msgstr "Katalogsichtbarkeit"
 #: src/Integrations/WooCommerce/Products.php:534
 #: src/Integrations/WooCommerce/Products.php:544
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:303
-#: src/Objects/Generic_Post_Type.php:385
+#: src/Objects/Generic_Post_Type.php:419
 msgid "Displays the %1$s %2$s."
 msgstr "Zeigt die %1$s %2$s an."
 
@@ -1586,7 +1571,7 @@ msgstr "In den Warenkorb"
 #: src/Integrations/EDD/Downloads.php:155
 #: src/Integrations/WooCommerce/Products.php:474
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:106
-#: src/Objects/Generic_Post_Type.php:297
+#: src/Objects/Generic_Post_Type.php:326
 msgid "Displays a button link to the %s."
 msgstr "Zeigt eine Verknüpfung mit der Schaltfläche %s an."
 
@@ -1596,8 +1581,8 @@ msgstr "Zeigt eine Verknüpfung mit der Schaltfläche %s an."
 #: src/Integrations/WooCommerce/Products.php:482
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:103
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:114
-#: src/Objects/Generic_Post_Type.php:294
-#: src/Objects/Generic_Post_Type.php:305
+#: src/Objects/Generic_Post_Type.php:323
+#: src/Objects/Generic_Post_Type.php:334
 msgid "Read More"
 msgstr "Weiterlesen"
 
@@ -1608,28 +1593,28 @@ msgstr "Preis HTML"
 #: src/Integrations/EDD/Downloads.php:142
 #: src/Integrations/WooCommerce/Products.php:452
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:93
-#: src/Objects/Generic_Post_Type.php:353
+#: src/Objects/Generic_Post_Type.php:382
 msgid "Select image size"
 msgstr "Wählen Sie die Bildgröße"
 
 #: src/Integrations/EDD/Downloads.php:141
 #: src/Integrations/WooCommerce/Products.php:451
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:92
-#: src/Objects/Generic_Post_Type.php:352
+#: src/Objects/Generic_Post_Type.php:381
 msgid "Select the image size to display."
 msgstr "Wählen Sie die Bildgröße, die angezeigt werden soll."
 
 #: src/Integrations/EDD/Downloads.php:139
 #: src/Integrations/WooCommerce/Products.php:449
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:90
-#: src/Objects/Generic_Post_Type.php:350
+#: src/Objects/Generic_Post_Type.php:379
 msgid "Resolution"
 msgstr "Auflösung"
 
 #: src/Integrations/EDD/Downloads.php:127
 #: src/Integrations/WooCommerce/Products.php:437
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:78
-#: src/Objects/Generic_Post_Type.php:338
+#: src/Objects/Generic_Post_Type.php:367
 msgid "Displays the featured image."
 msgstr "Zeigt das angezeigte Bild an."
 
@@ -1915,15 +1900,15 @@ msgstr "Filtern Sie nach Produkttyp."
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:843
-#: src/Objects/Collection.php:1074
-#: src/Objects/Post_Type.php:450
+#: src/Objects/Collection.php:1075
+#: src/Objects/Post_Type.php:484
 msgid "The default value to display if not set."
 msgstr "Der Standardwert, der angezeigt wird, wenn er nicht festgelegt ist."
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:840
-#: src/Objects/Collection.php:1071
-#: src/Objects/Post_Type.php:447
+#: src/Objects/Collection.php:1072
+#: src/Objects/Post_Type.php:481
 msgid "Default Value"
 msgstr "Standardwert"
 
@@ -1958,196 +1943,196 @@ msgid "Variation ID"
 msgstr "Varianten-ID"
 
 #. translators: %s: Order status label.
-#: src/Integrations/WooCommerce/Orders.php:843
+#: src/Integrations/WooCommerce/Orders.php:853
 msgid "Order > %s"
 msgstr "Bestellung > %s"
 
 #: src/Integrations/EDD/Orders.php:175
-#: src/Integrations/WooCommerce/Orders.php:767
+#: src/Integrations/WooCommerce/Orders.php:773
 #: src/Integrations/WooCommerce/Products.php:568
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:186
-#: src/Objects/Generic_Post_Type.php:196
+#: src/Objects/Generic_Post_Type.php:225
 msgid "Parent ID"
 msgstr "Übergeordnete ID"
 
-#: src/Integrations/WooCommerce/Orders.php:754
+#: src/Integrations/WooCommerce/Orders.php:760
 msgid "Displays the customer details for the order."
 msgstr "Zeigt die Kundendaten für die Bestellung an."
 
-#: src/Integrations/WooCommerce/Orders.php:753
+#: src/Integrations/WooCommerce/Orders.php:759
 msgid "Customer Details"
 msgstr "Kundendetails"
 
-#: src/Integrations/WooCommerce/Orders.php:750
+#: src/Integrations/WooCommerce/Orders.php:756
 msgid "Customer details"
 msgstr "Kundendetails"
 
-#: src/Integrations/WooCommerce/Orders.php:741
+#: src/Integrations/WooCommerce/Orders.php:747
 msgid "Displays the details for the order."
 msgstr "Zeigt die Details der Bestellung an."
 
-#: src/Integrations/WooCommerce/Orders.php:740
+#: src/Integrations/WooCommerce/Orders.php:746
 msgid "Order Details"
 msgstr "Bestelldetails"
 
-#: src/Integrations/WooCommerce/Orders.php:737
+#: src/Integrations/WooCommerce/Orders.php:743
 msgid "Details"
 msgstr "Details"
 
-#: src/Integrations/WooCommerce/Orders.php:728
+#: src/Integrations/WooCommerce/Orders.php:734
 msgid "Displays the upsells for the order."
 msgstr "Zeigt die Upsells für die Bestellung an."
 
-#: src/Integrations/WooCommerce/Orders.php:727
+#: src/Integrations/WooCommerce/Orders.php:733
 msgid "Order Upsells"
 msgstr "Upsells bestellen"
 
-#: src/Integrations/WooCommerce/Orders.php:724
+#: src/Integrations/WooCommerce/Orders.php:730
 #: src/Integrations/WooCommerce/Products.php:803
 msgid "Upsells"
 msgstr "Zusatzverkäufe"
 
-#: src/Integrations/WooCommerce/Orders.php:715
+#: src/Integrations/WooCommerce/Orders.php:721
 msgid "Displays the cross sells for the order."
 msgstr "Zeigt die Cross-Sells für den Auftrag an."
 
-#: src/Integrations/WooCommerce/Orders.php:714
+#: src/Integrations/WooCommerce/Orders.php:720
 msgid "Order Cross sells"
 msgstr "Bestellung Cross sells"
 
-#: src/Integrations/WooCommerce/Orders.php:711
+#: src/Integrations/WooCommerce/Orders.php:717
 #: src/Integrations/WooCommerce/Products.php:790
 msgid "Cross sells"
 msgstr "Crosssells"
 
-#: src/Integrations/WooCommerce/Orders.php:702
+#: src/Integrations/WooCommerce/Orders.php:708
 msgid "Displays the items in the order."
 msgstr "Zeigt die Artikel in der Bestellung an."
 
 #: src/Integrations/EDD/Order_Items.php:23
-#: src/Integrations/WooCommerce/Orders.php:701
+#: src/Integrations/WooCommerce/Orders.php:707
 #: src/Integrations/WooCommerce/Order_Items.php:23
 msgid "Order Items"
 msgstr "Bestellpositionen"
 
-#: src/Integrations/WooCommerce/Orders.php:694
+#: src/Integrations/WooCommerce/Orders.php:700
 msgid "Customer user agent"
 msgstr "Benutzeragent des Kunden"
 
-#: src/Integrations/WooCommerce/Orders.php:682
+#: src/Integrations/WooCommerce/Orders.php:688
 msgid "Displays the customer note for the order."
 msgstr "Zeigt die Kundennotiz für die Bestellung an."
 
-#: src/Integrations/WooCommerce/Orders.php:678
-#: src/Integrations/WooCommerce/Orders.php:681
+#: src/Integrations/WooCommerce/Orders.php:684
+#: src/Integrations/WooCommerce/Orders.php:687
 msgid "Customer note"
 msgstr "Kundennotiz"
 
-#: src/Integrations/WooCommerce/Orders.php:665
+#: src/Integrations/WooCommerce/Orders.php:671
 msgid "Displays a button link to edit the order in the admin backend."
 msgstr "Zeigt eine Schaltfläche an, über die Sie die Bestellung im Admin-Backend bearbeiten können."
 
-#: src/Integrations/WooCommerce/Orders.php:664
-#: src/Integrations/WooCommerce/Orders.php:671
+#: src/Integrations/WooCommerce/Orders.php:670
+#: src/Integrations/WooCommerce/Orders.php:677
 msgid "Edit order"
 msgstr "Bestellung bearbeiten"
 
 #: src/Integrations/EDD/Orders.php:265
-#: src/Integrations/WooCommerce/Orders.php:661
+#: src/Integrations/WooCommerce/Orders.php:667
 msgid "Admin URL"
 msgstr "Administrator-URL"
 
-#: src/Integrations/WooCommerce/Orders.php:648
+#: src/Integrations/WooCommerce/Orders.php:654
 msgid "Displays a button link to view the order."
 msgstr "Zeigt eine Schaltfläche an, über die Sie die Bestellung einsehen können."
 
-#: src/Integrations/WooCommerce/Orders.php:647
-#: src/Integrations/WooCommerce/Orders.php:654
+#: src/Integrations/WooCommerce/Orders.php:653
+#: src/Integrations/WooCommerce/Orders.php:660
 msgid "View order"
 msgstr "Bestellung ansehen"
 
-#: src/Integrations/WooCommerce/Orders.php:644
+#: src/Integrations/WooCommerce/Orders.php:650
 msgid "View URL"
 msgstr "URL anzeigen"
 
-#: src/Integrations/WooCommerce/Orders.php:637
+#: src/Integrations/WooCommerce/Orders.php:643
 msgid "Pay Now"
 msgstr "Jetzt bezahlen"
 
-#: src/Integrations/WooCommerce/Orders.php:631
+#: src/Integrations/WooCommerce/Orders.php:637
 msgid "Displays a button link to pay for the order."
 msgstr "Zeigt einen Link zur Bezahlung der Bestellung an."
 
-#: src/Integrations/WooCommerce/Orders.php:630
+#: src/Integrations/WooCommerce/Orders.php:636
 msgid "Pay Order"
 msgstr "Bestellung zahlen"
 
-#: src/Integrations/WooCommerce/Orders.php:627
+#: src/Integrations/WooCommerce/Orders.php:633
 msgid "Payment URL"
 msgstr "Zahlungs-URL"
 
-#: src/Integrations/WooCommerce/Orders.php:623
+#: src/Integrations/WooCommerce/Orders.php:629
 msgid "Payment method title"
 msgstr "Titel der Zahlungsmethode"
 
-#: src/Integrations/WooCommerce/Orders.php:614
+#: src/Integrations/WooCommerce/Orders.php:620
 msgid "Shipping phone"
 msgstr "Versand Telefon"
 
-#: src/Integrations/WooCommerce/Orders.php:593
+#: src/Integrations/WooCommerce/Orders.php:599
 msgid "Shipping address 2"
 msgstr "Versand Anschrift 2"
 
-#: src/Integrations/WooCommerce/Orders.php:589
+#: src/Integrations/WooCommerce/Orders.php:595
 msgid "Shipping address 1"
 msgstr "Versand Anschrift 1"
 
-#: src/Integrations/WooCommerce/Orders.php:585
+#: src/Integrations/WooCommerce/Orders.php:591
 msgid "Shipping company"
 msgstr "Versand Firma"
 
-#: src/Integrations/WooCommerce/Orders.php:569
+#: src/Integrations/WooCommerce/Orders.php:575
 msgid "Displays the formatted shipping address for the order"
 msgstr "Zeigt die formatierte Lieferadresse für die Bestellung an"
 
-#: src/Integrations/WooCommerce/Orders.php:568
+#: src/Integrations/WooCommerce/Orders.php:574
 msgid "Order Shipping address"
 msgstr "Bestellung Lieferadresse"
 
-#: src/Integrations/WooCommerce/Orders.php:565
+#: src/Integrations/WooCommerce/Orders.php:571
 msgid "Shipping address"
 msgstr "Lieferadresse"
 
-#: src/Integrations/WooCommerce/Orders.php:557
+#: src/Integrations/WooCommerce/Orders.php:563
 msgid "Displays the formatted shipping method for the order"
 msgstr "Zeigt die formatierte Versandmethode für die Bestellung an"
 
-#: src/Integrations/WooCommerce/Orders.php:553
-#: src/Integrations/WooCommerce/Orders.php:556
+#: src/Integrations/WooCommerce/Orders.php:559
+#: src/Integrations/WooCommerce/Orders.php:562
 msgid "Shipping method"
 msgstr "Versandart"
 
-#: src/Integrations/WooCommerce/Orders.php:545
+#: src/Integrations/WooCommerce/Orders.php:551
 msgid "Billing email"
 msgstr "Rechnungs-E-Mail-Adresse"
 
-#: src/Integrations/WooCommerce/Orders.php:524
+#: src/Integrations/WooCommerce/Orders.php:530
 msgid "Billing address 2"
 msgstr "Rechnungsanschrift 2"
 
-#: src/Integrations/WooCommerce/Orders.php:520
+#: src/Integrations/WooCommerce/Orders.php:526
 msgid "Billing address 1"
 msgstr "Rechnung Anschrift 1"
 
-#: src/Integrations/WooCommerce/Orders.php:516
+#: src/Integrations/WooCommerce/Orders.php:522
 msgid "Billing company"
 msgstr "Rechnung Firma"
 
-#: src/Integrations/WooCommerce/Orders.php:500
+#: src/Integrations/WooCommerce/Orders.php:506
 msgid "Displays the formatted billing address for the order"
 msgstr "Zeigt die formatierte Rechnungsadresse für die Bestellung an"
 
-#: src/Integrations/WooCommerce/Orders.php:499
+#: src/Integrations/WooCommerce/Orders.php:505
 msgid "Order Billing address"
 msgstr "Bestellung Rechnungsadresse"
 
@@ -2204,7 +2189,7 @@ msgid "Date order was paid, in the site's timezone, with an optional comparison 
 msgstr "Datum, an dem die Bestellung bezahlt wurde, in der Zeitzone der Website, mit einem optionalen Vergleichsoperator."
 
 #: src/Integrations/WooCommerce/Orders.php:271
-#: src/Integrations/WooCommerce/Orders.php:779
+#: src/Integrations/WooCommerce/Orders.php:785
 msgid "Date paid"
 msgstr "Zahlungsdatum"
 
@@ -2213,7 +2198,7 @@ msgid "Date order was completed, in the site's timezone, with an optional compar
 msgstr "Datum, an dem die Bestellung abgeschlossen wurde, in der Zeitzone der Website, mit einem optionalen Vergleichsoperator."
 
 #: src/Integrations/WooCommerce/Orders.php:257
-#: src/Integrations/WooCommerce/Orders.php:783
+#: src/Integrations/WooCommerce/Orders.php:789
 msgid "Date completed"
 msgstr "Fertigstellungsdatum"
 
@@ -2222,7 +2207,7 @@ msgid "Date order was last modified, in the site's timezone, with an optional co
 msgstr "Datum, an dem die Reihenfolge zuletzt geändert wurde, in der Zeitzone der Website, mit einem optionalen Vergleichsoperator."
 
 #: src/Integrations/WooCommerce/Orders.php:243
-#: src/Integrations/WooCommerce/Orders.php:775
+#: src/Integrations/WooCommerce/Orders.php:781
 #: src/Integrations/WooCommerce/Products.php:578
 msgid "Date modified"
 msgstr "Datum modifiziert"
@@ -2232,34 +2217,34 @@ msgid "Date order was created, in the site's timezone, with an optional comparis
 msgstr "Die Datumsreihenfolge wurde in der Zeitzone der Website erstellt, mit einem optionalen Vergleichsoperator."
 
 #: src/Integrations/WooCommerce/Orders.php:229
-#: src/Integrations/WooCommerce/Orders.php:771
+#: src/Integrations/WooCommerce/Orders.php:777
 #: src/Integrations/WooCommerce/Products.php:305
 #: src/Integrations/WooCommerce/Products.php:574
 msgid "Date created"
 msgstr "Erstellungsdatum"
 
 #: src/Integrations/WooCommerce/Orders.php:224
-#: src/Integrations/WooCommerce/Orders.php:690
+#: src/Integrations/WooCommerce/Orders.php:696
 msgid "Customer IP address"
 msgstr "Kunden-IP-Adresse"
 
 #: src/Integrations/WooCommerce/Orders.php:219
-#: src/Integrations/WooCommerce/Orders.php:609
+#: src/Integrations/WooCommerce/Orders.php:615
 msgid "Shipping country"
 msgstr "Versand Land"
 
 #: src/Integrations/WooCommerce/Orders.php:214
-#: src/Integrations/WooCommerce/Orders.php:605
+#: src/Integrations/WooCommerce/Orders.php:611
 msgid "Shipping postcode"
 msgstr "Versandpostleitzahl"
 
 #: src/Integrations/WooCommerce/Orders.php:209
-#: src/Integrations/WooCommerce/Orders.php:601
+#: src/Integrations/WooCommerce/Orders.php:607
 msgid "Shipping state"
 msgstr "Versand Staat"
 
 #: src/Integrations/WooCommerce/Orders.php:204
-#: src/Integrations/WooCommerce/Orders.php:597
+#: src/Integrations/WooCommerce/Orders.php:603
 msgid "Shipping city"
 msgstr "Versand Stadt"
 
@@ -2276,12 +2261,12 @@ msgid "Shipping company name"
 msgstr "Name der Reederei"
 
 #: src/Integrations/WooCommerce/Orders.php:184
-#: src/Integrations/WooCommerce/Orders.php:581
+#: src/Integrations/WooCommerce/Orders.php:587
 msgid "Shipping last name"
 msgstr "Versand Nachname"
 
 #: src/Integrations/WooCommerce/Orders.php:179
-#: src/Integrations/WooCommerce/Orders.php:577
+#: src/Integrations/WooCommerce/Orders.php:583
 msgid "Shipping first name"
 msgstr "Versand Vorname"
 
@@ -2306,12 +2291,12 @@ msgid "Billing company name"
 msgstr "Name der Rechnungsstellungsfirma"
 
 #: src/Integrations/WooCommerce/Orders.php:129
-#: src/Integrations/WooCommerce/Orders.php:512
+#: src/Integrations/WooCommerce/Orders.php:518
 msgid "Billing last name"
 msgstr "Rechnung Nachname"
 
 #: src/Integrations/WooCommerce/Orders.php:124
-#: src/Integrations/WooCommerce/Orders.php:508
+#: src/Integrations/WooCommerce/Orders.php:514
 msgid "Billing first name"
 msgstr "Rechnung Vorname"
 
@@ -2320,7 +2305,7 @@ msgid "Customer ID or email"
 msgstr "Kunden-ID oder E-Mail"
 
 #: src/Integrations/WooCommerce/Orders.php:114
-#: src/Integrations/WooCommerce/Orders.php:618
+#: src/Integrations/WooCommerce/Orders.php:624
 msgid "Payment method"
 msgstr "Zahlungsmethode"
 
@@ -2349,40 +2334,41 @@ msgid "Parent order ID"
 msgstr "ID der übergeordneten Bestellung"
 
 #: src/Integrations/WooCommerce/Customers.php:159
-#: src/Integrations/WooCommerce/Orders.php:549
+#: src/Integrations/WooCommerce/Orders.php:555
 msgid "Billing phone"
 msgstr "Rechnung Telefon"
 
 #: src/Integrations/WooCommerce/Customers.php:155
 #: src/Integrations/WooCommerce/Orders.php:164
-#: src/Integrations/WooCommerce/Orders.php:540
+#: src/Integrations/WooCommerce/Orders.php:546
 msgid "Billing country"
 msgstr "Rechnungsland"
 
 #: src/Integrations/WooCommerce/Customers.php:151
 #: src/Integrations/WooCommerce/Orders.php:159
-#: src/Integrations/WooCommerce/Orders.php:536
+#: src/Integrations/WooCommerce/Orders.php:542
 msgid "Billing postcode"
 msgstr "Rechnungs Postleitzahl"
 
 #: src/Integrations/WooCommerce/Customers.php:147
 #: src/Integrations/WooCommerce/Orders.php:154
-#: src/Integrations/WooCommerce/Orders.php:532
+#: src/Integrations/WooCommerce/Orders.php:538
 msgid "Billing state"
 msgstr "Rechnung Staat"
 
 #: src/Integrations/WooCommerce/Customers.php:143
 #: src/Integrations/WooCommerce/Orders.php:149
-#: src/Integrations/WooCommerce/Orders.php:528
+#: src/Integrations/WooCommerce/Orders.php:534
 msgid "Billing city"
 msgstr "Rechnung Stadt"
 
 #: src/Integrations/WooCommerce/Customers.php:139
-#: src/Integrations/WooCommerce/Orders.php:496
+#: src/Integrations/WooCommerce/Orders.php:502
 msgid "Billing address"
 msgstr "Rechnungsadresse"
 
 #: src/Integrations/WooCommerce/Customers.php:133
+#: src/Integrations/WooCommerce/Orders.php:496
 #: src/Objects/Users.php:229
 msgid "Locale"
 msgstr "Lokal"
@@ -2486,44 +2472,44 @@ msgstr "Aktivieren Sie das Addon Noptin Addons Pack zum Freischalten."
 msgid "Install"
 msgstr "Installieren"
 
-#: includes/emails/emails.php:624
+#: includes/emails/emails.php:625
 msgid "Add heading text here"
 msgstr "Überschriftstext hier hinzufügen"
 
-#: includes/emails/emails.php:615
+#: includes/emails/emails.php:616
 msgid "Add footer text here"
 msgstr "Fußzeilentext hier hinzufügen"
 
-#: includes/emails/emails.php:439
+#: includes/emails/emails.php:440
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Years"
 msgstr "Jahre"
 
-#: includes/emails/emails.php:438
+#: includes/emails/emails.php:439
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Months"
 msgstr "Monate"
 
-#: includes/emails/emails.php:437
+#: includes/emails/emails.php:438
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Weeks"
 msgstr "Wochen"
 
-#: includes/emails/emails.php:435
+#: includes/emails/emails.php:436
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Hours"
 msgstr "Stunden"
 
-#: includes/emails/emails.php:434
+#: includes/emails/emails.php:435
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Minutes"
 msgstr "Minuten"
 
-#: includes/emails/emails.php:257
+#: includes/emails/emails.php:258
 msgid "Compose your email using the block editor"
 msgstr "Verfassen Sie Ihre E-Mail mit dem Block-Editor"
 
-#: includes/emails/emails.php:256
+#: includes/emails/emails.php:257
 msgid "Visual"
 msgstr "Visuell"
 
@@ -2571,7 +2557,7 @@ msgstr "Anzahl eintragen"
 
 #: build/Emails/Types/Recurring.php:307
 #: build/Emails/Types/Recurring.php:314
-#: includes/emails/emails.php:436
+#: includes/emails/emails.php:437
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Days"
 msgstr "Tage"
@@ -2650,72 +2636,72 @@ msgstr "Ungültige E-Mail-Adresse"
 msgid "Unique identifier for the post."
 msgstr "Eindeutige Kennung für den Beitrag."
 
-#: build/Emails/Main.php:398
+#: build/Emails/Main.php:399
 msgid "Click the button below to set-up your first automated email"
 msgstr "Klicken Sie auf die Schaltfläche unten, um Ihre erste automatische E-Mail einzurichten"
 
-#: build/Emails/Main.php:397
+#: build/Emails/Main.php:398
 msgid "New Automated Email"
 msgstr "Neue automatisierte E-Mail"
 
-#: build/Emails/Main.php:395
+#: build/Emails/Main.php:396
 msgid "Automated Email"
 msgstr "Automatisierte E-Mail"
 
-#: build/Emails/Main.php:386
+#: build/Emails/Main.php:387
 msgid "Click the button below to send your first newsletter campaign"
 msgstr "Klicken Sie auf die Schaltfläche unten, um Ihre erste Newsletter-Kampagne zu versenden"
 
-#: build/Emails/Main.php:275
+#: build/Emails/Main.php:276
 msgid "Email campaign updated."
 msgstr "E-Mail-Kampagne aktualisiert."
 
-#: build/Emails/Main.php:274
+#: build/Emails/Main.php:275
 msgid "Email campaign scheduled."
 msgstr "E-Mail-Kampagne geplant."
 
-#: build/Emails/Main.php:273
+#: build/Emails/Main.php:274
 msgid "Email campaign trashed."
 msgstr "E-Mail-Kampagne vernichtet."
 
-#: build/Emails/Main.php:272
+#: build/Emails/Main.php:273
 msgid "Email campaign reverted to draft."
 msgstr "E-Mail-Kampagne wurde zum Entwurf zurückgesetzt."
 
-#: build/Emails/Main.php:271
+#: build/Emails/Main.php:272
 msgid "Email campaign published."
 msgstr "E-Mail-Kampagne veröffentlicht."
 
-#: build/Emails/Main.php:270
+#: build/Emails/Main.php:271
 msgid "Email campaigns list"
 msgstr "Liste der E-Mail-Kampagnen"
 
-#: build/Emails/Main.php:269
+#: build/Emails/Main.php:270
 msgid "Filter campaigns list"
 msgstr "Liste der Kampagnen filtern"
 
-#: build/Emails/Main.php:268
+#: build/Emails/Main.php:269
 msgid "Uploaded to this campaign"
 msgstr "Zu dieser Kampagne hochgeladen"
 
-#: build/Emails/Main.php:267
+#: build/Emails/Main.php:268
 msgid "Insert into campaign"
 msgstr "In die Kampagne einfügen"
 
-#: build/Emails/Main.php:266
+#: build/Emails/Main.php:267
 msgid "Search Campaigns"
 msgstr "Kampagnen suchen"
 
-#: build/Emails/Main.php:265
+#: build/Emails/Main.php:266
 msgid "View Campaigns"
 msgstr "Kampagnen anzeigen"
 
-#: build/Emails/Main.php:260
 #: build/Emails/Main.php:261
+#: build/Emails/Main.php:262
 msgid "Add New Campaign"
 msgstr "Neue Kampagne hinzufügen"
 
-#: build/Emails/Main.php:259
+#: build/Emails/Main.php:260
 #: build/Emails/Records.php:33
 msgid "Email Campaign"
 msgstr "E-Mail-Kampagne"
@@ -2888,7 +2874,7 @@ msgstr "Fortsetzen"
 msgid "Back"
 msgstr "Zurück"
 
-#: build/Tasks/Task.php:443
+#: build/Tasks/Task.php:522
 #: build/Misc/assets/js/collection.js:178
 msgid "Are you sure you want to delete this record?"
 msgstr "Möchten Sie diesen Datensatz wirklich löschen?"
@@ -2896,7 +2882,7 @@ msgstr "Möchten Sie diesen Datensatz wirklich löschen?"
 #. translators: %s is the filter label, e.g, "Tags".
 #. translators: %s: Field label.
 #: build/Subscribers/Records.php:659
-#: src/Objects/Collection.php:804
+#: src/Objects/Collection.php:805
 #: build/Misc/assets/js/collection.js:231
 msgid "%s - Exclude"
 msgstr "%s - Ausschließen"
@@ -3075,20 +3061,20 @@ msgstr "Erstellungsdatum"
 
 #: src/Integrations/EDD/Orders.php:84
 #: src/Integrations/WooCommerce/Orders.php:366
-#: src/Integrations/WooCommerce/Orders.php:698
+#: src/Integrations/WooCommerce/Orders.php:704
 #: build/Misc/assets/js/collection.js:123
 msgid "Items"
 msgstr "Artikel"
 
 #: src/DB/Main.php:465
-#: src/Objects/Generic_Post_Type.php:217
+#: src/Objects/Generic_Post_Type.php:246
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Title"
 msgstr "Titel"
 
 #. translators: %s is the object type label, e.g. "orders".
-#: src/Objects/Collection.php:492
-#: src/Objects/Collection.php:924
+#: src/Objects/Collection.php:493
+#: src/Objects/Collection.php:925
 msgid "No %s found."
 msgstr "Keine %s gefunden."
 
@@ -3110,12 +3096,12 @@ msgstr "Wählen Sie die %s, um neue Abonnenten hinzuzufügen, die sich über die
 msgid "Enter a comma separated list of tags to assign subscribers who sign up using this form"
 msgstr "Geben Sie eine durch Kommata getrennte Liste von Tags ein, die Sie Abonnenten zuweisen möchten, die sich über dieses Formular anmelden"
 
-#: includes/emails/emails.php:445
+#: includes/emails/emails.php:446
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Hour"
 msgstr "Stunde"
 
-#: includes/emails/emails.php:444
+#: includes/emails/emails.php:445
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Minute"
 msgstr "Minute"
@@ -3178,7 +3164,7 @@ msgstr "Automatisierung läuft"
 
 #: build/Subscribers/Records.php:190
 #: src/Integrations/EDD/Orders.php:151
-#: src/Integrations/WooCommerce/Orders.php:857
+#: src/Integrations/WooCommerce/Orders.php:867
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "New"
 msgstr "Neu"
@@ -3223,7 +3209,7 @@ msgstr "Aktionseinstellungen JSON"
 msgid "The action ID."
 msgstr "Die Aktions-ID."
 
-#: build/Tasks/Main.php:571
+#: build/Tasks/Main.php:565
 #: src/DB/Schema.php:70
 #: src/DB/Schema.php:173
 msgid "Unique identifier for this resource."
@@ -3239,11 +3225,11 @@ msgid "Sending has been paused due to sending limits. %1$s emails have been sent
 msgstr "Der Versand wurde aufgrund von Sendebeschränkungen pausiert. in dieser Stunde wurden %1$s E-Mails versendet. Sie können %2$s E-Mails pro Stunde versenden."
 
 #. translators: %s: Trigger description.
-#: build/Emails/Main.php:176
+#: build/Emails/Main.php:177
 msgid "Noptin will send this email %s"
 msgstr "Noptin wird diese E-Mail senden %s"
 
-#: build/Emails/Main.php:155
+#: build/Emails/Main.php:156
 msgid "Optional. Send this email only if certain conditions are met."
 msgstr "Optional. Senden Sie diese E-Mail nur, wenn bestimmte Bedingungen erfüllt sind."
 
@@ -3267,7 +3253,7 @@ msgid "Package Name"
 msgstr "Paketname"
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:125
+#: src/Objects/Post_Type.php:126
 msgid "When a %s is published"
 msgstr "Wenn eine %s veröffentlicht wird"
 
@@ -3365,17 +3351,17 @@ msgstr "Optional. Geben Sie den Standardplatzhalter für dieses Feld ein"
 msgid "Placeholder"
 msgstr "Platzhalter"
 
-#: src/Integrations/Elementor/Main.php:123
+#: src/Integrations/Elementor/Main.php:121
 msgid "Page URL"
 msgstr "Seiten URL"
 
-#: src/Objects/Generic_Post_Type.php:185
+#: src/Objects/Generic_Post_Type.php:214
 msgid "Leave blank to create a new post."
 msgstr "Leer lassen, um einen neuen Beitrag zu erstellen."
 
 #. translators: %s: Object type label.
 #: build/Subscribers/Records.php:881
-#: src/Objects/Generic_Post_Type.php:509
+#: src/Objects/Generic_Post_Type.php:543
 msgid "Create or update a %s"
 msgstr "Erstellen oder aktualisieren Sie ein %s"
 
@@ -3568,7 +3554,7 @@ msgid "First"
 msgstr "Erste"
 
 #: src/Integrations/EDD/Orders.php:148
-#: src/Integrations/WooCommerce/Orders.php:854
+#: src/Integrations/WooCommerce/Orders.php:864
 msgid "The previous order status."
 msgstr "Der vorherige Bestellstatus."
 
@@ -3610,7 +3596,7 @@ msgstr "Bei der Überprüfung Ihres Lizenzschlüssels ist ein Fehler aufgetreten
 msgid "You need an active license key to keep using premium Noptin Addons."
 msgstr "Sie benötigen einen aktiven Lizenzschlüssel, um Premium Noptin Addons weiterhin nutzen zu können."
 
-#: src/Integrations/Elementor/Main.php:127
+#: src/Integrations/Elementor/Main.php:125
 #: src/Integrations/Gravity_Forms/Main.php:84
 msgid "User Agent"
 msgstr "User Agent"
@@ -3646,16 +3632,16 @@ msgstr "Wenn ein %s-Formular eingereicht wird"
 
 #: src/Integrations/WooCommerce/Products.php:429
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:70
-#: src/Objects/Generic_Post_Type.php:320
+#: src/Objects/Generic_Post_Type.php:349
 msgid "Slug"
 msgstr "Slug"
 
-#: includes/emails/emails.php:449
+#: includes/emails/emails.php:450
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Year"
 msgstr "Jahr"
 
-#: includes/emails/emails.php:447
+#: includes/emails/emails.php:448
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Week"
 msgstr "Woche"
@@ -3730,17 +3716,17 @@ msgstr "Fügen Sie Ihrer Website herunterladbare Dateien hinzu und beschränken 
 msgid "Protects your subscription, contact, checkout, and registration forms from spammers."
 msgstr "Schützt Ihre Abonnement-, Kontakt-, Checkout- und Registrierungsformulare vor Spammern."
 
-#: src/Objects/Collection.php:425
+#: src/Objects/Collection.php:426
 msgid "unsubscribed"
 msgstr "abgemeldet"
 
-#: src/Objects/Collection.php:424
+#: src/Objects/Collection.php:425
 msgid "subscribed"
 msgstr "abonniert"
 
 #: includes/emails/automated-email-types/class-post_notifications.php:117
-#: src/Objects/Post_Type.php:95
-#: src/Objects/Post_Type.php:102
+#: src/Objects/Post_Type.php:96
+#: src/Objects/Post_Type.php:103
 msgid "If that doesn't work, copy and paste the following link into your browser:"
 msgstr "Wenn das nicht funktioniert, kopieren Sie den folgenden Link und fügen ihn in Ihren Browser ein:"
 
@@ -3789,58 +3775,58 @@ msgstr "Verarbeitet über die Kasse"
 
 #. translators: %s is a date.
 #. translators: %1$s is a string, %2$s is a string.
-#: includes/functions.php:1837
-#: includes/functions.php:2061
+#: includes/functions.php:1870
+#: includes/functions.php:2094
 msgid "%1$s and %2$s"
 msgstr "%1$s und %2$s"
 
-#: includes/functions.php:1695
+#: includes/functions.php:1728
 msgid "is after"
 msgstr "Ist nach"
 
-#: includes/functions.php:1691
+#: includes/functions.php:1724
 msgid "is before"
 msgstr "ist vor"
 
-#: includes/functions.php:1687
-#: includes/functions.php:1699
+#: includes/functions.php:1720
+#: includes/functions.php:1732
 msgid "is between"
 msgstr "liegt zwischen"
 
-#: includes/functions.php:1683
+#: includes/functions.php:1716
 msgid "is less than"
 msgstr "ist kleiner als"
 
-#: includes/functions.php:1679
+#: includes/functions.php:1712
 msgid "is greater than"
 msgstr "ist größer als"
 
-#: includes/functions.php:1675
+#: includes/functions.php:1708
 msgid "is not empty"
 msgstr "ist nicht leer"
 
-#: includes/functions.php:1671
+#: includes/functions.php:1704
 msgid "is empty"
 msgstr "ist leer"
 
-#: includes/functions.php:1667
+#: includes/functions.php:1700
 msgid "ends with"
 msgstr "endet mit"
 
-#: includes/functions.php:1663
+#: includes/functions.php:1696
 msgid "begins with"
 msgstr "beginnt mit"
 
-#: includes/functions.php:1659
+#: includes/functions.php:1692
 msgid "does not contain"
 msgstr "enthält nicht"
 
-#: includes/functions.php:1655
+#: includes/functions.php:1688
 msgid "contains"
 msgstr "enthält"
 
 #. translators: %s: Order status label.
-#: src/Integrations/WooCommerce/Orders.php:848
+#: src/Integrations/WooCommerce/Orders.php:858
 msgid "When a WooCommerce order is %s"
 msgstr "Wenn eine WooCommerce-Bestellung %s ist"
 
@@ -3884,7 +3870,7 @@ msgstr "IP übermitteln"
 #: src/Integrations/EDD/Downloads.php:126
 #: src/Integrations/WooCommerce/Products.php:436
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:77
-#: src/Objects/Generic_Post_Type.php:337
+#: src/Objects/Generic_Post_Type.php:366
 msgid "Featured Image"
 msgstr "Beitragsbild"
 
@@ -3995,28 +3981,28 @@ msgstr "Sammeln Sie mehr Informationen von Ihren Abonnenten, indem Sie benutzerd
 msgid "in %1$s"
 msgstr "in %1$s"
 
-#: build/Tasks/Main.php:712
+#: build/Tasks/Main.php:714
 #: templates/debug-log.php:14
 msgid "Message"
 msgstr "Nachricht"
 
 #: build/Emails/Types/Recurring.php:325
-#: build/Tasks/Main.php:707
+#: build/Tasks/Main.php:709
 #: templates/debug-log.php:13
 msgid "Time"
 msgstr "Zeit"
 
-#: includes/functions.php:1651
+#: includes/functions.php:1684
 msgid "is not"
 msgstr "ist nicht"
 
-#: includes/functions.php:1647
+#: includes/functions.php:1680
 msgid "is"
 msgstr "ist"
 
 #: build/Automation_Rules/Automation_Rule.php:540
 #: build/Automation_Rules/Automation_Rule.php:544
-#: build/Emails/Main.php:152
+#: build/Emails/Main.php:153
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Emails/assets/js/blocks.js:46
 #: build/Emails/assets/js/email-editor.js:51
@@ -4032,7 +4018,7 @@ msgstr "Bedingte Logik"
 msgid "Your website does not support that action."
 msgstr "Ihre Website unterstützt diese Aktion nicht."
 
-#: build/Emails/Main.php:143
+#: build/Emails/Main.php:144
 msgid "Your website does not support that trigger."
 msgstr "Ihre Website unterstützt diesen Auslöser nicht."
 
@@ -4042,7 +4028,7 @@ msgid "Rule not found. It might have been deleted."
 msgstr "Regel nicht gefunden. Sie wurde möglicherweise gelöscht."
 
 #: build/Automation_Rules/Admin/Table.php:223
-#: build/Automation_Rules/Automation_Rule.php:605
+#: build/Automation_Rules/Automation_Rule.php:611
 #: build/Subscribers/Records.php:201
 msgid "Action"
 msgstr "Aktion"
@@ -4247,11 +4233,11 @@ msgstr "Bei der Aktivierung Ihres Lizenzschlüssels ist ein Fehler aufgetreten: 
 #: src/Integrations/GeoDirectory/Listings.php:248
 #: src/Integrations/PMPro/Membership_Levels.php:44
 #: src/Integrations/WooCommerce/Customers.php:96
-#: src/Integrations/WooCommerce/Orders.php:763
+#: src/Integrations/WooCommerce/Orders.php:769
 #: src/Integrations/WooCommerce/Order_Items.php:43
 #: src/Integrations/WooCommerce/Products.php:551
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:182
-#: src/Objects/Generic_Post_Type.php:179
+#: src/Objects/Generic_Post_Type.php:208
 #: src/Objects/Users.php:215
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 msgid "ID"
@@ -4559,16 +4545,16 @@ msgstr "Bestellungen"
 msgid "customers"
 msgstr "Kunden"
 
-#: includes/functions.php:1869
+#: includes/functions.php:1902
 msgid "AND"
 msgstr "UND"
 
-#: includes/functions.php:1867
+#: includes/functions.php:1900
 msgid "OR"
 msgstr "ODER"
 
 #. translators: %s: Human-readable time difference.
-#: includes/functions.php:1349
+#: includes/functions.php:1382
 #: src/DB/Main.php:566
 #: src/DB/Main.php:592
 #: src/DB/Main.php:639
@@ -4966,7 +4952,7 @@ msgid "Subscribe To Our Newsletter"
 msgstr "Für unseren Newsletter anmelden"
 
 #: build/Forms/Admin/optin-templates.php:141
-#: includes/emails/emails.php:261
+#: includes/emails/emails.php:262
 msgid "Classic"
 msgstr "Classic"
 
@@ -5138,7 +5124,7 @@ msgstr "Standard-Formular"
 msgid "Form:"
 msgstr "Formular:"
 
-#: build/Emails/Main.php:383
+#: build/Emails/Main.php:384
 #: build/Forms/Widgets/Form.php:122
 msgid "Newsletter"
 msgstr "Newsletter"
@@ -5819,7 +5805,7 @@ msgstr "Formulareditor"
 msgid "Single-line / Horizontal Form"
 msgstr "Einzeiliges / horizontales Formular"
 
-#: includes/emails/emails.php:448
+#: includes/emails/emails.php:449
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Month"
 msgstr "Monat"
@@ -5828,44 +5814,44 @@ msgstr "Monat"
 #: build/Emails/Types/Recurring.php:281
 #: build/Emails/Types/Recurring.php:293
 #: build/Emails/Types/Recurring.php:314
-#: includes/emails/emails.php:446
+#: includes/emails/emails.php:447
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Day"
 msgstr "Tag"
 
-#: includes/emails/emails.php:302
+#: includes/emails/emails.php:303
 msgid "Merriweather"
 msgstr "Merriweather"
 
-#: includes/emails/emails.php:301
+#: includes/emails/emails.php:302
 msgid "Plain"
 msgstr "Einfach"
 
-#: includes/emails/emails.php:300
+#: includes/emails/emails.php:301
 msgid "Paste"
 msgstr "Einfügen"
 
-#: includes/emails/emails.php:299
+#: includes/emails/emails.php:300
 msgid "No template"
 msgstr "Keine Vorlage"
 
-#: includes/emails/emails.php:272
+#: includes/emails/emails.php:273
 msgid "This is useful if you're using a drag and drop email builder. Please note that you should include an unsubscribe link by using the [[unsubscribe_url]] merge tag."
 msgstr "Dies ist nützlich, wenn Sie einen Drag&Drop-E-Mail-Builder verwenden. Bitte beachten Sie, dass Sie mit dem [[unsubscribe_url]]-Merge-Tag einen Link zum Abbestellen einfügen sollten."
 
-#: includes/emails/emails.php:271
+#: includes/emails/emails.php:272
 msgid "Raw HTML"
 msgstr "Reines HTML"
 
-#: includes/emails/emails.php:267
+#: includes/emails/emails.php:268
 msgid "Send a plain text email. It will contain no HTML which means open tracking and click tracking will not work."
 msgstr "Senden Sie eine einfache Text-E-Mail. Sie enthält kein HTML, was bedeutet, dass die Öffnungs- und Klickverfolgung nicht funktioniert."
 
-#: includes/emails/emails.php:266
+#: includes/emails/emails.php:267
 msgid "Plain Text"
 msgstr "Klartext"
 
-#: includes/emails/emails.php:262
+#: includes/emails/emails.php:263
 msgid "Your email will be embedded inside a template"
 msgstr "Ihre E-Mail wird in eine Vorlage eingebettet"
 
@@ -5873,12 +5859,12 @@ msgstr "Ihre E-Mail wird in eine Vorlage eingebettet"
 msgid "WordPress Users"
 msgstr "WordPress Benutzer"
 
-#: includes/emails/emails.php:189
+#: includes/emails/emails.php:190
 msgid "Send a bulk email to your active subscribers. You can filter recipients by subscription source, tags, lists or custom fields."
 msgstr "Senden Sie eine Massen-E-Mail an Ihre aktiven Abonnenten. Sie können die Empfänger nach Abonnementquelle, Tags, Listen oder benutzerdefinierten Feldern filtern."
 
 #: build/Subscribers/Records.php:32
-#: includes/emails/emails.php:188
+#: includes/emails/emails.php:189
 msgid "Noptin Subscribers"
 msgstr "Noptin Abonnenten"
 
@@ -5888,7 +5874,7 @@ msgid "Sending the campaign: \"%s\""
 msgstr "Senden Sie die Kampagne: \"%s\""
 
 #: build/Forms/Admin/editor-settings.php:531
-#: src/Objects/Collection.php:430
+#: src/Objects/Collection.php:431
 msgid "Avatar URL"
 msgstr "Avatar-URL"
 
@@ -6056,7 +6042,7 @@ msgid "If that doesn't work, copy and paste the following link in your browser:"
 msgstr "Wenn das nicht funktioniert, kopieren Sie den folgenden Link und fügen ihn in Ihren Browser ein:"
 
 #: includes/emails/automated-email-types/class-post_notifications.php:116
-#: src/Objects/Post_Type.php:94
+#: src/Objects/Post_Type.php:95
 msgid "Continue Reading"
 msgstr "Weiterlesen"
 
@@ -6166,7 +6152,7 @@ msgstr "Ihre E-Mail wurde in die Warteschlange für den Versand aufgenommen und 
 #: includes/subscriber.php:1117
 #: src/DB/Main.php:510
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:190
-#: src/Objects/Generic_Post_Type.php:213
+#: src/Objects/Generic_Post_Type.php:242
 msgid "Date"
 msgstr "Datum"
 
@@ -6224,7 +6210,7 @@ msgstr "Sind Sie sicher, dass Sie diese Kampagne löschen möchten?"
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: build/Emails/Main.php:423
+#: build/Emails/Main.php:424
 #: build/Emails/assets/js/email-editor.js:53
 msgid "Template"
 msgstr "Template"
@@ -6254,20 +6240,20 @@ msgstr "Sie müssen einen Betreff für Ihre E-Mail angeben."
 msgid "Please provide a valid email address"
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
 
-#: build/Emails/Main.php:262
+#: build/Emails/Main.php:263
 msgid "Edit Campaign"
 msgstr "Kampagne bearbeiten"
 
-#: build/Emails/Main.php:263
-#: build/Emails/Main.php:385
+#: build/Emails/Main.php:264
+#: build/Emails/Main.php:386
 msgid "New Campaign"
 msgstr "Neue Kampagne"
 
-#: build/Emails/Main.php:396
+#: build/Emails/Main.php:397
 msgid "Automated Emails"
 msgstr "Automatisierte E-Mails"
 
-#: build/Emails/Main.php:384
+#: build/Emails/Main.php:385
 msgid "Newsletters"
 msgstr "Newsletter"
 
@@ -6338,7 +6324,7 @@ msgid "Form Name"
 msgstr "Formularname"
 
 #: build/Emails/Admin/Table.php:206
-#: build/Emails/Main.php:264
+#: build/Emails/Main.php:265
 #: includes/class-noptin-post-types.php:57
 #: build/Forms/assets/js/form-editor.js:52
 msgid "Preview"
@@ -6346,8 +6332,8 @@ msgstr "Vorschau"
 
 #: build/Emails/Admin/Main.php:300
 #: build/Emails/Admin/Main.php:301
-#: build/Emails/Main.php:258
-#: build/Emails/Main.php:277
+#: build/Emails/Main.php:259
+#: build/Emails/Main.php:278
 #: build/Emails/Records.php:32
 msgid "Email Campaigns"
 msgstr "E-Mail-Kampagnen"
@@ -6429,7 +6415,7 @@ msgid "Failed sending an email to %1$s with the subject %2$s"
 msgstr "Versand einer E-Mail an %1$s mit dem Betreff %2$s fehlgeschlagen"
 
 #. Translators: %1$s Opening link tag, %2$s Closing link tag.
-#: includes/emails/emails.php:477
+#: includes/emails/emails.php:478
 msgid "[[blog_name]] &mdash; Powered by [[noptin]] | %1$sUnsubscribe%2$s"
 msgstr "[[blog_name]] - Powered by [[noptin]] | %1$sAbbestellen%2$s"
 
@@ -6492,6 +6478,7 @@ msgstr "Daten aus einem Cookie."
 #: includes/subscriber.php:1085
 #: includes/subscriber.php:1239
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:169
+#: src/Objects/Generic_Post_Type.php:87
 #: build/Emails/assets/js/email-editor.js:54
 msgid "Language"
 msgstr "Sprache"
@@ -6521,7 +6508,7 @@ msgstr "Abonnenten zeigen"
 #: src/Integrations/EDD/Downloads.php:149
 #: src/Integrations/WooCommerce/Products.php:468
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:100
-#: src/Objects/Generic_Post_Type.php:291
+#: src/Objects/Generic_Post_Type.php:320
 #: src/Objects/Users.php:266
 msgid "URL"
 msgstr "URL"
@@ -6781,7 +6768,7 @@ msgstr "Bestehende Abonnenten aktualisieren"
 msgid "Import Subscribers"
 msgstr "Abonnenten importieren"
 
-#: src/Integrations/Elementor/Main.php:131
+#: src/Integrations/Elementor/Main.php:129
 #: src/Integrations/Gravity_Forms/Main.php:76
 msgid "IP Address"
 msgstr "IP-Adresse"
@@ -6838,6 +6825,7 @@ msgid "Order"
 msgstr "Bestellung"
 
 #: build/Subscribers/Records.php:643
+#: src/Objects/Generic_Post_Type.php:92
 #: build/Misc/assets/js/collection.js:216
 msgid "Any"
 msgstr "Irgendwelche"
@@ -6884,7 +6872,7 @@ msgid "View a list of notices and errors logged by Noptin."
 msgstr "Sehen Sie sich eine Liste der von Noptin protokollierten Hinweise und Fehler an."
 
 #: includes/class-noptin-dynamic-content-tags.php:565
-#: includes/functions.php:1148
+#: includes/functions.php:1147
 #: includes/subscriber.php:1401
 #: includes/subscriber.php:1460
 #: src/Integrations/WooCommerce/Products.php:220
@@ -6896,7 +6884,7 @@ msgid "No"
 msgstr "Nein"
 
 #: includes/class-noptin-dynamic-content-tags.php:565
-#: includes/functions.php:1152
+#: includes/functions.php:1151
 #: includes/subscriber.php:1400
 #: includes/subscriber.php:1459
 #: src/DB/Main.php:551
@@ -6909,15 +6897,15 @@ msgid "Yes"
 msgstr "Ja"
 
 #: build/Emails/Admin/Table.php:834
-#: build/Tasks/Main.php:608
+#: build/Tasks/Main.php:602
 #: src/Integrations/EDD/Customers.php:139
 #: src/Integrations/EDD/Orders.php:95
 #: src/Integrations/EDD/Orders.php:252
 #: src/Integrations/WooCommerce/Orders.php:377
-#: src/Integrations/WooCommerce/Orders.php:787
+#: src/Integrations/WooCommerce/Orders.php:793
 #: src/Integrations/WooCommerce/Products.php:582
 #: src/Integrations/WP_Recipe_Maker/Recipes.php:165
-#: src/Objects/Generic_Post_Type.php:272
+#: src/Objects/Generic_Post_Type.php:301
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
 msgid "Status"
@@ -7181,8 +7169,8 @@ msgstr "E-Mails"
 #: build/Settings/Menu.php:241
 #: build/Settings/Menu.php:350
 #: includes/emails/automated-email-types/class-type-automation-rule.php:209
-#: includes/functions.php:1816
-#: includes/functions.php:2085
+#: includes/functions.php:1849
+#: includes/functions.php:2118
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/blocks.js:46
@@ -7205,7 +7193,7 @@ msgid "Learn more about automation rules"
 msgstr "Erfahren Sie mehr über Automatisierungsregeln"
 
 #: build/Forms/Main.php:90
-#: build/Tasks/Main.php:555
+#: build/Tasks/Main.php:549
 #: src/DB/Schema.php:212
 #: build/Automation_Rules/assets/js/automation-rule-editor.js:39
 #: build/Misc/assets/js/collection.js:123
@@ -7251,7 +7239,7 @@ msgstr "Noptin Dashboard"
 
 #: build/Emails/Admin/Table.php:259
 #: build/Emails/Admin/Table.php:674
-#: build/Tasks/Task.php:442
+#: build/Tasks/Task.php:521
 #: src/DB/Subscriber.php:815
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Misc/assets/js/collection.js:178
@@ -7260,7 +7248,7 @@ msgstr "Noptin Dashboard"
 msgid "Delete"
 msgstr "﻿Löschen"
 
-#: build/Tasks/Task.php:408
+#: build/Tasks/Task.php:487
 #: includes/class-noptin-scripts.php:188
 #: build/Automation_Rules/assets/js/automation-rules.js:1
 #: build/Emails/assets/js/view-campaigns.js:18
@@ -7274,7 +7262,7 @@ msgstr "Abbrechen"
 msgid "Close"
 msgstr "Schließen"
 
-#: build/Tasks/Main.php:528
+#: build/Tasks/Main.php:522
 #: includes/admin/class-noptin-tools.php:85
 msgid "View"
 msgstr "Anzeigen"
@@ -7311,23 +7299,23 @@ msgstr "https://noptin.com"
 msgid "Noptin - WordPress Newsletter Plugin"
 msgstr "Noptin - WordPress Newsletter Plugin"
 
-#: build/Emails/Main.php:414
+#: build/Emails/Main.php:415
 msgid "Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc."
 msgstr ""
 
-#: build/Emails/Main.php:424
+#: build/Emails/Main.php:425
 msgid "Templates"
 msgstr ""
 
-#: build/Emails/Main.php:425
+#: build/Emails/Main.php:426
 msgid "New Email Template"
 msgstr ""
 
-#: build/Emails/Main.php:426
+#: build/Emails/Main.php:427
 msgid "Click the button below to set-up your first email template"
 msgstr ""
 
-#: build/Emails/Main.php:427
+#: build/Emails/Main.php:428
 msgid "Create your own reusable email templates."
 msgstr ""
 
@@ -7376,12 +7364,12 @@ msgid "This email will skip sending on %1$s since %2$s is a skip day."
 msgstr ""
 
 #. translators: %s: The merge tag button.
-#: build/Automation_Rules/Automation_Rule.php:591
+#: build/Automation_Rules/Automation_Rule.php:597
 msgid "Click the %s button to add dynamic values. You can combine multiple values in a single field."
 msgstr ""
 
 #. translators: %s: The merge tag button.
-#: build/Automation_Rules/Automation_Rule.php:627
+#: build/Automation_Rules/Automation_Rule.php:633
 msgid "Click the %s button to add dynamic values from your trigger. You can add multiple values to a single field."
 msgstr ""
 
@@ -7403,31 +7391,54 @@ msgstr ""
 msgid "%s Information"
 msgstr ""
 
-#: src/Objects/Generic_Post_Type.php:278
+#: src/Objects/Generic_Post_Type.php:307
 msgid "Scheduled"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:504
+#: src/Objects/Generic_Post_Type.php:538
 msgid "Create or update an %s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Generic_Post_Type.php:526
+#: src/Objects/Generic_Post_Type.php:560
 msgid "Delete an %s"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:120
+#: src/Objects/Post_Type.php:121
 msgid "When an %s is published"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:160
+#: src/Objects/Post_Type.php:161
 msgid "When an %s is unpublished"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Post_Type.php:179
+#: src/Objects/Post_Type.php:180
 msgid "When an %s is deleted"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:998
+msgid "Update the subscriber's %s"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:1032
+msgid "Add the subscriber to %s"
+msgstr ""
+
+#. translators: %s: field label
+#: build/Subscribers/Records.php:1066
+msgid "Remove the subscriber from %s"
+msgstr ""
+
+#: src/Objects/Generic_Post_Type.php:89
+msgid "The language to filter posts by."
+msgstr ""
+
+#: src/Objects/Generic_Post_Type.php:389
+msgid "Language (Locale)"
 msgstr ""
