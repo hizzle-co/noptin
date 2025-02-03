@@ -12,7 +12,7 @@ class Test_Tasks extends WP_UnitTestCase {
 
     public function setUp(): void {
         parent::setUp();
-        $this->task = Main::get();
+        $this->task = Main::schedule_task('test_hook', ['Test_Tasks']);
     }
 
     public function test_get_set_hook() {

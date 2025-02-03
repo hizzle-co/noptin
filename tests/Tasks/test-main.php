@@ -24,7 +24,7 @@ class Test_Main extends WP_UnitTestCase {
 
     public function test_schedule_task() {
         $hook = 'test_hook';
-        $args = ['value'];
+        $args = ['test_schedule_task'];
 
         $task = Main::schedule_task($hook, $args);
 
@@ -36,7 +36,7 @@ class Test_Main extends WP_UnitTestCase {
 
     public function test_get_next_scheduled_task() {
         $hook = 'test_hook';
-        $args = ['value'];
+        $args = ['test_get_next_scheduled_task'];
 
         // Schedule a task
         Main::schedule_task($hook, $args, HOUR_IN_SECONDS);
@@ -55,7 +55,7 @@ class Test_Main extends WP_UnitTestCase {
 
     public function test_delete_scheduled_task() {
         $hook = 'test_hook';
-        $args = ['value'];
+        $args = ['test_delete_scheduled_task'];
 
         // Schedule a task
         Main::schedule_task($hook, $args);
@@ -79,7 +79,7 @@ class Test_Main extends WP_UnitTestCase {
 
     public function test_retry_task() {
         // Create and save original task
-        $original_task = Main::schedule_task('test_hook', ['value']);
+        $original_task = Main::schedule_task('test_hook', ['test_retry_task']);
 
         // Retry the task
         $retried_task = Main::retry_task($original_task, 0);

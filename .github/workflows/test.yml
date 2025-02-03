@@ -16,7 +16,7 @@ jobs:
             MYSQL_ALLOW_EMPTY_PASSWORD: "true"
     strategy:
       matrix:
-        php-version: ['7.2'] # Add PHP 8.2 after figuring out how to use PHPUnit 9
+        php-version: ['7.4'] # Add PHP 8.2 after figuring out how to use PHPUnit 9
         wordpress-version: ['6.4', 'latest']
     steps:
       - name: Checkout Repository
