@@ -909,7 +909,6 @@ function schedule_noptin_background_action( $timestamp, $hook, ...$args ) {
  *                          want the action to run for the first time. Default: none.
  * @param string $hook       (required) Name of the action hook. Default: none.
  * @param mixed  ...$args   Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
- * @return int|bool The action id on success. False otherwise.
  */
 function schedule_noptin_recurring_background_action( $interval, $timestamp, $hook, ...$args ) {
 	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args, $timestamp - time(), $interval );
