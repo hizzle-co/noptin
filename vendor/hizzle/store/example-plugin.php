@@ -3,7 +3,7 @@
 Plugin Name: Hizzle Data Stores
 Plugin URI: https://hizzle.co/
 Description: Hizzle Data Stores
-Version: 0.2.3
+Version: 0.2.4
 Author: picocodes
 Author URI: https://github.com/picocodes/
 License: GPL-3.0+
