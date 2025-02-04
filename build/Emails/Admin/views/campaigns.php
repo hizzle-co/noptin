@@ -48,7 +48,7 @@
 		noptin()->admin->show_notices();
 
 		// Check if sending has been paused due to limits.
-		$emails_sent_this_hour = (int) get_transient( 'noptin_emails_sent_' . gmdate( 'YmdH' ) );
+		$emails_sent_this_hour = \Hizzle\Noptin\Bulk_Emails\Main::emails_sent_this_hour();
 		$email_sending_limit   = get_noptin_option( 'per_hour', 0 );
 
 		if ( ! empty( $email_sending_limit ) && $emails_sent_this_hour >= $email_sending_limit ) {

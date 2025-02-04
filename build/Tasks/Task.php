@@ -364,7 +364,7 @@ class Task extends \Hizzle\Store\Record {
 
 		// Run the task.
 		if ( is_null( $this->get_subject() ) && is_null( $this->get_primary_id() ) && is_null( $this->get_secondary_id() ) ) {
-			do_action_ref_array( $hook, $args );
+			do_action_ref_array( $hook, array_values( $args ) );
 		} else {
 			do_action( $hook, $this, $args );
 		}
