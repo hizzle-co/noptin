@@ -243,6 +243,13 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			return false;
 		}
 
+		noptin_error_log(
+			array(
+				'limit'       => noptin_max_emails_per_period(),
+				'emails_sent' => self::emails_sent_this_hour(),
+			)
+		);
+
 		// Fetch from cache.
 		if ( ! empty( $this->next_recipients ) ) {
 			return array_shift( $this->next_recipients );
@@ -343,8 +350,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @return int
 	 */
 	public static function emails_sent_this_hour() {
-		$option_name = 'noptin_emails_sent_' . self::current_hour();
-		return (int) get_option( $option_name, 0 );
+		return (int) get_option( 'noptin_emails_sent_' . self::current_hour() );
 	}
 
 	/**
@@ -353,24 +359,10 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @return void
 	 */
 	private static function increase_emails_sent_this_hour() {
-		global $wpdb;
-
 		static $cleaned_options = array();
 		$option_name = 'noptin_emails_sent_' . self::current_hour();
-
-		// Atomically increment the option value.
-		$wpdb->query(
-			$wpdb->prepare(
-				"INSERT INTO {$wpdb->options} (option_name, option_value, autoload) 
-				VALUES (%s, %d, 'off') 
-				ON DUPLICATE KEY UPDATE option_value = option_value + 1",
-				$option_name,
-				1
-			)
-		);
-
-		// Remove the option from cache.
-		wp_cache_delete( $option_name, 'options' );
+		$sent        = self::emails_sent_this_hour();
+		update_option( $option_name, $sent + 1, false );
 
 		// Cleanup the option once per hour.
 		if ( ! isset( $cleaned_options[ $option_name ] ) ) {

@@ -134,9 +134,6 @@ abstract class Bulk_Task_Runner {
 			// Process the task.
 			$this->process_task( $task );
 
-			// Fetch the next task.
-			$task = $this->get_next_task();
-
 			// Increment the processed tasks counter.
 			++ $this->processed_tasks;
 
@@ -160,11 +157,7 @@ abstract class Bulk_Task_Runner {
 	 * Schedules the remaining tasks to be run in the background.
 	 */
 	protected function schedule_remaining_tasks() {
-
-		if ( class_exists( '\Noptin\Addons_Pack\Tasks\Main' ) ) {
-			\Noptin\Addons_Pack\Tasks\Main::delete_scheduled_task( $this->cron_hook, array(), 100 );
-		}
-
+		delete_noptin_background_action( $this->cron_hook );
 		schedule_noptin_background_action( time() + 180, $this->cron_hook );
 	}
 
@@ -254,9 +247,7 @@ abstract class Bulk_Task_Runner {
 	 * @return int The number of seconds.
 	 */
 	protected function get_time_limit() {
-		$limit = defined( 'NOPTIN_TASKS_RUNNER_TIME_LIMIT' ) ? NOPTIN_TASKS_RUNNER_TIME_LIMIT : 20;
-
-		return absint( apply_filters( $this->cron_hook . '_time_limit', $limit ) );
+		return absint( apply_filters( $this->cron_hook . '_time_limit', 20 ) );
 	}
 
 	/**
@@ -323,7 +314,7 @@ abstract class Bulk_Task_Runner {
 	 * @return bool
 	 */
 	protected function batch_limits_exceeded() {
-		return $this->memory_exceeded() || $this->time_likely_to_be_exceeded( $this->processed_tasks );
+		return $this->memory_exceeded() || $this->time_likely_to_be_exceeded();
 	}
 
 	/**
