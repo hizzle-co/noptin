@@ -243,13 +243,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			return false;
 		}
 
-		noptin_error_log(
-			array(
-				'limit'       => noptin_max_emails_per_period(),
-				'emails_sent' => self::emails_sent_this_hour(),
-			)
-		);
-
 		// Fetch from cache.
 		if ( ! empty( $this->next_recipients ) ) {
 			return array_shift( $this->next_recipients );
