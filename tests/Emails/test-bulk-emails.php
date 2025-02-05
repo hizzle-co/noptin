@@ -114,6 +114,8 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function test_send_newsletter_campaign() {
 
+		$this->assertTrue( $this->campaign->can_send() );
+
 		// Send the campaign
 		$this->bulk_emails->send_newsletter_campaign($this->campaign);
 
@@ -181,8 +183,20 @@ class Test_Main extends \WP_UnitTestCase {
 		// Verify campaign was paused
 		$this->assertEquals(
 			'Test error message',
-			get_post_meta($this->campaign->id, 'paused_reason', true)
+			get_post_meta($this->campaign->id, '_bulk_email_last_error', true)
 		);
+
+		// Test that paused meta was set
+		$this->assertEquals(1, (int) get_post_meta($this->campaign->id, 'paused', true));
+
+		// Test that resume action was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
+
 	}
 
 	/**
