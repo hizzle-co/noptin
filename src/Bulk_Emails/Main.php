@@ -316,8 +316,11 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 *
 	 * @return bool
 	 */
-	public function handle_unexpected_shutdown() {
-		$error = error_get_last();
+	public function handle_unexpected_shutdown( $error = null ) {
+		// Get the last error if none provided
+        if ( $error === null ) {
+            $error = error_get_last();
+        }
 
 		if ( ! empty( $this->current_campaign ) && ! empty( $error ) && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
 			noptin_pause_email_campaign(

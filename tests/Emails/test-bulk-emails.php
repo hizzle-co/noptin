@@ -167,27 +167,20 @@ class Test_Main extends \WP_UnitTestCase {
 		$property->setAccessible(true);
 		$property->setValue($this->bulk_emails, $this->campaign);
 
-		// Mock error_get_last() using namespace function override
-		$mock_error = [
+		// Create mock error
+		$mock_error = array(
 			'type'    => E_ERROR,
 			'message' => 'Test error message',
 			'file'    => __FILE__,
 			'line'    => __LINE__
-		];
+		);
 
-		// Create a namespace function override
-		namespace_function_include('error_get_last', function() use ($mock_error) {
-			return $mock_error;
-		});
-
-		$this->bulk_emails->handle_unexpected_shutdown();
-
-		// Restore original error_get_last function
-		namespace_function_restore('error_get_last');
+		// Call the method with our mock error
+		$this->bulk_emails->handle_unexpected_shutdown($mock_error);
 
 		// Verify campaign was paused
 		$this->assertEquals(
-			$mock_error['message'],
+			'Test error message',
 			get_post_meta($this->campaign->id, 'paused_reason', true)
 		);
 	}
