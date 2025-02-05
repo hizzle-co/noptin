@@ -106,6 +106,7 @@ class Test_Main extends \WP_UnitTestCase {
 	public function test_has_sender() {
 		$this->assertTrue($this->bulk_emails->has_sender('mock'));
 		$this->assertFalse($this->bulk_emails->has_sender('nonexistent'));
+		$this->assertEquals('mock', $this->campaign->get_sender());
 	}
 
 	/**
@@ -142,7 +143,7 @@ class Test_Main extends \WP_UnitTestCase {
 
 		// Simulate sending emails
 		for ($i = 0; $i < 3; $i++) {
-			$method->invoke($this->bulk_emails, 'test' . $i . '@example.com');
+			$this->assertNotFalse($method->invoke($this->bulk_emails, 'test' . $i . '@example.com'));
 		}
 
 		// Check updated count
@@ -166,33 +167,27 @@ class Test_Main extends \WP_UnitTestCase {
 		$property->setAccessible(true);
 		$property->setValue($this->bulk_emails, $this->campaign);
 
-		// Set a fake last error using set_error_handler
-		$last_error = null;
-		set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$last_error) {
-			$last_error = array(
-				'type'    => $errno,
-				'message' => $errstr,
-				'file'    => $errfile,
-				'line'    => $errline
-			);
-			return true;
+		// Mock error_get_last() using namespace function override
+		$mock_error = [
+			'type'    => E_ERROR,
+			'message' => 'Test error message',
+			'file'    => __FILE__,
+			'line'    => __LINE__
+		];
+
+		// Create a namespace function override
+		namespace_function_include('error_get_last', function() use ($mock_error) {
+			return $mock_error;
 		});
-
-		// Trigger an error
-		@trigger_error('Test error message', E_ERROR);
-		restore_error_handler();
-
-		// Use reflection to set the error as the last error
-		$error_reflection = new \ReflectionFunction('error_get_last');
-		$error_static = new \ReflectionProperty('Error', 'last');
-		$error_static->setAccessible(true);
-		$error_static->setValue(null, $last_error);
 
 		$this->bulk_emails->handle_unexpected_shutdown();
 
+		// Restore original error_get_last function
+		namespace_function_restore('error_get_last');
+
 		// Verify campaign was paused
 		$this->assertEquals(
-			'Test error message',
+			$mock_error['message'],
 			get_post_meta($this->campaign->id, 'paused_reason', true)
 		);
 	}

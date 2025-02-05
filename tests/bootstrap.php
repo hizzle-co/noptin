@@ -25,6 +25,34 @@ if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 // Give access to tests_add_filter() function.
 require_once "{$_tests_dir}/includes/functions.php";
 
+if (!function_exists('namespace_function_include')) {
+    function namespace_function_include($function_name, $function_implementation) {
+        $function_name = ltrim($function_name, '\\');
+        $namespace = __NAMESPACE__;
+
+        if (!empty($namespace)) {
+            $namespace .= '\\';
+        }
+
+        $code = sprintf(
+            'namespace %s { function %s() { $args = func_get_args(); return ($GLOBALS["%s"])(...$args); } }',
+            $namespace,
+            $function_name,
+            "_mock_function_$function_name"
+        );
+
+        $GLOBALS["_mock_function_$function_name"] = $function_implementation;
+        eval($code);
+    }
+}
+
+if (!function_exists('namespace_function_restore')) {
+    function namespace_function_restore($function_name) {
+        $function_name = ltrim($function_name, '\\');
+        unset($GLOBALS["_mock_function_$function_name"]);
+    }
+}
+
 /**
  * Manually load the plugin being tested.
  */
