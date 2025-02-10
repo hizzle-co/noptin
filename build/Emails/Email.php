@@ -432,38 +432,54 @@ class Email {
 	 */
 	private function check_can_send() {
 
-		if ( ! $this->is_published() || ! $this->exists() ) {
+		if ( ! $this->exists() ) {
+			return new \WP_Error( 'noptin_email_cannot_send', 'The email cannot be sent since it does not exist.' );
+		}
+
+		if ( ! $this->is_published() ) {
 			return new \WP_Error( 'noptin_email_cannot_send', 'The email cannot be sent since it is not published.' );
 		}
 
 		// Check if the campaign is already sent.
 		if ( '' !== get_post_meta( $this->id, 'completed', true ) ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email has already been sent.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_cannot_send', 'The email has already been sent.' );
 		}
 
 		// Check if the campaign is paused.
 		if ( '' !== get_post_meta( $this->id, 'paused', true ) ) {
-			return new \WP_Error( 'noptin_email_cannot_send', __( 'The email is paused and cannot be sent.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_cannot_send', 'The email is paused and cannot be sent.' );
 		}
 
 		// Make sure the sender is valid.
 		if ( $this->supports( 'supports_recipients' ) && $this->is_mass_mail() ) {
 			$sender = $this->get_sender();
 
-			if ( empty( $sender ) || ! array_key_exists( $sender, get_noptin_email_senders() ) ) {
-				return new \WP_Error( 'noptin_email_invalid_sender', __( 'The sender is not supported.', 'newsletter-optin-box' ) );
+			if ( empty( $sender ) ) {
+				return new \WP_Error( 'noptin_email_invalid_sender', 'No email sender selected.' );
+			}
+
+			$supported_senders = get_noptin_email_senders();
+			if ( ! array_key_exists( $sender, $supported_senders ) ) {
+				return new \WP_Error(
+					'noptin_email_invalid_sender',
+					sprintf(
+						'Selected sender "%s" is not supported. Supported senders are: %s',
+						$sender,
+						implode( ', ', wp_list_pluck( $supported_senders, 'label' ) )
+					)
+				);
 			}
 		}
 
 		// Make sure we have an email body and subject.
 		if ( empty( $this->subject ) ) {
-			return new \WP_Error( 'noptin_email_no_subject', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_no_subject', 'You need to provide a subject for your email.' );
 		}
 
 		$content = $this->get_content( $this->get_email_type() );
 
 		if ( empty( $content ) ) {
-			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'missing_content', 'The email body cannot be empty.' );
 		}
 
 		return apply_filters( 'noptin_email_can_send', true, $this );

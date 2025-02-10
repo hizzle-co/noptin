@@ -131,15 +131,16 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function test_send_newsletter_campaign() {
 
-		$this->assertTrue( $this->campaign->can_send() );
+		// Check that the campaign can be sent
+		$can_send = $this->campaign->can_send( true );
+		$this->assertNotWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
 
 		// Send the campaign
 		$this->bulk_emails->send_newsletter_campaign($this->campaign);
 
 		// Verify that the campaign was queued for sending
 		$this->assertTrue(
-			has_action('wp_ajax_noptin_send_bulk_emails') ||
-			has_action('wp_ajax_nopriv_noptin_send_bulk_emails')
+			did_filter( 'noptin_send_bulk_emails_ajax_query_args' )
 		);
 	}
 
