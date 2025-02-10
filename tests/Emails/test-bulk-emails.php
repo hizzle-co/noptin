@@ -141,7 +141,7 @@ class Test_Main extends \WP_UnitTestCase {
 		$this->bulk_emails->send_newsletter_campaign($this->campaign);
 
 		// Verify that the campaign was queued for sending
-		$this->assertTrue(
+		$this->assertNotEmpty(
 			did_filter( 'noptin_send_bulk_emails_ajax_query_args' )
 		);
 	}
@@ -201,9 +201,10 @@ class Test_Main extends \WP_UnitTestCase {
 		$this->bulk_emails->handle_unexpected_shutdown($mock_error);
 
 		// Verify campaign was paused
+		$last_error = get_post_meta($this->campaign->id, '_bulk_email_last_error', true);
 		$this->assertEquals(
 			'Test error message',
-			get_post_meta($this->campaign->id, '_bulk_email_last_error', true)
+			is_array($last_error) ? $last_error['message'] ?? '' : ''
 		);
 
 		// Test that paused meta was set

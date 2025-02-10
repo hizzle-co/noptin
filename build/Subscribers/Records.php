@@ -695,7 +695,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 * @return Record $person The person.
 	 */
 	public function get_from_user( $user ) {
-		return new Record( $user );
+		return new Record( $user->user_email );
 	}
 
 	/**

@@ -571,6 +571,14 @@ class Email {
 				return new \WP_Error( 'noptin_email_skipped', $GLOBALS['noptin_email_force_skip']['message'] );
 			}
 
+			if ( did_action( 'noptin_collection_list_empty' ) && ! did_action( 'noptin_collection_list_not_empty' ) ) {
+				$should_break = apply_filters( 'noptin_email_skip_if_all_items_empty', (bool) $this->get( 'skip_if_all_items_empty' ), $this );
+
+				if ( $should_break ) {
+					return new \WP_Error( 'noptin_email_skipped', 'The email was skipped because all items are empty.' );
+				}
+			}
+
 			// Maybe skip sending the email.
 			$should_send = apply_filters( 'noptin_email_should_send', true, $this );
 

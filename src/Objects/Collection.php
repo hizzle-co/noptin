@@ -943,8 +943,11 @@ abstract class Collection {
 				return '<div data-remove="wp-block-noptin-group"></div>';
 			}
 
+			do_action( 'noptin_collection_list_empty', $this );
 			return '';
 		}
+
+		do_action( 'noptin_collection_list_not_empty', $this );
 
 		$post                 = isset( $GLOBALS['post'] ) ? $GLOBALS['post'] : null;
 		$tags                 = new Tags( $this->type );
