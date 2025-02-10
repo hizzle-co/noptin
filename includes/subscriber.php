@@ -40,6 +40,12 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 		$subscriber = $subscriber->id;
 	}
 
+	// WP_User.
+	if ( is_object( $subscriber ) && $subscriber instanceof \WP_User ) {
+		$subscriber = $subscriber->user_email;
+	}
+
+	// Array.
 	if ( is_array( $subscriber ) && isset( $subscriber['email'] ) ) {
 		$subscriber = $subscriber['email'];
 	}

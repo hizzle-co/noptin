@@ -40,9 +40,11 @@ class Test_Main extends \WP_UnitTestCase {
 			'content'   => 'Test Content',
 			'options'   => array(
 				'email_sender'   => 'mock',
-				'email_type'     => 'visual',
+				'email_type'     => 'normal',
 				'template'       => 'default',
 				'recipients'     => 'test@example.com',
+				'content_normal' => 'Test Content',
+				'template'       => 'paste',
 			),
 		);
 
