@@ -213,7 +213,7 @@ class Action extends \Noptin_Abstract_Action {
 			}
 
 			if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
-				$field['map_field'] = true;
+				$field['map_field'] = $field['map_field'] ?? false;
 				$field['el'] = 'select';
 				unset( $field['type'] );
 			}
@@ -227,10 +227,10 @@ class Action extends \Noptin_Abstract_Action {
 				'type'        => 'text',
 				'el'          => 'input',
 				'label'       => $field['label'],
-				'map_field'   => true,
-				'placeholder' => isset( $field['placeholder'] ) ? $field['placeholder'] : '',
-				'description' => empty( $field['description'] ) ? '' : $field['description'],
-				'advanced'    => isset( $field['advanced'] ) ? $field['advanced'] : false,
+				'map_field'   => $field['map_field'] ?? true,
+				'placeholder' => $field['placeholder'] ?? '',
+				'description' => $field['description'] ?? '',
+				'advanced'    => $field['advanced'] ?? false,
 			);
 
 			if ( isset( $field['default'] ) ) {

@@ -79,6 +79,23 @@ class Test_Main extends \WP_UnitTestCase {
 		// Init email senders
 		$this->bulk_emails->senders['mock'] = $this->mock_sender;
 
+		add_filter(
+			'noptin_email_senders',
+			function($senders) {
+				$senders['mock'] = array(
+					'label' => 'Mock Sender',
+					'description' => 'Mock sender for testing',
+					'image' => array(
+						'icon' => 'email',
+						'url' => 'https://example.com/mock-sender-image.png',
+					),
+					'is_installed' => true,
+					'is_local'     => true,
+				);
+				return $senders;
+			}
+		);
+
 		// Create a test campaign
 		$this->campaign = $this->create_test_campaign();
 		$this->campaign->save();

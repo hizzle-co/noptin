@@ -281,6 +281,16 @@
 		}
 	}
 
+	.wp-block-noptin-table-cell {
+		min-width: 100px;
+		padding: 0.5em;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.wp-block-noptin-table-cell > * {
+		margin: 0;
+	}
+
 	<?php
 		if ( ! empty( $settings['block_css'] ) ) {
 			foreach ( (array) $settings['block_css'] as $block_css ) {
