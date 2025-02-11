@@ -417,8 +417,8 @@ class Main {
 						'senders'      => array_merge(
 							array(
 								'manual_recipients' => array(
-									'label'        => __( 'Manual Recipients', 'newsletter-optin-box' ),
-									'description'  => __( 'Send an email to a comma separated list of email addresses.', 'newsletter-optin-box' ),
+									'label'        => __( 'Specific People', 'newsletter-optin-box' ),
+									'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
 									'image'        => array(
 										'icon' => 'businessperson',
 										'fill' => '#212121',

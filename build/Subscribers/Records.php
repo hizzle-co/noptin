@@ -747,7 +747,8 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			}
 
 			if ( isset( $field['options'] ) && is_array( $field['options'] ) ) {
-				$prepared['options'] = $field['options'];
+				$prepared['options']   = $field['options'];
+				$prepared['map_field'] = true;
 			}
 
 			if ( isset( $buttons[ $smart_tag ] ) ) {
@@ -1011,11 +1012,12 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required' => true,
 							),
 							$merge_tag => array(
-								'el'       => 'select',
-								'label'    => $field['label'],
-								'options'  => $field['options'],
-								'required' => true,
-								'default'  => '',
+								'el'        => 'select',
+								'label'     => $field['label'],
+								'options'   => $field['options'],
+								'required'  => true,
+								'map_field' => true,
+								'default'   => '',
 							),
 						),
 					);
@@ -1045,11 +1047,12 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required' => true,
 							),
 							$merge_tag => array(
-								'el'       => 'tags' === $merge_tag ? 'input' : 'multi_checkbox_alt',
-								'label'    => $field['label'],
-								'options'  => $field['options'],
-								'required' => true,
-								'default'  => 'tags' === $merge_tag ? '' : array(),
+								'el'        => 'tags' === $merge_tag ? 'input' : 'multi_checkbox_alt',
+								'label'     => $field['label'],
+								'options'   => $field['options'],
+								'required'  => true,
+								'map_field' => true,
+								'default'   => 'tags' === $merge_tag ? '' : array(),
 							),
 						),
 					);
@@ -1079,11 +1082,12 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required' => true,
 							),
 							$merge_tag => array(
-								'el'       => 'tags' === $merge_tag ? 'input' : 'multi_checkbox_alt',
-								'label'    => $field['label'],
-								'options'  => $field['options'],
-								'required' => true,
-								'default'  => 'tags' === $merge_tag ? '' : array(),
+								'el'        => 'tags' === $merge_tag ? 'input' : 'multi_checkbox_alt',
+								'label'     => $field['label'],
+								'options'   => $field['options'],
+								'required'  => true,
+								'default'   => 'tags' === $merge_tag ? '' : array(),
+								'map_field' => true,
 							),
 						),
 					);
