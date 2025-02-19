@@ -128,15 +128,16 @@ abstract class Post_Type extends Collection {
 						),
 					'subject'     => 'post_author',
 					'mail_config' => array(
-						'object_type' => $this->object_type,
-						'label'       => ucwords(
+						'object_type'  => $this->object_type,
+						'is_mass_mail' => true,
+						'label'        => ucwords(
 							sprintf(
 								/* translators: %s: Object type label. */
 								__( 'New %s notification', 'newsletter-optin-box' ),
 								$this->singular_label
 							)
 						),
-						'defaults'    => array(
+						'defaults'     => array(
 							'subject'        => $this->field_to_merge_tag( $this->title_field ),
 							'heading'        => $this->field_to_merge_tag( $this->title_field ),
 							'preview_text'   => sprintf(
