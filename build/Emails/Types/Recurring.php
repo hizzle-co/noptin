@@ -172,7 +172,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 */
 	public static function get_month_days() {
 
-		$dates     = array();
+		$dates = array();
 
 		for ( $i = 1; $i < 29; $i++ ) {
 			switch ( $i ) {
@@ -216,7 +216,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			function ( $day ) {
 
 				$ends = array( 'th', 'st', 'nd', 'rd', 'th', 'th', 'th', 'th', 'th', 'th' );
-				if ( (($day % 100) >= 11) && (($day % 100) <= 13) ) {
+				if ( ( ( $day % 100 ) >= 11 ) && ( ( $day % 100 ) <= 13 ) ) {
 					$ordinal = $day . 'th';
 				} else {
 					$ordinal = $day . $ends[ $day % 10 ];
@@ -338,7 +338,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					),
 				),
 			),
-			'skip_days'      => array(
+			'skip_days' => array(
 				'el'          => 'select',
 				'options'     => (object) self::get_weekdays(),
 				'label'       => __( 'Skip days', 'newsletter-optin-box' ),

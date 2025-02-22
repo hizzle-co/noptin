@@ -839,7 +839,7 @@ class Subscriber extends \Hizzle\Store\Record {
 		}
 
 		if ( ! use_custom_noptin_double_optin_email() ) {
-			$result = send_new_noptin_subscriber_double_optin_email( $this->get_id() );
+			$result = send_new_noptin_subscriber_double_optin_email( $this->get_id(), true );
 		} else {
 			do_action( 'noptin_subscriber_status_set_to_pending', $this, 'new' );
 			$result = true;

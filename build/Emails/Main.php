@@ -17,8 +17,8 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-     * @var Type[] The email types.
-     */
+	 * @var Type[] The email types.
+	 */
 	private static $types = array();
 
 	/**
@@ -70,9 +70,9 @@ class Main {
 
 		// Campaign type.
 		register_rest_field(
-            'noptin-campaign',
-            'noptin_campaign_type',
-            array(
+			'noptin-campaign',
+			'noptin_campaign_type',
+			array(
 				'get_callback' => function ( $request ) {
 
 					// Abort if no id.
@@ -102,8 +102,8 @@ class Main {
 					),
 					'additionalProperties' => true,
 				),
-            )
-        );
+			)
+		);
 
 		// Automation rule.
 		register_rest_field(
@@ -828,9 +828,9 @@ class Main {
 						);
 						$title = $email->name;
 
-						if ( empty( $title ) || 'title' !== $atts['show'] ) {
-							$title = $email->get( 'subject' );
-						}
+					if ( empty( $title ) || 'title' !== $atts['show'] ) {
+						$title = $email->get( 'subject' );
+					}
 					?>
 
 					<li class="noptin-past-newsletters__list-item">
@@ -868,8 +868,8 @@ class Main {
 		// If meta is being updated, filter out Elementor fields
 		if ( isset( $params['meta'] ) && is_array( $params['meta'] ) ) {
 			$filtered_meta = array_filter(
-				$params['meta'], 
-				function( $key ) {
+				$params['meta'],
+				function ( $key ) {
 					// Filter out protected meta keys.
 					return strpos( $key, '_' ) !== 0;
 				},

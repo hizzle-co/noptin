@@ -815,16 +815,10 @@ function noptin_has_enabled_double_optin() {
  * @param int $id The id of the new subscriber.
  * @since 1.2.4
  */
-function send_new_noptin_subscriber_double_optin_email( $id ) {
+function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 
 	// Don't send double opt-in emails for imported subscribers.
 	if ( did_action( 'noptin_subscribers_before_import_item' ) && doing_action( 'noptin_subscriber_created' ) ) {
-		return false;
-	}
-
-	// Abort if double opt-in is disabled.
-	$double_optin = noptin_has_enabled_double_optin() && ! use_custom_noptin_double_optin_email();
-	if ( empty( $double_optin ) && doing_action( 'noptin_subscriber_created' ) ) {
 		return false;
 	}
 
@@ -832,6 +826,10 @@ function send_new_noptin_subscriber_double_optin_email( $id ) {
 
 	// Abort if the subscriber is missing or confirmed.
 	if ( ! $subscriber->exists() || $subscriber->get_confirmed() ) {
+		return false;
+	}
+
+	if ( ! $force && 'pending' !== $subscriber->get_status() ) {
 		return false;
 	}
 
