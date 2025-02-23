@@ -18,16 +18,6 @@ class Noptin_Page {
 		// Register shortcode.
 		add_shortcode( 'noptin_action_page', array( $this, 'do_shortcode' ) );
 
-		// Email confirmation.
-		add_action( 'noptin_page_confirm', array( $this, 'confirm_subscription' ) );
-		add_action( 'noptin_pre_page_confirm', array( $this, 'pre_confirm_subscription' ) );
-
-		// Email open.
-		add_filter( 'noptin_actions_page_template', array( $this, 'email_open' ) );
-
-		// Email click.
-		add_filter( 'noptin_actions_page_template', array( $this, 'email_click' ) );
-
 		// Filter template.
 		add_action( 'parse_request', array( $this, 'listen' ), 0 );
 
@@ -204,89 +194,6 @@ class Noptin_Page {
 	}
 
 	/**
-	 * Logs email opens
-	 *
-	 * @access      public
-	 * @since       1.2.0
-	 * @return      array
-	 */
-	public function email_open( $filter ) {
-
-		if ( 'email_open' !== $this->get_request_action() ) {
-			return $filter;
-		}
-
-		// Log the action.
-		$this->_log_open();
-
-		// Display 1x1 pixel transparent gif.
-		nocache_headers();
-		header( 'Content-type: image/gif' );
-		header( 'Content-Length: 42' );
-		echo esc_html( base64_decode( 'R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEA' ) );
-		exit;
-	}
-
-	protected function _log_open() {
-
-		// Fetch recipient.
-		$recipient = $this->get_request_recipient();
-
-		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) ) {
-			if ( ! empty( $recipient['sid'] ) ) {
-				log_noptin_subscriber_campaign_open( $recipient['sid'], $recipient['cid'] );
-			} else {
-				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_opens' );
-			}
-		}
-	}
-
-	/**
-	 * Logs email clicks
-	 *
-	 * @access      public
-	 * @since       1.2.0
-	 * @return      array
-	 */
-	public function email_click( $filter ) {
-
-		// Ensure this is our action.
-		if ( 'email_click' !== $this->get_request_action() ) {
-			return $filter;
-		}
-
-		// Fetch recipient.
-		$recipient = $this->get_request_recipient();
-
-		// Add cookie.
-		if ( ! empty( $recipient['cid'] ) ) {
-			$duration = apply_filters( 'noptin_click_cookie_duration', 14 * DAY_IN_SECONDS );
-			setcookie( 'noptin_cid', noptin_encrypt( $recipient['cid'] ), time() + $duration, COOKIEPATH, COOKIE_DOMAIN );
-		}
-
-		// Abort if no destination.
-		if ( empty( $recipient['to'] ) ) {
-			wp_safe_redirect( get_home_url() );
-			exit;
-		}
-
-		$destination = str_replace( array( '#038;', '&#38;', '&amp;' ), '&', rawurldecode( $recipient['to'] ) );
-
-		// Ensure we have a campaign.
-		if ( ! empty( $recipient['cid'] ) ) {
-			if ( ! empty( $recipient['sid'] ) ) {
-				log_noptin_subscriber_campaign_click( $recipient['sid'], $recipient['cid'], $destination );
-			} else {
-				increment_noptin_campaign_stat( $recipient['cid'], '_noptin_clicks' );
-			}
-		}
-
-		wp_redirect( $destination );
-		exit;
-	}
-
-	/**
 	 * Merges Noptin content.
 	 *
 	 * @access      public
@@ -294,14 +201,7 @@ class Noptin_Page {
 	 * @return      array
 	 */
 	public function merge( $content ) {
-
-		$recipient = $this->get_request_recipient();
-
-		if ( empty( $recipient['sid'] ) ) {
-			return $content;
-		}
-
-		return add_noptin_merge_tags( $content, get_noptin_subscriber_merge_fields( $recipient['sid'] ) );
+		return noptin_parse_email_content_tags( $content );
 	}
 
 	public function maybe_autosubmit_form() {
@@ -333,53 +233,6 @@ class Noptin_Page {
 		exit;
 	}
 
-	/**
-	 * Notifies the user that they have successfully subscribed.
-	 *
-	 * @access      public
-	 * @since       1.2.5
-	 * @return      array
-	 */
-	public function confirm_subscription() {
-
-		$msg = get_noptin_option( 'pages_confirm_page_message' );
-
-		if ( empty( $msg ) ) {
-			$msg = $this->default_subscription_confirmation_message();
-		}
-
-		echo wp_kses_post( $this->merge( $msg ) );
-	}
-
-	/**
-	 * Confirms a user's subscription to the newsletter.
-	 *
-	 * @access      public
-	 * @since       1.2.7
-	 * @return      array
-	 */
-	public function pre_confirm_subscription() {
-
-		// Prevent accidental unsubscribes.
-		$this->maybe_autosubmit_form();
-
-		// Fetch recipient.
-		$recipient = $this->get_request_recipient();
-
-		// Ensure there's a subscriber.
-		if ( ! empty( $recipient['sid'] ) ) {
-			confirm_noptin_subscriber_email( $recipient['sid'] );
-		}
-	}
-
-	public function print_paragraph( $content, $class = 'noptin-padded' ) {
-		printf(
-			'<p class="%s">%s</p>',
-			esc_attr( $class ),
-			wp_kses_post( $content )
-		);
-	}
-
 	public function listen() {
 
 		if ( empty( $_GET['noptin_ns'] ) && empty( $GLOBALS['wp']->query_vars['noptin_newsletter'] ) ) {
@@ -402,7 +255,13 @@ class Noptin_Page {
 			exit;
 		}
 
-		do_action( 'noptin_pre_load_actions_page', $action, $this->get_request_recipient(), $this );
+		// Set the current email recipient.
+		do_action( 'noptin_pre_load_actions_page', $this->get_request_recipient(), $action, $this );
+
+		// Prevent accidental actions.
+		if ( apply_filters( "noptin_auto_submit_actions_page_for_$action", true ) ) {
+			$this->maybe_autosubmit_form();
+		}
 
 		/*
 		 * Site admins are allowed to use custom pages
@@ -412,8 +271,12 @@ class Noptin_Page {
 
 		// Provide a way to filter the page.
 		$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
+
+		// Deprecated.
 		do_action( "noptin_pre_page_$action", $custom_page, $this->get_request_recipient(), $this );
-		do_action( "noptin_actions_handle_$action", $this->get_request_recipient(), $this );
+
+		// Handle the action.
+		do_action( "noptin_actions_handle_$action", $this, $this->get_request_recipient() );
 
 		// If we are redirecting by page id, fetch the page's permalink.
 		if ( is_numeric( $custom_page ) ) {

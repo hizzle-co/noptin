@@ -48,6 +48,7 @@ class Main {
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 		add_filter( 'rest_pre_insert_noptin-campaign', array( __CLASS__, 'filter_campaign_rest_request' ), 10, 2 );
+		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init', 0 );
 
 		// Add shortcode to display past newsletters.
 		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
@@ -608,12 +609,15 @@ class Main {
 			if ( is_email( $recipient['email'] ) ) {
 				$GLOBALS['current_noptin_email'] = $recipient['email'];
 			}
+
+			// sid and uid are here for backwards compatibility.
 		} elseif ( ! empty( $recipient['sid'] ) ) {
 			$subscriber = noptin_get_subscriber( $recipient['sid'] );
 
 			if ( $subscriber->exists() ) {
 				$GLOBALS['current_noptin_email'] = $subscriber->get_email();
 				$recipient['email']              = $subscriber->get_email();
+				$recipient['subscriber']         = $subscriber->get_id();
 			}
 		} elseif ( ! empty( $recipient['uid'] ) ) {
 			$user = get_userdata( $recipient['uid'] );
@@ -621,6 +625,7 @@ class Main {
 			if ( $user && $user->exists() ) {
 				$GLOBALS['current_noptin_email'] = $user->user_email;
 				$recipient['email']              = $user->user_email;
+				$recipient['user']               = $user->ID;
 			}
 		}
 

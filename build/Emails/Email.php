@@ -553,8 +553,8 @@ class Email {
 				}
 			}
 
-			if ( ! empty( $GLOBALS['noptin_email_' . $this->id . '_extra_conditional_logic'] ) ) {
-				$args['extra_conditional_logic'] = $GLOBALS['noptin_email_' . $this->id . '_extra_conditional_logic'];
+			if ( ! empty( $GLOBALS[ 'noptin_email_' . $this->id . '_extra_conditional_logic' ] ) ) {
+				$args['extra_conditional_logic'] = $GLOBALS[ 'noptin_email_' . $this->id . '_extra_conditional_logic' ];
 			} else {
 				unset( $args['extra_conditional_logic'] );
 			}
