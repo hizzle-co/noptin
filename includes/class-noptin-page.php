@@ -18,10 +18,6 @@ class Noptin_Page {
 		// Register shortcode.
 		add_shortcode( 'noptin_action_page', array( $this, 'do_shortcode' ) );
 
-		// User resubscribe.
-		add_action( 'noptin_page_resubscribe', array( $this, 'resubscribe_user' ) );
-		add_action( 'noptin_pre_page_resubscribe', array( $this, 'pre_resubscribe_user' ) );
-
 		// Email confirmation.
 		add_action( 'noptin_page_confirm', array( $this, 'confirm_subscription' ) );
 		add_action( 'noptin_pre_page_confirm', array( $this, 'pre_confirm_subscription' ) );
@@ -77,8 +73,6 @@ class Noptin_Page {
 					$msg = $options[ 'pages_' . $action ]['settings'][ 'pages_' . $action . '_page_message' ]['default'];
 				}
 			}
-
-			$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $value ), $msg );
 
 			echo wp_kses_post( $this->merge( $msg ) );
 		} else {
@@ -337,62 +331,6 @@ class Noptin_Page {
 		</html>
 		<?php
 		exit;
-	}
-
-	/**
-	 * Notifies the user that they have successfuly resubscribed.
-	 *
-	 * @access      public
-	 * @since       1.4.4
-	 * @return      array
-	 */
-	public function resubscribe_user( $key ) {
-		$msg = get_noptin_option( 'pages_resubscribe_page_message' );
-
-		if ( empty( $msg ) ) {
-			$msg = $this->default_resubscription_confirmation_message();
-		}
-
-		$msg = str_ireplace( '[[unsubscribe_url]]', get_noptin_action_url( 'unsubscribe', $key ), $msg );
-
-		echo wp_kses_post( $this->merge( $msg ) );
-	}
-
-	/**
-	 * Resubscribes a user
-	 *
-	 * @access      public
-	 * @since       1.4.4
-	 * @return      array
-	 */
-	public function pre_resubscribe_user( $page ) {
-
-		// Prevent accidental unsubscribes.
-		$this->maybe_autosubmit_form();
-
-		// Fetch recipient.
-		$recipient = $this->get_request_recipient();
-
-		// Process subscribers.
-		if ( ! empty( $recipient['sid'] ) ) {
-			resubscribe_noptin_subscriber( $recipient['sid'] );
-		}
-
-		// Process users.
-		if ( ! empty( $recipient['uid'] ) ) {
-			delete_user_meta( $recipient['uid'], 'noptin_unsubscribed' );
-		}
-
-		// Process campaigns.
-		if ( ! empty( $recipient['cid'] ) ) {
-			decrease_noptin_campaign_stat( $recipient['cid'], '_noptin_unsubscribed' );
-		}
-
-		// If we have a redirect, redirect.
-		if ( ! empty( $page ) ) {
-			wp_safe_redirect( $page );
-			exit;
-		}
 	}
 
 	/**

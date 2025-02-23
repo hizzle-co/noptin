@@ -21,6 +21,9 @@ class Actions {
 
 		// User unsubscribe.
 		add_action( 'noptin_actions_handle_unsubscribe', array( __CLASS__, 'unsubscribe_user' ), 10, 3 );
+
+		// User resubscribe.
+		add_action( 'noptin_actions_handle_resubscribe', array( __CLASS__, 'resubscribe_user' ), 10, 3 );
 	}
 
 	/**
@@ -85,6 +88,38 @@ class Actions {
 		// Process campaigns.
 		if ( ! empty( $campaign_id ) ) {
 			increment_noptin_campaign_stat( $campaign_id, '_noptin_unsubscribed' );
+		}
+	}
+
+	/**
+	 * Resubscribes a user
+	 *
+	 * @param array $recipient The recipient.
+	 * @param \Noptin_Page $handler The handler.
+	 * @since 3.0.0
+	 */
+	public static function resubscribe_user( $recipient, $handler ) {
+		// Prevent accidental resubscribes.
+		$handler->maybe_autosubmit_form();
+
+		// Fetch the subscriber.
+		$subscriber = self::get_subscriber( $recipient );
+
+		// Abort if the subscriber is already subscribed or does not exist.
+		if ( ! $subscriber || ! $subscriber->exists() || $subscriber->is_active() ) {
+			return;
+		}
+
+		// Resubscribe the subscriber.
+		$subscriber->set_status( 'subscribed' );
+		$subscriber->save();
+
+		// Fetch the campaign id.
+		$campaign_id = ! empty( $recipient['cid'] ) ? $recipient['cid'] : 0;
+
+		// Process campaigns.
+		if ( ! empty( $campaign_id ) ) {
+			decrease_noptin_campaign_stat( $campaign_id, '_noptin_unsubscribed' );
 		}
 	}
 }
