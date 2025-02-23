@@ -25,9 +25,11 @@ class Actions {
 
 		// Email open.
 		add_action( 'noptin_actions_handle_email_open', array( __CLASS__, 'handle_email_open' ) );
+		add_filter( 'noptin_auto_submit_actions_page_for_email_open', '__return_false' );
 
 		// Email click.
 		add_action( 'noptin_actions_handle_email_click', array( __CLASS__, 'handle_email_click' ) );
+		add_filter( 'noptin_auto_submit_actions_page_for_email_click', '__return_false' );
 	}
 
 	/**
