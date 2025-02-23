@@ -68,9 +68,7 @@ class Noptin_Page {
 
 		ob_start();
 
-		do_action( "noptin_page_$action", $value, $this->get_request_recipient(), $this );
-
-		if ( ! did_action( "noptin_page_$action" ) ) {
+		if ( ! has_action( "noptin_page_$action" ) ) {
 			$msg = get_noptin_option( "pages_{$action}_page_message" );
 
 			if ( empty( $msg ) ) {
@@ -83,6 +81,8 @@ class Noptin_Page {
 			$msg = str_ireplace( '[[resubscribe_url]]', get_noptin_action_url( 'resubscribe', $value ), $msg );
 
 			echo wp_kses_post( $this->merge( $msg ) );
+		} else {
+			do_action( "noptin_page_$action", $value, $this->get_request_recipient(), $this );
 		}
 
 		return ob_get_clean();
