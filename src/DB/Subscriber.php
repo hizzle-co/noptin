@@ -573,7 +573,12 @@ class Subscriber extends \Hizzle\Store\Record {
 			'unsubscribe',
 			noptin_encrypt(
 				wp_json_encode(
-					array( 'sid' => $this->get_id() )
+					array_filter(
+						array(
+							'email' => $this->get_email(),
+							'cid'   => empty( \Hizzle\Noptin\Emails\Main::$current_email ) ? '' : \Hizzle\Noptin\Emails\Main::$current_email->id,
+						)
+					)
 				)
 			)
 		);
@@ -589,7 +594,12 @@ class Subscriber extends \Hizzle\Store\Record {
 			'resubscribe',
 			noptin_encrypt(
 				wp_json_encode(
-					array( 'sid' => $this->get_id() )
+					array_filter(
+						array(
+							'email' => $this->get_email(),
+							'cid'   => empty( \Hizzle\Noptin\Emails\Main::$current_email ) ? '' : \Hizzle\Noptin\Emails\Main::$current_email->id,
+						)
+					)
 				)
 			)
 		);

@@ -35,7 +35,6 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 		$this->collection_type = $collection->type;
 		$this->options_key     = $collection->email_sender_options;
 
-		add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 		parent::__construct();
 	}
 
@@ -46,32 +45,6 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	 */
 	public function get_collection() {
 		return Store::get( $this->collection_type );
-	}
-
-	/**
-	 * Prepares test data.
-	 *
-	 * @param \Hizzle\Noptin\Emails\Email $email
-	 */
-	public function prepare_email_test_sender_data( $email ) {
-		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
-
-		// Abort if not test mode.
-		if ( ! $email || ! $email->is_mass_mail() || $email->get_sender() !== $this->sender || ! empty( $recipient[ $this->collection_type ] ) || ! isset( $recipient['mode'] ) || 'preview' !== $recipient['mode'] ) {
-			return;
-		}
-
-		if ( 'noptin' !== $this->sender && ! noptin_has_active_license_key() ) {
-			return;
-		}
-
-		$manual     = $email->get_manual_recipients_ids();
-		$collection = $this->get_collection();
-		if ( ! empty( $manual ) ) {
-			\Hizzle\Noptin\Emails\Main::$current_email_recipient[ $this->collection_type ] = $manual[0];
-		} elseif ( $collection ) {
-			\Hizzle\Noptin\Emails\Main::$current_email_recipient[ $this->collection_type ] = $collection->get_test_id();
-		}
 	}
 
 	/**

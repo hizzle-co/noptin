@@ -36,14 +36,14 @@ abstract class People extends Collection {
 	public function __construct() {
 		if ( ! empty( $this->email_sender ) ) {
 			add_filter( 'noptin_' . $this->email_sender . '_email_sender_collection_object', array( $this, 'get_instance' ) );
+			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 
 			if ( ! empty( $this->email_sender_options ) ) {
 				add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ) );
-			} else {
-				add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 			}
 		}
 
+		add_action( 'noptin_init_current_email_recipient', array( $this, 'maybe_set_current_noptin_email' ), 5 );
 		parent::__construct();
 	}
 
@@ -129,10 +129,6 @@ abstract class People extends Collection {
 			return;
 		}
 
-		if ( 'noptin' !== $this->email_sender && ! noptin_has_active_license_key() ) {
-			return;
-		}
-
 		$manual = $email->get_manual_recipients_ids();
 
 		if ( ! empty( $manual ) ) {
@@ -176,5 +172,42 @@ abstract class People extends Collection {
 		$senders[ $this->email_sender ] = new People_List( $this );
 
 		return $senders;
+	}
+
+	/**
+	 * (Maybe) Sets the current Noptin email.
+	 */
+	public function maybe_set_current_noptin_email() {
+		// Backwards compatibility for users and subscribers.
+		$old_keys = array(
+			'user'       => 'uid',
+			'subscriber' => 'sid',
+		);
+
+		foreach ( $old_keys as $type => $key ) {
+			if ( $type === $this->type && empty( \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $type ] ) && ! empty( \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $key ] ) ) {
+				\Hizzle\Noptin\Emails\Main::$current_email_recipient[ $type ] = \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $key ];
+				unset( \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $key ] );
+			}
+		}
+
+		if ( ! empty( \Hizzle\Noptin\Emails\Main::$current_email_recipient['email'] ) && is_email( \Hizzle\Noptin\Emails\Main::$current_email_recipient['email'] ) ) {
+			return;
+		}
+
+		if ( ! empty( \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $this->type ] ) ) {
+			$record = $this->get( \Hizzle\Noptin\Emails\Main::$current_email_recipient[ $this->type ] );
+
+			if ( ! $record ) {
+				return;
+			}
+
+			$email = $record->get( 'email' );
+
+			if ( is_string( $email ) && is_email( $email ) ) {
+				$GLOBALS['current_noptin_email']                              = $email;
+				\Hizzle\Noptin\Emails\Main::$current_email_recipient['email'] = $email;
+			}
+		}
 	}
 }
