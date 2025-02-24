@@ -622,6 +622,30 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the manage preferences URL for the subscriber.
+	 *
+	 * @return string
+	 */
+	public function get_manage_preferences_url() {
+		$url = get_noptin_option( 'manage_preferences_url' );
+
+		if ( empty( $url ) || get_noptin_action_url( 'manage_preferences' ) === $url ) {
+			$url = get_noptin_action_url(
+				'manage_preferences',
+				noptin_encrypt(
+					wp_json_encode(
+						array( 'email' => $this->get_email() )
+					)
+				)
+			);
+		} else {
+			$url = add_query_arg( 'noptin_key', $this->get_confirm_key(), $url );
+		}
+
+		return $url;
+	}
+
+	/**
 	 * Returns the send email URL for the subscriber.
 	 *
 	 * @return string
@@ -763,7 +787,13 @@ class Subscriber extends \Hizzle\Store\Record {
 		);
 
 		// Prepare action links.
-		$action_links = array();
+		$action_links = array(
+			array(
+				'label'  => __( 'Manage Preferences URL', 'newsletter-optin-box' ),
+				'value'  => $this->get_manage_preferences_url(),
+				'action' => 'copy',
+			),
+		);
 
 		// Add link to user profile if the subscriber is a WordPress user.
 		$user_id = $this->get_wp_user_id();

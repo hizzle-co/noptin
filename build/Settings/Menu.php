@@ -343,6 +343,14 @@ class Menu {
 						'placeholder' => '',
 						'tooltip'     => __( 'If you are migrating from another email plugin, enter the cookie name they used to identify subscribers.', 'newsletter-optin-box' ),
 					),
+					'manage_preferences_url' => array(
+						'el'          => 'input',
+						'type'        => 'text',
+						'label'       => __( 'Manage Preferences URL', 'newsletter-optin-box' ),
+						'placeholder' => get_noptin_action_url( 'manage_preferences' ),
+						'default'     => get_noptin_action_url( 'manage_preferences' ),
+						'tooltip'     => __( 'Optional. Enter a custom URL to a page where subscribers can manage their subscriptions. Ensure the page has the [noptin_manage_subscription] shortcode.', 'newsletter-optin-box' ),
+					),
 				),
 			),
 			'general_email_info'  => array(

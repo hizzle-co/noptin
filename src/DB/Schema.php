@@ -330,6 +330,13 @@ class Schema {
 								'readonly'    => true,
 							),
 
+							'manage_preferences_url' => array(
+								'type'        => 'TEXT',
+								'description' => __( "The subscriber's manage preferences URL.", 'newsletter-optin-box' ),
+								'is_dynamic'  => true,
+								'readonly'    => true,
+							),
+
 							'send_email_url'           => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's send email URL.", 'newsletter-optin-box' ),

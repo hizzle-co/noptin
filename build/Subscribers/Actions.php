@@ -27,6 +27,9 @@ class Actions {
 
 		// User confirm.
 		add_action( 'noptin_actions_handle_confirm', array( __CLASS__, 'handle_confirm' ) );
+
+		// User manage preferences.
+		add_action( 'noptin_page_manage_preferences', array( __CLASS__, 'display_manage_preferences_form' ) );
 	}
 
 	/**
@@ -118,5 +121,19 @@ class Actions {
 
 		// Confirm the subscriber.
 		confirm_noptin_subscriber_email( self::get_subscriber() );
+	}
+
+	/**
+	 * Displays the manage preferences form.
+	 *
+	 * @since 3.0.0
+	 */
+	public static function display_manage_preferences_form() {
+		printf(
+			'<h1>%s</h1>',
+			esc_html( get_bloginfo( 'name' ) )
+		);
+
+		Manage_Preferences::display_form();
 	}
 }
