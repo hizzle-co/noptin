@@ -929,6 +929,14 @@ function get_noptin_subscribers_meta_table_name() {
  */
 function get_current_noptin_subscriber_id() {
 
+	if ( did_action( 'noptin_pre_load_actions_page' ) ) {
+		$subscriber = \Hizzle\Noptin\Subscribers\Actions::get_subscriber();
+
+		if ( $subscriber ) {
+			return $subscriber->get_id();
+		}
+	}
+
 	// Try retrieveing subscriber key.
 	$subscriber_key = '';
 	if ( ! empty( $_GET['noptin_key'] ) ) {
