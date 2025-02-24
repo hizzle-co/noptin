@@ -41,16 +41,7 @@ class Noptin_Page {
 		}
 
 		// Retrieve the optional value.
-		$value     = $this->get_request_value();
-		$recipient = $this->get_request_recipient();
-
-		if ( ! empty( $recipient['sid'] ) ) {
-			$subscriber = noptin_get_subscriber( $recipient['sid'] );
-
-			if ( $subscriber->exists() ) {
-				$_GET['noptin_key'] = $subscriber->get_confirm_key();
-			}
-		}
+		$value = $this->get_request_value();
 
 		ob_start();
 
@@ -126,8 +117,8 @@ class Noptin_Page {
 		// Prepare default recipient.
 		$default = array_filter(
 			array(
-				'sid' => get_current_noptin_subscriber_id(),
-				'uid' => get_current_user_id(),
+				'subscriber' => get_current_noptin_subscriber_id(),
+				'user'       => get_current_user_id(),
 			)
 		);
 
