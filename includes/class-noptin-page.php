@@ -138,39 +138,14 @@ class Noptin_Page {
 		$decoded = json_decode( noptin_decrypt( $recipient ), true );
 
 		if ( ! empty( $decoded ) && is_array( $decoded ) ) {
-			if ( isset( $decoded['email'] ) ) {
-				if ( empty( $decoded['sid'] ) ) {
-					$decoded['sid'] = get_noptin_subscriber_id_by_email( $decoded['email'] );
-				}
-
-				if ( empty( $decoded['uid'] ) ) {
-					$user = get_user_by( 'email', $decoded['email'] );
-
-					if ( $user ) {
-						$decoded['uid'] = $user->ID;
-					}
-				}
-			}
 			return $decoded;
 		}
 
-		// Old format (Users).
+		// Backwards compatibility (Users).
 		if ( is_email( $recipient ) ) {
-			$user = get_user_by( 'email', $recipient );
-
-			if ( $user ) {
-				$default['uid'] = $user->ID;
-			}
-
-			$subscriber_id = get_noptin_subscriber_id_by_email( $recipient );
-
-			if ( $subscriber_id ) {
-				$default['sid'] = $subscriber_id;
-			}
-
-			$default['email'] = $recipient;
-
-			return $default;
+			return array(
+				'email' => $recipient,
+			);
 		}
 
 		// Old format (subscribers).
@@ -178,7 +153,9 @@ class Noptin_Page {
 		$subscriber_id = get_noptin_subscriber_id_by_confirm_key( $recipient );
 
 		if ( $subscriber_id ) {
-			$default['sid'] = $subscriber_id;
+			return array(
+				'subscriber' => $subscriber_id,
+			);
 		}
 
 		return $default;

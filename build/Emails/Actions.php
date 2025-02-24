@@ -53,11 +53,11 @@ class Actions {
 		}
 
 		// Set the subscriber.
-		if ( isset( $recipient['email'] ) && empty( $recipient['subscriber'] ) && function_exists( 'noptin_get_subscriber' ) ) {
-			$subscriber = noptin_get_subscriber( $recipient['email'] );
+		if ( isset( $recipient['email'] ) && empty( $recipient['subscriber'] ) && function_exists( 'get_noptin_subscriber_id_by_email' ) ) {
+			$subscriber = get_noptin_subscriber_id_by_email( $recipient['email'] );
 
-			if ( $subscriber && $subscriber->exists() ) {
-				$recipient['subscriber'] = $subscriber->get_id();
+			if ( $subscriber ) {
+				$recipient['subscriber'] = $subscriber;
 			}
 		}
 
@@ -82,10 +82,22 @@ class Actions {
 		if ( $email ) {
 			$recipient = Main::$current_email_recipient;
 
-			if ( is_array( $recipient ) && ! empty( $recipient['subscriber'] ) ) {
-				log_noptin_subscriber_campaign_open( $recipient['subscriber'], $email->id );
-			} else {
-				increment_noptin_campaign_stat( $email->id, '_noptin_opens' );
+			if ( is_array( $recipient ) ) {
+				if ( ! empty( $recipient['subscriber'] ) ) {
+					log_noptin_subscriber_campaign_open( $recipient['subscriber'], $email->id );
+				} elseif ( ! empty( $recipient['email'] ) ) {
+					$opens = get_post_meta( $email->id, '_noptin_opens_emails', true );
+
+					if ( ! is_array( $opens ) ) {
+						$opens = array();
+					}
+
+					if ( ! in_array( $recipient['email'], $opens, true ) ) {
+						$opens[] = $recipient['email'];
+						update_post_meta( $email->id, '_noptin_opens_emails', $opens );
+						increment_noptin_campaign_stat( $email->id, '_noptin_opens' );
+					}
+				}
 			}
 		}
 
@@ -116,7 +128,7 @@ class Actions {
 		}
 
 		// Abort if no destination.
-		if ( ! is_array( $recipient ) || empty( $recipient['to'] ) ) {
+		if ( ! is_array( $recipient ) || empty( $recipient['to'] ) || '#' === $recipient['to'] ) {
 			wp_safe_redirect( get_home_url() );
 			exit;
 		}
@@ -125,10 +137,22 @@ class Actions {
 
 		// Ensure we have a campaign.
 		if ( ! empty( Main::$current_email ) ) {
-			if ( is_array( $recipient ) && ! empty( $recipient['subscriber'] ) ) {
-				log_noptin_subscriber_campaign_click( $recipient['subscriber'], Main::$current_email->id, $destination );
-			} else {
-				increment_noptin_campaign_stat( Main::$current_email->id, '_noptin_clicks' );
+			if ( is_array( $recipient ) ) {
+				if ( ! empty( $recipient['subscriber'] ) ) {
+					log_noptin_subscriber_campaign_click( $recipient['subscriber'], Main::$current_email->id, $destination );
+				} elseif ( ! empty( $recipient['email'] ) ) {
+					$clicks = get_post_meta( Main::$current_email->id, '_noptin_clicks_emails', true );
+
+					if ( ! is_array( $clicks ) ) {
+						$clicks = array();
+					}
+
+					if ( ! in_array( $recipient['email'], $clicks, true ) ) {
+						$clicks[] = $recipient['email'];
+						update_post_meta( Main::$current_email->id, '_noptin_clicks_emails', $clicks );
+						increment_noptin_campaign_stat( Main::$current_email->id, '_noptin_clicks' );
+					}
+				}
 			}
 		}
 

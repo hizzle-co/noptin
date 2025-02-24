@@ -605,31 +605,11 @@ class Main {
 	 * @param array $recipient The email recipient.
 	 */
 	public static function init_current_email_recipient( $recipient, $campaign = null ) {
-		if ( ! empty( $recipient['email'] ) ) {
-			if ( is_email( $recipient['email'] ) ) {
-				$GLOBALS['current_noptin_email'] = $recipient['email'];
-			}
-
-			// sid and uid are here for backwards compatibility.
-		} elseif ( ! empty( $recipient['sid'] ) ) {
-			$subscriber = noptin_get_subscriber( $recipient['sid'] );
-
-			if ( $subscriber->exists() ) {
-				$GLOBALS['current_noptin_email'] = $subscriber->get_email();
-				$recipient['email']              = $subscriber->get_email();
-				$recipient['subscriber']         = $subscriber->get_id();
-			}
-		} elseif ( ! empty( $recipient['uid'] ) ) {
-			$user = get_userdata( $recipient['uid'] );
-
-			if ( $user && $user->exists() ) {
-				$GLOBALS['current_noptin_email'] = $user->user_email;
-				$recipient['email']              = $user->user_email;
-				$recipient['user']               = $user->ID;
-			}
+		if ( ! empty( $recipient['email'] ) && is_email( $recipient['email'] ) ) {
+			$GLOBALS['current_noptin_email'] = $recipient['email'];
 		}
 
-		self::$current_email_recipient = $recipient;
+		self::$current_email_recipient = array_filter( $recipient );
 
 		do_action( 'noptin_init_current_email_recipient', $campaign );
 	}

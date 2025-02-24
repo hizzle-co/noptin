@@ -34,10 +34,16 @@ class Actions {
 	 *
 	 */
 	public static function get_subscriber() {
-		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
+		if ( is_array( \Hizzle\Noptin\Emails\Main::$current_email_recipient ) ) {
+			$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
 
-		if ( is_array( $recipient ) && ! empty( $recipient['subscriber'] ) ) {
-			return noptin_get_subscriber( $recipient['subscriber'] );
+			if ( ! empty( $recipient['subscriber'] ) || ! empty( $recipient['email'] ) ) {
+				$subscriber = noptin_get_subscriber( $recipient['subscriber'] ?? $recipient['email'] );
+
+				if ( $subscriber->exists() ) {
+					return $subscriber;
+				}
+			}
 		}
 
 		return null;
