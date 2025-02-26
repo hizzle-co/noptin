@@ -367,6 +367,9 @@ class Noptin_Email_Generator {
 		// Remove unused classes and ids.
 		$content = $this->clean_html( $content );
 
+		// Clean <style> tags.
+		$content = $this->clean_style_tags( $content );
+
 		// Restore hrefs.
 		$content = $this->restore_hrefs( $content );
 
@@ -431,12 +434,13 @@ class Noptin_Email_Generator {
 			return $html;
 		}
 
-		/** @var \DOMNodeList $elements */
 		foreach ( $elements as $element ) {
+			/** @var \DOMElement $element */
 			// If element has data-remove attribute, remove closest parent element that has the same selector.
 			if ( $element->hasAttribute( 'data-remove' ) ) {
 				$selector = $element->getAttribute( 'data-remove' );
 				$parent   = $element->parentNode;
+				/** @var \DOMElement $parent */
 				while ( $parent && ! ( $parent->nodeName === $selector || ( $parent->hasAttribute( 'class' ) && strpos( $parent->getAttribute( 'class' ), $selector ) !== false ) || ( $parent->hasAttribute( 'id' ) && $parent->getAttribute( 'id' ) === $selector ) ) ) {
 					$parent = $parent->parentNode;
 				}
@@ -462,10 +466,12 @@ class Noptin_Email_Generator {
 				// If <p> tag only contains whitespace, remove it
 				if ( ! $has_content ) {
 					$element->parentNode->removeChild( $element );
+					continue;
 				}
 			} elseif ( $is_block_element && ! $element->hasChildNodes() ) {
 				// If <p> tag has no children, remove it
 				$element->parentNode->removeChild( $element );
+				continue;
 			}
 
 			// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
@@ -493,6 +499,7 @@ class Noptin_Email_Generator {
 			// Move padding styles from button links to wrapper td
 			if ( 'a' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-link' ) ) {
 				$style = $element->getAttribute( 'style' );
+
 				if ( ! empty( $style ) ) {
 					$padding_styles = array();
 
@@ -520,6 +527,11 @@ class Noptin_Email_Generator {
 
 					// Backwards compatibility:- Remove word-break: break-word;
 					$style = str_replace( 'word-break: break-word;', '', $style );
+
+					// Backwards compatibility:- Remove background-color.
+					if ( preg_match( '/background-color:[^;]+;/', $style, $matches ) ) {
+						$style = str_replace( $matches[0], '', $style );
+					}
 
 					$element->setAttribute( 'style', $style );
 
@@ -624,11 +636,17 @@ class Noptin_Email_Generator {
 		}
 
 		foreach ( $elements as $element ) {
+			/** @var \DOMElement $element */
 			$element->setAttribute( 'data-href', $element->getAttribute( 'href' ) );
 			$element->removeAttribute( 'href' );
 		}
 
 		return $doc->saveHTML();
+	}
+
+	private function clean_style_tags( $html ) {
+		$html = str_replace( '#noptin-email-content .main-content-wrapper .noptin-button-link,', '', $html );
+		return $html;
 	}
 
 	private function restore_hrefs( $html ) {

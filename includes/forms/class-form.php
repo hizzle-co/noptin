@@ -499,13 +499,13 @@ class Noptin_Form {
 	 * Check if this is a slide in form.
 	 */
 	public function is_slide_in() {
-		return ! empty( $this->settings['slide']['enable'] );
+		return false;
 	}
 
 	/**
 	 * Check if this is a popup form.
 	 */
 	public function is_popup() {
-		return ! empty( $this->settings['popup']['enable'] );
+		return false;
 	}
 }
