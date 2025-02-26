@@ -250,16 +250,16 @@ class Menu {
 					),
 					'enable_ecommerce_tracking' => array(
 						'label'            => __( 'Enable E-commerce Tracking', 'newsletter-optin-box' ),
-						'description'      => __( 'Enable this to track revenue collected per email campaign.', 'newsletter-optin-box' ) . ( noptin_has_active_license_key() ? '' : ' ' . sprintf(
+						'description'      => __( 'Enable this to track revenue collected per email campaign.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
 							'<a href="%s" target="_blank">%s</a>',
 							noptin_get_upsell_url( '/pricing', 'settings', 'ecommerce-tracking' ),
 							__( 'Activate your license key to unlock', 'newsletter-optin-box' )
-						)),
+						) ),
 						'type'             => 'checkbox_alt',
 						'el'               => 'input',
-						'default'          => noptin_has_active_license_key(),
+						'default'          => noptin_has_alk(),
 						'customAttributes' => array(
-							'disabled' => ! noptin_has_active_license_key(),
+							'disabled' => ! noptin_has_alk(),
 						),
 						'conditions'       => array(
 							array(
@@ -315,14 +315,14 @@ class Menu {
 				'label'    => __( 'Email Subscribers', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'hide_from_subscribers' => array(
+					'hide_from_subscribers'  => array(
 						'el'          => 'input',
 						'type'        => 'checkbox_alt',
 						'label'       => __( 'Hide From Subscribers', 'newsletter-optin-box' ),
 						'default'     => false,
 						'description' => __( 'Hide opt-in forms and methods from existing subscribers.', 'newsletter-optin-box' ),
 					),
-					'always_show_to_admin'  => array(
+					'always_show_to_admin'   => array(
 						'el'          => 'input',
 						'type'        => 'checkbox_alt',
 						'label'       => __( 'Always Show to Admin', 'newsletter-optin-box' ),
@@ -336,7 +336,7 @@ class Menu {
 							),
 						),
 					),
-					'subscribers_cookie'    => array(
+					'subscribers_cookie'     => array(
 						'el'          => 'input',
 						'type'        => 'text',
 						'label'       => __( 'Subscription Cookie', 'newsletter-optin-box' ),
@@ -731,7 +731,7 @@ class Menu {
 						// translators: %s is the name of the integration.
 						__( 'Connects Noptin to %s', 'newsletter-optin-box' ),
 						esc_html( $data->name )
-                    ),
+					),
 					'el'          => 'integration_panel',
 					'badges'      => array(
 						array(

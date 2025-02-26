@@ -140,12 +140,12 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		);
 
 		if ( is_wp_error( $result ) ) {
-			throw new \Exception( $result->get_error_message() );
+			throw new \Exception( esc_html( $result->get_error_message() ) );
 		}
 
 		if ( empty( $result ) ) {
 			$error = \Noptin_Email_Sender::get_phpmailer_last_error();
-			throw new \Exception( 'Failed sending an email' . ( $error ? ': ' . $error : '' ) );
+			throw new \Exception( 'Failed sending an email' . ( $error ? ': ' . esc_html( $error ) : '' ) );
 		}
 
 		return $result;
@@ -209,7 +209,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
 
-		if ( ! $campaign->is_mass_mail() || ! noptin_has_active_license_key() ) {
+		if ( ! $campaign->is_mass_mail() || ! noptin_has_alk() ) {
 			return $tags;
 		}
 
@@ -230,12 +230,12 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
 	 */
 	public function prepare_skipped_rules( $conditional_logic, $rule ) {
-		if ( ! noptin_has_active_license_key() ) {
+		if ( ! noptin_has_alk() ) {
 			return;
 		}
 
 		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
 
-		$GLOBALS['noptin_email_' . $automated_email_id . '_extra_conditional_logic'] = $conditional_logic;
+		$GLOBALS[ 'noptin_email_' . $automated_email_id . '_extra_conditional_logic' ] = $conditional_logic;
 	}
 }

@@ -135,7 +135,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 */
 	public function help_url() {
 
-		return noptin_get_upsell_url( '/guide/email-automations/new-post-notifications/', 'new-post-notifications', 'email-campaigns' );
+		return noptin_get_guide_url( 'New Post Notifications', '/email-automations/new-post-notifications/' );
 	}
 
 	/**

@@ -6,7 +6,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-shortcode/', 'shortcode', 'subscription-forms' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/newsletter-subscription-shortcode/' ) ),
 				esc_html__( 'Use the subscription form shortcode.', 'newsletter-optin-box' )
 			);
 		?>
@@ -16,7 +16,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-widget/', 'widget', 'subscription-forms' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/newsletter-subscription-widget/' ) ),
 				esc_html__( 'Display this form in a widget.', 'newsletter-optin-box' )
 			);
 		?>
@@ -26,7 +26,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/newsletter-subscription-widget/', 'block', 'subscription-forms' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/newsletter-subscription-widget/' ) ),
 				esc_html__( 'Use the subscription form block.', 'newsletter-optin-box' )
 			);
 		?>
@@ -36,7 +36,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/preventing-spam-sign-ups/', 'spam', 'subscription-forms' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/preventing-spam-sign-ups/' ) ),
 				esc_html__( 'Prevent spam sign-ups.', 'newsletter-optin-box' )
 			);
 		?>
@@ -46,7 +46,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_upsell_url( '/guide/subscription-forms/preventing-spam-sign-ups/', 'unsubscribe-forms', 'subscription-forms' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/preventing-spam-sign-ups/' ) ),
 				esc_html__( 'Create unsubscribe forms', 'newsletter-optin-box' )
 			);
 		?>

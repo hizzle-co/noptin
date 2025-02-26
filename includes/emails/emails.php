@@ -234,7 +234,7 @@ function get_noptin_email_senders( $full = false ) {
  */
 function get_default_noptin_email_type() {
 
-	if ( noptin_has_active_license_key() ) {
+	if ( noptin_has_alk() ) {
 		return 'visual';
 	}
 
@@ -732,7 +732,7 @@ function noptin_record_ecommerce_purchase( $amount, $email_address = null ) {
 	$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
 	update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
 
-	if ( noptin_has_active_license_key() ) {
+	if ( noptin_has_alk() ) {
 
 		// Backward compatibility.
 		if ( is_numeric( $email_address ) ) {

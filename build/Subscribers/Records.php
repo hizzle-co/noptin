@@ -430,7 +430,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 */
 	public function on_field_change( $subscriber, $from, $to ) {
 
-		if ( ! noptin_has_active_license_key() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
 			return;
 		}
 
@@ -456,7 +456,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 */
 	public function on_field_add( $subscriber, $value ) {
 
-		if ( ! noptin_has_active_license_key() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
 			return;
 		}
 
@@ -568,7 +568,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		$manual_recipients = $email->get_manual_recipients_ids();
 		if ( ! empty( $manual_recipients ) ) {
 			$args['include'] = $manual_recipients;
-		} elseif ( noptin_has_active_license_key() ) {
+		} elseif ( noptin_has_alk() ) {
 
 			if ( is_array( $options ) ) {
 
@@ -871,19 +871,19 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			parent::get_actions(),
 			array(
 				'subscribe'         => array(
-					'id'             => 'subscribe',
-					'label'          => sprintf(
+					'id'              => 'subscribe',
+					'label'           => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Create or Update', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description'    => sprintf(
+					'description'     => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'Create or update a %s', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'callback'       => __CLASS__ . '::add_noptin_subscriber',
-					'extra_settings' => array(
+					'callback'        => __CLASS__ . '::add_noptin_subscriber',
+					'extra_settings'  => array(
 						'update_existing' => array(
 							'label'   => __( 'Update existing subscribers', 'newsletter-optin-box' ),
 							'el'      => 'input',
@@ -891,9 +891,9 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'default' => true,
 						),
 					),
-					'action_fields'  => array_keys( get_editable_noptin_subscriber_fields() ),
+					'action_fields'   => array_keys( get_editable_noptin_subscriber_fields() ),
 					'advanced_fields' => array( 'confirmed', 'status', 'ip_address', 'conversion_page' ),
-					'callback_args'  => array( 'settings', 'rule' ),
+					'callback_args'   => array( 'settings', 'rule' ),
 				),
 				'delete_subscriber' => array(
 					'id'             => 'delete_subscriber',
@@ -1058,18 +1058,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					);
 
 					$actions[ "remove_from_{$merge_tag}" ] = array(
-						'label'       => sprintf(
+						'label'          => sprintf(
 							// translators: %1$s: Object type label, %2$s: Field label.
 							__( '%1$s > Remove from %2$s', 'newsletter-optin-box' ),
 							$this->singular_label,
 							$field['label']
 						),
-						'description' => sprintf(
+						'description'    => sprintf(
 							/* translators: %s: field label */
 							__( 'Remove the subscriber from %s', 'newsletter-optin-box' ),
 							strtolower( $field['label'] )
 						),
-						'icon'        => array(
+						'icon'           => array(
 							'icon' => 'category',
 							'fill' => '#008000',
 						),

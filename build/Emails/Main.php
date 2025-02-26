@@ -429,7 +429,7 @@ class Main {
 				'plural_label'        => __( 'Templates', 'newsletter-optin-box' ),
 				'new_campaign_label'  => __( 'New Email Template', 'newsletter-optin-box' ),
 				'click_to_add_first'  => __( 'Click the button below to set-up your first email template', 'newsletter-optin-box' ),
-				'upsell'              => noptin_has_active_license_key() ? false : __( 'Create your own reusable email templates.', 'newsletter-optin-box' ),
+				'upsell'              => noptin_has_alk() ? false : __( 'Create your own reusable email templates.', 'newsletter-optin-box' ),
 				'supports_recipients' => false,
 				'supports_menu_order' => true,
 				'icon'                => 'admin-page',

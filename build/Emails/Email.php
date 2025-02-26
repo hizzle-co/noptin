@@ -814,7 +814,7 @@ class Email {
 		$attachments = $this->get( 'attachments' );
 		$attachments = ! is_array( $attachments ) ? array() : array_filter( $attachments );
 
-		if ( ! noptin_has_active_license_key() || empty( $attachments ) ) {
+		if ( ! noptin_has_alk() || empty( $attachments ) ) {
 			return array();
 		}
 
@@ -972,7 +972,7 @@ class Email {
 		$email_types = array_keys( get_noptin_email_types() );
 		$email_type  = in_array( $email_type, $email_types, true ) ? $email_type : get_default_noptin_email_type();
 
-		if ( 'visual' === $email_type && ! noptin_has_active_license_key() ) {
+		if ( 'visual' === $email_type && ! noptin_has_alk() ) {
 			$email_type = 'normal';
 		}
 

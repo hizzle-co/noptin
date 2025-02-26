@@ -587,7 +587,7 @@ class Table extends \WP_List_Table {
 	public function column_revenue( $item ) {
 
 		$revenue = (float) get_post_meta( $item->id, '_revenue', true );
-		if ( noptin_has_active_license_key() ) {
+		if ( noptin_has_alk() ) {
 			$callback  = apply_filters( 'noptin_format_price_callback', '', $revenue );
 			$formatted = empty( $callback ) ? $revenue : call_user_func( $callback, $revenue );
 
@@ -888,12 +888,12 @@ class Table extends \WP_List_Table {
 	}
 
 	/**
-     * Extra controls to be displayed between bulk actions and pagination
-     *
-     * @since 3.1.0
-     * @access protected
-     */
-    public function extra_tablenav( $which ) {
+	 * Extra controls to be displayed between bulk actions and pagination
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	public function extra_tablenav( $which ) {
 
 		if ( $this->email_type->upsell ) {
 			return;

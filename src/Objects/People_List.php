@@ -233,7 +233,6 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 
 		if ( 'noptin' === $this->sender ) {
 			$settings['upsell'] = array(
-				'link'    => noptin_get_upsell_url( '/pricing/', 'filter-subscribers', 'email-campaigns' ),
 				'message' => __( 'Premium plans allow you to filter newsletter recipients by their subscription method, tags, lists, and custom fields.', 'newsletter-optin-box' ),
 			);
 		}

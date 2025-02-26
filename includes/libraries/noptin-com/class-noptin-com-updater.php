@@ -422,7 +422,7 @@ class Noptin_COM_Updater {
 		$slug                = 'noptin-addons-pack';
 		$settings['license'] = array(
 			'key'          => Noptin_COM::get_active_license_key(),
-			'upgrade_url'  => noptin_get_upsell_url( 'pricing', 'upgrade', 'emails' ),
+			'upgrade_url'  => noptin_get_upsell_url( 'pricing', 'upgrade', 'license' ),
 			'is_usable'    => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
 			'activate_url' => admin_url( 'admin.php?page=noptin-addons' ),
 			'install_text' => isset( $installed_addons[ $slug ] ) ? __( 'Activate', 'newsletter-optin-box' ) : __( 'Install', 'newsletter-optin-box' ),

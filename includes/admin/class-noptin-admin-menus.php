@@ -120,7 +120,7 @@ class Noptin_Admin_Menus {
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				noptin_get_upsell_url( 'guide/', 'documentation', 'link' ),
+				noptin_get_guide_url( 'Admin Menu' ),
 				''
 			);
 		}

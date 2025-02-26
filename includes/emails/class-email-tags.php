@@ -330,7 +330,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 		return sprintf(
 			'<a target="_blank" href="%s">Noptin</a>',
-			noptin_get_upsell_url( 'https://noptin.com/', 'powered-by', 'email-campaigns' )
+			noptin_get_upsell_url( 'https://noptin.com/', 'Powered By', 'Referrals' )
 		);
 	}
 
@@ -376,7 +376,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	public function get_merge_tag_posts( $args = array() ) {
 
 		$post_type = ! empty( $args['post_type'] ) ? $args['post_type'] : 'post';
-		if ( ! noptin_has_active_license_key() ) {
+		if ( ! noptin_has_alk() ) {
 			$post_type = 'post';
 		}
 
@@ -406,7 +406,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			}
 		}
 
-		if ( ! noptin_has_active_license_key() ) {
+		if ( ! noptin_has_alk() ) {
 			return get_posts( $query );
 		}
 

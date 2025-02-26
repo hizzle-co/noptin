@@ -425,7 +425,7 @@ class Main {
 		);
 
 		$upsell      = __( 'You can use tags to automate your email marketing.', 'newsletter-optin-box' );
-		$upsell_url  = noptin_get_upsell_url( '/guide/email-subscribers/tagging-subscribers/', 'segment', 'email-subscribers' );
+		$upsell_url  = noptin_get_guide_url( 'Email Subscribers', '/email-subscribers/tagging-subscribers/' );
 		$upsell_text = __( 'Learn More', 'newsletter-optin-box' );
 
 		foreach ( array( 'record_overview', 'record_create', 'import' ) as $route ) {

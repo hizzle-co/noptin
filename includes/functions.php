@@ -705,6 +705,10 @@ function log_noptin_message( $message, $code = 'error' ) {
 	return update_option( 'noptin_logged_messages', $messages );
 }
 
+function noptin_has_alk() {
+	return ! ! Noptin_COM::get_active_license_key();
+}
+
 /**
  * Logs a message.
  *
@@ -1014,7 +1018,7 @@ function noptin_premium_addons() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', ! noptin_has_active_license_key() );
+	return apply_filters( 'noptin_upsell_integrations', ! noptin_has_alk() );
 }
 
 /**
@@ -1022,13 +1026,18 @@ function noptin_upsell_integrations() {
  *
  * @since 1.9.0
  * @param string $url The URL to redirect to.
- * @param string $utm_source The utm source.
- * @param string $utm_medium The utm medium.
- * @param string $utm_campaign The utm campaign.
+ * @param string $utm_source The utm source e.g Noptin Plugin Dashboard.
+ * @param string $utm_medium The utm medium e.g Automated Emails.
+ * @param string $utm_campaign The utm campaign e.g New Post Notification.
  * @ignore
- * @return bool
+ * @return string
  */
-function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 'plugin-dashboard' ) {
+function noptin_get_upsell_url( $url, $utm_campaign, $utm_medium, $utm_source = 'Noptin Plugin Dashboard' ) {
+	$screen_id = false;
+
+	if ( is_admin() && get_current_screen() && get_current_screen()->id ) {
+		$screen_id = get_current_screen()->id;
+	}
 
 	// Check the URL begins with http.
 	if ( 0 !== strpos( $url, 'http' ) ) {
@@ -1037,14 +1046,31 @@ function noptin_get_upsell_url( $url, $utm_source, $utm_campaign, $utm_medium = 
 
 	return add_query_arg(
 		rawurlencode_deep(
-			array(
-				'utm_medium'   => $utm_medium,
-				'utm_campaign' => $utm_campaign,
-				'utm_source'   => empty( $utm_source ) ? get_home_url() : $utm_source,
+			array_filter(
+				array(
+					'utm_medium'   => $utm_medium,
+					'utm_campaign' => $utm_campaign,
+					'utm_term'     => $screen_id ? $screen_id : get_home_url(),
+					'utm_source'   => $utm_source,
+				)
 			)
 		),
 		$url
 	);
+}
+
+/**
+ * Retrieves an upsell URL.
+ *
+ * @since 1.9.0
+ * @param string $path The path to redirect to.
+ * @param string $utm_campaign The utm campaign e.g New Post Notification.
+ * @ignore
+ * @return string
+ */
+function noptin_get_guide_url( $utm_campaign, $path = '' ) {
+	$path = 'guide/' . ltrim( $path, '/' );
+	return noptin_get_upsell_url( $path, $utm_campaign, 'Documentation' );
 }
 
 /**
@@ -2128,16 +2154,6 @@ function noptin_prepare_merge_tags_for_js( $merge_tags ) {
 	}
 
 	return $prepared;
-}
-
-/**
- * Checks if we have an active license key.
- *
- * @return bool
- * @since 3.0.0
- */
-function noptin_has_active_license_key() {
-	return ! ! Noptin_COM::get_active_license_key();
 }
 
 /**

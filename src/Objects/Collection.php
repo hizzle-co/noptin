@@ -872,7 +872,7 @@ abstract class Collection {
 	 */
 	public function handle_list_shortcode( $atts, $template ) {
 
-		if ( ! noptin_has_active_license_key() ) {
+		if ( ! noptin_has_alk() ) {
 			return $template;
 		}
 

@@ -101,7 +101,7 @@ class Main {
 				// Optionally load premium functionality.
 				$class_name = 'Hizzle\\Noptin\\Integrations\\' . $namespace . '\\Premium\\Main';
 
-				if ( class_exists( $class_name ) && noptin_has_active_license_key() ) {
+				if ( class_exists( $class_name ) && noptin_has_alk() ) {
 
 					// Are we loading via a hook?
 					if ( ! empty( $config['hook'] ) ) {
@@ -303,7 +303,7 @@ class Main {
 		}
 
 		$installed_addons = wp_list_pluck( \Noptin_COM::get_installed_addons(), '_filename', 'slug' );
-		$has_license_key  = noptin_has_active_license_key();
+		$has_license_key  = noptin_has_alk();
 		$old_notices      = $this->notices;
 		foreach ( $all as $integration ) {
 			if ( $this->is_integration_usable( $integration ) ) {
