@@ -123,8 +123,7 @@ class Actions {
 
 		// Add cookie.
 		if ( ! empty( Main::$current_email ) ) {
-			$duration = apply_filters( 'noptin_click_cookie_duration', MONTH_IN_SECONDS );
-			setcookie( 'noptin_cid', noptin_encrypt( Main::$current_email->id ), time() + $duration, COOKIEPATH, COOKIE_DOMAIN );
+			Revenue::record_email_click( Main::$current_email->id );
 		}
 
 		// Abort if no destination.

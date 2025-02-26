@@ -704,18 +704,17 @@ function noptin_supports_ecommerce_tracking() {
  * @return int
  */
 function noptin_get_referring_email_id() {
+	return \Hizzle\Noptin\Emails\Revenue::get_referring_email_id();
+}
 
-	if ( ! isset( $_COOKIE['noptin_cid'] ) ) {
-		return 0;
-	}
-
-	$cid = noptin_decrypt( $_COOKIE['noptin_cid'] );
-
-	if ( is_numeric( $cid ) ) {
-		return (int) $cid;
-	}
-
-	return 0;
+/**
+ * Attributes a referring email id to the provided email address.
+ *
+ * @since 3.2.0
+ * @param int $campaign_id
+ */
+function noptin_attribute_revenue_by_email_address( $email_address ) {
+	\Hizzle\Noptin\Emails\Revenue::save_by_email_address( $email_address );
 }
 
 /**
@@ -724,13 +723,26 @@ function noptin_get_referring_email_id() {
  * @since 3.0.0
  * @param float $amount
  */
-function noptin_record_ecommerce_purchase( $amount, $campaign_id ) {
+function noptin_record_ecommerce_purchase( $amount, $email_address = null ) {
+	// Abort if empty.
+	if ( empty( $amount ) ) {
+		return;
+	}
 
-	if ( noptin_has_active_license_key() && get_noptin_option( 'enable_ecommerce_tracking', true ) ) {
-		increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+	$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
+	update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
 
-		$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
-		update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
+	if ( noptin_has_active_license_key() ) {
+
+		// Backward compatibility.
+		if ( is_numeric( $email_address ) ) {
+			$campaign_id   = $email_address;
+			$email_address = null;
+		} else {
+			$campaign_id = null;
+		}
+
+		\Hizzle\Noptin\Emails\Revenue::attribute_sale( $amount, $campaign_id, $email_address );
 	}
 }
 

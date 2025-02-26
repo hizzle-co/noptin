@@ -59,6 +59,9 @@ class Main {
 		// Templates.
 		Templates::init();
 
+		// Revenue.
+		Revenue::init();
+
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}

@@ -75,13 +75,11 @@ abstract class Email_Sender {
 		if ( isset( $senders[ $this->sender ] ) ) {
 			$senders[ $this->sender ]['is_installed'] = true;
 
-			if ( noptin_has_active_license_key() ) {
-				$senders[ $this->sender ]['settings'] = apply_filters(
-					'noptin_email_sender_settings',
-					$this->get_sender_settings(),
-					$this->sender
-				);
-			}
+			$senders[ $this->sender ]['settings'] = apply_filters(
+				'noptin_email_sender_settings',
+				$this->get_sender_settings(),
+				$this->sender
+			);
 		}
 
 		return $senders;

@@ -58,7 +58,7 @@ class Manage_Preferences {
 		$subscribed = 'subscribed' === $subscriber->get_status();
 		$defaults   = array();
 
-		if ( get_current_user_id() ) {
+		if ( get_current_user_id() && ! $subscriber->exists() ) {
 			$user = get_userdata( get_current_user_id() );
 
 			if ( ! $subscriber->exists() ) {
@@ -79,7 +79,8 @@ class Manage_Preferences {
 
 		?>
 			<style>
-				.noptin-manage-subscriptions p {
+				.noptin-manage-subscriptions p,
+				.noptin-field-wrapper {
 					padding: 0.1875em;
 					margin: 0 0 0.375em;
 				}
@@ -147,13 +148,13 @@ class Manage_Preferences {
 				<?php endif; ?>
 
 				<?php if ( apply_filters( 'noptin_manage_subscriptions_show_status_field', true ) ) : ?>
-					<p>
+					<div class="noptin-field-wrapper noptin-field-wrapper--status">
 						<input type="hidden" name="noptin_fields[status]" value="unsubscribed" />
 						<input type="checkbox" name="noptin_fields[status]" value="subscribed" <?php checked( $subscribed ); ?> />
 						<span>
 							<?php esc_html_e( 'Subscribe to our newsletter', 'noptin-addons-pack' ); ?>
 						</span>
-					</p>
+					</div>
 				<?php endif; ?>
 
 				<?php
@@ -174,9 +175,9 @@ class Manage_Preferences {
 					$custom_field['wrap_name'] = true;
 					$custom_field['show_id']   = true;
 
-					echo '<p>';
+					echo '<div class="noptin-field-wrapper noptin-field-wrapper--' . esc_attr( $custom_field['merge_tag'] ) . '">';
 					display_noptin_custom_field_input( $custom_field, $subscriber );
-					echo '</p>';
+					echo '</div>';
 				}
 
 					wp_nonce_field( 'noptin-manage-subscription-nonce', 'noptin-manage-subscription-nonce' );
@@ -184,9 +185,9 @@ class Manage_Preferences {
 
 				<input type="hidden" name="noptin-subscriber-key" value="<?php echo $subscriber ? esc_attr( $subscriber->get_confirm_key() ) : ''; ?>" />
 
-				<p class="submit">
+				<div class="noptin-field-wrapper noptin-field-wrapper--submit">
 					<input type="submit" name="submit" class="btn button wp-element-button" value="<?php esc_attr_e( 'Update Preferences', 'noptin-addons-pack' ); ?>" />
-				</p>
+				</div>
 			</form>
 		<?php
 	}

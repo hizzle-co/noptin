@@ -27,6 +27,8 @@ class Main {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
 		}
+
+		Manage_Preferences::init();
 	}
 
 	/**
