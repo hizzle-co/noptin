@@ -474,25 +474,44 @@ class Noptin_Email_Generator {
 				continue;
 			}
 
-			// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
-			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
-				$anchors           = $element->getElementsByTagName( 'a' );
-				$missing_href      = ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) );
-				$missing_data_href = ! $anchors->item( 0 )->hasAttribute( 'data-href' ) || empty( $anchors->item( 0 )->getAttribute( 'data-href' ) );
-				$has_either        = ! $missing_href || ! $missing_data_href;
-				if ( 0 === $anchors->length || ! $has_either ) {
-					$element->parentNode->removeChild( $element );
-					continue;
+			// If you have issues with background colors on <td> or <table> tags,
+			// then it is possible that the fallback color hasn’t been added correctly in style or bgcolor
+			if ( 'td' === $element->nodeName || 'table' === $element->nodeName ) {
+				if ( $element->hasAttribute( 'style' ) ) {
+					$style = $element->getAttribute( 'style' );
+
+					if ( preg_match( '/background-color:[^;]+;/', $style, $matches ) && ! $element->hasAttribute( 'bgcolor' ) ) {
+						$bgcolor = $matches[0];
+
+						if ( ! empty( $bgcolor ) ) {
+							$element->setAttribute( 'bgcolor', $bgcolor );
+						}
+					}
 				}
 			}
 
-			// If this is a table element with .noptin-image-block__wrapper class,
-			// Remove it if the inner img tag has no src attribute.
-			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-image-block__wrapper' ) ) {
-				$images = $element->getElementsByTagName( 'img' );
-				if ( 0 === $images->length || ! $images->item( 0 )->hasAttribute( 'src' ) || empty( $images->item( 0 )->getAttribute( 'src' ) ) ) {
-					$element->parentNode->removeChild( $element );
-					continue;
+			if ( 'table' === $element->nodeName && $element->hasAttribute( 'class' ) ) {
+
+				// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
+				if ( false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
+					$anchors           = $element->getElementsByTagName( 'a' );
+					$missing_href      = ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) );
+					$missing_data_href = ! $anchors->item( 0 )->hasAttribute( 'data-href' ) || empty( $anchors->item( 0 )->getAttribute( 'data-href' ) );
+					$has_either        = ! $missing_href || ! $missing_data_href;
+					if ( 0 === $anchors->length || ! $has_either ) {
+						$element->parentNode->removeChild( $element );
+						continue;
+					}
+				}
+
+				// If this is a table element with .noptin-image-block__wrapper class,
+				// Remove it if the inner img tag has no src attribute.
+				if ( $element->hasAttribute( 'class' ) && false !== strpos( $element->getAttribute( 'class' ), 'noptin-image-block__wrapper' ) ) {
+					$images = $element->getElementsByTagName( 'img' );
+					if ( 0 === $images->length || ! $images->item( 0 )->hasAttribute( 'src' ) || empty( $images->item( 0 )->getAttribute( 'src' ) ) ) {
+						$element->parentNode->removeChild( $element );
+						continue;
+					}
 				}
 			}
 
