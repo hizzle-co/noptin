@@ -480,11 +480,11 @@ class Noptin_Email_Generator {
 				if ( $element->hasAttribute( 'style' ) ) {
 					$style = $element->getAttribute( 'style' );
 
-					if ( preg_match( '/background-color:[^;]+;/', $style, $matches ) && ! $element->hasAttribute( 'bgcolor' ) ) {
-						$bgcolor = $matches[0];
+					if ( preg_match( '/background-color:([^;]+);/', $style, $matches ) && ! $element->hasAttribute( 'bgcolor' ) ) {
+						$bgcolor = $matches[1];
 
 						if ( ! empty( $bgcolor ) ) {
-							$element->setAttribute( 'bgcolor', $bgcolor );
+							$element->setAttribute( 'bgcolor', trim( $bgcolor ) );
 						}
 					}
 				}
@@ -631,6 +631,42 @@ class Noptin_Email_Generator {
 					// Id is not used, remove it.
 					$element->removeAttribute( 'id' );
 				}
+			}
+
+			// Fix image display on Outlook.
+			if ( 'img' === $element->nodeName && ! $element->hasAttribute( 'width' ) ) {
+
+				$width = '100%';
+
+				// Check if the image is inside a .noptin-column element
+				$parent = $element;
+				while ( $parent = $parent->parentNode ) {
+					/** @var \DOMElement $parent */
+					if ( $parent->nodeType === XML_ELEMENT_NODE && $parent->hasAttribute( 'class' ) ) {
+						$parent_classes = explode( ' ', $parent->getAttribute( 'class' ) );
+						if ( in_array( 'noptin-column', $parent_classes ) && $parent->hasAttribute( 'style' ) ) {
+							if ( preg_match( '/width:([^;]+);/', $parent->getAttribute( 'style' ), $matches ) ) {
+								$width = $matches[1];
+							}
+							break;
+						}
+					}
+
+					// Stop if we reach the body or html element
+					if ( in_array( $parent->nodeName, array( 'body', 'html' ) ) ) {
+						break;
+					}
+				}
+
+				// If width is a percentage, calculate the pixel value based on 600px
+				if ( strpos( $width, '%' ) !== false ) {
+					$percentage = (float) $width;
+					$width_px   = round( ($percentage / 100) * 600 );
+					$width      = $width_px . 'px';
+				}
+
+				// Set the width attribute on the image
+				$element->setAttribute( 'width', trim( str_replace( 'px', '', $width ) ) );
 			}
 		}
 
