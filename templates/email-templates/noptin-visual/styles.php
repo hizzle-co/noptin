@@ -29,13 +29,15 @@
 		padding:0;
 	}
 
+	body {
+		padding: 0;
+	}
+
 	body,
 	.wrapper-div {
 		background-color: <?php echo esc_attr( $settings['background_color'] ); ?>;
 		width: 100%;
-		height: 100%;
 		margin: 0;
-		padding: 0;
 		overflow: auto;
 		box-sizing: border-box;
 		color: <?php echo esc_attr( $settings['color'] ); ?>;
@@ -138,11 +140,13 @@
 		overflow: hidden;
 	}
 
-	/**
-	 * Collapse table borders to avoid space between cells.
-	 */
-	table {
+	.wp-block-noptin-table table,
+	.wp-block-noptin-table td {
 		border-collapse: collapse;
+	}
+
+	table {
+		border-collapse: separate;
 	}
 
 	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper {
@@ -172,6 +176,14 @@
 		margin-left: 0;
 		margin-right: 0;
 		margin-top: 0;
+	}
+
+	.noptin-column__inner > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+		margin-bottom: 0;
+	}
+
+	.noptin-column__inner img {
+		width: 100%;
 	}
 
 	.noptin-records__wrapper,
@@ -223,8 +235,6 @@
 	}
 
 	.wp-block-noptin-group {
-		margin-left: auto;
-		margin-right: auto;
 		margin-bottom: 20px;
 	}
 
@@ -273,11 +283,17 @@
 		.noptin-is-stacked-on-mobile.noptin-column {
 			vertical-align: top !important;
 			width: 100% !important;
+			margin-left: auto !important;
+			margin-right: auto !important;
 		}
 
 		.noptin-is-stacked-on-mobile.noptin-column .noptin-column__inner {
 			margin-left: 0 !important;
 			margin-right: 0 !important;
+		}
+
+		.wp-block-noptin-group > table {
+			width: 100%;
 		}
 	}
 

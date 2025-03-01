@@ -76,7 +76,7 @@ abstract class Post_Type extends Collection {
 		if ( ! empty( $this->description_field ) ) {
 			$content_normal .= sprintf(
 				'<p>%s</p>',
-				$this->field_to_merge_tag( $this->description_field )
+				$this->field_to_merge_tag( $this->description_field, array( 'words' => 20 ) )
 			);
 
 			$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->description_field ) );
@@ -84,7 +84,7 @@ abstract class Post_Type extends Collection {
 				'<!-- wp:%1$s {"anchor":"%2$s"} --><p class="wp-block-%2$s noptin-block__margin-wrapper %2$s">%3$s</p><!-- /wp:%1$s -->',
 				$block_name,
 				str_replace( '/', '-', $block_name ),
-				$this->field_to_merge_tag( $this->description_field )
+				$this->field_to_merge_tag( $this->description_field, array( 'words' => 20 ) )
 			);
 		}
 
@@ -488,5 +488,20 @@ abstract class Post_Type extends Collection {
 				'element'     => 'div',
 			),
 		);
+	}
+
+	/**
+	 * Returns the template for the list shortcode.
+	 */
+	protected function get_list_shortcode_template() {
+		$template = parent::get_list_shortcode_template();
+
+		if ( 'excerpt' === $this->description_field ) {
+			$template['description'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name(
+				$this->field_to_merge_tag( $this->description_field )
+			);
+		}
+
+		return $template;
 	}
 }

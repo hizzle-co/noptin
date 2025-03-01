@@ -41,11 +41,6 @@
 		mso-table-lspace: 0pt;
 	}
 
-	/* Outlook 07, 10 Padding issue fix */
-	table td {
-		border-collapse: collapse;
-	}
-
 	/**
 	 * Better fluid images in Internet Explorer.
 	 */
@@ -67,6 +62,10 @@
 		line-height: inherit !important;
 		color: inherit !important;
 		text-decoration: none !important;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		mso-line-height-rule: exactly;
 	}
 
 	a {
@@ -495,6 +494,10 @@
 		.noptin-is-stacked-on-mobile.noptin-column {
 			vertical-align: top !important;
 			width: 100% !important;
+		}
+
+		.noptin-block-group__inner {
+			width: 99%;
 		}
 	}
 
