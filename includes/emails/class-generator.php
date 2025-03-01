@@ -602,37 +602,6 @@ class Noptin_Email_Generator {
 				}
 			}
 
-			// Check if the class is used in the CSS.
-			if ( $element->hasAttribute( 'class' ) ) {
-				$class = $element->getAttribute( 'class' );
-
-				// Split the class attribute.
-				$classes = empty( $class ) ? array() : explode( ' ', $class );
-				$styled  = array();
-
-				// Loop over all classes.
-				foreach ( $classes as $class ) {
-					if ( isset( $all_classes[ $class ] ) ) {
-						$styled[]  = $class;
-					}
-				}
-
-				if ( 0 < count( $styled ) ) {
-					$element->setAttribute( 'class', implode( ' ', $styled ) );
-				} else {
-					$element->removeAttribute( 'class' );
-				}
-			}
-
-			// Check if the id is used in the CSS.
-			if ( $element->hasAttribute( 'id' ) ) {
-				$id = $element->getAttribute( 'id' );
-				if ( ! isset( $ids[ $id ] ) ) {
-					// Id is not used, remove it.
-					$element->removeAttribute( 'id' );
-				}
-			}
-
 			// Fix image display on Outlook.
 			if ( 'img' === $element->nodeName && ! $element->hasAttribute( 'width' ) ) {
 
@@ -667,6 +636,53 @@ class Noptin_Email_Generator {
 
 				// Set the width attribute on the image
 				$element->setAttribute( 'width', trim( str_replace( 'px', '', $width ) ) );
+			}
+
+			// Fix section widths on Apple mail.
+			if ( 'table' === $element->nodeName && $element->hasAttribute( 'width' ) && $element->hasAttribute( 'style' ) ) {
+				$style = $element->getAttribute( 'style' );
+				if ( preg_match( '/width:([^;]+);/', $style, $matches ) ) {
+					$style = str_replace( $matches[0], '', $style );
+
+					// Remove max-width from style
+					if ( preg_match( '/max-width:([^;]+);/', $style, $max_width_matches ) ) {
+						$style = str_replace( $max_width_matches[0], '', $style );
+					}
+
+					$style .= 'width: 100%; max-width: ' . $matches[1] . ';';
+					$element->setAttribute( 'style', $style );
+				}
+			}
+
+			// Check if the class is used in the CSS.
+			if ( $element->hasAttribute( 'class' ) ) {
+				$class = $element->getAttribute( 'class' );
+
+				// Split the class attribute.
+				$classes = empty( $class ) ? array() : explode( ' ', $class );
+				$styled  = array();
+
+				// Loop over all classes.
+				foreach ( $classes as $class ) {
+					if ( isset( $all_classes[ $class ] ) ) {
+						$styled[]  = $class;
+					}
+				}
+
+				if ( 0 < count( $styled ) ) {
+					$element->setAttribute( 'class', implode( ' ', $styled ) );
+				} else {
+					$element->removeAttribute( 'class' );
+				}
+			}
+
+			// Check if the id is used in the CSS.
+			if ( $element->hasAttribute( 'id' ) ) {
+				$id = $element->getAttribute( 'id' );
+				if ( ! isset( $ids[ $id ] ) ) {
+					// Id is not used, remove it.
+					$element->removeAttribute( 'id' );
+				}
 			}
 		}
 

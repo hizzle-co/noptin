@@ -79,7 +79,6 @@ class Preview {
 	 * Admin preview.
 	 */
 	public static function admin_preview( $template ) {
-		remove_filter( 'get_post_metadata', '_wp_preview_meta_filter' );
 
 		// Check if we are previewing the post type noptin-campaign.
 		if ( ! is_singular( 'noptin-campaign' ) ) {
@@ -91,10 +90,12 @@ class Preview {
 			wp_die( 'You do not have permission to view this campaign.' );
 		}
 
+		remove_filter( 'get_post_metadata', '_wp_preview_meta_filter' );
+
 		// Prepare the preview.
 		self::$simulation = ! empty( $_GET['noptin_simulate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		self::$mode       = 'preview';
-		self::$campaign   = new Email( get_post() );
+		self::$campaign   = new Email( get_the_ID() );
 		$user             = wp_get_current_user();
 		self::$user       = array(
 			'email' => $user->user_email,
