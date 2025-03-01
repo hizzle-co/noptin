@@ -142,6 +142,10 @@ class Generic_Post extends Record {
 		// Excerpt.
 		if ( 'excerpt' === strtolower( $field ) ) {
 
+			if ( ! isset( $args['words'] ) ) {
+				$args['words'] = 20;
+			}
+
 			// Are we limiting the excerpt length?
 			if ( ! empty( $args['words'] ) ) {
 				$this->excerpt_length = (int) $args['words'];
@@ -171,7 +175,6 @@ class Generic_Post extends Record {
 			if ( ! empty( $args['words'] ) ) {
 				$this->excerpt_length = null;
 				remove_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
-				$excerpt = wp_trim_words( $excerpt, $args['words'], '' );
 			}
 
 			return $excerpt;
@@ -191,7 +194,8 @@ class Generic_Post extends Record {
 		if ( 'featured_image' === strtolower( $field ) ) {
 			$image_size = ! empty( $args['size'] ) ? $args['size'] : 'large';
 			$url        = get_the_post_thumbnail_url( $this->external, $image_size );
-			return $url ? $url : '';
+			$fallback   = ! empty( $args['fallback'] ) ? $args['fallback'] : '';
+			return $url ? $url : $fallback;
 		}
 
 		// Meta.
