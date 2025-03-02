@@ -376,6 +376,15 @@ class Email {
 	}
 
 	/**
+	 * Returns the last send timestamp in GMT.
+	 *
+	 * @return int
+	 */
+	public function get_last_send() {
+		return (int) get_post_meta( $this->id, '_noptin_last_send', true );
+	}
+
+	/**
 	 * Returns the sub type for this email.
 	 *
 	 * @return string

@@ -699,7 +699,7 @@ class Main {
 	public static function filter_last_send_date( $date ) {
 
 		if ( ( Preview::$simulation || ! did_action( 'noptin_prepare_email_preview' ) ) && ! empty( self::$current_email ) ) {
-			$last_date = get_post_meta( self::$current_email->id, '_noptin_last_send', true );
+			$last_date = self::$current_email->get_last_send();
 
 			if ( ! empty( $last_date ) ) {
 				return $last_date;

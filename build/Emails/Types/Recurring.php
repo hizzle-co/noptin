@@ -258,6 +258,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					'monthly' => __( 'Monthly', 'newsletter-optin-box' ),
 					'yearly'  => __( 'Yearly', 'newsletter-optin-box' ),
 					'x_days'  => __( 'Every X days', 'newsletter-optin-box' ),
+					'manual'  => __( 'Send manually', 'newsletter-optin-box' ),
 				),
 				'label'       => __( 'Frequency', 'newsletter-optin-box' ),
 				'description' => __( 'How often should this email be sent?', 'newsletter-optin-box' ),
@@ -325,6 +326,13 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				'label'       => __( 'Time', 'newsletter-optin-box' ),
 				'placeholder' => __( 'Enter a time', 'newsletter-optin-box' ),
 				'description' => __( 'What time should this email be sent?', 'newsletter-optin-box' ),
+				'conditions'  => array(
+					array(
+						'value'   => 'manual',
+						'key'     => 'frequency',
+						'compare' => '!=',
+					),
+				),
 			),
 			'next_send' => array(
 				'el'          => 'input',
@@ -345,6 +353,13 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				'placeholder' => __( 'Select days', 'newsletter-optin-box' ),
 				'description' => __( 'Select days to skip sending this email.', 'newsletter-optin-box' ),
 				'multiple'    => true,
+				'conditions'  => array(
+					array(
+						'value'   => 'manual',
+						'key'     => 'frequency',
+						'compare' => '!=',
+					),
+				),
 			),
 		);
 	}
@@ -425,7 +440,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 * Schedules the next send for a given campain.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 * @param int $is_saving
+	 * @param int $is_saving Either saving or rescheduling after sending.
 	 */
 	public function schedule_campaign( $campaign, $is_saving = false ) {
 
@@ -433,13 +448,13 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		delete_noptin_background_action( $this->notification_hook, $campaign->id );
 
 		// Abort if the campaign is not active.
-		if ( ! $campaign->can_send() ) {
+		if ( ! $campaign->can_send() || 'manual' === $campaign->get( 'frequency' ) ) {
 			delete_post_meta( $campaign->id, '_noptin_next_send' );
 			return;
 		}
 
 		// Get the frequency.
-		$last_send = get_post_meta( $campaign->id, '_noptin_last_send', true );
+		$last_send = $campaign->get_last_send();
 		$frequency = $campaign->get( 'frequency' );
 		$day       = (string) $campaign->get( 'day' );
 		$date      = (string) $campaign->get( 'date' );
@@ -452,7 +467,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		}
 
 		if ( empty( $time ) ) {
-			$time = '07:00';
+			$time = $this->default_time();
 		}
 
 		// Get the next send date.
@@ -462,7 +477,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				break;
 
 			case 'weekly':
-				$day  = $day ?? '0';
+				$day  = is_numeric( $day ) ? $day : $this->default_day();
 				$days = array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
 				$day  = $days[ (int) $day ] ?? 'sunday';
 
@@ -470,7 +485,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				break;
 
 			case 'monthly':
-				$date = $date ?? '1';
+				$date = is_numeric( $date ) ? $date : $this->default_date();
 
 				$this_month = (int) gmdate( 'n', time() );
 				$this_year  = (int) gmdate( 'Y', time() );
@@ -517,6 +532,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					$current_time = time();
 					$seconds      = $x_days * DAY_IN_SECONDS;
 
+					// If we have a last send date, use it to calculate the next send date.
 					if ( $is_saving && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
 						$current_time = $last_send;
 					}
@@ -556,11 +572,11 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		$this->on_save_campaign( $campaign );
 
 		// Get the last send date (GMT).
-		$last_send = get_post_meta( $campaign_id, '_noptin_last_send', true );
+		$last_send = $campaign->get_last_send();
 
 		// Don't send if we already sent today.
 		if ( ! empty( $last_send ) && gmdate( 'Ymd', $last_send ) === gmdate( 'Ymd' ) && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
-			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- Already sent today.';
+			log_noptin_message( sprintf( 'Skipped sending campaign:- %s. Reason:- Already sent today.', $campaign->name ) );
 			return;
 		}
 
@@ -568,16 +584,16 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		$skip_days = wp_parse_id_list( $campaign->get( 'skip_days' ) );
 		$today     = (int) gmdate( 'w' );
 
-		if ( in_array( $today, $skip_days, true ) && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
+		if ( in_array( $today, $skip_days, true ) && 'manual' !== $campaign->get( 'frequency' ) && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
 			update_post_meta(
 				$campaign_id,
 				'_bulk_email_last_error',
 				array(
-					'message' => 'Skipped sending campaign. Reason:- Today is a skip day.',
+					'message' => sprintf( 'Skipped sending campaign. Reason:- %s is a skip day.', date_i18n( 'l', $today ) ),
 				)
 			);
 
-			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- Today is a skip day.';
+			log_noptin_message( sprintf( 'Skipped sending campaign:- %s. Reason:- %s is a skip day.', $campaign->name, date_i18n( 'l', $today ) ) );
 			return;
 		}
 
@@ -592,8 +608,6 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					'message' => 'Skipped sending campaign. Reason:- ' . $result->get_error_message(),
 				)
 			);
-
-			$GLOBALS['noptin_email_force_send_error'] = 'Skipped sending campaign. Reason:- ' . $result->get_error_message();
 
 			log_noptin_message( 'Skipped sending campaign:- ' . $campaign->name . '. Reason:- ' . $result->get_error_message() );
 		}
@@ -614,6 +628,24 @@ class Recurring extends \Noptin_Automated_Email_Type {
 
 		// Prepare next send time.
 		$next_send = get_post_meta( $campaign->id, '_noptin_next_send', true );
+
+		if ( 'manual' === $campaign->get( 'frequency' ) ) {
+			$next_send = sprintf(
+				'<div class="noptin-strong">%s</div>',
+				esc_html__( 'This email is sent manually.', 'newsletter-optin-box' )
+			);
+
+			$last_send = $campaign->get_last_send();
+
+			if ( ! empty( $last_send ) ) {
+				$next_send .= sprintf(
+					'<div class="noptin-strong">%s</div>',
+					esc_html__( 'Last sent:', 'newsletter-optin-box' ) . ' ' . date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+				);
+			}
+
+			return $about . $next_send;
+		}
 
 		if ( $next_send ) {
 			$scheduled = next_scheduled_noptin_background_action( $this->notification_hook, $campaign->id );
@@ -688,7 +720,11 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					human_time_diff( $timestamp, $now )
 				),
 				sprintf(
-					'<a href="https://cronwp.com" target="_blank">%s</a>',
+					'<a href="%s" target="_blank">%s</a>',
+					noptin_get_guide_url(
+						'CRON Jobs',
+						'/sending-emails/how-to-set-up-an-external-cron-job-in-wordpress-and-speed-up-email-sending/'
+					),
 					sprintf(
 						// translators: %s is the cron URL.
 						__( 'Set up an external cron job for "%s" to fix such issues.', 'newsletter-optin-box' ),
