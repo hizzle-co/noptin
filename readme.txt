@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.4
 Tested up to: 6.7
 Requires PHP: 7.4
-Version: 3.7.8
-Stable tag: 3.7.8
+Version: 3.7.9
+Stable tag: 3.7.9
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.7.9 =
+* Fix: Compatibility with more email clients.
+* Add: Can now set new posts digest newsletters to send manually. 
 
 = 3.7.8 =
 * Fix: Bulk senders not showing when creating a new post notification email.

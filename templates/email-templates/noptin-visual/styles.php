@@ -295,6 +295,10 @@
 		.wp-block-noptin-group > table {
 			width: 100%;
 		}
+
+		p {
+			word-break: break-word;
+		}
 	}
 
 	.wp-block-noptin-table-cell {
