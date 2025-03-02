@@ -328,9 +328,9 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				'description' => __( 'What time should this email be sent?', 'newsletter-optin-box' ),
 				'conditions'  => array(
 					array(
-						'value'   => 'manual',
-						'key'     => 'frequency',
-						'compare' => '!=',
+						'value'    => 'manual',
+						'key'      => 'frequency',
+						'operator' => '!=',
 					),
 				),
 			),
@@ -355,9 +355,9 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				'multiple'    => true,
 				'conditions'  => array(
 					array(
-						'value'   => 'manual',
-						'key'     => 'frequency',
-						'compare' => '!=',
+						'value'    => 'manual',
+						'key'      => 'frequency',
+						'operator' => '!=',
 					),
 				),
 			),
