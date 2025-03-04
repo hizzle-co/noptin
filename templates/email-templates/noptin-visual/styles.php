@@ -269,7 +269,7 @@
 		overflow: hidden;
 	}
 
-	.noptin-column__inner {
+	.noptin-column > div {
 		margin-left: 10px;
 		margin-right: 10px;
 		overflow: hidden;
@@ -287,7 +287,7 @@
 			margin-right: auto !important;
 		}
 
-		.noptin-is-stacked-on-mobile.noptin-column .noptin-column__inner {
+		.noptin-is-stacked-on-mobile.noptin-column > div {
 			margin-left: 0 !important;
 			margin-right: 0 !important;
 		}
