@@ -822,6 +822,12 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 		return false;
 	}
 
+	// Abort if double opt-in is disabled.
+	$double_optin = noptin_has_enabled_double_optin() && ! use_custom_noptin_double_optin_email();
+	if ( empty( $double_optin ) && doing_action( 'noptin_subscriber_created' ) ) {
+		return false;
+	}
+
 	$subscriber = noptin_get_subscriber( $id );
 
 	// Abort if the subscriber is missing or confirmed.
