@@ -238,6 +238,10 @@
 		margin-bottom: 20px;
 	}
 
+	.noptin-block-group__inner {
+		overflow: hidden;
+	}
+
 	.wp-block-noptin-group > table {
 		overflow: hidden;
 	}
@@ -309,6 +313,10 @@
 
 	.wp-block-noptin-table-cell > * {
 		margin: 0;
+	}
+
+	.wp-block-noptin-coupon-code {
+		word-break: break-word;
 	}
 
 	<?php
