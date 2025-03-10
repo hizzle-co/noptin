@@ -84,6 +84,10 @@ class Actions {
 		// Process campaigns.
 		if ( ! empty( $campaign_id ) ) {
 			increment_noptin_campaign_stat( $campaign_id, '_noptin_unsubscribed' );
+
+			if ( ! empty( $recipient['email'] ) ) {
+				\Hizzle\Noptin\Emails\Logs\Main::create( 'unsubscribe', $campaign_id, $recipient['email'] );
+			}
 		}
 	}
 
@@ -109,6 +113,14 @@ class Actions {
 		// Process campaigns.
 		if ( ! empty( \Hizzle\Noptin\Emails\Main::$current_email ) ) {
 			decrease_noptin_campaign_stat( \Hizzle\Noptin\Emails\Main::$current_email->id, '_noptin_unsubscribed' );
+
+			if ( ! empty( \Hizzle\Noptin\Emails\Main::$current_email_recipient['email'] ) ) {
+				\Hizzle\Noptin\Emails\Logs\Main::create(
+					'resubscribe',
+					\Hizzle\Noptin\Emails\Main::$current_email->id,
+					\Hizzle\Noptin\Emails\Main::$current_email_recipient['email']
+				);
+			}
 		}
 	}
 

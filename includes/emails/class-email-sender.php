@@ -234,6 +234,7 @@ class Noptin_Email_Sender {
 
 				if ( apply_filters( 'noptin_log_email_send', true, $result, $this ) ) {
 					increment_noptin_campaign_stat( $args['campaign_id'], '_noptin_sends' );
+					\Hizzle\Noptin\Emails\Logs\Main::create( 'send', $args['campaign_id'], $recipient );
 				}
 			}
 		}

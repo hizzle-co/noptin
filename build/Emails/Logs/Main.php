@@ -49,6 +49,10 @@ class Main {
 	 */
 	public static function create( $activity, $campaign_id, $email, $extra = null ) {
 
+		if ( ! is_string( $email ) || ! is_email( $email ) ) {
+			return;
+		}
+
 		$log = self::get( 0 );
 		$log->set( 'activity', $activity );
 		$log->set( 'campaign_id', $campaign_id );
