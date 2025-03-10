@@ -83,6 +83,10 @@ class Actions {
 			$recipient = Main::$current_email_recipient;
 
 			if ( is_array( $recipient ) ) {
+				if ( ! empty( $recipient['email'] ) ) {
+					Logs\Main::create( 'open', $email->id, $recipient['email'] );
+				}
+
 				if ( ! empty( $recipient['subscriber'] ) ) {
 					log_noptin_subscriber_campaign_open( $recipient['subscriber'], $email->id );
 				} elseif ( ! empty( $recipient['email'] ) ) {
@@ -152,6 +156,10 @@ class Actions {
 						increment_noptin_campaign_stat( Main::$current_email->id, '_noptin_clicks' );
 					}
 				}
+			}
+
+			if ( ! empty( $recipient['email'] ) ) {
+				Logs\Main::create( 'click', Main::$current_email->id, $recipient['email'], $destination );
 			}
 		}
 

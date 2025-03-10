@@ -62,6 +62,10 @@ class Main {
 		// Revenue.
 		Revenue::init();
 
+		// Activity logs.
+		Logs\Main::init();
+
+		// Admin.
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}
