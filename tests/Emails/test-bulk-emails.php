@@ -153,6 +153,7 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function test_hourly_email_limit() {
 		// Test initial count
+		noptin()->db()->delete_all( 'email_logs' );
 		$this->assertEquals(0, Main::emails_sent_this_hour());
 
 		// Use reflection to access protected process_task method
