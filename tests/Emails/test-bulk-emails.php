@@ -70,6 +70,8 @@ class Test_Main extends \WP_UnitTestCase {
 
 			public function send($campaign, $recipient) {
 				$this->sent_emails[] = $recipient;
+				$campaign->send_to( $recipient );
+
 				return true;
 			}
 
@@ -247,7 +249,6 @@ class Test_Main extends \WP_UnitTestCase {
 		}
 
 		// Clean up any options or transients
-		delete_option('noptin_emails_sent_' . Main::current_hour());
 		delete_transient($this->bulk_emails->cron_hook . '_process_lock');
 
 		parent::tear_down();
