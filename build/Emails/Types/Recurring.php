@@ -565,6 +565,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		$campaign    = noptin_get_email_campaign_object( $campaign_id );
 		$campaign_id = $campaign->id;
 
+		// Delete the last error.
 		delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 
 		// Reschedule next send.

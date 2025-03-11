@@ -384,8 +384,6 @@ class Table extends \WP_List_Table {
 					'<p class="description" style="color: red;">%s</p>',
 					esc_html( $error['message'] )
 				);
-
-				delete_post_meta( $item->id, '_bulk_email_last_error' );
 			}
 		}
 
@@ -414,7 +412,12 @@ class Table extends \WP_List_Table {
 					'<p class="noptin-strong description">%s</p>',
 					sprintf(
 						'<a href="%s" target="_blank" class="noptin-text-success">%s</a>',
-						esc_url( 'https://noptin.com/guide/sending-emails/how-to-fix-emails-not-sending/' ),
+						esc_url(
+							noptin_get_guide_url(
+								$this->email_type->plural_label,
+								'sending-emails/how-to-fix-emails-not-sending/'
+							)
+						),
 						esc_html__( 'Learn how to troubleshoot email sending errors', 'newsletter-optin-box' )
 					)
 				);

@@ -671,7 +671,13 @@ function noptin_prepare_email_recipients( $unprepared ) {
  */
 function noptin_pause_email_campaign( $campaign_id, $reason = '' ) {
 	update_post_meta( $campaign_id, 'paused', 1 );
-	update_post_meta( $campaign_id, '_bulk_email_last_error', array( 'message' => $reason ) );
+
+	if ( ! empty( $reason ) ) {
+		update_post_meta( $campaign_id, '_bulk_email_last_error', array( 'message' => $reason ) );
+	} else {
+		delete_post_meta( $campaign_id, '_bulk_email_last_error' );
+	}
+
 	schedule_noptin_background_action( time() + HOUR_IN_SECONDS, 'noptin_resume_email_campaign', $campaign_id );
 }
 

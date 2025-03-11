@@ -112,6 +112,9 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			return;
 		}
 
+		// Delete the last error.
+		delete_post_meta( $campaign->id, '_bulk_email_last_error' );
+
 		// Log the campaign.
 		log_noptin_message(
 			sprintf(
@@ -293,13 +296,8 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		// Send the email.
 		$result = $this->senders[ $sender ]->send( $this->current_campaign, $recipient );
 
-		// Increase stats.
-		if ( true === $result ) {
-
-			// Increase emails sent this hour.
-			$this->increase_emails_sent_this_hour();
-
-		} elseif ( false === $result ) {
+		// Pause the campaign if there was an error.
+		if ( false === $result ) {
 			noptin_pause_email_campaign(
 				$this->current_campaign->id,
 				sprintf(
@@ -346,28 +344,18 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * @return int
 	 */
 	public static function emails_sent_this_hour() {
-		return (int) get_option( 'noptin_emails_sent_' . self::current_hour() );
-	}
+		$args = array(
+			'activity'           => 'send',
+			'date_created_after' => gmdate( 'Y-m-d H:59:59 e', time() - HOUR_IN_SECONDS ),
+		);
 
-	/**
-	 * Increase sent this hour.
-	 *
-	 * @return void
-	 */
-	private static function increase_emails_sent_this_hour() {
-		static $cleaned_options = array();
-		$option_name = 'noptin_emails_sent_' . self::current_hour();
-		$sent        = self::emails_sent_this_hour();
-		update_option( $option_name, $sent + 1, false );
+		$limit_type = get_noptin_option( 'email_limit_type', 'hourly' );
 
-		// Cleanup the option once per hour.
-		if ( ! isset( $cleaned_options[ $option_name ] ) ) {
-			if ( ! next_scheduled_noptin_background_action( 'noptin_cleanup_hourly_email_count', $option_name ) ) {
-				schedule_noptin_background_action( time() + 2 * HOUR_IN_SECONDS, 'noptin_cleanup_hourly_email_count', $option_name );
-			}
-
-			$cleaned_options[ $option_name ] = true;
+		if ( 'daily' === $limit_type ) {
+			$args['date_created_after'] = gmdate( 'Y-m-d 00:00:00 e', time() - DAY_IN_SECONDS );
 		}
+
+		return (int) noptin()->db()->query( 'email_logs', $args, 'count' );
 	}
 
 	/**
