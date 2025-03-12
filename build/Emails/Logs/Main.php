@@ -90,7 +90,7 @@ class Main {
 					'singular_name' => 'email_log',
 					'props'         => array(
 
-						'id'            => array(
+						'id'             => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => false,
@@ -98,47 +98,61 @@ class Main {
 							'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
 						),
 
-						'email'         => array(
+						'email'          => array(
 							'type'        => 'VARCHAR',
 							'length'      => 255,
 							'nullable'    => false,
 							'description' => 'The email address associated with this log.',
 						),
 
-						'campaign_id'   => array(
+						'campaign_id'    => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => false,
 							'description' => 'The campaign ID.',
 						),
 
-						'parent_id'     => array(
+						'parent_id'      => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
 							'description' => 'The parent campaign ID.',
 						),
 
-						'activity'      => array(
+						'activity'       => array(
 							'type'        => 'VARCHAR',
 							'length'      => 30,
 							'nullable'    => false,
 							'description' => 'The type of activity',
 						),
 
-						'activity_info' => array(
+						'activity_info'  => array(
 							'type'        => 'TEXT',
 							'description' => 'Additional details',
 						),
 
-						'date_created'  => array(
+						'date_created'   => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'readonly'    => true,
 							'description' => 'The date this log was created.',
 						),
 
-						'metadata'      => array(
+						'campaign_title' => array(
+							'type'        => 'TEXT',
+							'description' => 'The campaign title',
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
+						'campaign_url'   => array(
+							'type'        => 'TEXT',
+							'description' => 'The campaign URL',
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
+						'metadata'       => array(
 							'type'        => 'TEXT',
 							'description' => 'A key value array of additional metadata about this log',
 						),

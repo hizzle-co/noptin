@@ -1,7 +1,7 @@
 === Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, woocommerce
-Requires at least: 6.4
+Requires at least: 6.6
 Tested up to: 6.7
 Requires PHP: 7.4
 Version: 3.7.10

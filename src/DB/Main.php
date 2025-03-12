@@ -83,7 +83,8 @@ class Main {
 	 *
 	 */
 	private function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'load' ) );
+		add_action( 'init', array( $this, 'load' ), -100 );
+		add_action( 'noptin_init', array( $this, 'load_rest_routes' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_admin_app_routes', array( $this, 'filter_subscribers_collection_admin_routes' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_record_tabs' ), 1000 );
@@ -111,6 +112,17 @@ class Main {
 		// Init the webhooks manager.
 		$this->webhooks = new \Hizzle\Store\Webhooks( $this->store );
 
+		// Fire action hook.
+		do_action( 'hizzle_noptin_db_init', $this );
+	}
+
+	/**
+	 * Loads the REST routes.
+	 *
+	 * @return void
+	 */
+	public function load_rest_routes() {
+
 		// Init the REST API manager.
 		foreach ( $this->store->get_collections() as $collection ) {
 
@@ -122,9 +134,6 @@ class Main {
 			// Init the controller class.
 			$this->controllers[ $collection->get_name() ] = new \Hizzle\Store\REST_Controller( $this->store->get_namespace(), $collection->get_name() );
 		}
-
-		// Fire action hook.
-		do_action( 'hizzle_noptin_db_init', $this );
 	}
 
 	/**

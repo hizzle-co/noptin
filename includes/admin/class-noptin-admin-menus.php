@@ -19,7 +19,6 @@ class Noptin_Admin_Menus {
 		// Add menus.
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 10 );
 		add_action( 'admin_menu', array( $this, 'menu_highlight' ), 15 );
-		add_action( 'admin_menu', array( $this, 'dashboard_menu' ), 20 );
 		add_action( 'admin_menu', array( $this, 'forms_menu' ), 30 );
 		add_action( 'admin_menu', array( $this, 'documentation_menu' ), 80 );
 
@@ -45,52 +44,6 @@ class Noptin_Admin_Menus {
 			noptin()->white_label->get( 'icon', 'dashicons-forms' ),
 			'23.81204129341231'
 		);
-	}
-
-	/**
-	 * Add dashboard menu item.
-	 */
-	public function dashboard_menu() {
-		add_submenu_page(
-			'noptin',
-			__( 'Noptin Dashboard', 'newsletter-optin-box' ),
-			__( 'Dashboard', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin',
-			array( $this, 'render_dashboard_page' )
-		);
-	}
-
-	/**
-	 * Displays the dashboard page.
-	 */
-	public function render_dashboard_page() {
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		/**
-		 * Runs before displaying the main menu page.
-		 *
-		 */
-		do_action( 'noptin_before_admin_main_page' );
-
-		if ( is_using_new_noptin_forms() ) {
-			$all_forms = noptin_count_optin_forms();
-		} else {
-			$popups   = noptin_count_optin_forms( 'popup' );
-			$inpost   = noptin_count_optin_forms( 'inpost' );
-			$widget   = noptin_count_optin_forms( 'sidebar' );
-			$slide_in = noptin_count_optin_forms( 'slide_in' );
-		}
-
-		include plugin_dir_path( __FILE__ ) . 'welcome.php';
-
-		/**
-		 * Runs after displaying the main menu page.
-		 *
-		 */
-		do_action( 'noptin_after_admin_main_page' );
 	}
 
 	/**

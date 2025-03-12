@@ -24,7 +24,7 @@ class Main {
 		}
 	}
 
-    /**
+	/**
 	 * Enqueues interface scripts and styles.
 	 *
 	 */
