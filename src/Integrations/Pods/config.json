@@ -1,0 +1,7 @@
+{
+    "label": "Pods",
+    "slug": "pods",
+    "requires": {
+        "class": "PodsAPI"
+    }
+}
