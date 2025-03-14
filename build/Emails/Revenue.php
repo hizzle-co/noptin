@@ -31,8 +31,10 @@ class Revenue {
 	public static function record_email_click( $campaign_id ) {
 
 		// Add cookie.
-		$duration = apply_filters( 'noptin_click_cookie_duration', MONTH_IN_SECONDS );
-		setcookie( 'noptin_cid', noptin_encrypt( $campaign_id ), time() + $duration, COOKIEPATH, COOKIE_DOMAIN );
+		if ( ! headers_sent() && ! apply_filters( 'noptin_disable_cookies', false ) ) {
+			$duration = apply_filters( 'noptin_click_cookie_duration', MONTH_IN_SECONDS );
+			setcookie( 'noptin_cid', noptin_encrypt( $campaign_id ), time() + $duration, COOKIEPATH, COOKIE_DOMAIN );
+		}
 
 		// If logged in, record the click.
 		if ( get_current_user_id() ) {
@@ -165,6 +167,18 @@ class Revenue {
 
 		if ( ! empty( $campaign_id ) ) {
 			increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+
+			if ( ! empty( $email_address ) ) {
+				$callback  = apply_filters( 'noptin_format_price_callback', '', $amount );
+				$formatted = empty( $callback ) ? $amount : call_user_func( $callback, $amount );
+
+				Logs\Main::create(
+					'purchase',
+					$campaign_id,
+					$email_address,
+					wp_strip_all_tags( $formatted )
+				);
+			}
 		}
 
 		// Remove the cookie after attributing the sale.

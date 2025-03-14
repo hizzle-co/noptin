@@ -28,6 +28,10 @@ class Main {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
 		}
 
+		// Initialize the privacy class.
+		Privacy::init();
+
+		// Initialize the manage preferences class.
 		Manage_Preferences::init();
 	}
 

@@ -475,7 +475,7 @@ function add_noptin_subscriber( $fields ) {
 	$_GET['noptin_key'] = $subscriber->get_confirm_key();
 
 	// Set cookie.
-	if ( ! headers_sent() ) {
+	if ( ! headers_sent() && ! apply_filters( 'noptin_disable_cookies', false ) ) {
 		setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 
 		$cookie = get_noptin_option( 'subscribers_cookie' );
