@@ -1,0 +1,54 @@
+{
+	"name": "hizzle/wp",
+	"version": "1.0.1",
+	"description": "WordPress compatibility layer for Hizzle JS packages",
+	"keywords": [
+		"wordpress",
+		"hizzle",
+		"wp"
+	],
+	"homepage": "https://github.com/hizzle-co/hizzle/",
+	"type": "library",
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Brian Mutende",
+			"email": "picocodes@gmail.com",
+			"homepage": "http://github.com/picocodes/",
+			"role": "Developer"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"files": [
+			"src/ScriptManager.php"
+		]
+	},
+	"archive": {
+		"exclude": [
+			".github/",
+			"node_modules/",
+			"packages/",
+			".eslintrc.js",
+			".gitignore",
+			".prettierrc",
+			"index.php",
+			"lerna.json",
+			"package.json",
+			"package-lock.json",
+			"requirements.md",
+			"tsconfig.json",
+			"tsconfig.base.json",
+			"webpack.config.js",
+			"webpack.dev.config.js"
+		],
+		"include": [
+			"src/**/*",
+			"vendor/**/*",
+			"composer.json",
+			"README.md"
+		]
+	}
+}

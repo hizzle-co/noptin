@@ -52,6 +52,57 @@
             "install-path": "../hizzle/store"
         },
         {
+            "name": "hizzle/wp",
+            "version": "1.0.1",
+            "version_normalized": "1.0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hizzle-co/hizzle.git",
+                "reference": "d4de51cac8daf2917a573ce76d0b31dfdf2f2d95"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/d4de51cac8daf2917a573ce76d0b31dfdf2f2d95",
+                "reference": "d4de51cac8daf2917a573ce76d0b31dfdf2f2d95",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2025-03-19T06:00:58+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/ScriptManager.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Brian Mutende",
+                    "email": "picocodes@gmail.com",
+                    "homepage": "http://github.com/picocodes/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "WordPress compatibility layer for Hizzle JS packages",
+            "homepage": "https://github.com/hizzle-co/hizzle/",
+            "keywords": [
+                "hizzle",
+                "wordpress",
+                "wp"
+            ],
+            "support": {
+                "issues": "https://github.com/hizzle-co/hizzle/issues",
+                "source": "https://github.com/hizzle-co/hizzle/tree/v1.0.1"
+            },
+            "install-path": "../hizzle/wp"
+        },
+        {
             "name": "symfony/css-selector",
             "version": "v5.4.45",
             "version_normalized": "5.4.45.0",

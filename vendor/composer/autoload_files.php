@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'a4a119a56e50fbb293281d9a48007e0e' => $vendorDir . '/symfony/polyfill-php80/bootstrap.php',
+    'c19afdcdea21a93bc1162cf72c110965' => $vendorDir . '/hizzle/wp/src/ScriptManager.php',
     '574fe3d4b2ffe8c86f902746df6f2ec5' => $baseDir . '/includes/functions.php',
     'd6774e7ef10b855e2b150eaf0997a2ea' => $baseDir . '/build/autoload.php',
 );
