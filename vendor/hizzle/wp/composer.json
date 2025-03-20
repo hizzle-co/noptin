@@ -1,6 +1,6 @@
 {
 	"name": "hizzle/wp",
-	"version": "1.0.1",
+	"version": "1.1.1",
 	"description": "WordPress compatibility layer for Hizzle JS packages",
 	"keywords": [
 		"wordpress",
@@ -31,6 +31,8 @@
 			".github/",
 			"node_modules/",
 			"packages/",
+			"scripts/",
+			"tools/",
 			".eslintrc.js",
 			".gitignore",
 			".prettierrc",
@@ -42,13 +44,9 @@
 			"tsconfig.json",
 			"tsconfig.base.json",
 			"webpack.config.js",
-			"webpack.dev.config.js"
-		],
-		"include": [
-			"src/**/*",
-			"vendor/**/*",
-			"composer.json",
-			"README.md"
+			"webpack.dev.config.js",
+			"README.md",
+			"babel.config.js"
 		]
 	}
 }

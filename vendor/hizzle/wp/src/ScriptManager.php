@@ -7,7 +7,7 @@
 
 namespace Hizzle\WordPress;
 
-if ( class_exists( 'Hizzle\WordPress\ScriptManager' ) ) {
+if ( did_action( 'hizzlewp_scripts_init' ) ) {
 	return;
 }
 
@@ -32,6 +32,7 @@ class ScriptManager {
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
+		do_action( 'hizzlewp_scripts_init' );
 	}
 
 	/**
@@ -56,7 +57,7 @@ class ScriptManager {
 
 					wp_register_script(
 						'hizzlewp-' . $folder,
-						plugins_url( $folder . '/index.js', $current_file ),
+						plugins_url( $folder . '/index.js', $folder_path ),
 						$config_file['dependencies'],
 						$config_file['version'],
 						true
@@ -67,7 +68,7 @@ class ScriptManager {
 				if ( file_exists( $folder_path . 'style-index.css' ) ) {
 					wp_register_style(
 						'hizzlewp-' . $folder,
-						plugins_url( $folder . '/style-index.css', $current_file ),
+						plugins_url( $folder . '/style-index.css', $folder_path ),
 						$load_components ? array( 'wp-components' ) : array(),
 						filemtime( $folder_path . 'style-index.css' )
 					);
