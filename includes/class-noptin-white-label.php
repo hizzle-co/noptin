@@ -91,6 +91,51 @@ class Noptin_White_Label {
             'version' => $this->version,
             'icon'    => $this->icon,
             'logo'    => $this->logo,
+            'menu'    => $this->get_menu(),
         );
+    }
+
+    /**
+     * Returns the plugin menu.
+     *
+     * @return array
+     */
+    public function get_menu() {
+        $current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
+
+        $menu = array(
+            array(
+                'text'      => __( 'Dashboard', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin' ),
+                'isPressed' => 'noptin' === $current_page
+            ),
+            array(
+                'text'      => __( 'Forms', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'edit.php?post_type=noptin-form' ),
+                'isPressed' => 'noptin-forms' === $current_page
+            ),
+            array(
+                'text'      => __( 'Subscribers', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-subscribers' ),
+                'isPressed' => 'noptin-subscribers' === $current_page
+            ),
+            array(
+                'text'      => __( 'Emails', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-email-campaigns' ),
+                'isPressed' => 'noptin-email-campaigns' === $current_page
+            ),
+            array(
+                'text'      => __( 'Automation', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-automation-rules' ),
+                'isPressed' => 'noptin-automation-rules' === $current_page
+            ),
+            array(
+                'text'      => __( 'Settings', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-settings' ),
+                'isPressed' => 'noptin-settings' === $current_page
+            ),
+        );
+
+        return apply_filters( 'noptin_white_label_menu', $menu );
     }
 }

@@ -138,8 +138,6 @@ class Menu {
 			array( 'wp-components' ),
 			$config['version']
 		);
-
-		\Hizzle\Noptin\Misc\Main::load_interface_styles();
 	}
 
 	/**

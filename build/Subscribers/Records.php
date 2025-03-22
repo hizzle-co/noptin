@@ -476,7 +476,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	* Fired when a subscriber opens an email campaign.
 	*
-	* @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber.
+	* @param \Hizzle\Noptin\DB\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
 	* @param $campaign_id The campaign that was opened.
 	*/
 	public function on_open( $subscriber, $campaign_id ) {
@@ -501,7 +501,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	* Fired when a subscriber clicks on a link in an email campaign.
 	*
-	* @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber.
+	* @param \Hizzle\Noptin\DB\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
 	* @param $campaign_id The campaign that was opened.
 	* @param $url The url that was clicked.
 	*/
@@ -524,7 +524,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			),
 		);
 
-		$this->trigger( 'open_email', $args );
+		$this->trigger( 'link_click', $args );
 	}
 
 	/**

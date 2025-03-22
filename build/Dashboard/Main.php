@@ -139,6 +139,5 @@ class Main {
 			$config['version']
 		);
 
-		\Hizzle\Noptin\Misc\Main::load_interface_styles();
 	}
 }

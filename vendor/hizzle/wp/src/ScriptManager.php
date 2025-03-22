@@ -30,7 +30,6 @@ class ScriptManager {
 	 */
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
-		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		do_action( 'hizzlewp_scripts_init' );
 	}
@@ -97,8 +96,24 @@ class ScriptManager {
 				&& ! wp_style_is( $handle, 'enqueued' )
 			) {
 				wp_enqueue_style( $handle );
+
+				// Add 'block-editor-page' to body class.
+				if ( 'hizzlewp-interface' === $handle ) {
+					add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
+				}
 			}
 		}
+	}
+
+	/**
+	 * Adds 'block-editor-page' to the body class.
+	 *
+	 * @param string $classes The current body classes.
+	 * @return string The modified body classes.
+	 */
+	public static function add_block_editor_body_class( $classes ) {
+		$classes .= ' block-editor-page is-fullscreen-mode';
+		return $classes;
 	}
 }
 
