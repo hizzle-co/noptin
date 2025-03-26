@@ -26,7 +26,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/newsletter-subscription-widget/' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/newsletter-subscription-block/' ) ),
 				esc_html__( 'Use the subscription form block.', 'newsletter-optin-box' )
 			);
 		?>
@@ -46,7 +46,7 @@
 		<?php
 			printf(
 				'<a href="%s" target="_blank">%s</a>',
-				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/preventing-spam-sign-ups/' ) ),
+				esc_url( noptin_get_guide_url( 'Subscription Forms', '/subscription-forms/unsubscribe-forms/' ) ),
 				esc_html__( 'Create unsubscribe forms', 'newsletter-optin-box' )
 			);
 		?>

@@ -119,13 +119,7 @@ class Menu {
 							'className' => 'noptin-components-button__pink',
 						),
 					),
-					'brand'        => array_merge(
-						noptin()->white_label->get_details(),
-						array(
-							'name'    => 'Noptin Extensions',
-							'version' => noptin()->version,
-						)
-					),
+					'brand'        => noptin()->white_label->get_details(),
 				),
 			)
 		);
@@ -139,8 +133,6 @@ class Menu {
 			array( 'wp-components' ),
 			$config['version']
 		);
-
-		\Hizzle\Noptin\Misc\Main::load_interface_styles();
 	}
 
 	/**

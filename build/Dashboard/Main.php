@@ -54,30 +54,6 @@ class Main {
 
 		// Include the settings view.
 		require_once plugin_dir_path( __FILE__ ) . 'view.php';
-
-		return;
-		/**
-		 * Runs before displaying the main menu page.
-		 *
-		 */
-		do_action( 'noptin_before_admin_main_page' );
-
-		if ( is_using_new_noptin_forms() ) {
-			$all_forms = noptin_count_optin_forms();
-		} else {
-			$popups   = noptin_count_optin_forms( 'popup' );
-			$inpost   = noptin_count_optin_forms( 'inpost' );
-			$widget   = noptin_count_optin_forms( 'sidebar' );
-			$slide_in = noptin_count_optin_forms( 'slide_in' );
-		}
-
-		include plugin_dir_path( __FILE__ ) . 'welcome.php';
-
-		/**
-		 * Runs after displaying the main menu page.
-		 *
-		 */
-		do_action( 'noptin_after_admin_main_page' );
 	}
 
 	/**
@@ -101,6 +77,26 @@ class Main {
 			true
 		);
 
+		$plugins = array();
+
+		if ( ! class_exists( '\Hizzle\Recaptcha\Main' ) ) {
+			$plugins[] = array(
+				'label' => 'Hizzle CAPTCHA',
+				'info'  => __( 'Protects your subscription, contact, checkout, and registration forms from spammers.', 'newsletter-optin-box' ),
+				'icon'  => 'lock',
+				'url'   => network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-recaptcha&TB_iframe=true&width=772&height=600' ),
+			);
+		}
+
+		if ( ! function_exists( 'hizzle_downloads' ) ) {
+			$plugins[] = array(
+				'label' => 'Hizzle Downloads',
+				'info'  => __( 'Add downloadable files to your site and restrict access by user role or newsletter subscription status.', 'newsletter-optin-box' ),
+				'icon'  => 'download',
+				'url'   => network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-downloads&TB_iframe=true&width=772&height=600' ),
+			);
+		}
+
 		// Localize the script.
 		wp_localize_script(
 			'noptin-dashboard',
@@ -109,21 +105,27 @@ class Main {
 				'brand'               => noptin()->white_label->get_details(),
 				'forms'               => noptin_count_optin_forms(),
 				'subscriber_statuses' => noptin_get_subscriber_statuses(),
-				'plugins'             => array(
+				'plugins'             => $plugins,
+				'links'               => array(
 					array(
-						'slug' => 'hizzle-recaptcha',
-						'name' => 'Hizzle CAPTCHA',
-						'desc' => __( 'Protects your subscription, contact, checkout, and registration forms from spammers.', 'newsletter-optin-box' ),
-						'img'  => 'https://ps.w.org/hizzle-recaptcha/assets/icon-256x256.png',
-						'url'  => admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-recaptcha&TB_iframe=true&width=772&height=600' ),
+						'text' => __( 'Report a bug or request a feature', 'newsletter-optin-box' ),
+						'href' => 'https://github.com/hizzle-co/noptin/issues/new/choose',
 					),
-
 					array(
-						'slug' => 'hizzle-downloads',
-						'name' => 'Hizzle Downloads',
-						'desc' => __( 'Add downloadable files to your site and restrict access by user role or newsletter subscription status.', 'newsletter-optin-box' ),
-						'img'  => 'https://s.w.org/plugins/geopattern-icon/hizzle-downloads.svg',
-						'url'  => admin_url( 'plugin-install.php?tab=plugin-information&plugin=hizzle-downloads&TB_iframe=true&width=772&height=600' ),
+						'text' => __( 'Prevent spam sign-ups.', 'newsletter-optin-box' ),
+						'href' => noptin_get_guide_url( 'Dashboard', '/subscription-forms/preventing-spam-sign-ups/' ),
+					),
+					array(
+						'text' => __( 'Set-up new post notifications.', 'newsletter-optin-box' ),
+						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/new-post-notifications/' ),
+					),
+					array(
+						'text' => __( 'Email sending limits.', 'newsletter-optin-box' ),
+						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/email-sending-limits/' ),
+					),
+					array(
+						'text' => __( 'How to fix emails not sending.', 'newsletter-optin-box' ),
+						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/how-to-fix-emails-not-sending/' ),
 					),
 				),
 			)
@@ -138,6 +140,5 @@ class Main {
 			array( 'wp-components' ),
 			$config['version']
 		);
-
 	}
 }

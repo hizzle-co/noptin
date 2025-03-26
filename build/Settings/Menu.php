@@ -94,50 +94,35 @@ class Menu {
 	 */
 	public static function enqueue_scripts( $hook ) {
 
-		// Abort if not on the email campaigns page.
+		// Abort if not on the settings page.
 		if ( self::$hook_suffix !== $hook ) {
 			return;
 		}
 
-		$config = include plugin_dir_path( __FILE__ ) . 'assets/js/settings.asset.php';
-
 		wp_enqueue_media();
 
-		wp_enqueue_script(
-			'noptin-settings',
-			plugins_url( 'assets/js/settings.js', __FILE__ ),
-			$config['dependencies'],
-			$config['version'],
-			true
-		);
+		wp_enqueue_script( 'hizzlewp-settings' );
 
 		// Localize the script.
 		wp_localize_script(
-			'noptin-settings',
-			'noptinSettings',
+			'hizzlewp-settings',
+			'hizzleWPSettings',
 			array(
 				'data' => array(
-					'settings' => self::prepare_settings(),
-					'saved'    => array_merge(
+					'settings'    => self::prepare_settings(),
+					'saved'       => array_merge(
 						get_noptin_options(),
 						array(
 							'custom_fields' => array_values( get_noptin_custom_fields() ),
 						)
 					),
-					'brand'    => noptin()->white_label->get_details(),
+					'brand'       => noptin()->white_label->get_details(),
+					'option_name' => 'noptin_options',
 				),
 			)
 		);
 
-		wp_set_script_translations( 'noptin-settings', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
-
-		// Load the css.
-		wp_enqueue_style(
-			'noptin-settings',
-			plugins_url( 'assets/css/style-settings.css', __FILE__ ),
-			array( 'wp-components' ),
-			$config['version']
-		);
+		wp_set_script_translations( 'hizzlewp-settings', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 	}
 
 	/**
