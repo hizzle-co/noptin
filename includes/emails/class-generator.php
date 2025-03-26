@@ -352,6 +352,9 @@ class Noptin_Email_Generator {
 		// Balance tags.
 		$content = force_balance_tags( $content );
 
+		// Clean links.
+		$content = $this->clean_links( $content );
+
 		// Remove double http://.
 		$content = $this->fix_links_with_double_http( $content );
 
@@ -790,6 +793,36 @@ class Noptin_Email_Generator {
 		}
 
 		return apply_filters( 'noptin_can_track_campaign', true, $this );
+	}
+
+	/**
+	 * Ensures links are properly formatted.
+	 *
+	 * @param string $content The email content.
+	 * @return string
+	 */
+	public function clean_links( $content ) {
+		// Replace links that start with ? with home_url() + ?
+		$content = preg_replace_callback(
+			//\s+ ensures at least one whitespace character after <a
+			//[^>]*? ensures we only match attributes before the href
+			//\s*=\s* handles optional whitespace around the equals sign
+			//["\']?\s* handles optional quotes and whitespace before the question mark
+			//[^"\'>]* more specifically matches the query string by excluding quotes and closing angle bracket
+			'/<a\s+([^>]*?)href\s*=\s*["\']?\s*\?([^"\'>]*)["\']([^>]*?)>/mi',
+			function ( $matches ) {
+				$url = site_url() . '/?' . $matches[2];
+				return sprintf(
+					'<a%shref="%s"%s>',
+					$matches[1],
+					esc_url( $url ),
+					$matches[3]
+				);
+			},
+			$content
+		);
+
+		return $content;
 	}
 
 	/**
