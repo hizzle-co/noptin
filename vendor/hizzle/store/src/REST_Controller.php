@@ -94,12 +94,14 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'create_item' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array( $this, 'delete_items_permissions_check' ),
 					'args'                => array(),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
@@ -129,6 +131,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'update_item' ),
 					'permission_callback' => array( $this, 'update_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,
@@ -141,6 +144,7 @@ class REST_Controller extends \WP_REST_Controller {
 							'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
 						),
 					) : array(),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
@@ -191,6 +195,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'args'                => array(
 						'context' => $this->get_context_param( array( 'default' => 'edit' ) ),
 					),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				'schema' => '__return_empty_array',
 			)
@@ -230,6 +235,7 @@ class REST_Controller extends \WP_REST_Controller {
 						'callback'            => array( $this, 'update_item' ),
 						'permission_callback' => array( $this, 'update_item_permissions_check' ),
 						'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
+						'allow_batch'         => array( 'v1' => true ),
 					),
 					array(
 						'methods'             => \WP_REST_Server::DELETABLE,
@@ -242,6 +248,7 @@ class REST_Controller extends \WP_REST_Controller {
 								'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
 							),
 						) : array(),
+						'allow_batch'         => array( 'v1' => true ),
 					),
 					'schema' => array( $this, 'get_public_item_schema' ),
 				)
@@ -289,6 +296,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'batch_items' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
+					'allow_batch'         => array( 'v1' => true ),
 				),
 				'schema' => array( $this, 'get_public_batch_schema' ),
 			)
@@ -563,38 +571,38 @@ class REST_Controller extends \WP_REST_Controller {
 
 		$max_pages = $total > 0 && $per_page > 1 ? ceil( $total / $per_page ) : 1;
 
-		$response = rest_ensure_response(
-			apply_filters(
-				$this->prefix_hook( 'get_items' ),
-				array(
-					'items'   => $items,
-					'summary' => (object) array(
-						'total' => array(
-							'label' => $query->get_total() === 1 ?
-								$collection->get_label( 'singular_name', $collection->get_singular_name() )
-								: $collection->get_label( 'name', $collection->get_name() ),
-							'value' => $query->get_total(),
+		if ( ! $request->get_param( '__next_as_array' ) ) {
+			$response = rest_ensure_response(
+				apply_filters(
+					$this->prefix_hook( 'get_items' ),
+					array(
+						'items'   => $items,
+						'summary' => (object) array(
+							'total' => array(
+								'label' => $query->get_total() === 1 ?
+									$collection->get_label( 'singular_name', $collection->get_singular_name() )
+									: $collection->get_label( 'name', $collection->get_name() ),
+								'value' => $query->get_total(),
+							),
 						),
+						'total'   => $total,
 					),
-					'total'   => $total,
-				),
-				$query,
-				$request,
-				$this
-			)
-		);
-
-		/*
-		$response = rest_ensure_response(
-			apply_filters(
-				$this->prefix_hook( 'get_items' ),
-				$items,
-				$query,
-				$request,
-				$this
-			)
-		);
-		*/
+					$query,
+					$request,
+					$this
+				)
+			);
+		} else {
+			$response = rest_ensure_response(
+				apply_filters(
+					$this->prefix_hook( 'get_collection_items' ),
+					$items,
+					$query,
+					$request,
+					$this
+				)
+			);
+		}
 
 		// Add headers.
 		$response->header( 'X-WP-Total', $total );
@@ -1430,15 +1438,16 @@ class REST_Controller extends \WP_REST_Controller {
 				apply_filters(
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
 					array(
-						'schema'   => array_values( $schema ),
-						'ignore'   => array(),
-						'hidden'   => $hidden,
-						'routes'   => $this->get_admin_app_routes(),
-						'labels'   => (object) $collection->labels,
-						'settings' => empty( $collection->settings ) ? null : $collection->settings,
-						'id_prop'  => $default,
-						'tabs'     => $tabs,
-						'fills'    => array(),
+						'schema'        => array_values( $schema ),
+						'ignore'        => array(),
+						'hidden'        => $hidden,
+						'routes'        => $this->get_admin_app_routes(),
+						'labels'        => (object) $collection->labels,
+						'settings'      => empty( $collection->settings ) ? null : $collection->settings,
+						'id_prop'       => $default,
+						'tabs'          => $tabs,
+						'fills'         => array(),
+						'singular_name' => $collection->get_singular_name(),
 					)
 				)
 			);

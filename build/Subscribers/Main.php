@@ -12,6 +12,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class Main {
 
+	private static $hook_suffix;
+
 	/**
 	 * Registers custom objects.
 	 *
@@ -26,6 +28,11 @@ class Main {
 
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
+
+			if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING ) {
+				add_action( 'admin_menu', array( __CLASS__, 'new_subscribers_menu' ), 33 );
+				add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+			}
 		}
 
 		// Initialize the privacy class.
@@ -146,6 +153,21 @@ class Main {
 	}
 
 	/**
+	 * New subscribers menu.
+	 */
+	public static function new_subscribers_menu() {
+
+		self::$hook_suffix = add_submenu_page(
+			'noptin',
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			esc_html__( 'Subscribers', 'newsletter-optin-box' ) . ' <span class="menu-counter">Beta</span>',
+			get_noptin_capability(),
+			'noptin-subscribers__new',
+			__CLASS__ . '::render_admin_page'
+		);
+	}
+
+	/**
 	 * Subscribers menu.
 	 */
 	public static function subscribers_menu() {
@@ -160,5 +182,46 @@ class Main {
 		);
 
 		\Hizzle\Noptin\Misc\Store_UI::collection_menu( $hook_suffix, 'noptin/subscribers' );
+	}
+
+	/**
+	 * Renders the admin page.
+	 */
+	public static function render_admin_page() {
+		?>
+			<div id="hizzlewp-store-ui">
+				<!-- spinner -->
+				<span class="spinner" style="visibility: visible; float: none;"></span>
+				<!-- /spinner -->
+			</div>
+		<?php
+	}
+
+	/**
+	 * Enqueues scripts.
+	 *
+	 * @param string $hook The hook.
+	 */
+	public static function enqueue_scripts( $hook ) {
+		if ( self::$hook_suffix !== $hook ) {
+			return;
+		}
+
+		wp_enqueue_script( 'hizzlewp-store-ui' );
+
+		// Localize the script.
+		wp_localize_script(
+			'hizzlewp-store-ui',
+			'hizzleWPStore',
+			array(
+				'data' => array(
+					'namespace'  => 'noptin',
+					'collection' => 'subscribers',
+					'brand'      => noptin()->white_label->get_details(),
+				),
+			)
+		);
+
+		wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 	}
 }
