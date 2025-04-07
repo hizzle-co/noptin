@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class Bounce_Handler {
 
-	const NAMESPACE = 'noptin/v1';
-	const REST_BASE = 'bounce_handler';
+	const REST_NAMESPACE = 'noptin/v1';
+	const REST_BASE      = 'bounce_handler';
 
 	/**
 	 * Loads the class.
@@ -35,7 +35,7 @@ class Bounce_Handler {
 
 		// Handles a bounced email.
 		register_rest_route(
-			self::NAMESPACE,
+			self::REST_NAMESPACE,
 			'/' . self::REST_BASE . '/(?P<noptin_name>[\w-]+)/(?P<noptin_code>[\w\-\.]+)',
 			array(
 				array(
@@ -69,7 +69,7 @@ class Bounce_Handler {
 		return rest_url(
 			sprintf(
 				'%s/%s/%s/%s',
-				self::NAMESPACE,
+				self::REST_NAMESPACE,
 				self::REST_BASE,
 				$service_name,
 				noptin_encrypt( 'noptin' )
@@ -110,9 +110,9 @@ class Bounce_Handler {
 					'name' => 'Elasticemail',
 					'url'  => self::service_url( 'elasticemail' ),
 				),
-				'other'        => array(
-					'name' => 'Other',
-					'url'  => self::service_url( 'other' ),
+				'ses'          => array(
+					'name' => 'Amazon SES',
+					'url'  => self::service_url( 'ses' ),
 				),
 			)
 		);
@@ -286,5 +286,62 @@ class Bounce_Handler {
 		if ( in_array( $status, array( 'bounced', 'abusereport', 'unsubscribed' ), true ) ) {
 			self::handle_bounced_action( $status, $request['to'] );
 		}
+	}
+
+	/**
+	 * @param \WP_REST_Request $request Request object.
+	 */
+	public static function handle_ses( $request ) {
+		// Parse the message.
+		$payload = $request->get_json_params();
+		$message = isset( $payload['Message'] ) ? json_decode( $payload['Message'], true ) : array();
+		$message = is_array( $message ) ? $message : array();
+		$type    = $payload['notificationType'] ?? $message['notificationType'] ?? $message['eventType'] ?? $payload['Type'] ?? '';
+
+		// SES sends a subscription confirmation first
+		if ( 'SubscriptionConfirmation' === $type ) {
+			return;
+		}
+
+		// Parse the message
+		$bounce    = $message['bounce'] ?? $payload['bounce'] ?? array();
+		$complaint = $message['complaint'] ?? $payload['complaint'] ?? array();
+		$email     = $message['email'] ?? $payload['email'] ?? array();
+
+		// Get campaign ID from message headers if available
+		$campaign_id = 0;
+		if ( ! empty( $email['headers'] ) ) {
+			foreach ( $email['headers'] as $header ) {
+				if ( self::campaign_id_header_name() === $header['name'] && is_numeric( $header['value'] ) ) {
+					$campaign_id = (int) $header['value'];
+					break;
+				}
+			}
+		}
+
+		// Handle bounces.
+		if ( ! empty( $bounce ) ) {
+			// Only handle permanent bounces.
+			if ( 'Permanent' === $bounce['bounceType'] ) {
+				foreach ( $bounce['bouncedRecipients'] as $recipient ) {
+					if ( ! empty( $recipient['emailAddress'] ) ) {
+						self::handle_bounced_action( 'bounce', $recipient['emailAddress'], $campaign_id );
+					}
+				}
+			}
+		}
+
+		// Handle complaints.
+		if ( ! empty( $complaint ) && 'not-spam' !== $complaint['complaintSubType'] ?? '' ) {
+			foreach ( $complaint['complainedRecipients'] as $recipient ) {
+				if ( ! empty( $recipient['emailAddress'] ) ) {
+					self::handle_bounced_action( 'complaint', $recipient['emailAddress'], $campaign_id );
+				}
+			}
+		}
+	}
+
+	private static function campaign_id_header_name() {
+		return 'X-' . md5( home_url() );
 	}
 }
