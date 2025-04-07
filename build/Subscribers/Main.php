@@ -40,6 +40,9 @@ class Main {
 
 		// Initialize the manage preferences class.
 		Manage_Preferences::init();
+
+		// Initialize the bounce handler.
+		Bounce_Handler::init();
 	}
 
 	/**

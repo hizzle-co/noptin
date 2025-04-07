@@ -323,9 +323,6 @@ class Noptin {
 		// DB.
 		$this->db();
 
-		// REST.
-		$this->api();
-
 		// Bulk email sender.
 		$this->bulk_emails();
 
@@ -479,15 +476,6 @@ class Noptin {
      */
 	public function db() {
 		return \Hizzle\Noptin\DB\Main::instance();
-	}
-
-	/**
-     * Returns the new REST API manager.
-     *
-     * @return \Hizzle\Noptin\REST\Main
-     */
-	public function api() {
-		return \Hizzle\Noptin\REST\Main::instance();
 	}
 
 	/**

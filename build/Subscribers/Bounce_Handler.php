@@ -5,31 +5,43 @@
  * @version 1.0.0
  */
 
-namespace Hizzle\Noptin\REST;
+namespace Hizzle\Noptin\Subscribers;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Controller for bounces.
  */
-class Bounce_Handler extends Controller {
+class Bounce_Handler {
+
+	const NAMESPACE = 'noptin/v1';
+	const REST_BASE = 'bounce_handler';
+
+	/**
+	 * Loads the class.
+	 *
+	 * @param string $rest_base The rest base.
+	 */
+	public static function init() {
+		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+	}
 
 	/**
 	 * Registers REST routes.
 	 *
 	 * @since 1.0.0
 	 */
-	public function register_routes() {
+	public static function register_routes() {
 
 		// Handles a bounced email.
 		register_rest_route(
-			$this->namespace,
-			'/' . $this->rest_base . '/(?P<noptin_name>[\w-]+)/(?P<noptin_code>[\w\-\.]+)',
+			self::NAMESPACE,
+			'/' . self::REST_BASE . '/(?P<noptin_name>[\w-]+)/(?P<noptin_code>[\w\-\.]+)',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::ALLMETHODS,
-					'callback'            => array( $this, 'handle_bounce' ),
-					'permission_callback' => array( $this, 'permission_callback' ),
+					'callback'            => array( __CLASS__, 'handle_bounce' ),
+					'permission_callback' => array( __CLASS__, 'permission_callback' ),
 					'args'                => array(
 						'noptin_name' => array(
 							'description' => 'Service name, e.g mailgun.',
@@ -52,13 +64,13 @@ class Bounce_Handler extends Controller {
 	 * Service url.
 	 *
 	 */
-	public function service_url( $service_name ) {
+	public static function service_url( $service_name ) {
 
 		return rest_url(
 			sprintf(
 				'%s/%s/%s/%s',
-				$this->namespace,
-				$this->rest_base,
+				self::NAMESPACE,
+				self::REST_BASE,
 				$service_name,
 				noptin_encrypt( 'noptin' )
 			)
@@ -69,37 +81,40 @@ class Bounce_Handler extends Controller {
 	 * Returns a list of supported services.
 	 *
 	 */
-	public function get_supported_services() {
+	public static function get_supported_services() {
 
 		return apply_filters(
 			'noptin_bounce_handler_supported_services',
 			array(
 				'mailgun'      => array(
 					'name' => 'Mailgun',
-					'url'  => $this->service_url( 'mailgun' ),
+					'url'  => self::service_url( 'mailgun' ),
 				),
 				'pepipost'     => array(
 					'name' => 'Pepipost',
-					'url'  => $this->service_url( 'pepipost' ),
+					'url'  => self::service_url( 'pepipost' ),
 				),
 				'postmark'     => array(
 					'name' => 'Postmark',
-					'url'  => $this->service_url( 'postmark' ),
+					'url'  => self::service_url( 'postmark' ),
 				),
 				'sendgrid'     => array(
 					'name' => 'Sendgrid',
-					'url'  => $this->service_url( 'sendgrid' ),
+					'url'  => self::service_url( 'sendgrid' ),
 				),
 				'sparkpost'    => array(
 					'name' => 'Sparkpost',
-					'url'  => $this->service_url( 'sparkpost' ),
+					'url'  => self::service_url( 'sparkpost' ),
 				),
 				'elasticemail' => array(
 					'name' => 'Elasticemail',
-					'url'  => $this->service_url( 'elasticemail' ),
+					'url'  => self::service_url( 'elasticemail' ),
 				),
-			),
-			$this
+				'other'        => array(
+					'name' => 'Other',
+					'url'  => self::service_url( 'other' ),
+				),
+			)
 		);
 	}
 
@@ -111,7 +126,7 @@ class Bounce_Handler extends Controller {
 	 * @param \WP_REST_Request $request Full details about the request.
 	 * @return bool
 	 */
-	public function permission_callback( $request ) {
+	public static function permission_callback( $request ) {
 		return 'noptin' === noptin_decrypt( $request->get_param( 'noptin_code' ) );
 	}
 
@@ -121,7 +136,7 @@ class Bounce_Handler extends Controller {
 	 * @param \WP_REST_Request $request Request object.
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
-	public function handle_bounce( $request ) {
+	public static function handle_bounce( $request ) {
 		$service_name = $request->get_param( 'noptin_name' );
 
 		if ( empty( $service_name ) ) {
@@ -130,11 +145,11 @@ class Bounce_Handler extends Controller {
 
 		$service_name = strtolower( $service_name );
 
-		if ( is_callable( array( $this, 'handle_' . $service_name ) ) ) {
-			return $this->{'handle_' . $service_name}( $request );
+		if ( is_callable( array( __CLASS__, 'handle_' . $service_name ) ) ) {
+			return call_user_func( array( __CLASS__, 'handle_' . $service_name ), $request );
 		}
 
-		do_action( 'noptin_handle_bounce_' . $service_name, $request, $this );
+		do_action( 'noptin_handle_bounce_' . $service_name, $request );
 
 		return rest_ensure_response( true );
 	}
@@ -145,7 +160,7 @@ class Bounce_Handler extends Controller {
 	public static function handle_bounced_action( $action, $email_address, $campaign_id = 0 ) {
 
 		if ( ! is_string( $email_address ) || ! is_email( $email_address ) ) {
-			return false;
+			return;
 		}
 
 		$action = strtolower( $action );
@@ -195,7 +210,7 @@ class Bounce_Handler extends Controller {
 	/**
 	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function handle_sendgrid( $request, $param = 'event', $email = 'email' ) {
+	public static function handle_sendgrid( $request, $param = 'event', $email = 'email' ) {
 		$events = $request->get_json_params();
 
 		if ( ! is_array( $events ) || empty( $events ) ) {
@@ -234,21 +249,21 @@ class Bounce_Handler extends Controller {
 	/**
 	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function handle_pepipost( $request ) {
-		$this->handle_sendgrid( $request, 'EVENT', 'EMAIL' );
+	public static function handle_pepipost( $request ) {
+		self::handle_sendgrid( $request, 'EVENT', 'EMAIL' );
 	}
 
 	/**
 	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function handle_sparkpost( $request ) {
-		$this->handle_sendgrid( $request, 'message_event.type', 'rcpt_to' );
+	public static function handle_sparkpost( $request ) {
+		self::handle_sendgrid( $request, 'message_event.type', 'rcpt_to' );
 	}
 
 	/**
 	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function handle_postmark( $request ) {
+	public static function handle_postmark( $request ) {
 
 		$metadata    = $request['Metadata'];
 		$campaign_id = is_array( $metadata ) && isset( $metadata['noptin_campaign_id'] ) ? $metadata['noptin_campaign_id'] : 0;
@@ -261,15 +276,15 @@ class Bounce_Handler extends Controller {
 	/**
 	 * @param \WP_REST_Request $request Request object.
 	 */
-	public function handle_elasticemail( $request ) {
+	public static function handle_elasticemail( $request ) {
 		$status = strtolower( $request['status'] );
 
 		if ( 'error' === $status && in_array( $request['category'], array( 'NoMailbox', 'BlackListed', 'ManualCancel' ), true ) ) {
 			$status = 'bounced';
 		}
 
-		if ( ! in_array( $status, array( 'bounced', 'abusereport', 'unsubscribed' ), true ) ) {
-			self::handle_bounced_action( $request['RecordType'], $request['to'] );
+		if ( in_array( $status, array( 'bounced', 'abusereport', 'unsubscribed' ), true ) ) {
+			self::handle_bounced_action( $status, $request['to'] );
 		}
 	}
 }
