@@ -1,13 +1,13 @@
 <?php
 
-namespace Hizzle\Store;
-
 /**
  * Store API: Handles CRUD operations on a single object.
  *
  * @since   1.0.0
  * @package Hizzle\Store
  */
+
+namespace Hizzle\Store;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -594,22 +594,22 @@ class Record {
 	 * @param bool $strict Whether to only split on commas.
 	 * @return array Sanitized array of values.
 	 */
-	private function parse_list( $list, $strict = false ) {
+	private function parse_list( $string_or_array, $strict = false ) {
 
-		if ( empty( $list ) ) {
+		if ( empty( $string_or_array ) ) {
 			return array();
 		}
 
-		if ( ! is_array( $list ) ) {
+		if ( ! is_array( $string_or_array ) ) {
 
 			if ( $strict ) {
-				$list = preg_split( '/,+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+				$string_or_array = preg_split( '/,+/', $string_or_array, -1, PREG_SPLIT_NO_EMPTY );
 			} else {
-				$list = preg_split( '/[\s,]+/', $list, -1, PREG_SPLIT_NO_EMPTY );
+				$string_or_array = preg_split( '/[\s,]+/', $string_or_array, -1, PREG_SPLIT_NO_EMPTY );
 			}
 		}
 
-		return map_deep( $list, 'trim' );
+		return map_deep( $string_or_array, 'trim' );
 	}
 
 	/**
@@ -673,6 +673,9 @@ class Record {
 					$offset    = ! empty( $date_bits[7] ) ? iso8601_timezone_to_offset( $date_bits[7] ) : wp_timezone()->getOffset( new \DateTime( 'now' ) );
 					$timestamp = gmmktime( $date_bits[4], $date_bits[5], $date_bits[6], $date_bits[2], $date_bits[3], $date_bits[1] ) - $offset;
 					$datetime  = new Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
+				} elseif ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/', $value, $date_bits ) ) {
+					// Handle Y-m-d format by defaulting to midnight.
+					$datetime = new Date_Time( $value . ' 23:59:59', wp_timezone() );
 				} else {
 					$datetime = new Date_Time( $value, wp_timezone() );
 				}
@@ -792,7 +795,7 @@ class Record {
 	 * @param mixed $default default value.
 	 * @return mixed
 	 */
-	public function get_meta( $meta_key, $default = null ) {
+	public function get_meta( $meta_key, $default_value = null ) {
 		$collection = $this->get_collection();
 
 		if ( $collection->use_meta_table ) {
@@ -800,7 +803,7 @@ class Record {
 				return $collection->get_record_meta( $this->get_id(), $meta_key, true );
 			}
 
-			return $default;
+			return $default_value;
 		}
 
 		$metadata = $this->get_metadata();
@@ -809,7 +812,7 @@ class Record {
 			return $metadata[ $meta_key ];
 		}
 
-		return $default;
+		return $default_value;
 	}
 
 	/**
@@ -819,25 +822,22 @@ class Record {
 	 * @param  integer $limit Limit size in characters.
 	 * @return string
 	 */
-	protected function limit_length( $string, $limit ) {
+	protected function limit_length( $content, $limit ) {
 
-		if ( empty( $limit ) || empty( $string ) || ! is_string( $string ) ) {
-			return $string;
+		if ( empty( $limit ) || empty( $content ) || ! is_string( $content ) ) {
+			return $content;
 		}
 
 		$str_limit = $limit - 3;
 
 		if ( function_exists( 'mb_strimwidth' ) ) {
-			if ( mb_strlen( $string, 'UTF-8' ) > $limit ) {
-				$string = mb_strimwidth( $string, 0, $str_limit ) . '...';
+			if ( mb_strlen( $content, 'UTF-8' ) > $limit ) {
+				$content = mb_strimwidth( $content, 0, $str_limit ) . '...';
 			}
-		} else {
-			if ( strlen( $string ) > $limit ) {
-				$string = substr( $string, 0, $str_limit ) . '...';
-			}
+		} elseif ( strlen( $content ) > $limit ) {
+			$content = substr( $content, 0, $str_limit ) . '...';
 		}
-		return $string;
-
+		return $content;
 	}
 
 	/**
@@ -886,7 +886,6 @@ class Record {
 		}
 
 		return wp_kses_post( (string) $value );
-
 	}
 
 	/**
