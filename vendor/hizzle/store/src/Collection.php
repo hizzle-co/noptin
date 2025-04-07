@@ -1,13 +1,13 @@
 <?php
 
-namespace Hizzle\Store;
-
 /**
  * Store API: Handles CRUD operations on a single collection of data.
  *
  * @since   1.0.0
  * @package Hizzle\Store
  */
+
+namespace Hizzle\Store;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -142,15 +142,15 @@ class Collection {
 	/**
 	 * Class constructor.
 	 *
-	 * @param string $namespace Namespace of this store's instance.
+	 * @param string $store_namespace Namespace of this store's instance.
 	 * @param array  $data An array of relevant data.
 	 */
-	public function __construct( $namespace, $data ) {
+	public function __construct( $store_namespace, $data ) {
 		global $wpdb;
 
 		// Set namespace.
 		$this->capabillity = function_exists( 'get_noptin_capability' ) ? get_noptin_capability() : 'manage_options';
-		$this->namespace   = $namespace;
+		$this->namespace   = $store_namespace;
 
 		// Set collection data.
 		foreach ( apply_filters( $this->hook_prefix( 'collection_data' ), $data ) as $key => $value ) {
@@ -649,7 +649,7 @@ class Collection {
 			}
 		}
 
-		$query_schema['order']           = array(
+		$query_schema['order'] = array(
 			'description'       => __( 'Order sort attribute ascending or descending.', 'hizzle-store' ),
 			'type'              => 'string',
 			'default'           => 'desc',
@@ -659,7 +659,7 @@ class Collection {
 
 		$all_fields = $this->get_known_fields();
 
-		$query_schema['orderby']         = array(
+		$query_schema['orderby'] = array(
 			'description'       => __( 'Sort collection by object attribute.', 'hizzle-store' ),
 			'type'              => 'string',
 			'default'           => 'id',
