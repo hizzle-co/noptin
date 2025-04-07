@@ -437,24 +437,21 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	}
 
 	/**
-	 * Schedules the next send for a given campain.
+	 * Calculates the next valid send date for a campaign.
 	 *
-	 * @param \Hizzle\Noptin\Emails\Email $campaign
-	 * @param int $is_saving Either saving or rescheduling after sending.
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The campaign object.
+	 * @param boolean $is_rescheduling Whether this is a rescheduling.
+	 * @param int $last_checked_date The timestamp of the last checked date.
+	 * @param int $tries The number of attempts made to find a valid date.
+	 * @return int|false The next valid send timestamp or false if no valid date found.
 	 */
-	public function schedule_campaign( $campaign, $is_saving = false ) {
-
-		// Clear scheduled task.
-		delete_noptin_background_action( $this->notification_hook, $campaign->id );
-
-		// Abort if the campaign is not active.
-		if ( ! $campaign->can_send() || 'manual' === $campaign->get( 'frequency' ) ) {
-			delete_post_meta( $campaign->id, '_noptin_next_send' );
-			return;
+	private function calculate_next_send_date( $campaign, $is_rescheduling, $last_checked_date = null, $tries = 0 ) {
+		// Prevent infinite loops.
+		if ( $tries >= 7 ) {
+			return false;
 		}
 
 		// Get the frequency.
-		$last_send = $campaign->get_last_send();
 		$frequency = $campaign->get( 'frequency' );
 		$day       = (string) $campaign->get( 'day' );
 		$date      = (string) $campaign->get( 'date' );
@@ -470,10 +467,11 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			$time = $this->default_time();
 		}
 
-		// Get the next send date.
+		// Calculate the next send date based on frequency.
+		$next_send = false;
 		switch ( $frequency ) {
 			case 'daily':
-				$next_send = noptin_string_to_timestamp( "tomorrow $time" );
+				$next_send = noptin_string_to_timestamp( "+1 day $time", $last_checked_date );
 				break;
 
 			case 'weekly':
@@ -481,38 +479,61 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				$days = array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
 				$day  = $days[ (int) $day ] ?? 'sunday';
 
-				$next_send = noptin_string_to_timestamp( "next $day $time" );
+				$next_send = noptin_string_to_timestamp( "next $day $time", $last_checked_date );
 				break;
 
 			case 'monthly':
 				$date = is_numeric( $date ) ? $date : $this->default_date();
 
-				$this_month = (int) gmdate( 'n', time() );
-				$this_year  = (int) gmdate( 'Y', time() );
+				$next_month = (int) gmdate( 'n', $last_checked_date ?? time() );
+				$next_year  = (int) gmdate( 'Y', $last_checked_date ?? time() );
 
-				$send_month = $this_month < 12 ? $this_month + 1 : 1;
-				$send_year  = $this_month < 12 ? $this_year : $this_year + 1;
+				// If we're rescheduling, and this is the first try, schedule in the same month...
+				if ( $is_rescheduling && ! $last_checked_date ) {
+					$next_send = noptin_string_to_timestamp( "$next_year-$next_month-$date $time" );
 
-				if ( $is_saving ) {
-					$next_send = noptin_string_to_timestamp( "$this_year-$this_month-$date $time" );
-
+					// ... unless the date is in the past.
 					if ( $next_send < time() ) {
-						$next_send = noptin_string_to_timestamp( "$send_year-$send_month-$date $time" );
+						++$next_month;
+						if ( $next_month > 12 ) {
+							$next_month = 1;
+							++$next_year;
+						}
 					}
+
+					// Else, schedule in the next month.
 				} else {
-					$next_send = noptin_string_to_timestamp( "$send_year-$send_month-$date $time" );
+					++$next_month;
+					if ( $next_month > 12 ) {
+						$next_month = 1;
+						++$next_year;
+					}
 				}
 
+				$last_day_of_month = (int) gmdate( 't', noptin_string_to_timestamp( "$next_year-$next_month-1" ) );
+
+				if ( $date > $last_day_of_month ) {
+					$date = $last_day_of_month;
+				}
+
+				$next_send = noptin_string_to_timestamp( "$next_year-$next_month-$date $time" );
 				break;
 
 			case 'yearly':
 				$year_day = $year_day ?? 1;
 
-				$send_year        = (int) gmdate( 'Y', time() );
-				$current_year_day = (int) gmdate( 'z', time() ) + 1;
+				$send_year = (int) gmdate( 'Y', $last_checked_date ?? time() );
 
-				if ( $year_day < $current_year_day ) {
+				// If we're retrying, schedule in the next year.
+				if ( $tries ) {
 					++$send_year;
+				} else {
+					$send_year        = (int) gmdate( 'Y', time() );
+					$current_year_day = (int) gmdate( 'z', time() ) + 1;
+
+					if ( $year_day < $current_year_day ) {
+						++$send_year;
+					}
 				}
 
 				$next_send = noptin_string_to_timestamp( "$send_year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
@@ -521,28 +542,69 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			case 'x_days':
 				$x_days = $x_days ?? 14;
 
-				// Schedule the next send.
-				$next_send = $campaign->get( 'next_send' );
+				if ( $tries ) {
+					$next_send = noptin_string_to_timestamp( "+$x_days days $time", $last_checked_date );
+				} else {
+					$next_send = $campaign->get( 'next_send' );
+					$last_send = $campaign->get_last_send();
 
-				if ( ! empty( $next_send ) ) {
-					$next_send = noptin_string_to_timestamp( $next_send ) - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-				}
-
-				if ( empty( $next_send ) || $next_send < time() ) {
-					$current_time = time();
-					$seconds      = $x_days * DAY_IN_SECONDS;
-
-					// If we have a last send date, use it to calculate the next send date.
-					if ( $is_saving && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
-						$current_time = $last_send;
+					// Next send is saved in local time.
+					// Convert it to GMT.
+					if ( ! empty( $next_send ) ) {
+						$next_send = noptin_string_to_timestamp( $next_send ) - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 					}
 
-					$next_send = noptin_string_to_timestamp( "+$x_days days $time", $current_time );
-				}
+					if ( empty( $next_send ) || $next_send < time() ) {
+						$current_time = time();
+						$seconds      = $x_days * DAY_IN_SECONDS;
 
+						if ( $is_rescheduling && ! empty( $last_send ) && ( $last_send + $seconds ) > $current_time ) {
+							$current_time = $last_send;
+						}
+
+						$next_send = noptin_string_to_timestamp( "+$x_days days $time", $current_time );
+					}
+				}
 				break;
 		}
 
+		// If we couldn't calculate a next send date, return false.
+		if ( empty( $next_send ) ) {
+			return false;
+		}
+
+		// Check if the calculated date is a skip day.
+		$skip_days   = wp_parse_id_list( $campaign->get( 'skip_days' ) );
+		$day_of_week = (int) gmdate( 'w', $next_send );
+
+		if ( ! empty( $skip_days ) && in_array( $day_of_week, $skip_days, true ) ) {
+			return $this->calculate_next_send_date( $campaign, $is_rescheduling, $next_send, $tries + 1 );
+		}
+
+		return $next_send;
+	}
+
+	/**
+	 * Schedules the next send for a given campain.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
+	 * @param boolean $is_rescheduling Either saving or rescheduling after sending.
+	 */
+	public function schedule_campaign( $campaign, $is_rescheduling = false ) {
+
+		// Clear scheduled task.
+		delete_noptin_background_action( $this->notification_hook, $campaign->id );
+
+		// Abort if the campaign is not active.
+		if ( ! $campaign->can_send() || 'manual' === $campaign->get( 'frequency' ) ) {
+			delete_post_meta( $campaign->id, '_noptin_next_send' );
+			return;
+		}
+
+		// Get the last send date.
+		$last_send = $campaign->get_last_send();
+		// Calculate the next send date.
+		$next_send = $this->calculate_next_send_date( $campaign, $is_rescheduling );
 		if ( ! empty( $next_send ) ) {
 			$next_send -= ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 			$next_send += MINUTE_IN_SECONDS; // Add a minute to avoid sending the email at the same time as the cron event.
@@ -649,16 +711,17 @@ class Recurring extends \Noptin_Automated_Email_Type {
 		}
 
 		if ( $next_send ) {
-			$scheduled = next_scheduled_noptin_background_action( $this->notification_hook, $campaign->id );
-			$next_send = $scheduled ? $scheduled : $next_send;
-			$skip_days = wp_parse_id_list( $campaign->get( 'skip_days' ) );
-			$error     = ( $next_send < time() || in_array( (int) gmdate( 'w', $next_send ), $skip_days, true ) ) ? 'noptin-text-warning' : 'noptin-text-success';
+			$scheduled  = next_scheduled_noptin_background_action( $this->notification_hook, $campaign->id );
+			$next_send  = $scheduled ? $scheduled : $next_send;
+			$local_time = $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+			$skip_days  = wp_parse_id_list( $campaign->get( 'skip_days' ) );
+			$error      = ( $next_send < time() || in_array( (int) gmdate( 'w', $next_send ), $skip_days, true ) ) ? 'noptin-text-warning' : 'noptin-text-success';
 
 			$next_send = sprintf(
 				'<div class="noptin-strong %s noptin-tip" title="%s">%s</div>',
 				$error,
-				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_send + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) ),
-				wp_kses_post( $this->get_formatted_next_send_time( $next_send, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )
+				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $local_time ) ),
+				wp_kses_post( $this->get_formatted_next_send_time( $local_time, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )
 			);
 
 			// If we have a next send time, but no cron event, display a warning.
@@ -709,7 +772,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 */
 	private function get_formatted_next_send_time( $timestamp, $skip_days = array() ) {
 
-		$now = time();
+		$now = current_time( 'timestamp' );
 
 		// If past, abort.
 		if ( $timestamp < $now ) {

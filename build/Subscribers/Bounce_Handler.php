@@ -24,6 +24,7 @@ class Bounce_Handler {
 	 */
 	public static function init() {
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
+		add_filter( 'noptin_get_settings', array( __CLASS__, 'add_settings' ) );
 	}
 
 	/**
@@ -112,7 +113,7 @@ class Bounce_Handler {
 				),
 				'ses'          => array(
 					'name' => 'Amazon SES',
-					'url'  => self::service_url( 'ses' ),
+					'url'  => noptin_get_guide_url( 'Email Subscribers', 'email-subscribers/bounce-handling/amazon-ses' ),
 				),
 			)
 		);
@@ -293,13 +294,22 @@ class Bounce_Handler {
 	 */
 	public static function handle_ses( $request ) {
 		// Parse the message.
-		$payload = $request->get_json_params();
-		$message = isset( $payload['Message'] ) ? json_decode( $payload['Message'], true ) : array();
+		$payload = json_decode( $request->get_body(), true );
+
+		if ( ! is_array( $payload ) ) {
+			return;
+		}
+
+		$message = isset( $payload['Message'] ) ? ( is_string( $payload['Message'] ) ? json_decode( $payload['Message'], true ) : $payload['Message'] ) : array();
 		$message = is_array( $message ) ? $message : array();
 		$type    = $payload['notificationType'] ?? $message['notificationType'] ?? $message['eventType'] ?? $payload['Type'] ?? '';
 
 		// SES sends a subscription confirmation first
 		if ( 'SubscriptionConfirmation' === $type ) {
+			if ( ! empty( $payload['SubscribeURL'] ) ) {
+				\wp_remote_get( $payload['SubscribeURL'] );
+			}
+
 			return;
 		}
 
@@ -343,5 +353,48 @@ class Bounce_Handler {
 
 	private static function campaign_id_header_name() {
 		return 'X-' . md5( home_url() );
+	}
+
+	/**
+	 * Add settings.
+	 *
+	 * @param array $settings The settings array.
+	 * @return array
+	 */
+	public static function add_settings( $settings ) {
+		if ( ! isset( $settings['general_email_info'] ) ) {
+			return $settings;
+		}
+
+		$settings['general_email_info']['settings']['bounce_webhook_url'] = array(
+			'el'          => 'input',
+			'type'        => 'text',
+			'section'     => 'emails',
+			'readonly'    => true,
+			'label'       => __( 'Bounce Handler', 'newsletter-optin-box' ),
+			'default'     => self::service_url( '{{YOUR_SERVICE}}' ),
+			'placeholder' => self::service_url( '{{YOUR_SERVICE}}' ),
+			'description' => sprintf(
+				// translators: %s is the list of supported services.
+				__( 'Supported services:- %s', 'newsletter-optin-box' ),
+				implode(
+					', ',
+					array_map(
+						function ( $args, $service ) {
+							return sprintf(
+								'<a href="%s" target="_blank">%s</a>',
+								esc_url( $args['url'] ),
+								esc_html( $service )
+							);
+						},
+						self::get_supported_services(),
+						array_keys( self::get_supported_services() )
+					)
+				)
+			),
+			'disabled'    => true,
+		);
+
+		return $settings;
 	}
 }

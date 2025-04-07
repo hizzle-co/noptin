@@ -376,35 +376,6 @@ class Menu {
 						'tooltip'     => __( 'The maximum number of emails to send per hour. Leave empty to send as many as possible.', 'newsletter-optin-box' ),
 					),
 
-					'bounce_webhook_url' => array(
-						'el'          => 'input',
-						'type'        => 'text',
-						'section'     => 'emails',
-						'readonly'    => true,
-						'label'       => __( 'Bounce Handler', 'newsletter-optin-box' ),
-						'default'     => noptin()->api()->bounce_handler->service_url( '{{YOUR_SERVICE}}' ),
-						'placeholder' => noptin()->api()->bounce_handler->service_url( '{{YOUR_SERVICE}}' ),
-						'description' => sprintf(
-							// translators: %s is the list of supported services.
-							__( 'Supported services:- %s', 'newsletter-optin-box' ),
-							implode(
-								', ',
-								array_map(
-									function ( $args, $service ) {
-										return sprintf(
-											'<a href="%s" target="_blank">%s</a>',
-											esc_url( $args['url'] ),
-											esc_html( $service )
-										);
-									},
-									noptin()->api()->bounce_handler->get_supported_services(),
-									array_keys( noptin()->api()->bounce_handler->get_supported_services() )
-								)
-							)
-						),
-						'disabled'    => true,
-					),
-
 					'delete_campaigns'   => array(
 						'el'               => 'input',
 						'type'             => 'number',

@@ -714,8 +714,34 @@ class Main {
 
 			switch ( self::$current_email->get( 'frequency' ) ) {
 
-				// Get posts published yesterday.
+				// Get posts published since last send, accounting for skipped days.
 				case 'daily':
+					$skip_days = wp_parse_id_list( self::$current_email->get( 'skip_days' ) );
+
+					// Get current time in WordPress timezone
+					$today = (int) gmdate( 'w' );
+
+					// Calculate yesterday's weekday number (0-6).
+					// $today - 1 would give us yesterday's day number.
+					// + 7 is added to ensure we don't get negative numbers.
+					// % 7 (modulo 7) wraps the number back into the 0-6 range
+					// If today is Monday (1), then (1 - 1 + 7) % 7 = 0 (Sunday).
+					// If today is Sunday (0), then (0 - 1 + 7) % 7 = 6 (Saturday).
+					$yesterday = ( $today + 6 ) % 7;
+
+					// If yesterday was a skip day, look back to the last non-skip day.
+					if ( in_array( $yesterday, $skip_days, true ) ) {
+						// Look back up to 7 days to find the last non-skip day.
+						for ( $i = 2; $i <= 7; $i++ ) {
+							$check_day = ( $today - $i + 7 ) % 7;
+							if ( ! in_array( $check_day, $skip_days, true ) ) {
+								return strtotime( "-$i days midnight" );
+							}
+						}
+
+						return $date;
+					}
+
 					return strtotime( 'yesterday midnight' );
 
 				// Get posts published in the last 7 days.
@@ -733,11 +759,10 @@ class Main {
 				// Get posts published last x days.
 				case 'x_days':
 					$days = self::$current_email->get( 'x_days' );
-					if ( empty( $days ) ) {
-						$days = 14;
+					if ( ! empty( $days ) ) {
+						$days = absint( $days );
+						return strtotime( "-$days days" );
 					}
-
-					return strtotime( "-$days days" );
 			}
 		}
 
