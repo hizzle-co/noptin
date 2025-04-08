@@ -360,18 +360,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			return;
 		}
 
-		$referring_campaign = edd_get_order_meta( $order->id, '_noptin_referring_campaign', true );
+		if ( function_exists( 'noptin_attribute_revenue_by_email_address' ) ) {
+			noptin_attribute_revenue_by_email_address( $order->email );
 
-		if ( empty( $referring_campaign ) ) {
-			$referring_campaign = noptin_get_referring_email_id();
-
-			if ( ! empty( $referring_campaign ) ) {
-				edd_update_order_meta( $order->id, '_noptin_referring_campaign', $referring_campaign );
+			if ( 'complete' === $new_status ) {
+				noptin_record_ecommerce_purchase( $order->total, $order->email );
 			}
-		}
-
-		if ( ! empty( $referring_campaign ) && 'complete' === $new_status ) {
-			noptin_record_ecommerce_purchase( $order->total, $referring_campaign );
 		}
 
 		$this->trigger(

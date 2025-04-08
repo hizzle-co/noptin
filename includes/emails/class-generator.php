@@ -355,9 +355,6 @@ class Noptin_Email_Generator {
 		// Remove double http://.
 		$content = $this->fix_links_with_double_http( $content );
 
-		// Make links trackable.
-		$content = $this->make_links_trackable( $content );
-
 		// Backup hrefs.
 		$content = $this->backup_hrefs( $content );
 
@@ -372,6 +369,9 @@ class Noptin_Email_Generator {
 
 		// Restore hrefs.
 		$content = $this->restore_hrefs( $content );
+
+		// Make links trackable.
+		$content = $this->make_links_trackable( $content );
 
 		// Filters a post processed email.
 		return apply_filters( 'noptin_post_process_email_content', $content, $this );

@@ -902,19 +902,12 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			return;
 		}
 
-		$referring_campaign = $order->get_meta( '_noptin_referring_campaign' );
+		if ( function_exists( 'noptin_attribute_revenue_by_email_address' ) ) {
+			noptin_attribute_revenue_by_email_address( $order->get_billing_email() );
 
-		if ( empty( $referring_campaign ) ) {
-			$referring_campaign = noptin_get_referring_email_id();
-
-			if ( ! empty( $referring_campaign ) ) {
-				$order->update_meta_data( '_noptin_referring_campaign', $referring_campaign );
-				$order->save();
+			if ( self::is_complete() ) {
+				noptin_record_ecommerce_purchase( $order->get_total(), $order->get_billing_email());
 			}
-		}
-
-		if ( ! empty( $referring_campaign ) && self::is_complete() ) {
-			noptin_record_ecommerce_purchase( $order->get_total(), $referring_campaign );
 		}
 
 		// Check that the current action is a valid trigger.

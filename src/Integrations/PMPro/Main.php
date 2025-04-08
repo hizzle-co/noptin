@@ -25,6 +25,11 @@ class Main {
 		add_action( 'pmpro_after_change_membership_level', __CLASS__ . '::after_change_membership_level', 100, 3 );
 		add_action( 'pmpro_checkout_before_change_membership_level', __CLASS__ . '::remove_trigger' );
 		add_action( 'pmpro_after_checkout', __CLASS__ . '::after_checkout', 100, 2 );
+		add_filter( 'noptin_get_settings', array( __CLASS__, 'add_options' ) );
+
+		if ( get_noptin_option( 'pmpro_manage_preferences' ) ) {
+			add_action( 'pmpro_show_user_profile', array( __CLASS__, 'display_pmpro_manage_subscription_form' ) );
+		}
 	}
 
 	/**
@@ -249,5 +254,116 @@ class Main {
 		if ( ! pmpro_changeMembershipLevel( $custom_level, $user->ID, 'changed' ) && ! empty( $GLOBALS['pmpro_error'] ) ) {
 			return new \WP_Error( 'noptin_pmpro_error', $GLOBALS['pmpro_error'] );
 		}
+	}
+
+	/**
+	 * Add PMPro manage options to Noptin settings.
+	 *
+	 * @param array $options
+	 * @return array
+	 */
+	public static function add_options( $options ) {
+
+		if ( isset( $options['subscription_info'] ) ) {
+			$options['subscription_info']['settings']['pmpro_manage_preferences'] = array(
+				'el'          => 'input',
+				'type'        => 'checkbox',
+				'label'       => __( 'PMPro Newsletter Subscription Management', 'newsletter-optin-box' ),
+				'description' => __( 'If enabled, subscribers will be able to manage their newsletter subscription from their PMPro profile edit page.', 'newsletter-optin-box' ),
+			);
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Display PMPro manage subscription form.
+	 */
+	public static function display_pmpro_manage_subscription_form() {
+
+		$user       = get_userdata( get_current_user_id() );
+		$subscriber = noptin_get_subscriber( $user->user_email );
+		$subscribed = 'subscribed' === $subscriber->get_status();
+		$defaults   = array(
+			'email'      => $user->user_email,
+			'first_name' => $user->first_name,
+			'last_name'  => $user->last_name,
+		);
+
+		if ( ! $subscriber->exists() ) {
+			$subscriber = false;
+		}
+
+		?>
+			<style>
+				textarea.noptin-text {
+				font-family: inherit;
+				width: 100%;
+			}
+			</style>
+			<fieldset id="pmpro_member_profile_edit-noptin-information" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmpro_member_profile_edit-noptin-information' ) ); ?>">
+				<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ); ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Newsletter', 'paid-memberships-pro' ); ?></h2>
+				</legend>
+				<div style="margin-bottom: 16px;">
+					<label>
+						<input type="hidden" name="noptin_fields[status]" value="unsubscribed" />
+						<input type="checkbox" name="noptin_fields[status]" value="subscribed" <?php checked( $subscribed ); ?> />
+						<span>
+							<?php esc_html_e( 'Subscribe to our newsletter', 'noptin-addons-pack' ); ?>
+						</span>
+					</label>
+				</div>
+				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields pmpro_cols-2' ) ); ?>">
+					<?php
+
+					foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
+
+						if ( isset( $defaults[ $custom_field['merge_tag'] ] ) ) {
+							printf(
+								'<input type="hidden" name="noptin_fields[%s]" value="%s" />',
+								esc_attr( $custom_field['merge_tag'] ),
+								esc_attr( $defaults[ $custom_field['merge_tag'] ] )
+							);
+
+							continue;
+						}
+
+						// Display the field.
+						$custom_field['wrap_name'] = true;
+						$custom_field['show_id']   = true;
+
+						?>
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-' . $custom_field['merge_tag'], 'pmpro_form_field-' . $custom_field['merge_tag'] ) ); ?>">
+								<?php display_noptin_custom_field_input( $custom_field, $subscriber ); ?>
+								</div>
+							<?php
+					}
+
+						wp_nonce_field( 'noptin-manage-subscription-nonce', 'noptin-manage-subscription-nonce' );
+					?>
+				</div>
+			</fieldset>
+			<script>
+				document.addEventListener('DOMContentLoaded', function() {
+					const labels = document.querySelectorAll('#pmpro_member_profile_edit-noptin-information .noptin-label');
+					labels.forEach(function(label) {
+						if (!label.classList.contains('pmpro_form_label')) {
+							label.classList.add('pmpro_form_label');
+						}
+					});
+
+					const inputs = document.querySelectorAll('#pmpro_member_profile_edit-noptin-information .noptin-text');
+					inputs.forEach(function(input) {
+						if (!input.classList.contains('pmpro_form_input')) {
+							input.classList.add('pmpro_form_input');
+						}
+						if (!input.classList.contains('pmpro_form_input-text')) {
+							input.classList.add('pmpro_form_input-text');
+						}
+					});
+				});
+			</script>
+		<?php
 	}
 }
