@@ -130,6 +130,17 @@ class Product extends \Hizzle\Noptin\Objects\Record {
 			return $this->external->get_permalink();
 		}
 
+		// Add to cart url.
+		if ( 'add_to_cart_url' === $field ) {
+			$url = $this->external->add_to_cart_url();
+
+			if ( 0 === strpos( $url, '?' ) ) {
+				$url = $this->external->get_permalink() . $url;
+			}
+
+			return $url;
+		}
+
 		// Image url.
 		if ( 'image' === strtolower( $field ) ) {
 			$image_size = ! empty( $args['size'] ) ? $args['size'] : 'woocommerce_thumbnail';
