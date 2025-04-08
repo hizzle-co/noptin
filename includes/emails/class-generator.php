@@ -352,9 +352,6 @@ class Noptin_Email_Generator {
 		// Balance tags.
 		$content = force_balance_tags( $content );
 
-		// Clean links.
-		$content = $this->clean_links( $content );
-
 		// Remove double http://.
 		$content = $this->fix_links_with_double_http( $content );
 
@@ -498,6 +495,12 @@ class Noptin_Email_Generator {
 				// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
 				if ( false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
 					$anchors           = $element->getElementsByTagName( 'a' );
+
+					if ( empty( $anchors->length ) ) {
+						$element->parentNode->removeChild( $element );
+						continue;
+					}
+
 					$missing_href      = ! $anchors->item( 0 )->hasAttribute( 'href' ) || empty( $anchors->item( 0 )->getAttribute( 'href' ) );
 					$missing_data_href = ! $anchors->item( 0 )->hasAttribute( 'data-href' ) || empty( $anchors->item( 0 )->getAttribute( 'data-href' ) );
 					$has_either        = ! $missing_href || ! $missing_data_href;
@@ -564,6 +567,7 @@ class Noptin_Email_Generator {
 							$parent = $parent->parentNode;
 						}
 
+						/** @var \DOMElement $parent */
 						if ( $parent && $parent->hasAttribute( 'class' ) && false !== strpos( $parent->getAttribute( 'class' ), 'noptin-button-link__wrapper' ) ) {
 							$td_style = $parent->getAttribute( 'style' );
 							$td_style = rtrim( $td_style, ';' );
@@ -607,7 +611,6 @@ class Noptin_Email_Generator {
 
 			// Fix image display on Outlook.
 			if ( 'img' === $element->nodeName && ! $element->hasAttribute( 'width' ) ) {
-
 				$width = '100%';
 
 				// Check if the image is inside a .noptin-column element
@@ -711,7 +714,19 @@ class Noptin_Email_Generator {
 
 		foreach ( $elements as $element ) {
 			/** @var \DOMElement $element */
-			$element->setAttribute( 'data-href', $element->getAttribute( 'href' ) );
+			$href = $element->getAttribute( 'href' );
+
+			// Check if href begins with a question mark and fix it
+			if ( ! empty( $href ) && '?' === substr( $href, 0, 1 ) ) {
+				// Get the current site URL to prepend
+				$site_url = get_site_url();
+
+				// Append the query string to the site URL
+				$href = trailingslashit( $site_url ) . $href;
+				$element->setAttribute( 'href', $href );
+			}
+
+			$element->setAttribute( 'data-href', $href );
 			$element->removeAttribute( 'href' );
 		}
 
@@ -793,36 +808,6 @@ class Noptin_Email_Generator {
 		}
 
 		return apply_filters( 'noptin_can_track_campaign', true, $this );
-	}
-
-	/**
-	 * Ensures links are properly formatted.
-	 *
-	 * @param string $content The email content.
-	 * @return string
-	 */
-	public function clean_links( $content ) {
-		// Replace links that start with ? with home_url() + ?
-		$content = preg_replace_callback(
-			//\s+ ensures at least one whitespace character after <a
-			//[^>]*? ensures we only match attributes before the href
-			//\s*=\s* handles optional whitespace around the equals sign
-			//["\']?\s* handles optional quotes and whitespace before the question mark
-			//[^"\'>]* more specifically matches the query string by excluding quotes and closing angle bracket
-			'/<a\s+([^>]*?)href\s*=\s*["\']?\s*\?([^"\'>]*)["\']([^>]*?)>/mi',
-			function ( $matches ) {
-				$url = site_url() . '/?' . $matches[2];
-				return sprintf(
-					'<a%shref="%s"%s>',
-					$matches[1],
-					esc_url( $url ),
-					$matches[3]
-				);
-			},
-			$content
-		);
-
-		return $content;
 	}
 
 	/**
