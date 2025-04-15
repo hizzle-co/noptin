@@ -488,6 +488,12 @@ class Recurring extends \Noptin_Automated_Email_Type {
 				$next_month = (int) gmdate( 'n', $last_checked_date ?? time() );
 				$next_year  = (int) gmdate( 'Y', $last_checked_date ?? time() );
 
+				$last_day_of_month = (int) gmdate( 't', noptin_string_to_timestamp( "$next_year-$next_month-1" ) );
+
+				if ( $date > $last_day_of_month ) {
+					$date = $last_day_of_month;
+				}
+
 				// If we're rescheduling, and this is the first try, schedule in the same month...
 				if ( $is_rescheduling && ! $last_checked_date ) {
 					$next_send = noptin_string_to_timestamp( "$next_year-$next_month-$date $time" );
@@ -510,6 +516,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 					}
 				}
 
+				// Again, check if the date is valid.
 				$last_day_of_month = (int) gmdate( 't', noptin_string_to_timestamp( "$next_year-$next_month-1" ) );
 
 				if ( $date > $last_day_of_month ) {
