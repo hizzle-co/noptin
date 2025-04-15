@@ -83,12 +83,16 @@ class REST_Controller extends \WP_REST_Controller {
 			$this->namespace,
 			'/' . $this->rest_base,
 			array(
+
+				// Fetch multiple records.
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 					'args'                => $this->get_collection_params(),
 				),
+
+				// Create a new record.
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'create_item' ),
@@ -96,13 +100,33 @@ class REST_Controller extends \WP_REST_Controller {
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ),
 					'allow_batch'         => array( 'v1' => true ),
 				),
+
+				// Bulk update records.
+				array(
+					'methods'             => 'PATCH',
+					'callback'            => array( $this, 'bulk_update_items' ),
+					'permission_callback' => array( $this, 'create_item_permissions_check' ),
+					'args'                => array_merge(
+						$this->get_collection_params(),
+						array(
+							'bulk_update'    => array(
+								'type'        => array( 'object' ),
+								'description' => 'The edits to be made to the records.',
+								'required'    => true,
+							),
+						)
+					),
+				),
+
+				// Bulk delete records.
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array( $this, 'delete_items_permissions_check' ),
 					'args'                => array(),
-					'allow_batch'         => array( 'v1' => true ),
 				),
+
+				// Schema.
 				'schema' => array( $this, 'get_public_item_schema' ),
 			)
 		);
@@ -773,6 +797,60 @@ class REST_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Bulk updates a collection of items.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function bulk_update_items( $request ) {
+		$collection = $this->fetch_collection();
+		$response   = array();
+
+		try {
+			// Prepare params.
+			$params    = $request->get_params();
+			$to_update = $params['bulk_update'];
+			unset( $params['bulk_update'] );
+
+			// Get the items to update.
+			$query = $collection->query( $params );
+
+			// Loop through the items and update them.
+			foreach ( $query->get_results() as $item ) {
+				if ( ! $this->check_record_permissions( 'edit', $item->get_id() ) ) {
+					$response[ $item->get_id() ] = array(
+						'error'   => 'hizzle_rest_cannot_edit',
+						'message' => __( 'Sorry, you are not allowed to edit this resource.', 'hizzle-store' ),
+						'status'  => rest_authorization_required_code(),
+					);
+					continue;
+				}
+
+				$item->set_props( $to_update );
+				$result = $item->save();
+
+				if ( is_wp_error( $result ) ) {
+					$response[ $item->get_id() ] = array(
+						'error'   => $result->get_error_code(),
+						'message' => $result->get_error_message(),
+					);
+				} else {
+					$response[ $item->get_id() ] = array(
+						'success' => true,
+						'message' => 'Record updated successfully.',
+					);
+				}
+			}
+		} catch ( Store_Exception $e ) {
+			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
+		}
+
+		return rest_ensure_response( $response );
+	}
+
+	/**
 	 * Updates one item from the collection.
 	 *
 	 * @since 1.0.0
@@ -1084,7 +1162,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
 		}
 
-		// Bulk updates.
+		// Is the user updating all items matching a query?
 		$bulk_update = $request->get_param( 'bulk_update' );
 		$collection  = $this->fetch_collection();
 
@@ -1092,9 +1170,13 @@ class REST_Controller extends \WP_REST_Controller {
 			$items['update'] = isset( $items['update'] ) ? $items['update'] : array();
 
 			try {
+				// Get the items to update.
 				$query = $collection->query( $bulk_update['query'] );
+
+				// Prepare the edits to be made to the items.
 				$merge = $bulk_update['merge'];
 
+				// Loop through the items and prepare the edits.
 				foreach ( $query->get_results() as $item ) {
 					$items['update'][] = array_merge(
 						$merge,
