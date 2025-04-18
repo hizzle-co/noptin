@@ -59,6 +59,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	public function before_initialize() {
 
 		// Misc.
+		add_action( 'woocommerce_blocks_loaded', array( $this, 'init_store_endpoint' ) );
 		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
 		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
 	}
@@ -81,6 +82,35 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
 	}
 
+	public function init_store_endpoint() {
+		$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
+
+		if ( is_callable( array( $extend, 'register_endpoint_data' ) ) ) {
+			$extend->register_endpoint_data(
+				array(
+					'endpoint'        => Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema::IDENTIFIER,
+					'namespace'       => 'noptin',
+					'schema_callback' => array( $this, 'extend_checkout_schema' ),
+					'schema_type'     => ARRAY_A,
+				)
+			);
+		}
+	}
+
+	public function extend_checkout_schema() {
+		return array(
+			'optin' => array(
+				'description' => 'Noptin optin',
+				'type'        => 'boolean',
+				'context'     => array( 'view', 'edit' ),
+				'optional'    => true,
+				'arg_options' => array(
+					'validate_callback' => '__return_true',
+				),
+			),
+		);
+	}
+
 	/**
 	 * Registers a WooCommerce checkout block registry integration.
 	 *
@@ -100,7 +130,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 * @since 1.7.4
 	 */
 	public function checkout_update_order_from_request( $order, $request = array() ) {
-		$optin = ! empty( $request['extensions']['noptin']['optin'] );
+		$extensions = $request->get_param( 'extensions' );
+		$optin      = ! empty( $extensions['noptin']['optin'] );
 		$order->update_meta_data( 'noptin_opted_in', (int) $optin );
 	}
 
@@ -114,13 +145,13 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 		return apply_filters(
 			'noptin_woocommerce_integration_subscription_checkbox_positions',
 			array(
-				'after_email_field'                           => __( 'After email field', 'newsletter-optin-box' ),
-				'woocommerce_checkout_billing'                => __( 'After billing details', 'newsletter-optin-box' ),
-				'woocommerce_checkout_shipping'               => __( 'After shipping details', 'newsletter-optin-box' ),
+				'after_email_field'                       => __( 'After email field', 'newsletter-optin-box' ),
+				'woocommerce_checkout_billing'            => __( 'After billing details', 'newsletter-optin-box' ),
+				'woocommerce_checkout_shipping'           => __( 'After shipping details', 'newsletter-optin-box' ),
 				'woocommerce_checkout_after_customer_details' => __( 'After customer details', 'newsletter-optin-box' ),
-				'woocommerce_review_order_before_payment'     => __( 'After order review', 'newsletter-optin-box' ),
-				'woocommerce_review_order_before_submit'      => __( 'Before submit button', 'newsletter-optin-box' ),
-				'woocommerce_after_order_notes'               => __( 'After order notes', 'newsletter-optin-box' ),
+				'woocommerce_review_order_before_payment' => __( 'After order review', 'newsletter-optin-box' ),
+				'woocommerce_review_order_before_submit'  => __( 'Before submit button', 'newsletter-optin-box' ),
+				'woocommerce_after_order_notes'           => __( 'After order notes', 'newsletter-optin-box' ),
 			)
 		);
 	}
