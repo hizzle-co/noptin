@@ -50,21 +50,6 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	/**
-	 * This method is called before an integration is initialized.
-	 *
-	 * Useful for setting integration variables.
-	 *
-	 * @since 1.2.6
-	 */
-	public function before_initialize() {
-
-		// Misc.
-		add_action( 'woocommerce_blocks_loaded', array( $this, 'init_store_endpoint' ) );
-		add_action( 'woocommerce_blocks_checkout_block_registration', array( $this, 'register_checkout_block_integration_registry' ) );
-		add_action( 'woocommerce_store_api_checkout_update_order_from_request', array( $this, 'checkout_update_order_from_request' ), 10, 2 );
-	}
-
-	/**
 	 * Hooks the display checkbox code.
 	 *
 	 * @since 1.2.6
@@ -72,67 +57,28 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	 */
 	public function hook_show_checkbox_code( $checkbox_position ) {
 
-		if ( 'after_email_field' === $checkbox_position ) {
-			add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
-		} else {
-			add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
+		if ( $this->can_show_checkbox() ) {
+			if ( 'after_email_field' === $checkbox_position ) {
+					add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
+			} else {
+					add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
+			}
+
+			// hooks for when using WooCommerce Checkout Block.
+			add_action( 'woocommerce_init', array( $this, 'add_checkout_block_field' ) );
+
+			if ( (bool) get_noptin_option( $this->get_autotick_checkbox_option_name() ) ) {
+				add_filter(
+					'woocommerce_get_default_value_for_noptin/optin',
+					function ( $value ) {
+						return '1';
+					}
+				);
+			}
 		}
 
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
 		add_filter( 'noptin_woocommerce_integration_subscription_checkbox_attributes', array( $this, 'add_woocommerce_class_to_checkbox' ) );
-	}
-
-	public function init_store_endpoint() {
-		$extend = Automattic\WooCommerce\StoreApi\StoreApi::container()->get( Automattic\WooCommerce\StoreApi\Schemas\ExtendSchema::class );
-
-		if ( is_callable( array( $extend, 'register_endpoint_data' ) ) ) {
-			$extend->register_endpoint_data(
-				array(
-					'endpoint'        => Automattic\WooCommerce\StoreApi\Schemas\V1\CheckoutSchema::IDENTIFIER,
-					'namespace'       => 'noptin',
-					'schema_callback' => array( $this, 'extend_checkout_schema' ),
-					'schema_type'     => ARRAY_A,
-				)
-			);
-		}
-	}
-
-	public function extend_checkout_schema() {
-		return array(
-			'optin' => array(
-				'description' => 'Noptin optin',
-				'type'        => 'boolean',
-				'context'     => array( 'view', 'edit' ),
-				'optional'    => true,
-				'arg_options' => array(
-					'validate_callback' => '__return_true',
-				),
-			),
-		);
-	}
-
-	/**
-	 * Registers a WooCommerce checkout block registry integration.
-	 *
-	 * @param Automattic\WooCommerce\Blocks\Integrations\IntegrationRegistry $integration_registry The integration registry.
-	 * @since 1.7.4
-	 */
-	public function register_checkout_block_integration_registry( $integration_registry ) {
-		require_once plugin_dir_path( __FILE__ ) . 'class-noptin-woocommerce-checkout-block-integration.php';
-		$integration_registry->register( new Noptin_WooCommerce_Checkout_Block_Integration( $this ) );
-	}
-
-	/**
-	 * Updates checkout blocks order.
-	 *
-	 * @param WC_Order $order Order object.
-	 * @param WP_REST_Request $request Full details about the request.
-	 * @since 1.7.4
-	 */
-	public function checkout_update_order_from_request( $order, $request = array() ) {
-		$extensions = $request->get_param( 'extensions' );
-		$optin      = ! empty( $extensions['noptin']['optin'] );
-		$order->update_meta_data( 'noptin_opted_in', (int) $optin );
 	}
 
 	/**
@@ -188,9 +134,52 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			return false;
 		}
 
+		if ( $this->auto_subscribe() ) {
+			return true;
+		}
+
+		// Shortcode checkout.
 		$checked = $order->get_meta( 'noptin_opted_in', true );
-		return $this->auto_subscribe() || ! empty( $checked );
+		if ( ! empty( $checked ) ) {
+			return true;
+		}
+
+		// Block checkout.
+		if ( class_exists( '\Automattic\WooCommerce\Blocks\Package' ) && class_exists( '\Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields' ) ) {
+			/** @var \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields $checkout_fields */
+            $checkout_fields = Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class );
+
+            if (
+                $checkout_fields
+
+                && method_exists( $checkout_fields, 'get_field_from_object' )
+                // method was private in earlier versions of WooCommerce, so check if callable
+                && is_callable( array( $checkout_fields, 'get_field_from_object' ) )
+            ) {
+                return $checkout_fields->get_field_from_object( 'noptin/optin', $order, 'contact' );
+            }
+        }
+
+		return false;
 	}
+
+	public function add_checkout_block_field() {
+        // for compatibility with older WooCommerce versions
+        // check if function exists before calling
+        if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+            return;
+        }
+
+        woocommerce_register_additional_checkout_field(
+            array(
+                'id'            => 'noptin/optin',
+                'location'      => 'order',
+                'type'          => 'checkbox',
+                'label'         => $this->get_label_text(),
+                'optionalLabel' => $this->get_label_text(),
+            )
+        );
+    }
 
 	/**
 	 * Adds the checkbox after an email field.
