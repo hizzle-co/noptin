@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Version: 3.8.1
-Stable tag: 3.8.1
+Version: 3.8.2
+Stable tag: 3.8.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.8.2 =
+* Fix: Compatibility with WooCommerce 9.8.
 
 = 3.8.1 =
 * Add: Amazon SES bounce handler.
