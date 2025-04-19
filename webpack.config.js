@@ -6,8 +6,6 @@ module.exports = {
 
 	entry: {
 		admin: "./includes/assets/js/src/admin.js",
-		"blocks-woocommerce-backend": "./includes/assets/js/src/wc/index.js",
-		"blocks-woocommerce-frontend": "./includes/assets/js/src/wc/frontend.js",
 		"form-editor": "./includes/assets/js/src/form-editor.js",
 	},
 	output: {
