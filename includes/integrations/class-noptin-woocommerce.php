@@ -158,22 +158,38 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	}
 
 	public function add_checkout_block_field() {
-        // for compatibility with older WooCommerce versions
-        // check if function exists before calling
-        if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
-            return;
-        }
+		// for compatibility with older WooCommerce versions
+		// check if function exists before calling
+		if ( ! function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+			return;
+		}
 
-        woocommerce_register_additional_checkout_field(
-            array(
-                'id'            => 'noptin/optin',
-                'location'      => 'contact',
-                'type'          => 'checkbox',
-                'label'         => $this->get_label_text(),
-                'optionalLabel' => $this->get_label_text(),
-            )
-        );
-    }
+		// get the location from the legacy method
+		switch ( $this->get_checkbox_position() ) {
+			case 'woocommerce_review_order_before_payment':
+			case 'woocommerce_review_order_before_submit':
+			case 'woocommerce_after_order_notes':
+				$location = 'order';
+				break;
+			case 'woocommerce_checkout_billing':
+			case 'woocommerce_checkout_shipping':
+				$location = 'address';
+				break;
+			default:
+				$location = 'contact';
+				break;
+		}
+
+		woocommerce_register_additional_checkout_field(
+			array(
+				'id'            => 'noptin/optin',
+				'location'      => $location,
+				'type'          => 'checkbox',
+				'label'         => $this->get_label_text(),
+				'optionalLabel' => $this->get_label_text(),
+			)
+		);
+	}
 
 	/**
 	 * Adds the checkbox after an email field.
@@ -402,10 +418,10 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 	protected function get_order_item_details( $item ) {
 
 		$product_id   = $item->get_product_id();
-        $variation_id = $item->get_variation_id();
+		$variation_id = $item->get_variation_id();
 
-        if ( empty( $variation_id ) ) {
-            $variation_id = $item->get_product_id();
+		if ( empty( $variation_id ) ) {
+			$variation_id = $item->get_product_id();
 		}
 
 		return array(
@@ -456,15 +472,15 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 			$items = $order->get_items();
 
 			// Compare each product to our product.
-      		foreach ( $items as $item ) {
+	  		foreach ( $items as $item ) {
 				$item = $this->get_order_item_details( $item );
 
-        		if ( $product_id === (int) $item['product_id'] ) {
-            		++ $count;
-         		} elseif ( $product_id === (int) $item['variation_id'] ) {
+				if ( $product_id === (int) $item['product_id'] ) {
+					++ $count;
+		 		} elseif ( $product_id === (int) $item['variation_id'] ) {
 					++ $count;
 				}
-    		}
+			}
    		}
 
 		return $count;
