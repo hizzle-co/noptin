@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('hizzlewp-components', 'hizzlewp-interface', 'hizzlewp-records', 'react', 'react-dom', 'react-jsx-runtime', 'wp-api-fetch', 'wp-components', 'wp-date', 'wp-dom-ready', 'wp-i18n', 'wp-primitives', 'wp-url'), 'version' => '4651d8342c8cf64e1f5e');
+<?php return array('dependencies' => array('hizzlewp-components', 'hizzlewp-interface', 'hizzlewp-records', 'react', 'react-dom', 'react-jsx-runtime', 'wp-api-fetch', 'wp-components', 'wp-date', 'wp-dom-ready', 'wp-i18n', 'wp-primitives', 'wp-url'), 'version' => '7bf23b397550da165a5a');

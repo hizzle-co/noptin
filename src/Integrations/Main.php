@@ -41,7 +41,9 @@ class Main {
 		spl_autoload_register( array( $this, 'autoload' ), true, true );
 
 		// Load core integrations.
-		$this->load_integrations();
+		// TODO: Check if this is needed. Some integrations run needed code before the init hook.
+		// We need to end support for those integrations and only load integrations on the init hook.
+		add_action( 'after_setup_theme', array( $this, 'load_integrations' ), 10 );
 
 		// Some integrations are only available on teh init hook.
 		add_action( 'init', array( $this, 'load_integrations' ), 20 );
