@@ -46,7 +46,7 @@ class Noptin_Email_Manager {
 		add_action( 'plugins_loaded', array( $this, 'init' ) );
 
 		// Add hooks.
-		add_action( 'plugins_loaded', array( $this, 'add_hooks' ) );
+		add_action( 'after_setup_theme', array( $this, 'add_hooks' ) );
 	}
 
 	/**

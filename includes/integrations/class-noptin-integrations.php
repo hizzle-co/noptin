@@ -19,7 +19,10 @@ class Noptin_Integrations {
 	 * Class Constructor.
 	 */
 	public function __construct() {
+		add_action( 'after_setup_theme', array( $this, 'load_integrations' ), 10 );
+	}
 
+	public function load_integrations() {
 		// WooCommerce integration.
 		if ( class_exists( 'WooCommerce' ) ) {
 			$this->integrations['woocommerce'] = new Noptin_WooCommerce();

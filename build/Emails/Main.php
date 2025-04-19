@@ -40,7 +40,7 @@ class Main {
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
-		add_action( 'noptin_load', array( __CLASS__, 'register_email_types' ), 0 );
+		add_action( 'after_setup_theme', array( __CLASS__, 'register_email_types' ), 0 );
 
 		// Fire hooks.
 		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );

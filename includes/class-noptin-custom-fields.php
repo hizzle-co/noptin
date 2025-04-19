@@ -31,18 +31,25 @@ class Noptin_Custom_Fields {
 		do_action( 'noptin_load_custom_field_files' );
 
 		// Load custom field types.
-		foreach ( get_noptin_custom_field_types() as $type => $data ) {
-
-			if ( ! empty( $data['class'] ) ) {
-				$this->custom_field_types[ $type ] = new $data['class']( $type );
-			}
-		}
+		add_action( 'after_setup_theme', array( $this, 'load_custom_field_types' ) );
 
 		add_filter( 'noptin_form_editor_data', array( $this, 'form_editor_data' ) );
 
 		// Deprecated functionality.
 		add_action( 'noptin_field_type_optin_markup', array( $this, 'output_preview' ) );
 		add_action( 'noptin_field_type_frontend_optin_markup', array( $this, 'output_frontend' ) );
+	}
+
+	/**
+	 * Loads custom field types.
+	 */
+	public function load_custom_field_types() {
+		foreach ( get_noptin_custom_field_types() as $type => $data ) {
+
+			if ( ! empty( $data['class'] ) ) {
+				$this->custom_field_types[ $type ] = new $data['class']( $type );
+			}
+		}
 	}
 
 	/**

@@ -315,8 +315,6 @@ class Noptin {
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
 		$this->integrations     = new Noptin_Integrations();
 
-		\Hizzle\Noptin\Objects\Users::add_default();
-
 		// Custom fields.
 		$this->custom_fields = new Noptin_Custom_Fields();
 
@@ -332,6 +330,9 @@ class Noptin {
 
 		// Init scripts.
 		Noptin_Scripts::init();
+
+		// Users.
+		add_action( 'after_setup_theme', '\Hizzle\Noptin\Objects\Users::add_default' );
 
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );
