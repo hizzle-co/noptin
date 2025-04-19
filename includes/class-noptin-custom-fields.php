@@ -20,12 +20,8 @@ class Noptin_Custom_Fields {
 	public function __construct() {
 
 		// Load dependancies.
-		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio', 'multi-checkbox' ) as $file ) {
+		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio', 'multi-checkbox', 'language' ) as $file ) {
 			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
-		}
-
-		if ( noptin_is_multilingual() ) {
-			require_once plugin_dir_path( __FILE__ ) . 'field-types/class-language.php';
 		}
 
 		do_action( 'noptin_load_custom_field_files' );
