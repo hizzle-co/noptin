@@ -75,6 +75,19 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 					}
 				);
 			}
+
+			if ( ! is_admin() ) {
+				add_action(
+					'woocommerce_set_additional_field_value',
+					function ( $key, $value, $group, $wc_object ) {
+						if ( 'noptin/optin' === $key ) {
+							$wc_object->update_meta_data( 'noptin_opted_in', $value, true );
+						}
+					},
+					10,
+					4
+				);
+			}
 		}
 
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
@@ -140,27 +153,8 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		// Shortcode checkout.
 		$checked = $order->get_meta( 'noptin_opted_in', true );
-		if ( ! empty( $checked ) ) {
-			return true;
-		}
 
-		// Block checkout.
-		if ( class_exists( '\Automattic\WooCommerce\Blocks\Package' ) && class_exists( '\Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields' ) ) {
-			/** @var \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields $checkout_fields */
-            $checkout_fields = Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class );
-
-            if (
-                $checkout_fields
-
-                && method_exists( $checkout_fields, 'get_field_from_object' )
-                // method was private in earlier versions of WooCommerce, so check if callable
-                && is_callable( array( $checkout_fields, 'get_field_from_object' ) )
-            ) {
-                return $checkout_fields->get_field_from_object( 'noptin/optin', $order, 'contact' );
-            }
-        }
-
-		return false;
+		return ! empty( $checked );
 	}
 
 	public function add_checkout_block_field() {
@@ -173,7 +167,7 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
         woocommerce_register_additional_checkout_field(
             array(
                 'id'            => 'noptin/optin',
-                'location'      => 'order',
+                'location'      => 'contact',
                 'type'          => 'checkbox',
                 'label'         => $this->get_label_text(),
                 'optionalLabel' => $this->get_label_text(),
