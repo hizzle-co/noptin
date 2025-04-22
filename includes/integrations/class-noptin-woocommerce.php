@@ -59,9 +59,9 @@ class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
 
 		if ( $this->can_show_checkbox() ) {
 			if ( 'after_email_field' === $checkbox_position ) {
-					add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
+				add_filter( 'woocommerce_form_field_email', array( $this, 'add_checkbox_after_email_field' ), 100, 2 );
 			} else {
-					add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
+				add_action( $checkbox_position, array( $this, 'output_checkbox' ), 20 );
 			}
 
 			// hooks for when using WooCommerce Checkout Block.

@@ -94,7 +94,7 @@ abstract class Noptin_Abstract_Integration {
 		$this->initialize();
 
 		// Attaches the checkbox display hooks.
-		$this->hook_checkbox_code();
+		add_action( 'init', array( $this, 'hook_checkbox_code' ), -100 );
 
 		do_action( "noptin_{$this->slug}_integration_after_initialize", $this );
 
@@ -330,6 +330,7 @@ abstract class Noptin_Abstract_Integration {
 			'section'     => 'integrations',
 			'label'       => $title,
 			'description' => $description,
+			'default'     => $this->get_enable_integration_default_value(),
 		);
 
 		return $options;
