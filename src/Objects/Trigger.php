@@ -400,8 +400,8 @@ class Trigger extends \Noptin_Abstract_Trigger {
 						sprintf(
 							'%s changed from "%s" to "%s"',
 							esc_html( $key ),
-							esc_html( $current_value ),
-							esc_html( $original_value )
+							esc_html( $original_value ),
+							esc_html( $current_value )
 						)
 					);
 				}
