@@ -44,6 +44,11 @@ class Noptin_Admin_Menus {
 			noptin()->white_label->get( 'icon', 'dashicons-forms' ),
 			'23.81204129341231'
 		);
+
+		\Hizzle\WordPress\ScriptManager::add_namespace(
+			'noptin',
+			noptin()->white_label->get_details()
+		);
 	}
 
 	/**

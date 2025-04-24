@@ -166,7 +166,13 @@ class Main {
 			esc_html__( 'Subscribers', 'newsletter-optin-box' ) . ' <span class="menu-counter">Beta</span>',
 			get_noptin_capability(),
 			'noptin-subscribers__new',
-			__CLASS__ . '::render_admin_page'
+			'\Hizzle\WordPress\ScriptManager::render_collection'
+		);
+
+		\Hizzle\WordPress\ScriptManager::add_collection(
+			self::$hook_suffix,
+			'noptin',
+			'subscribers'
 		);
 	}
 
@@ -188,43 +194,13 @@ class Main {
 	}
 
 	/**
-	 * Renders the admin page.
-	 */
-	public static function render_admin_page() {
-		?>
-			<div id="hizzlewp-store-ui">
-				<!-- spinner -->
-				<span class="spinner" style="visibility: visible; float: none;"></span>
-				<!-- /spinner -->
-			</div>
-		<?php
-	}
-
-	/**
 	 * Enqueues scripts.
 	 *
 	 * @param string $hook The hook.
 	 */
 	public static function enqueue_scripts( $hook ) {
-		if ( self::$hook_suffix !== $hook ) {
-			return;
+		if ( self::$hook_suffix === $hook ) {
+			wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
-
-		wp_enqueue_script( 'hizzlewp-store-ui' );
-
-		// Localize the script.
-		wp_localize_script(
-			'hizzlewp-store-ui',
-			'hizzleWPStore',
-			array(
-				'data' => array(
-					'namespace'  => 'noptin',
-					'collection' => 'subscribers',
-					'brand'      => noptin()->white_label->get_details(),
-				),
-			)
-		);
-
-		wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 	}
 }

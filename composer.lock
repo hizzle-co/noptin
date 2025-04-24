@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e61adee088845f49f05a2df769b94ccb",
+    "content-hash": "4d2774cf9570baa41ffb9bac2528902a",
     "packages": [
         {
             "name": "hizzle/store",
