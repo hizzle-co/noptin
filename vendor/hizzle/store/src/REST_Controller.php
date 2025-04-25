@@ -280,15 +280,16 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		// Method to retrieve the data schema.
-		foreach ( $this->get_record_tabs() as $tab_id => $tab ) {
+		$tabs = array_filter( $this->get_record_tabs(), function( $tab ) {
+			return ! empty( $tab['callback'] );
+		} );
 
-			if ( empty( $tab['callback'] ) ) {
-				continue;
-			}
+		if ( ! empty( $tabs ) ) {
+			$keys = implode( '|', array_keys( $tabs ) );
 
 			register_rest_route(
 				$this->namespace,
-				'/' . $this->rest_base . '/(?P<id>[\d]+)/(?P<tab_id>' . $tab_id . ')',
+				'/' . $this->rest_base . '/(?P<id>[\d]+)/(?P<tab_id>(' . $keys . '))/',
 				array(
 					'args'   => array(
 						'id'     => array(
@@ -302,8 +303,8 @@ class REST_Controller extends \WP_REST_Controller {
 					),
 					array(
 						'methods'             => \WP_REST_Server::READABLE,
-						'callback'            => $tab['callback'],
-						'permission_callback' => array( $this, 'get_items_permissions_check' ),
+						'callback'            => array( $this, 'get_item_tab_content' ),
+						'permission_callback' => array( $this, 'get_item_permissions_check' ),
 					),
 					'schema' => '__return_empty_array',
 				)
@@ -708,6 +709,42 @@ class REST_Controller extends \WP_REST_Controller {
 				)
 			)
 		);
+	}
+
+	/**
+	 * Returns a tab's content.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
+	 */
+	public function get_item_tab_content( $request ) {
+		// Make sure we have a valid record.
+		$object = $this->get_object( $request );
+
+		if ( is_wp_error( $object ) ) {
+			return $object;
+		}
+
+		if ( ! $object || ! $object->exists() ) {
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+		}
+
+		// Make sure we have a valid tab.
+		$tab_id   = $request['tab_id'];
+		$all_tabs = $this->get_record_tabs();
+
+		if ( ! isset( $all_tabs[ $tab_id ] ) ) {
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Tab not found.', array( 'status' => 404 ) );
+		}
+
+		if ( empty( $all_tabs[ $tab_id ]['callback'] ) ) {
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Tab callback not found.', array( 'status' => 404 ) );
+		}
+
+		// Return the tab's content.
+		return rest_ensure_response( call_user_func( $all_tabs[ $tab_id ]['callback'], $request ) );
 	}
 
 	/**
