@@ -24,12 +24,29 @@ class ScriptManager {
 	private static $style_handles = array();
 
 	/**
+	 * Registered namespaces.
+	 *
+	 * $namespace => $brand_details
+	 *
+	 * @var array
+	 */
+	private static $namespaces = array();
+
+	/**
+	 * Registered collection menus.
+	 *
+	 * @var array
+	 */
+	private static $collections = array();
+
+	/**
 	 * Initializes the script manager.
 	 *
 	 * @var array
 	 */
 	public static function init() {
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_collection' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		do_action( 'hizzlewp_scripts_init' );
 	}
@@ -71,6 +88,8 @@ class ScriptManager {
 						$load_components ? array( 'wp-components' ) : array(),
 						filemtime( $folder_path . 'style-index.css' )
 					);
+
+					wp_style_add_data( 'hizzlewp-' . $folder, 'rtl', 'replace' );
 
 					self::$style_handles[] = 'hizzlewp-' . $folder;
 				}
@@ -114,6 +133,90 @@ class ScriptManager {
 	public static function add_block_editor_body_class( $classes ) {
 		$classes .= ' block-editor-page is-fullscreen-mode';
 		return $classes;
+	}
+
+	/**
+	 * Registers a namespace.
+	 */
+	public static function add_namespace( $namespace_name, $brand_details ) {
+		self::$namespaces[ $namespace_name ] = $brand_details;
+	}
+
+	/**
+	 * Registers a collection menu.
+	 */
+	public static function add_collection( $hook_suffix, $namespace_name, $collection_name ) {
+		self::$collections[ $hook_suffix ] = array(
+			'namespace'  => $namespace_name,
+			'collection' => $collection_name,
+		);
+	}
+
+	/**
+	 * Loads the collection.
+	 */
+	public static function load_collection( $hook_suffix ) {
+		if ( ! isset( self::$collections[ $hook_suffix ] ) ) {
+			return;
+		}
+
+		$namespace  = self::$collections[ $hook_suffix ]['namespace'] ?? '';
+		$collection = self::$collections[ $hook_suffix ]['collection'] ?? '';
+
+		wp_enqueue_script( 'hizzlewp-store-ui' );
+
+		// Localize the script.
+		wp_localize_script(
+			'hizzlewp-store-ui',
+			'hizzleWPStore',
+			array(
+				'data' => array_merge(
+					array(
+						'brand' => self::$namespaces[ $namespace ] ?? array(),
+					),
+					self::$collections[ $hook_suffix ]
+				),
+			)
+		);
+
+		// Preload the collection schema.
+		if ( ! empty( $namespace ) && ! empty( $collection ) ) {
+			$preload_data = array_reduce(
+				array(
+					sprintf(
+						'/%s/v1/%s/collection_schema',
+						$namespace,
+						$collection
+					),
+				),
+				'rest_preload_api_request',
+				array()
+			);
+
+			wp_add_inline_script(
+				'wp-api-fetch',
+				sprintf(
+					'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+					wp_json_encode( $preload_data )
+				),
+				'after'
+			);
+		}
+
+		do_action( 'hizzlewp_collection_loaded', $hook_suffix );
+	}
+
+	/**
+	 * Renders the collection.
+	 */
+	public static function render_collection() {
+		?>
+			<div id="hizzlewp-store-ui">
+				<!-- spinner -->
+				<span class="spinner" style="visibility: visible; float: none;"></span>
+				<!-- /spinner -->
+			</div>
+		<?php
 	}
 }
 

@@ -518,7 +518,7 @@ abstract class Collection {
 
 		$prepared = array();
 
-		foreach ( $this->get_all_by_email( $email_address ) as $record ) {
+		foreach ( $this->get_all_by_email( $email_address, 50 ) as $record ) {
 			$record = $this->get( $record );
 
 			if ( $record->exists() ) {
