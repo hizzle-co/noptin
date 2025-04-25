@@ -340,10 +340,11 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 	 *
 	 */
 	public function get_all_by_email( $email_address, $limit = 25 ) {
+		$user = get_user_by( 'email', $email_address );
 		return wc_get_orders(
 			array(
 				'limit'    => $limit,
-				'customer' => $email_address,
+				'customer' => $user ? $user->ID : $email_address,
 			)
 		);
 	}
@@ -462,6 +463,10 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			),
 			'transaction_id'       => array(
 				'label' => __( 'Transaction ID', 'newsletter-optin-box' ),
+				'type'  => 'string',
+			),
+			'currency'             => array(
+				'label' => __( 'Currency', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
 			'coupon_code'          => array(
