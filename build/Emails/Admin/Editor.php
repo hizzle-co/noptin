@@ -231,6 +231,7 @@ JS;
 				'styles'           => (object) $to_load,
 				'css'              => self::get_editor_styles(),
 				'settings'         => self::get_editor_settings(),
+				'comparisons'      => noptin_get_conditional_logic_comparisons(),
 				'types'            => get_noptin_email_types(),
 				'templates'        => get_noptin_email_templates(),
 				'templateDefaults' => get_noptin_email_template_defaults(),

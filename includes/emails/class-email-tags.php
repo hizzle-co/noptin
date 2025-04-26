@@ -97,6 +97,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		$content = $this->replace_with_external_tags( $content, 'replace_in_body', $is_partial );
 
 		$this->is_partial = $is_partial;
+		$content          = $this->apply_special_tags( $content );
 		$content          = $this->replace( $content, '' );
 		$this->is_partial = false;
 		return $content;
@@ -750,5 +751,184 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		ob_start();
 		get_noptin_template( 'post-digests/email-posts-' . $template . '.php', $args );
 		return ob_get_clean();
+	}
+
+	/**
+	 * Returns an array of special tags.
+	 *
+	 * @return array
+	 */
+	public static function get_special_tags() {
+		return apply_filters(
+			'noptin_email_special_tags',
+			array(
+				'noptin_conditional_email_content' => array( __CLASS__, 'conditional_email_content' ),
+			)
+        );
+	}
+
+	/**
+	 * @see get_shortcode_regex
+	 * @link https://regex101.com/r/6Nu7BT/1
+	 */
+	protected static function get_special_tags_regex( $tagnames = null ) {
+		if ( null === $tagnames ) {
+			$tagnames  = array_keys( self::get_special_tags() );
+		}
+
+		$tagregexp = implode( '|', array_map( 'preg_quote', $tagnames ) );
+
+		/*
+		* WARNING! Do not change this regex without changing self::apply_special_tags()
+		*/
+
+		// phpcs:disable Squiz.Strings.ConcatenationSpacing.PaddingFound -- don't remove regex indentation
+		return '\\{'                             // Opening bracket.
+			. '(\\{?)'                           // 1: Optional second opening bracket for escaping shortcodes: [[tag]].
+			. "($tagregexp)"                     // 2: Shortcode name.
+			. '(?![\\w-])'                       // Not followed by word character or hyphen.
+			. '('                                // 3: Unroll the loop: Inside the opening shortcode tag.
+			.     '[^\\}\\/]*'                   // Not a closing bracket or forward slash.
+			.     '(?:'
+			.         '\\/(?!\\})'               // A forward slash not followed by a closing bracket.
+			.         '[^\\}\\/]*'               // Not a closing bracket or forward slash.
+			.     ')*?'
+			. ')'
+			. '(?:'
+			.     '(\\/)'                        // 4: Self closing tag...
+			.     '\\}'                          // ...and closing bracket.
+			. '|'
+			.     '\\}'                          // Closing bracket.
+			.     '(?:'
+			.         '('                        // 5: Unroll the loop: Optionally, anything between the opening and closing shortcode tags.
+			.             '[^\\{]*+'             // Not an opening bracket.
+			.             '(?:'
+			.                 '\\{(?!\\/\\2\\})' // An opening bracket not followed by the closing shortcode tag.
+			.                 '[^\\{]*+'         // Not an opening bracket.
+			.             ')*+'
+			.         ')'
+			.         '\\{\\/\\2\\}'             // Closing shortcode tag.
+			.     ')?'
+			. ')'
+			. '(\\}?)';                          // 6: Optional second closing bracket for escaping shortcodes: [[tag]].
+		// phpcs:enable
+	}
+
+	/**
+	 * @see do_shortcode()
+	 * @return string Content with shortcodes filtered out.
+	 */
+	public function apply_special_tags( $content ) {
+		$special_tags = self::get_special_tags();
+
+		if ( ! is_string( $content ) || ! str_contains( $content, '{' ) ) {
+			return $content;
+		}
+
+		if ( empty( $special_tags ) || ! is_array( $special_tags ) ) {
+			return $content;
+		}
+
+		// Find all registered tag names in $content.
+		preg_match_all( '@\{([^<>&/\{\]\x00-\x20=]++)@', $content, $matches );
+		$tagnames = array_intersect( array_keys( $special_tags ), $matches[1] );
+
+		if ( empty( $tagnames ) ) {
+			return $content;
+		}
+
+		$pattern = self::get_special_tags_regex( $tagnames );
+		$result = preg_replace_callback( "/$pattern/", array( $this, 'apply_special_tag' ), $content );
+		return null === $result ? $content : $result;
+	}
+
+	/**
+	 * Regular Expression callable for self::apply_special_tags() for calling shortcode hook.
+	 *
+	 * @see self::get_special_tags_regex() for details of the match array contents.
+	 *
+	 * @param array $m {
+	 *     Regular expression match array.
+	 *
+	 *     @type string $0 Entire matched shortcode text.
+	 *     @type string $1 Optional second opening bracket for escaping shortcodes.
+	 *     @type string $2 Shortcode name.
+	 *     @type string $3 Shortcode arguments list.
+	 *     @type string $4 Optional self closing slash.
+	 *     @type string $5 Content of a shortcode when it wraps some content.
+	 *     @type string $6 Optional second closing bracket for escaping shortcodes.
+	 * }
+	 * @return string Shortcode output.
+	 */
+	protected function apply_special_tag( $m ) {
+		$special_tags = self::get_special_tags();
+
+		// Allow {{foo}} syntax for escaping a tag.
+		if ( '{' === $m[1] && '}' === $m[6] ) {
+			return substr( $m[0], 1, -1 );
+		}
+
+		$tag = $m[2];
+
+		if ( ! is_callable( $special_tags[ $tag ] ?? '' ) ) {
+			_doing_it_wrong(
+				__FUNCTION__,
+				/* translators: %s: Shortcode tag. */
+				sprintf( 'Attempting to parse a shortcode without a valid callback: %s', $tag ),
+				'4.3.0'
+			);
+			return $m[0];
+		}
+
+		$attr    = shortcode_parse_atts( $m[3] );
+		$content = isset( $m[5] ) ? $m[5] : null;
+
+		return $m[1] . call_user_func( $special_tags[ $tag ], $attr, $content, $this, $tag ) . $m[6];
+	}
+
+	/**
+	 * Processes the conditional email content.
+	 *
+	 * @param array $attributes
+	 * @param string $content
+	 * @param Noptin_Email_Tags $tag_manager
+	 * @param string $tag
+	 * @return string
+	 */
+	public static function conditional_email_content( $attributes, $content, $tag_manager, $tag ) {
+		// Abort if the conditional logic is not enabled.
+		if ( empty( $attributes['enabled'] ) || 'false' === $attributes['enabled'] ) {
+			return $content;
+		}
+
+		$action = $attributes['action'] ?? 'allow';
+		$type   = $attributes['type'] ?? 'all';
+		$rules  = $attributes['rules'] ?? array();
+
+		if ( is_string( $rules ) ) {
+			$rules = json_decode( rawurldecode( $rules ), true );
+		}
+
+		// Abort if we have no rules.
+		if ( empty( $rules ) ) {
+			return $content;
+		}
+
+		$is_met = $tag_manager->check_conditional_logic(
+			array(
+				'rules'   => $rules,
+				'action'  => $action,
+				'type'    => $type,
+				'enabled' => true,
+			),
+			array(),
+			false
+		);
+
+		if ( ! $is_met ) {
+			return '';
+		}
+
+		return $content;
 	}
 }

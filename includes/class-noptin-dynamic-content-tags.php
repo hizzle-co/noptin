@@ -399,7 +399,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
-	 * Retrieves the regexx
+	 * Retrieves the regex
 	 *
 	 * @param string $opening_tag
 	 * @param string $closing_tag
@@ -648,7 +648,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 * @param string[] $skip_tags The tags to skip.
 	 * @return bool|array
 	 */
-	public function check_conditional_logic( $conditional_logic, $skip_tags = array() ) {
+	public function check_conditional_logic( $conditional_logic, $skip_tags = array(), $log = true ) {
 
 		// Retrieve the conditional logic.
 		$action  = $conditional_logic['action']; // allow or prevent.
@@ -672,7 +672,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			// If the rule is met.
 			$is_met = noptin_is_conditional_logic_met( $current_value, $compare_value, $rule['condition'] );
 
-			if ( ! $is_met ) {
+			if ( ! $is_met && $log ) {
 				log_noptin_message( 'Conditional logic rule not met: ' . json_encode( compact( 'current_value', 'compare_value', 'rule' ) ) );
 			}
 
