@@ -409,7 +409,6 @@ function get_noptin_email_template_defaults() {
 	);
 
 	foreach ( array_keys( get_noptin_email_templates() ) as $template ) {
-
 		if ( ! isset( $defaults[ $template ] ) ) {
 			$defaults[ $template ] = array();
 		}
@@ -649,7 +648,6 @@ function noptin_prepare_email_recipients( $unprepared ) {
 	$recipients = array();
 
 	foreach ( noptin_parse_list( $unprepared, true ) as $recipient ) {
-
 		$track     = false === stripos( $recipient, '--notracking' );
 		$recipient = trim( str_ireplace( '--notracking', '', $recipient ) );
 
