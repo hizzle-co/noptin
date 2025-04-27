@@ -451,7 +451,10 @@ class Noptin_Email_Generator {
 
 				// Sanitize style attribute.
 				if ( 'style' === $attr_name ) {
+					add_filter( 'safecss_filter_attr_allow_css', __CLASS__ . '::allow_rgb_in_css', 10, 2 );
 					$safe_style = safecss_filter_attr( $attr_value );
+					remove_filter( 'safecss_filter_attr_allow_css', __CLASS__ . '::allow_rgb_in_css', 10 );
+
 					if ( empty( $safe_style ) ) {
 						$element->removeAttribute( 'style' );
 					} else {
@@ -1060,5 +1063,24 @@ class Noptin_Email_Generator {
 		}
 
 		return preg_replace( $pattern, "$1\n", $content );
+	}
+
+	/**
+     * At the moment rgb() is not allowed to use in the style attribute. `style="color:rgb(0,0,0);"` gets
+     * sanitized if you use wp_kses. We hook into safecss_filter_attr_allow_css to allow for rgb. The code
+     * follows the precedent WordPress sets for the usage of var(), calc() etc. in safecss_filter_attr()
+    */
+	public static function allow_rgb_in_css( $allowed, $css_string ) {
+		if ( $allowed ) {
+			return (bool) $allowed;
+		}
+
+		$css_string = preg_replace(
+            '/\b(?:rgb|rgba)(\((?:[^()]|(?1))*\))/',
+           '',
+            $css_string
+		);
+
+		return ! preg_match( '%[\\\(&=}]|/\*%', $css_string );
 	}
 }

@@ -40,8 +40,8 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		);
 
 		parent::__construct();
-		add_filter( 'noptin_automation_rules_email_conditional_logic_skip_tags', array( $this, 'conditional_logic_skip_tags' ), 10, 2 );
-		add_action( 'noptin_automation_rules_email_prepare_skipped_rules', array( $this, 'prepare_skipped_rules' ), 10, 2 );
+		add_filter( 'noptin_automation_rules_email_conditional_logic_skip_tags', array( __CLASS__, 'conditional_logic_skip_tags' ), 10, 2 );
+		add_action( 'noptin_automation_rules_email_prepare_skipped_rules', array( __CLASS__, 'prepare_skipped_rules' ), 10, 2 );
 	}
 
 	/**
@@ -200,9 +200,14 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	/**
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
 	 */
-	public function conditional_logic_skip_tags( $tags, $rule ) {
+	public static function conditional_logic_skip_tags( $tags, $rule = null ) {
 		// Abort if we do not have a campaign.
-		$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+		if ( ! empty( $rule ) ) {
+			$automated_email_id = $rule->get_action_setting( 'automated_email_id' );
+		} else {
+			$automated_email_id = empty( Main::$current_email ) ? null : Main::$current_email->id;
+		}
+
 		if ( empty( $automated_email_id ) ) {
 			return $tags;
 		}
@@ -229,7 +234,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	/**
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
 	 */
-	public function prepare_skipped_rules( $conditional_logic, $rule ) {
+	public static function prepare_skipped_rules( $conditional_logic, $rule ) {
 		if ( ! noptin_has_alk() ) {
 			return;
 		}

@@ -1,1 +1,1 @@
-<div id="noptin-email-campaigns__editor" class="block-editor"></div>
+<div id="noptin-email-campaigns__editor" class="block-editor block-editor__container"></div>
