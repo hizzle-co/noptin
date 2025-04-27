@@ -838,7 +838,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 		}
 
 		$pattern = self::get_special_tags_regex( $tagnames );
-		$result = preg_replace_callback( "/$pattern/", array( $this, 'apply_special_tag' ), $content );
+		$result  = preg_replace_callback( "/$pattern/", array( $this, 'apply_special_tag' ), $content );
 		return null === $result ? $content : $result;
 	}
 
@@ -914,17 +914,30 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			return $content;
 		}
 
-		$is_met = $tag_manager->check_conditional_logic(
+		$skip_tags = $tag_manager->is_partial ? \Hizzle\Noptin\Emails\Records::conditional_logic_skip_tags( array() ) : array();
+		$is_met    = $tag_manager->check_conditional_logic(
 			array(
 				'rules'   => $rules,
 				'action'  => $action,
 				'type'    => $type,
 				'enabled' => true,
 			),
-			array(),
+			$skip_tags,
 			false
 		);
 
+		// If we have more conditional logic that should be checked per recipient, return the content.
+		if ( is_array( $is_met ) ) {
+			return sprintf(
+				'{noptin_conditional_email_content enabled="true" action="%s" type="%s" rules="%s"}%s{/noptin_conditional_email_content}',
+				$action,
+				$type,
+				rawurlencode( json_encode( $is_met ) ),
+				$content
+			);
+		}
+
+		// If the conditional logic is not met, return an empty string.
 		if ( ! $is_met ) {
 			return '';
 		}
