@@ -451,15 +451,7 @@ class Noptin_Email_Generator {
 
 				// Sanitize style attribute.
 				if ( 'style' === $attr_name ) {
-					add_filter( 'safecss_filter_attr_allow_css', __CLASS__ . '::allow_rgb_in_css', 10, 2 );
-					$safe_style = safecss_filter_attr( $attr_value );
-					remove_filter( 'safecss_filter_attr_allow_css', __CLASS__ . '::allow_rgb_in_css', 10 );
-
-					if ( empty( $safe_style ) ) {
-						$element->removeAttribute( 'style' );
-					} else {
-						$element->setAttribute( 'style', $safe_style );
-					}
+					$element->setAttribute( 'style', $this->sanitize_inline_css( $attr_value ) );
 					continue;
 				}
 
@@ -1082,5 +1074,48 @@ class Noptin_Email_Generator {
 		);
 
 		return ! preg_match( '%[\\\(&=}]|/\*%', $css_string );
+	}
+
+	/**
+	 * Fully sanitize a style attribute value securely.
+	 *
+	 * @param string $style_attribute Raw style attribute value.
+	 * @return string Sanitized safe style attribute.
+	 */
+	private function sanitize_inline_css( $style_attribute ) {
+		$sanitized_styles = array();
+
+		// Split multiple CSS declarations.
+		$declarations = explode( ';', $style_attribute );
+
+		foreach ( $declarations as $declaration ) {
+			$declaration = trim( $declaration );
+
+			if ( empty( $declaration ) || strpos( $declaration, ':' ) === false ) {
+				continue;
+			}
+
+			list( $property, $value ) = explode( ':', $declaration, 2 );
+
+			$property = trim( strtolower( $property ) );
+			$value    = trim( $value );
+
+			if ( empty( $property ) || empty( $value ) ) {
+				continue;
+			}
+
+			// Basic protocol cleaning inside url()
+			$value = preg_replace( '/url\(\s*[\'"]?\s*(javascript|vbscript|data)\s*:/i', 'url(', $value );
+
+			// Very basic value cleaning (prevent expressions)
+			if ( stripos( $value, 'expression(' ) !== false ) {
+				continue; // Dangerous old IE expression detected, skip this rule.
+			}
+
+			// Rebuild safe style.
+			$sanitized_styles[] = "{$property}: {$value}";
+		}
+
+		return implode( '; ', $sanitized_styles );
 	}
 }

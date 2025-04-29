@@ -502,7 +502,58 @@
 	}
 
 	.screen-reader-text {
-		display: none;
+		display: none !important;
+	}
+
+	ins {
+		text-decoration: none;
+	}
+
+	.email-order-details,
+	.email-order-details table {
+		border-collapse: collapse;
+	}
+
+	.email-order-details tfoot th {
+		text-align: right;
+	}
+
+	table .email-order-details td:first-child,
+	table .email-order-details th:first-child {
+		padding-<?php echo is_rtl() ? 'right' : 'left'; ?>: 0;
+	}
+
+	table .email-order-details td:last-child,
+	table .email-order-details th:last-child {
+		padding-<?php echo is_rtl() ? 'left' : 'right'; ?>: 0;
+	}
+
+	.email-order-details tbody tr:last-child td {
+		border-bottom: 1px solid #333;
+	}
+
+	.order-item-data td {
+		border: 0 !important;
+		padding: 0 !important;
+		vertical-align: middle;
+	}
+
+	.email-order-details .order-totals td,
+	.email-order-details .order-totals th {
+		font-weight: normal;
+		padding-bottom: 5px;
+		padding-top: 5px;
+	}
+
+	.email-order-details .order-totals-last td,
+	.email-order-details .order-totals-last th {
+		border-bottom: none;
+	}
+
+	.email-order-details .order-customer-note td {
+		border-bottom: 1px solid #333;
+		padding-bottom: 24px;
+		padding-top: 24px;
 	}
 
 	<?php
