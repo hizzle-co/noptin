@@ -551,8 +551,8 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function get_edit_url() {
 		return add_query_arg(
 			array(
-				'page'        => 'noptin-subscribers',
-				'hizzle_path' => rawurlencode(
+				'page'          => 'noptin-subscribers',
+				'hizzlewp_path' => rawurlencode(
 					sprintf(
 						'/noptin/subscribers/%d',
 						$this->get_id()
