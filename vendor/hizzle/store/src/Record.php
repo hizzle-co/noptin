@@ -380,6 +380,7 @@ class Record {
 			}
 		}
 
+		$data['hizzlewp_actions'] = $this->get_hizzlewp_actions();
 		return $data;
 	}
 
@@ -941,6 +942,16 @@ class Record {
 	 * @return array
 	 */
 	public function get_overview() {
+		return array();
+	}
+
+	/**
+	 * Returns the record's actions.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function get_hizzlewp_actions() {
 		return array();
 	}
 }

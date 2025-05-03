@@ -1161,6 +1161,15 @@ class REST_Controller extends \WP_REST_Controller {
 	public function get_item_schema() {
 		$collection = $this->fetch_collection();
 		$schema     = $collection ? $collection->get_rest_schema() : array();
+
+		if ( isset( $schema['properties'] ) ) {
+			$schema['properties']['hizzlewp_actions'] = array(
+				'description' => 'HizzleWP Actions',
+				'type'        => 'array',
+				'context'     => array( 'view' ),
+			);
+		}
+
 		return $this->add_additional_fields_schema( $schema );
 	}
 

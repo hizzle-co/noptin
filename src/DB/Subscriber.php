@@ -758,11 +758,11 @@ class Subscriber extends \Hizzle\Store\Record {
 
 		foreach ( $sent_emails as $email ) {
 			if ( ! empty( $email['opens'] ) ) {
-				$opens++;
+				++$opens;
 			}
 
 			if ( ! empty( $email['clicks'] ) ) {
-				$clicks++;
+				++$clicks;
 			}
 		}
 
@@ -786,57 +786,83 @@ class Subscriber extends \Hizzle\Store\Record {
 			),
 		);
 
-		// Prepare action links.
-		$action_links = array(
-			array(
-				'label'  => __( 'Manage Preferences URL', 'newsletter-optin-box' ),
-				'value'  => $this->get_manage_preferences_url(),
-				'action' => 'copy',
-			),
+		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
+	}
+
+	/**
+	 * Returns the record's actions.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	public function get_hizzlewp_actions() {
+		$actions = parent::get_hizzlewp_actions();
+
+		// Manage Preferences URL.
+		$actions[] = array(
+			'id'    => 'manage_preferences_url',
+			'type'  => 'copy',
+			'text'  => __( 'Manage Preferences URL', 'newsletter-optin-box' ),
+			'value' => $this->get_manage_preferences_url(),
+			'icon'  => 'admin-customizer',
 		);
 
 		// Add link to user profile if the subscriber is a WordPress user.
 		$user_id = $this->get_wp_user_id();
 
 		if ( ! empty( $user_id ) ) {
-			$action_links[] = array(
-				'label' => __( 'View User Profile', 'newsletter-optin-box' ),
-				'value' => get_edit_user_link( $user_id ),
+			$actions[] = array(
+				'id'     => 'view_user_profile',
+				'text'   => __( 'View User Profile', 'newsletter-optin-box' ),
+				'href'   => get_edit_user_link( $user_id ),
+				'icon'   => 'admin-users',
+				'target' => '_blank',
 			);
 		}
 
 		// Send email if the subscriber is active.
 		if ( $this->is_active() ) {
-			$action_links[] = array(
-				'label' => __( 'Send Email', 'newsletter-optin-box' ),
-				'value' => $this->get_send_email_url(),
+			$actions[] = array(
+				'id'     => 'send_email',
+				'text'   => __( 'Send Email', 'newsletter-optin-box' ),
+				'href'   => $this->get_send_email_url(),
+				'icon'   => 'email',
+				'target' => '_blank',
 			);
 
-			$action_links[] = array(
-				'label'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
-				'value'  => $this->get_unsubscribe_url(),
-				'action' => 'copy',
+			$actions[] = array(
+				'id'    => 'unsubscribe_url',
+				'type'  => 'copy',
+				'text'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
+				'value' => $this->get_unsubscribe_url(),
+				'icon'  => 'minus',
 			);
 		} elseif ( 'unsubscribed' === $this->get_status() ) {
-			$action_links[] = array(
-				'label'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
-				'value'  => $this->get_resubscribe_url(),
-				'action' => 'copy',
+			$actions[] = array(
+				'id'    => 'resubscribe_url',
+				'type'  => 'copy',
+				'text'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
+				'value' => $this->get_resubscribe_url(),
+				'icon'  => 'plus',
 			);
 		}
 
 		// Email confirmation URL.
 		if ( ! $this->get_confirmed() ) {
-			$action_links[] = array(
-				'label'  => __( 'Send Confirmation Email', 'newsletter-optin-box' ),
-				'value'  => 'send_confirmation_email',
-				'action' => 'remote',
+			$actions[] = array(
+				'id'         => 'send_confirmation_email',
+				'type'       => 'remote',
+				'text'       => __( 'Send Confirmation Email', 'newsletter-optin-box' ),
+				'actionName' => 'send_confirmation_email',
+				'icon'       => 'email',
 			);
 
-			$action_links[] = array(
-				'label'  => __( 'Email Confirmation URL', 'newsletter-optin-box' ),
-				'value'  => $this->get_confirm_subscription_url(),
-				'action' => 'copy',
+			$actions[] = array(
+				'id'    => 'email_confirmation_url',
+				'type'  => 'copy',
+				'text'  => __( 'Email Confirmation URL', 'newsletter-optin-box' ),
+				'value' => $this->get_confirm_subscription_url(),
+				'icon'  => 'email-alt',
 			);
 		}
 
@@ -844,25 +870,16 @@ class Subscriber extends \Hizzle\Store\Record {
 		$conversion_page = $this->get_conversion_page();
 
 		if ( ! empty( $conversion_page ) ) {
-			$action_links[] = array(
-				'label' => __( 'Conversion Page', 'newsletter-optin-box' ),
-				'value' => esc_url_raw( $conversion_page ),
+			$actions[] = array(
+				'id'     => 'conversion_page',
+				'text'   => __( 'Conversion Page', 'newsletter-optin-box' ),
+				'href'   => esc_url_raw( $conversion_page ),
+				'icon'   => 'external',
+				'target' => '_blank',
 			);
 		}
 
-		// Delete subscriber.
-		$action_links[] = array(
-			'label'  => __( 'Delete', 'newsletter-optin-box' ),
-			'value'  => __( 'Are you sure you want to delete this subscriber?', 'newsletter-optin-box' ),
-			'action' => 'delete',
-		);
-
-		$overview['action_links'] = array(
-			'type'  => 'action_links',
-			'links' => $action_links,
-		);
-
-		return apply_filters( 'noptin_subscriber_overview', $overview, $this );
+		return $actions;
 	}
 
 	/**

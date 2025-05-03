@@ -88,6 +88,17 @@ class Main {
 		add_filter( 'hizzle_rest_noptin_subscribers_admin_app_routes', array( $this, 'filter_subscribers_collection_admin_routes' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_collection_js_params', array( $this, 'filter_subscribers_collection_js_params' ) );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', array( $this, 'add_record_tabs' ), 1000 );
+		add_action( 'noptin_collection_registered', array( $this, 'update_capabilities' ) );
+	}
+
+	/**
+	 * Updates the capabilities.
+	 *
+	 * @param \Hizzle\Store\Collection $collection The collection.
+	 * @return void
+	 */
+	public function update_capabilities( $collection ) {
+		$collection->capabillity = get_noptin_capability();
 	}
 
 	/**
