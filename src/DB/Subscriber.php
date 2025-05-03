@@ -741,6 +741,11 @@ class Subscriber extends \Hizzle\Store\Record {
 			}
 		}
 
+		// Prevent blocked subscribers from being saved.
+		if ( 'blocked' === $this->data['status'] ?? '' && array_key_exists( 'status', $this->changes ) && ! current_user_can( get_noptin_capability() ) ) {
+			unset( $this->changes['status'] );
+		}
+
 		return parent::save();
 	}
 
@@ -879,6 +884,25 @@ class Subscriber extends \Hizzle\Store\Record {
 			);
 		}
 
+		// Block/unblock subscriber.
+		if ( 'blocked' !== $this->get_status() ) {
+			$actions[] = array(
+				'id'            => 'block_subscriber',
+				'type'          => 'remote',
+				'text'          => __( 'Block Subscriber', 'newsletter-optin-box' ),
+				'actionName'    => 'block_subscriber',
+				'icon'          => 'minus',
+				'isDestructive' => true,
+			);
+		} else {
+			$actions[] = array(
+				'id'         => 'unblock_subscriber',
+				'type'       => 'remote',
+				'text'       => __( 'Unblock Subscriber', 'newsletter-optin-box' ),
+				'actionName' => 'unblock_subscriber',
+				'icon'       => 'plus',
+			);
+		}
 		return $actions;
 	}
 
@@ -908,6 +932,37 @@ class Subscriber extends \Hizzle\Store\Record {
 
 		return array(
 			'message' => 'Confirmation email sent.',
+		);
+	}
+
+	/**
+	 * Blocks a subscriber.
+	 *
+	 * @since 1.0.0
+	 * @return array|\WP_Error
+	 */
+	public function do_block_subscriber() {
+
+		$this->set_status( 'blocked' );
+		$this->save();
+
+		return array(
+			'message' => 'Subscriber blocked.',
+		);
+	}
+
+	/**
+	 * Unblocks a subscriber.
+	 *
+	 * @since 1.0.0
+	 * @return array|\WP_Error
+	 */
+	public function do_unblock_subscriber() {
+		$this->set_status( 'subscribed' );
+		$this->save();
+
+		return array(
+			'message' => 'Subscriber unblocked.',
 		);
 	}
 }

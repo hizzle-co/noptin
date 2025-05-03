@@ -1659,6 +1659,7 @@ function noptin_get_subscriber_statuses() {
 			'subscribed'   => __( 'Subscribed', 'newsletter-optin-box' ),
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'bounced'      => __( 'Bounced', 'newsletter-optin-box' ),
+			'blocked'      => __( 'Blocked', 'newsletter-optin-box' ),
 		)
 	);
 }

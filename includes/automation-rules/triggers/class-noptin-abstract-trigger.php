@@ -419,6 +419,15 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		$GLOBALS['current_noptin_rule']  = $rule->get_id();
 		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );
 
+		if ( is_string( $GLOBALS['current_noptin_email'] ) && is_email( $GLOBALS['current_noptin_email'] ) ) {
+			$subscriber = noptin_get_subscriber( $GLOBALS['current_noptin_email'] );
+
+			if ( 'blocked' === $subscriber->get_status() ) {
+				log_noptin_message( esc_html( $GLOBALS['current_noptin_email'] ) . ' is blocked. Skipping rule.' );
+				return false;
+			}
+		}
+
 		$conditional_logic = $rule->get_conditional_logic();
 		// Abort if conditional logic is not set.
 		if ( empty( $conditional_logic['enabled'] ) || empty( $args['smart_tags'] ) || empty( $conditional_logic['rules'] ) || ! is_array( $conditional_logic['rules'] ) ) {

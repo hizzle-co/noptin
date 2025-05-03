@@ -25,6 +25,7 @@ class Main {
 		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', __CLASS__ . '::should_fire_has_changes_hook', 10, 2 );
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', __CLASS__ . '::add_collection_subscriber_tabs' );
 		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init' );
+		add_action( 'noptin_subscribers_before_prepare_query', __CLASS__ . '::hide_blocked_subscribers' );
 
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
@@ -202,5 +203,28 @@ class Main {
 		if ( self::$hook_suffix === $hook ) {
 			wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
+	}
+
+	/**
+	 * Hides blocked subscribers.
+	 *
+	 * @param \Hizzle\Store\Query $query The query.
+	 */
+	public static function hide_blocked_subscribers( $query ) {
+		$excluded = wp_parse_list( $query->query_vars['status_not'] ?? array() );
+		$included = wp_parse_list( $query->query_vars['status'] ?? array() );
+
+		// Abort if we're already excluding blocked subscribers.
+		if ( in_array( 'blocked', $excluded, true ) ) {
+			return;
+		}
+
+		// Abort if we're already including blocked subscribers.
+		if ( in_array( 'blocked', $included, true ) ) {
+			return;
+		}
+
+		$excluded[] = 'blocked';
+		$query->set( 'status_not', $excluded );
 	}
 }
