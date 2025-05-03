@@ -29,10 +29,10 @@ class Main {
 
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
+			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 
 			if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING ) {
-				add_action( 'admin_menu', array( __CLASS__, 'new_subscribers_menu' ), 33 );
-				add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+				add_action( 'admin_menu', array( __CLASS__, 'old_subscribers_menu' ), 33 );
 			}
 		}
 
@@ -159,14 +159,14 @@ class Main {
 	/**
 	 * New subscribers menu.
 	 */
-	public static function new_subscribers_menu() {
+	public static function subscribers_menu() {
 
 		self::$hook_suffix = add_submenu_page(
 			'noptin',
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			esc_html__( 'Subscribers', 'newsletter-optin-box' ) . ' <span class="menu-counter">Beta</span>',
+			esc_html__( 'Subscribers', 'newsletter-optin-box' ),
 			get_noptin_capability(),
-			'noptin-subscribers__new',
+			'noptin-subscribers',
 			'\Hizzle\WordPress\ScriptManager::render_collection'
 		);
 
@@ -180,14 +180,14 @@ class Main {
 	/**
 	 * Subscribers menu.
 	 */
-	public static function subscribers_menu() {
+	public static function old_subscribers_menu() {
 
 		$hook_suffix = add_submenu_page(
 			'noptin',
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
+			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ) . ' <span class="menu-counter">Old</span>',
 			get_noptin_capability(),
-			'noptin-subscribers',
+			'noptin-subscribers__old',
 			'\Hizzle\Noptin\Misc\Store_UI::render_admin_page'
 		);
 

@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Version: 3.8.5
-Stable tag: 3.8.5
+Version: 3.8.6
+Stable tag: 3.8.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 3.8.6 =
+* Add: Block/unblock certain newsletter subscribers.
 
 = 3.8.5 =
 * Fix: Dropdown, Radio, and Checkbox custom fields not displaying options input.
