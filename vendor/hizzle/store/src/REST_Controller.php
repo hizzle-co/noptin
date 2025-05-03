@@ -109,7 +109,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'args'                => array_merge(
 						$this->get_collection_params(),
 						array(
-							'bulk_update'    => array(
+							'bulk_update' => array(
 								'type'        => array( 'object' ),
 								'description' => 'The edits to be made to the records.',
 								'required'    => true,
@@ -280,9 +280,12 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		// Method to retrieve the data schema.
-		$tabs = array_filter( $this->get_record_tabs(), function( $tab ) {
-			return ! empty( $tab['callback'] );
-		} );
+		$tabs = array_filter(
+			$this->get_record_tabs(),
+			function ( $tab ) {
+				return ! empty( $tab['callback'] );
+			}
+		);
 
 		if ( ! empty( $tabs ) ) {
 			$keys = implode( '|', array_keys( $tabs ) );
