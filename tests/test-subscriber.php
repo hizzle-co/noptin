@@ -334,9 +334,8 @@ class SubscriberTest extends WP_UnitTestCase {
         $overview = $subscriber->get_overview();
 
         $this->assertArrayHasKey('stat_cards', $overview);
-        $this->assertArrayHasKey('action_links', $overview);
+        $this->assertArrayNotHasKey('action_links', $overview);
 
         $this->assertCount(3, $overview['stat_cards']['cards']);
-        $this->assertGreaterThan(0, count($overview['action_links']['links']));
     }
 }
