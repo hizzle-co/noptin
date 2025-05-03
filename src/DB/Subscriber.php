@@ -742,7 +742,8 @@ class Subscriber extends \Hizzle\Store\Record {
 		}
 
 		// Prevent blocked subscribers from being saved.
-		if ( 'blocked' === $this->data['status'] ?? '' && array_key_exists( 'status', $this->changes ) && ! current_user_can( get_noptin_capability() ) ) {
+		$current_status = $this->data['status'] ?? '';
+		if ( 'blocked' === $current_status && array_key_exists( 'status', $this->changes ) && ! current_user_can( get_noptin_capability() ) ) {
 			unset( $this->changes['status'] );
 		}
 
