@@ -194,10 +194,10 @@ class Main {
 			'noptin-form',
 			'_noptin_state',
 			array(
-				'single'            => true,
-				'type'              => 'object',
-				'default'           => (object) array(),
-				'show_in_rest'      => array(
+				'single'        => true,
+				'type'          => 'object',
+				'default'       => (object) array(),
+				'show_in_rest'  => array(
 					'schema' => array(
 						'type'                 => 'object',
 						'properties'           => array(
@@ -212,7 +212,7 @@ class Main {
 					),
 				),
 				//'revisions_enabled' => true,
-				'auth_callback'     => function ( $allowed, $meta_key, $post_id ) {
+				'auth_callback' => function ( $allowed, $meta_key, $post_id ) {
 					return current_user_can( 'edit_post', $post_id );
 				},
 			)
@@ -254,7 +254,9 @@ class Main {
 			plugin_dir_url( __FILE__ ) . 'assets/js/form.js',
 			$config['dependencies'],
 			$config['version'],
-			true
+			array(
+				'in_footer' => true,
+			)
 		);
 
 		// Scripts params.
@@ -273,7 +275,14 @@ class Main {
 
 		$params = apply_filters( 'noptin_form_scripts_params', $params );
 
-		wp_localize_script( 'noptin-form', 'noptinParams', $params );
+		wp_add_inline_script(
+			'noptin-form',
+			sprintf(
+				'var noptinParams = %s;',
+				wp_json_encode( $params, JSON_PRETTY_PRINT )
+			),
+			'before'
+		);
 
 		wp_register_style(
 			'noptin-form',

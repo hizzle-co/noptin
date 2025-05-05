@@ -42,6 +42,9 @@ class Noptin_Form_Manager {
 		$this->admin = new Noptin_Form_Admin();
 
 		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 5 );
+
+		// Breeze compatibility.
+		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );
 	}
 
 	/**
@@ -102,5 +105,16 @@ class Noptin_Form_Manager {
 	 */
 	public function get_tags() {
 		return $this->tags->all();
+	}
+
+	/**
+	 * Breeze compatibility.
+	 *
+	 * @param array $scripts
+	 * @return array
+	 */
+	public static function breeze_compatibility( $scripts ) {
+		$scripts[] = 'noptin';
+		return $scripts;
 	}
 }
