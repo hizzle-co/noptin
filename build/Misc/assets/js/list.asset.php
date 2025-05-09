@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('hizzlewp-interface', 'react', 'react-jsx-runtime', 'wp-components', 'wp-compose', 'wp-dom-ready', 'wp-element', 'wp-i18n'), 'version' => '6a4d991695c5dad077a2');
+<?php return array('dependencies' => array('hizzlewp-interface', 'react', 'react-jsx-runtime', 'wp-components', 'wp-compose', 'wp-dom-ready', 'wp-element', 'wp-i18n'), 'version' => 'f316b1686ebe34eabf8b');

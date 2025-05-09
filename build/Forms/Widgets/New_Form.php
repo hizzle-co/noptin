@@ -100,13 +100,10 @@ class New_Form extends \WP_Widget {
 
 		.noptin-email-optin-widget {
 			position: relative;
-			text-align: center;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
 
 			<?php if ( $bg_color ) : ?>
 				background-color: <?php echo esc_html( $bg_color ); ?>;
+				padding: 20px;
 			<?php endif; ?>
 
 			<?php if ( $color ) : ?>
@@ -114,45 +111,29 @@ class New_Form extends \WP_Widget {
 			<?php endif; ?>
 		}
 
-		:root :where(.noptin-email-optin-widget) .noptin_form_input_email {
-			min-height: calc(1.6em + .9rem + 2px);
+		:where(.noptin-email-optin-widget .noptin_form_input_email) {
 			padding: .45rem 1.2rem;
-			font-size: 1rem;
-			font-weight: 300;
-			line-height: 1.6;
-			color: #495057;
-			background-color: #fff;
-			background-clip: padding-box;
 			border: 1px solid #ced4da;
 			border-radius: .25rem;
 			transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 			box-shadow: none;
 		}
 
-		:where(.noptin-email-optin-widget) .noptin_form_input_email:focus {
-			color: #495057;
-            background-color: #fff;
-            border-color: #73b1e9;
-            outline: 0;
-		}
-
-		:where(.noptin-email-optin-widget) .noptin_form_submit {
+		:where(.noptin-email-optin-widget .noptin_form_submit) {
 			padding: .45rem 1.2rem;
-			font-size: 1rem;
 			line-height: 1.6;
 			border-radius: .25rem;
 			color: #fff;
 			background-color: #1e73be;
-			font-weight: 400;
+			user-select: none;
 			background-clip: padding-box;
 			border: 1px solid transparent;
 			box-shadow: none;
 			transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-			box-shadow: none;
 		}
 
-		:where(.noptin-email-optin-widget) .noptin_form_submit:focus,
-		:where(.noptin-email-optin-widget) .noptin_form_submit:hover {
+		:where(.noptin-email-optin-widget .noptin_form_submit:focus),
+		:where(.noptin-email-optin-widget .noptin_form_submit:hover) {
 			box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 		}
 
@@ -164,24 +145,12 @@ class New_Form extends \WP_Widget {
 
 		.noptin-email-optin-widget .noptin_form_submit {
 			position: relative;
-			text-align: center;
-			vertical-align: middle;
-			user-select: none;
-			flex: 1 0 0;
-			text-transform: none;
-			display: block;
-			width: 100%;
 			margin-top: 10px;
 
 			<?php if ( $btn_col ) : ?>
 				background-color: <?php echo esc_html( $btn_col ); ?>;
 			<?php endif; ?>
 		}
-
-        .noptin-email-optin-widget .noptin_form_submit:focus,
-        .noptin-email-optin-widget .noptin_form_submit:hover {
-            outline: 0 !important;
-        }
 
 		<?php
 		if ( $h2_col ) {
