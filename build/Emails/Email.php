@@ -1591,6 +1591,22 @@ class Email {
 	}
 
 	/**
+	 * Returns a stats URL for the email.
+	 *
+	 * @return string
+	 */
+	public function get_activity_url( $activity = false ) {
+		return add_query_arg(
+			array(
+				'page'            => 'noptin',
+				'noptin_campaign' => $this->id,
+				'noptin_activity' => $activity,
+			),
+			admin_url( 'admin.php' )
+		);
+	}
+
+	/**
 	 * Number of times the email has been sent.
 	 *
 	 * @return int

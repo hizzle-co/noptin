@@ -389,7 +389,7 @@ class Main {
 			}
 
 			wp_enqueue_script(
-				'noptin-' . $script,
+				$localize_script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
 				$config['dependencies'],
 				$config['version'],
@@ -402,64 +402,70 @@ class Main {
 			}
 
 			// Localize the script.
-			wp_localize_script(
-				$localize_script,
-				'noptinEmailSettingsMisc',
-				apply_filters(
-					'noptin_email_settings_misc',
-					array(
-						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
-						'data'         => (object) ( empty( $type ) ? array() : $type->to_array() ),
-						'from_name'    => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
-						'from_email'   => get_noptin_option( 'from_email', '' ),
-						'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
-						'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
-						'senders'      => array_merge(
-							array(
-								'manual_recipients' => array(
-									'label'        => __( 'Specific People', 'newsletter-optin-box' ),
-									'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
-									'image'        => array(
-										'icon' => 'businessperson',
-										'fill' => '#212121',
-									),
-									'is_active'    => true,
-									'is_installed' => true,
-									'is_local'     => true,
-									'settings'     => array(
-										'disableMergeTags' => false,
-										'fields'           => array(
-											'recipients' => array(
-												'label' => __( 'Recipient(s)', 'newsletter-optin-box' ),
-												'description' => sprintf(
-													'%s<br /> <br />%s',
-													__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
-													sprintf(
-														/* translators: %s: code */
-														__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
-														'<code>--notracking</code>'
-													)
-												),
-												'type'  => 'text',
-												'placeholder' => sprintf(
-													/* translators: %s: Example */
-													__( 'For example, %s', 'newsletter-optin-box' ),
-													'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
-												),
+			$data = apply_filters(
+				'noptin_email_settings_misc',
+				array(
+					'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
+					'data'         => (object) ( empty( $type ) ? array() : $type->to_array() ),
+					'from_name'    => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
+					'from_email'   => get_noptin_option( 'from_email', '' ),
+					'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
+					'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
+					'senders'      => array_merge(
+						array(
+							'manual_recipients' => array(
+								'label'        => __( 'Specific People', 'newsletter-optin-box' ),
+								'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
+								'image'        => array(
+									'icon' => 'businessperson',
+									'fill' => '#212121',
+								),
+								'is_active'    => true,
+								'is_installed' => true,
+								'is_local'     => true,
+								'settings'     => array(
+									'disableMergeTags' => false,
+									'fields'           => array(
+										'recipients' => array(
+											'label' => __( 'Recipient(s)', 'newsletter-optin-box' ),
+											'description' => sprintf(
+												'%s<br /> <br />%s',
+												__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
+												sprintf(
+													/* translators: %s: code */
+													__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
+													'<code>--notracking</code>'
+												)
+											),
+											'type'  => 'text',
+											'placeholder' => sprintf(
+												/* translators: %s: Example */
+												__( 'For example, %s', 'newsletter-optin-box' ),
+												'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
 											),
 										),
 									),
 								),
 							),
-							get_noptin_email_senders( true )
 						),
-						'assets_url' => plugins_url( 'static/images/', __DIR__ ),
+						get_noptin_email_senders( true )
 					),
-					$script
-				)
+					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
+					'brand'        => noptin()->white_label->get_details(),
+				),
+				$script
 			);
 
-			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+			wp_add_inline_script(
+				$localize_script,
+				sprintf(
+					'window.noptinEmailSettingsMisc = %s;',
+					wp_json_encode( $data )
+				),
+				'before'
+			);
+
+			wp_set_script_translations( $localize_script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
 
 		// Load the css.

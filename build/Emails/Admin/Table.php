@@ -544,7 +544,13 @@ class Table extends \WP_List_Table {
 	 * @return int
 	 */
 	public function column_recipients( $item ) {
-		return $item->get_send_count();
+		return sprintf(
+			'<a href="%s">%s</a>',
+			esc_url(
+				$item->get_activity_url( 'send' )
+			),
+			esc_html( $item->get_send_count() )
+		);
 	}
 
 	/**
@@ -557,6 +563,16 @@ class Table extends \WP_List_Table {
 		$sends   = $item->get_send_count();
 		$opens   = $item->get_open_count();
 		$percent = ( $sends && $opens ) ? round( ( $opens / $sends ) * 100, 2 ) : 0;
+
+		if ( ! empty( $opens ) ) {
+			$opens = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					$item->get_activity_url( 'open' )
+				),
+				esc_html( $opens )
+			);
+		}
 
 		$this->display_stat(
 			$opens,
@@ -574,6 +590,16 @@ class Table extends \WP_List_Table {
 		$sends   = $item->get_send_count();
 		$clicks  = $item->get_click_count();
 		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
+
+		if ( ! empty( $unsubscribed ) ) {
+			$unsubscribed = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					$item->get_activity_url( 'click' )
+				),
+				esc_html( $clicks )
+			);
+		}
 
 		$this->display_stat(
 			$clicks,
@@ -599,7 +625,8 @@ class Table extends \WP_List_Table {
 			}
 
 			return sprintf(
-				'<span class="noptin-strong">%s</span>',
+				'<span class="noptin-strong"><a href="%s">%s</a></span>',
+				esc_url( $item->get_activity_url( 'purchase' ) ),
 				$formatted
 			);
 		}
@@ -621,6 +648,16 @@ class Table extends \WP_List_Table {
 		$unsubscribed = $item->get_unsubscribe_count();
 		$percent      = ( $sends && $unsubscribed ) ? round( ( $unsubscribed / $sends ) * 100, 2 ) : 0;
 
+		if ( ! empty( $unsubscribed ) ) {
+			$unsubscribed = sprintf(
+				'<a href="%s">%s</a>',
+				esc_url(
+					$item->get_activity_url( 'unsubscribe' )
+				),
+				esc_html( $unsubscribed )
+			);
+		}
+
 		$this->display_stat(
 			$unsubscribed,
 			$percent
@@ -639,11 +676,11 @@ class Table extends \WP_List_Table {
 		if ( $percent > 0 && $percent < 101 ) {
 			printf(
 				'<div class="noptin-stat">%s</div><p class="noptin-stat-percent">%s%%</p>',
-				esc_html( $value ),
+				wp_kses_post( $value ),
 				esc_html( $percent )
 			);
 		} else {
-			echo esc_html( $value );
+			echo wp_kses_post( $value );
 		}
 	}
 

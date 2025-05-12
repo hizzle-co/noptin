@@ -97,38 +97,112 @@ class Main {
 			);
 		}
 
-		// Localize the script.
-		wp_localize_script(
-			'noptin-dashboard',
-			'noptinDashboard',
-			array(
-				'brand'               => noptin()->white_label->get_details(),
-				'forms'               => noptin_count_optin_forms(),
-				'subscriber_statuses' => noptin_get_subscriber_statuses(),
-				'plugins'             => $plugins,
-				'links'               => array(
-					array(
-						'text' => __( 'Report a bug or request a feature', 'newsletter-optin-box' ),
-						'href' => 'https://github.com/hizzle-co/noptin/issues/new/choose',
-					),
-					array(
-						'text' => __( 'Prevent spam sign-ups.', 'newsletter-optin-box' ),
-						'href' => noptin_get_guide_url( 'Dashboard', '/subscription-forms/preventing-spam-sign-ups/' ),
-					),
-					array(
-						'text' => __( 'Set-up new post notifications.', 'newsletter-optin-box' ),
-						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/new-post-notifications/' ),
-					),
-					array(
-						'text' => __( 'Email sending limits.', 'newsletter-optin-box' ),
-						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/email-sending-limits/' ),
-					),
-					array(
-						'text' => __( 'How to fix emails not sending.', 'newsletter-optin-box' ),
-						'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/how-to-fix-emails-not-sending/' ),
-					),
+		$data = array(
+			'brand'               => noptin()->white_label->get_details(),
+			'forms'               => noptin_count_optin_forms(),
+			'subscriber_statuses' => noptin_get_subscriber_statuses(),
+			'plugins'             => $plugins,
+			'links'               => array(
+				array(
+					'text' => __( 'Report a bug or request a feature', 'newsletter-optin-box' ),
+					'href' => 'https://github.com/hizzle-co/noptin/issues/new/choose',
 				),
-			)
+				array(
+					'text' => __( 'Prevent spam sign-ups.', 'newsletter-optin-box' ),
+					'href' => noptin_get_guide_url( 'Dashboard', '/subscription-forms/preventing-spam-sign-ups/' ),
+				),
+				array(
+					'text' => __( 'Set-up new post notifications.', 'newsletter-optin-box' ),
+					'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/new-post-notifications/' ),
+				),
+				array(
+					'text' => __( 'Email sending limits.', 'newsletter-optin-box' ),
+					'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/email-sending-limits/' ),
+				),
+				array(
+					'text' => __( 'How to fix emails not sending.', 'newsletter-optin-box' ),
+					'href' => noptin_get_guide_url( 'Dashboard', '/guide/sending-emails/how-to-fix-emails-not-sending/' ),
+				),
+			),
+		);
+
+		// If we have a campaign, add it to the data.
+		if ( isset( $_GET['noptin_campaign'] ) && current_user_can( 'edit_post', $_GET['noptin_campaign'] ) ) {
+			$campaign         = noptin_get_email_campaign_object( (int) $_GET['noptin_campaign'] );
+			$data['campaign'] = array(
+				'id'          => $campaign->id,
+				'edit_url'    => $campaign->get_edit_url(),
+				'preview_url' => $campaign->get_preview_url(),
+				'name'        => $campaign->name,
+			);
+
+			// Query the date range so that we can display the correct date range in the dashboard.
+			$query = array(
+				'campaign_id' => $campaign->id,
+				'orderby'     => 'date_created',
+				'fields'      => 'date_created',
+				'per_page'    => 1,
+			);
+
+			if ( isset( $_GET['noptin_activity'] ) ) {
+				$query['activity']            = sanitize_key( urldecode( $_GET['noptin_activity'] ) );
+				$data['campaign']['activity'] = $query['activity'];
+			}
+
+			$date_last      = \Hizzle\Noptin\Emails\Logs\Main::query( $query );
+			$query['order'] = 'ASC';
+			$date_first     = \Hizzle\Noptin\Emails\Logs\Main::query( $query );
+
+			if ( ! is_wp_error( $date_first ) && ! empty( $date_first ) ) {
+				$date_first = gmdate( 'Y-m-d', strtotime( current( $date_first ) ) );
+			}
+
+			if ( empty( $date_first ) ) {
+				$date_first = gmdate( 'Y-m-d' );
+			}
+
+			if ( ! is_wp_error( $date_last ) && ! empty( $date_last ) ) {
+				$date_last = gmdate( 'Y-m-d', strtotime( current( $date_last ) ) );
+			}
+
+			if ( empty( $date_last ) ) {
+				$date_last = gmdate( 'Y-m-d' );
+			}
+
+			// Calaulate the correct group by.
+			// Calculate the correct group by based on date difference
+			$first_timestamp     = strtotime( $date_first );
+			$last_timestamp  = strtotime( $date_last );
+			$diff_in_seconds = $last_timestamp - $first_timestamp;
+			$diff_in_hours   = $diff_in_seconds / HOUR_IN_SECONDS;
+			$diff_in_days    = $diff_in_seconds / DAY_IN_SECONDS;
+
+			if ( $diff_in_hours < 48 ) {
+				$group_by = 'hour';
+			} elseif ( $diff_in_days < 14 ) {
+				$group_by = 'day';
+			} elseif ( $diff_in_days < 60 ) {
+				$group_by = 'week';
+			} elseif ( $diff_in_days < 730 ) { // 2 years (approx)
+				$group_by = 'month';
+			} else {
+				$group_by = 'year';
+			}
+
+			if ( ! empty( $date_first ) && ! empty( $date_last ) ) {
+				$data['campaign']['date_range'] = array(
+					'start'   => $date_first,
+					'end'     => $date_last,
+					'groupBy' => $group_by,
+				);
+			}
+		}
+
+		// Localize the script.
+		wp_add_inline_script(
+			'noptin-dashboard',
+			'window.noptinDashboard = ' . wp_json_encode( $data ) . ';',
+			'before'
 		);
 
 		wp_set_script_translations( 'noptin-dashboard', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
