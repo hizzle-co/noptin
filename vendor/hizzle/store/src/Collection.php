@@ -915,6 +915,10 @@ class Collection {
 				apply_filters( $this->hook_prefix( 'insert_formats', true ), $formats, $record )
 			);
 
+			if ( empty( $result ) && ! empty( $wpdb->last_error ) ) {
+				noptin_error_log( 'Error creating record: ' . $wpdb->last_error );
+			}
+
 			return $result ? $wpdb->insert_id : 0;
 		}
 
