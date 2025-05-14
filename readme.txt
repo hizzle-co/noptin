@@ -138,7 +138,7 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 == Changelog ==
 
 = 3.8.7 =
-* Enhancement: View exactly who opened and clicked on your newsletter emails.
+* Added the ability to view detailed campaign engagement stats. You can now see exactly who opened, clicked, unsubscribed, or purchased from your newsletters — all linked directly to the activity logs.
 
 = 3.8.6 =
 * Add: Block/unblock certain newsletter subscribers.
