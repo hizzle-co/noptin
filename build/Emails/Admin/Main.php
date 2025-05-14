@@ -376,7 +376,7 @@ class Main {
 			// Prepare the block editor.
 			if ( 'email-editor' === $script ) {
 				$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
-				wp_enqueue_script(
+				wp_register_script(
 					'noptin-blocks',
 					plugins_url( 'assets/js/blocks.js', __DIR__ ),
 					$blocks['dependencies'],
@@ -389,7 +389,7 @@ class Main {
 			}
 
 			wp_enqueue_script(
-				$localize_script,
+				'noptin-' . $script,
 				plugins_url( 'assets/js/' . $script . '.js', __DIR__ ),
 				$config['dependencies'],
 				$config['version'],
@@ -465,7 +465,7 @@ class Main {
 				'before'
 			);
 
-			wp_set_script_translations( $localize_script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
 
 		// Load the css.

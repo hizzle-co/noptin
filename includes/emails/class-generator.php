@@ -463,7 +463,7 @@ class Noptin_Email_Generator {
 
 				// Sanitize href and src attributes: allow only http, https, mailto, tel
 				if ( in_array( $attr_name, array( 'href', 'src' ), true ) ) {
-					$element->setAttribute( $attribute->name, esc_url( $attr_value ) );
+					$element->setAttribute( $attribute->name, sanitize_url( $attr_value ) );
 					continue;
 				}
 

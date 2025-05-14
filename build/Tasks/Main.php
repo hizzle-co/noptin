@@ -296,7 +296,11 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			$task->update_meta( 'interval', $interval );
 		}
 
-		$task->save();
+		$result = $task->save();
+
+		if ( is_wp_error( $result ) ) {
+			noptin_error_log( 'Error scheduling task: ' . $result->get_error_message() );
+		}
 
 		self::$scheduled_tasks[] = $unique_check;
 
