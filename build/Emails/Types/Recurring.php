@@ -725,7 +725,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 			$error      = ( $next_send < time() || in_array( (int) gmdate( 'w', $next_send ), $skip_days, true ) ) ? 'noptin-text-warning' : 'noptin-text-success';
 
 			$next_send = sprintf(
-				'<div class="noptin-strong %s noptin-tip" title="%s">%s</div>',
+				'<div class="noptin-strong %s noptin-has-tooltip" data-title="%s">%s</div>',
 				$error,
 				esc_attr( date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $local_time ) ),
 				wp_kses_post( $this->get_formatted_next_send_time( $local_time, wp_parse_id_list( $campaign->get( 'skip_days' ) ) ) )

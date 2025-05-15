@@ -124,17 +124,3 @@ if ( $parent ) {
 	</div>
 
 </div>
-
-<div style="display: none;">
-	<div id="noptin-revenue-tooltip-content">
-		<?php
-		if ( noptin_has_alk() ) {
-			esc_html_e( 'Revenue is tracked when someone makes a purchase within 2 weeks of clicking on a link in a campaign', 'newsletter-optin-box' );
-		} else {
-			esc_html_e( 'Activate your license key to track and view revenue made per campaign', 'newsletter-optin-box' );
-		}
-		?>
-		<br />
-		<a class="button button-primary" href="<?php echo esc_url( noptin_get_upsell_url( 'guide/sending-emails/tracking-revenue-generated-per-email/', 'email-campaigns', 'revenue-tracking' ) ); ?>" target="_blank"><?php esc_html_e( 'Learn more', 'newsletter-optin-box' ); ?></a>
-	</div>
-</div>
