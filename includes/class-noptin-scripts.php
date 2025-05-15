@@ -91,16 +91,6 @@ class Noptin_Scripts {
 
 		// And EDD too.
 		add_filter( 'edd_load_admin_scripts', '__return_false', 1000 );
-
-		// Tooltips https://iamceege.github.io/tooltipster/.
-		wp_enqueue_script( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.js', array( 'jquery' ), '4.2.7', true );
-		wp_enqueue_style( 'tooltipster', $assets_url . '/vendor/tooltipster/tooltipster.bundle.min.css', array(), '4.2.7' );
-
-		// Enque media for image uploads.
-		wp_enqueue_media();
-
-		// Enqueue main admin script.
-		self::enqueue_script( 'admin' );
 	}
 
 	/**

@@ -5,7 +5,6 @@ const WooCommerceDependencyExtractionWebpackPlugin = require('@woocommerce/depen
 module.exports = {
 
 	entry: {
-		admin: "./includes/assets/js/src/admin.js",
 		"form-editor": "./includes/assets/js/src/form-editor.js",
 	},
 	output: {
