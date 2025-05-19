@@ -114,7 +114,6 @@ class Noptin_Form_Legacy {
 			'optinName'   => $post->post_title,
 			'optinStatus' => ( 'publish' === $post->post_status ),
 			'id'          => $post->ID,
-			'optinHTML'   => $post->post_content,
 			'optinType'   => get_post_meta( $post->ID, '_noptin_optin_type', true ),
 		);
 
@@ -589,7 +588,6 @@ class Noptin_Form_Legacy {
 		}
 
 		$state = $this->data;
-		unset( $state['optinHTML'] );
 		unset( $state['optinType'] );
 		unset( $state['id'] );
 		update_post_meta( $id, '_noptin_state', $this->data );
@@ -609,7 +607,7 @@ class Noptin_Form_Legacy {
 		$data = array(
 			'post_title'   => empty( $this->optinName ) ? '' : $this->optinName,
 			'ID'           => $this->id,
-			'post_content' => empty( $this->optinHTML ) ? __( 'This form is incorrectly configured', 'newsletter-optin-box' ) : $this->optinHTML,
+			'post_content' => 'Noptin Form',
 			'post_status'  => empty( $this->optinStatus ) ? 'draft' : 'publish',
 			'post_type'    => 'noptin-form',
 		);

@@ -32,7 +32,7 @@ class Noptin_Form_Admin {
 	 *
 	 * @since  1.6.2
 	 */
-	public function add_hooks() {
+	public function __construct() {
 		add_action( 'add_meta_boxes_noptin-form', array( $this, 'add_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'save_edited_form' ), 10, 2 );
 		add_filter( 'post_updated_messages', array( $this, 'post_updated_messages' ) );

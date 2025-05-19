@@ -99,7 +99,7 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 		}
 
 		if ( 'class' === $name && is_array( $value ) ) {
-			$value = implode( ' ', $value );
+			$value = implode( ' ', array_filter( $value ) );
 		}
 
 		if ( is_array( $value ) || is_object( $value ) ) {

@@ -24,8 +24,10 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 	/**
 	 * Register core hooks.
 	 */
-	public function add_hooks() {
+	public function __construct() {
+		add_action( 'init', array( $this, 'register' ) );
 		add_filter( 'noptin_subscription_response_html', array( $this, 'replace_in_form_response' ) );
+		add_filter( 'noptin_form_text', array( $this, 'replace_in_form_content' ) );
 		add_filter( 'noptin_form_html', array( $this, 'replace_in_form_content' ) );
 		add_filter( 'noptin_optin_form_html', array( $this, 'replace_in_form_content' ) );
 		add_filter( 'noptin_form_redirect_url', array( $this, 'replace_in_form_redirect_url' ) );

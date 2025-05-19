@@ -41,8 +41,6 @@ class Noptin_Form_Manager {
 		$this->tags  = new Noptin_Form_Tags();
 		$this->admin = new Noptin_Form_Admin();
 
-		add_action( 'plugins_loaded', array( $this, 'add_hooks' ), 5 );
-
 		// Breeze compatibility.
 		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );
 	}
@@ -57,32 +55,6 @@ class Noptin_Form_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php'; // Container for a single legacy form.
-	}
-
-	/**
-	 * Register relevant hooks.
-	 */
-	public function add_hooks() {
-
-		/**
-		 * Fires before the form manager inits.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'before_init_noptin_form_manager', $this );
-
-		// Init modules.
-		$this->tags->add_hooks();
-		$this->admin->add_hooks();
-
-		/**
-		 * Fires after the form manager inits.
-		 *
-		 * @param Noptin_Form_Manager $manager
-		 * @since 1.6.2
-		 */
-		do_action( 'init_noptin_form_manager', $this );
 	}
 
 	/**

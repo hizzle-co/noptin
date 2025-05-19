@@ -630,7 +630,18 @@ function noptin_is_singular( $posts = '' ) {
 	}
 
 	// Check if current url is in one of the urls.
-	return in_array( noptin_clean_url(), $posts['urls'], true );
+	$current_url = noptin_clean_url();
+	foreach ( $posts['urls'] as $url ) {
+		// Wildcard match.
+		if ( substr( $url, -1 ) === '*' && strpos( $current_url, rtrim( $url, '*' ) ) === 0 ) {
+			return true;
+		} elseif ( $url === $current_url ) {
+			return true;
+		}
+	}
+
+	// No match found.
+	return false;
 }
 
 /**
@@ -1326,7 +1337,7 @@ function noptin_is_preview() {
 		return true;
 	}
 
-	return false;
+	return apply_filters( 'noptin_is_preview', false );
 }
 
 /**
