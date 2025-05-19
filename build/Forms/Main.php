@@ -234,9 +234,13 @@ class Main {
 			return;
 		}
 
-		$new_form = new \Noptin_Form_Legacy(
-			array(
-				'optinName' => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
+		$default_form = include plugin_dir_path( __FILE__ ) . 'Admin/default-form.php';
+		$new_form     = new Form(
+				array_merge(
+					array(
+					'optinName' => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
+				),
+				$default_form
 			)
 		);
 
@@ -279,7 +283,7 @@ class Main {
 			'noptin-form',
 			sprintf(
 				'var noptinParams = %s;',
-				wp_json_encode( $params, JSON_PRETTY_PRINT )
+				wp_json_encode( $params )
 			),
 			'before'
 		);

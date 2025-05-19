@@ -31,28 +31,6 @@ class Main {
 	}
 
 	/**
-	 * Registers the form editing metabox.
-	 *
-	 * @since       1.6.2
-	 * @param \WP_Post $post
-	 */
-	public static function add_meta_boxes( $post ) {
-
-		if ( is_legacy_noptin_form( $post->ID ) ) {
-
-			add_meta_box(
-				'noptin_form_editor',
-				__( 'Form Editor', 'newsletter-optin-box' ),
-				__CLASS__ . '::render_admin_page',
-				null,
-				'normal',
-				'high'
-			);
-
-		}
-	}
-
-	/**
 	 * Checks if the current page is the forms edit page.
 	 */
 	public static function is_forms_edit_page() {
@@ -64,7 +42,7 @@ class Main {
 		}
 
 		// Check if the current post type is 'form' (assuming 'form' is your custom post type for forms).
-		if ( ! isset( $post ) || $post->post_type !== 'noptin-form' ) {
+		if ( ! isset( $post ) || 'noptin-form' !== $post->post_type ) {
 			return false;
 		}
 
@@ -80,7 +58,7 @@ class Main {
 		global $post;
 
 		// Check if we're on the post edit screen
-		if ( ! self::is_forms_edit_page() || ! is_legacy_noptin_form( $post->ID ) ) {
+		if ( ! self::is_forms_edit_page() ) {
 			return;
 		}
 
@@ -96,21 +74,36 @@ class Main {
 		);
 
 		// Localize the script.
-		wp_localize_script(
-			'noptin-form-editor',
-			'noptinForm',
+		$params = apply_filters(
+			'noptin_form_editor_data',
 			array(
-				'data' => apply_filters(
-					'noptin_form_editor_data',
-					array(
-						'form'         => $post->ID,
-						'brand'        => noptin()->white_label->get_details(),
-						'settings'     => self::sidebar_fields(),
-						'templates'    => self::get_templates(),
-						'default_form' => include plugin_dir_path( __FILE__ ) . 'default-form.php',
-					)
-				),
+				'form'         => $post->ID,
+				'brand'        => noptin()->white_label->get_details(),
+				'settings'     => self::sidebar_fields(),
+				'templates'    => self::get_templates(),
+				'default_form' => include plugin_dir_path( __FILE__ ) . 'default-form.php',
 			)
+		);
+
+		// Check if it was created by the legacy editor.
+		$state = get_post_meta( $form_id, '_noptin_state', true );
+
+		if ( is_object( $state ) ) {
+			$state = (array) $state;
+		}
+
+		if ( ! is_array( $state ) || empty( $state['fields'] ) ) {
+			$form                    = new \Hizzle\Noptin\Forms\Form( $post->ID );
+			$params['form_settings'] = $form->get_all_data();
+		}
+
+		wp_add_inline_script(
+			'noptin-form-editor',
+			sprintf(
+				'var noptinForm = %s;',
+				wp_json_encode( $params )
+			),
+			'before'
 		);
 
 		// Load the translations.
@@ -148,6 +141,9 @@ class Main {
 			sprintf( '%s/autosaves?context=edit', $rest_path ),
 			'/wp/v2/settings',
 			array( '/wp/v2/settings', 'OPTIONS' ),
+			array( '/wp/v2/pages', 'OPTIONS' ),
+			array( '/wp/v2/media', 'OPTIONS' ),
+			'wp/v2/block-patterns/categories',
 		);
 
 		/*

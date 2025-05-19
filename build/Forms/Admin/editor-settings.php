@@ -6,14 +6,25 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$confirmation_messages = array();
+$confirmation_messages = array(
+	'confirmationMessageInfo' => array(
+		'type'    => 'paragraph',
+		'raw'     => true,
+		'content' => sprintf(
+			// translators: %1 & 2, opening and closing link.
+			esc_html__( 'Edit the messages shown when someone submits this form. %1$sSmart tags%2$s are allowed in the message fields.', 'newsletter-optin-box' ),
+			'<a href="https://noptin.com/guide/subscription-forms/smart-tags/?utm_medium=Documentation&utm_campaign=Subscription%20Forms&utm_term=Smart%20Tags&utm_source=Noptin%20Plugin%20Dashboard" target="_blank" rel="noopener noreferrer">',
+			'</a>'
+		),
+	),
+);
 
 foreach ( get_default_noptin_form_messages() as $message_id => $message_details ) {
 	$confirmation_messages[ "{$message_id}Message" ] = array(
 		'type'        => 'text',
 		'el'          => 'input',
 		'label'       => $message_details['label'],
-		'description' => $message_details['description'],
+		'tooltip'     => $message_details['description'],
 		'placeholder' => $message_details['default'],
 		'conditions'  => $message_details['conditions'] ?? array(),
 	);
@@ -30,17 +41,17 @@ $editor_settings = array(
 			'id'       => 'basicSettings',
 			'children' => array(
 
-				'is_unsubscribe' => array(
-					'type'  => 'checkbox', 
+				'is_unsubscribe'  => array(
+					'type'  => 'checkbox',
 					'el'    => 'input',
 					'label' => __( 'This is an unsubscribe form.', 'newsletter-optin-box' ),
 				),
 
 				'update_existing' => array(
-					'type'  => 'checkbox',
-					'el'    => 'input',
-					'label' => __( 'Update existing subscribers if they match the submitted email address.', 'newsletter-optin-box' ),
-					'conditions'  => array(
+					'type'       => 'checkbox',
+					'el'         => 'input',
+					'label'      => __( 'Update existing subscribers if they match the submitted email address.', 'newsletter-optin-box' ),
+					'conditions' => array(
 						array(
 							'key'   => 'is_unsubscribe',
 							'value' => false,
@@ -369,7 +380,7 @@ $editor_settings = array(
 					'el'          => 'input',
 					'label'       => __( 'Subscriber Tags', 'newsletter-optin-box' ),
 					'placeholder' => 'Example tag 1, tag 2, tag 3',
-					'description' => __( 'Enter a comma separated list of tags to assign subscribers who sign up using this form', 'newsletter-optin-box' ),
+					'description' => __( 'Enter a comma separated list of tags to assign new subscribers.', 'newsletter-optin-box' ),
 				),
 
 			),
@@ -402,7 +413,7 @@ $editor_settings = array(
 		// Fields Design.
 		'fields'      => array(
 			'el'       => 'panel',
-			'title'    => __( 'Opt-in Fields', 'newsletter-optin-box' ),
+			'title'    => __( 'Form Fields', 'newsletter-optin-box' ),
 			'id'       => 'fieldDesign',
 			'children' => array(
 
@@ -444,6 +455,12 @@ $editor_settings = array(
 					),
 				),
 
+				'hideFields'      => array(
+					'type'  => 'switch',
+					'el'    => 'input',
+					'label' => __( 'Hide form fields', 'newsletter-optin-box' ),
+				),
+
 				'singleLine'      => array(
 					'type'       => 'switch',
 					'el'         => 'input',
@@ -460,6 +477,12 @@ $editor_settings = array(
 					'type'  => 'switch',
 					'el'    => 'input',
 					'label' => __( 'Show field labels outside the fields', 'newsletter-optin-box' ),
+					'conditions' => array(
+						array(
+							'key'   => 'hideFields',
+							'value' => false,
+						),
+					),
 				),
 
 				'gdprCheckbox'    => array(
@@ -490,16 +513,10 @@ $editor_settings = array(
 					),
 				),
 
-				'hideFields'      => array(
-					'type'  => 'switch',
-					'el'    => 'input',
-					'label' => __( 'Hide opt-in fields', 'newsletter-optin-box' ),
-				),
-
-				'hideEmail' => array(
-					'type'  => 'switch',
-					'el'    => 'input',
-					'label' => __( 'Hide email field if the email address is already known', 'newsletter-optin-box' ),
+				'hideEmail'       => array(
+					'type'       => 'switch',
+					'el'         => 'input',
+					'label'      => __( 'Hide email field if the email address is already known', 'newsletter-optin-box' ),
 					'conditions' => array(
 						array(
 							'key'   => 'hideFields',

@@ -39,7 +39,6 @@ class Noptin_Form_Manager {
 
 		// Init class properties.
 		$this->tags  = new Noptin_Form_Tags();
-		$this->admin = new Noptin_Form_Admin();
 
 		// Breeze compatibility.
 		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );

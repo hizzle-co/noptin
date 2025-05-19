@@ -35,7 +35,7 @@ class Previewer {
 
 		if ( 'new' !== $_GET['noptin_preview_form'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-			$form = noptin_get_optin_form( absint( $_GET['noptin_preview_form'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$form = new Form( absint( $_GET['noptin_preview_form'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			if ( ! $form->exists() ) {
 				return;
@@ -46,7 +46,8 @@ class Previewer {
 			self::$form_id = $form->id;
 		}
 
-		define( 'IS_NOPTIN_PREVIEW', 1 );
+		define( 'IS_NOPTIN_PREVIEW', ! empty( self::$form_id ) ? self::$form_id : true );
+		add_filter( 'noptin_is_preview', '__return_true' );
 		show_admin_bar( false );
 		add_filter( 'pre_handle_404', '__return_true' );
 		remove_all_actions( 'template_redirect' );

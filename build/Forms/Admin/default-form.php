@@ -64,7 +64,6 @@
 		// Title design.
 		'hidePrefix'            => true,
 		'prefix'                => __( 'Prefix', 'newsletter-optin-box' ),
-		'prefixColor'           => '#313131',
 		'prefixTypography'      => array(
 			'font_size'   => '20',
 			'font_weight' => '500',

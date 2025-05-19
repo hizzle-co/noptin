@@ -124,7 +124,7 @@ class Renderer {
 			// Maybe display a translated version.
 			$atts['form'] = translate_noptin_form_id( (int) $atts['form'] );
 
-			$form = noptin_get_optin_form( (int) $atts['form'] );
+			$form = new Form( (int) $atts['form'] );
 
 			// Make sure that the form is visible.
 			if ( ! $form->can_show() ) {
@@ -145,21 +145,18 @@ class Renderer {
 			$atts['source'] = (int) $atts['form'];
 
 			// Merge form settings with passed attributes.
-			if ( ! is_legacy_noptin_form( (int) $atts['form'] ) ) {
-				$atts = array_merge( $atts, $form->settings );
-			} else {
-				$atts = array_merge(
-					$atts,
-					array(
-						'fields'         => $form->fields,
-						'redirect'       => $form->redirect,
-						'labels'         => empty( $form->showLabels ) ? 'hide' : 'show',
-						'acceptance'     => $form->gdprCheckbox ? $form->gdprConsentText : '',
-						'is_unsubscribe' => !! $form->is_unsubscribe,
-						'submit'         => $form->noptinButtonLabel,
-					)
-				);
-			}
+			$atts = array_merge(
+				$atts,
+				array(
+					'fields'         => $form->fields,
+					'redirect'       => $form->redirect,
+					'labels'         => empty( $form->showLabels ) ? 'hide' : 'show',
+					'acceptance'     => $form->gdprCheckbox ? $form->gdprConsentText : '',
+					'is_unsubscribe' => ! ! $form->is_unsubscribe,
+					'hide_email'     => ! ! $form->hideEmail,
+					'submit'         => $form->noptinButtonLabel,
+				)
+			);
 		}
 
 		// Prepare default attributes.
@@ -201,6 +198,7 @@ class Renderer {
 			'submit'         => __( 'Subscribe', 'newsletter-optin-box' ),
 			'template'       => 'normal',
 			'is_unsubscribe' => '',
+			'hide_email'     => '',
 		);
 
 		foreach ( array_keys( get_default_noptin_form_messages() ) as $msg ) {
@@ -219,7 +217,7 @@ class Renderer {
 	 * Displays an optin form based on the passed args.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 *
 	 * @return string
 	 */
@@ -245,7 +243,7 @@ class Renderer {
 		do_action( 'noptin_form_wrapper', $form, $args );
 
 		// Opening wrapper.
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			self::before_display( $form, $args );
 		}
 
@@ -289,7 +287,7 @@ class Renderer {
 		echo '</form>';
 
 		// Closing wrapper.
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			self::after_display( $form, $args );
 		}
 
@@ -300,16 +298,18 @@ class Renderer {
 	 * Get a space separated list of CSS classes for this form
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 * @return string[]
 	 */
 	protected static function get_css_classes( $args, $form ) {
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			return array(
 				'noptin-optin-form',
 				$form->singleLine ? 'noptin-form-single-line' : 'noptin-form-new-line',
 				'noptin-label-' . sanitize_html_class( $args['labels'] ),
+				$form->unstyled ? 'noptin-form-unstyled' : '',
+				$args['html_id'],
 			);
 		}
 
@@ -363,17 +363,31 @@ class Renderer {
 	}
 
 	/**
+	 * Formats text for the form.
+	 *
+	 * @param string $text The text to format.
+	 */
+	protected static function format_text( $text ) {
+		return do_shortcode(
+			apply_filters(
+				'noptin_form_text',
+				$text
+			)
+		);
+	}
+
+	/**
 	 * Displays additional content before form fields.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 */
 	protected static function before_fields( $args, $form ) {
 		if ( isset( $args['before_fields'] ) && ! empty( $args['before_fields'] ) ) {
 			echo wp_kses_post( do_shortcode( $args['before_fields'] ) );
 		}
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			$show_header_text = ( ! $form->hidePrefix && ! empty( $form->prefix ) ) || ( ! $form->hideTitle && ! empty( $form->title ) ) || ( ! $form->hideDescription && ! empty( $form->description ) );
 			$show_header      = ! empty( $form->image ) || $show_header_text;
 
@@ -384,15 +398,21 @@ class Renderer {
 						<div class="noptin-form-header-text">
 
 							<?php if ( ! $form->hidePrefix ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->prefixColor, $form->prefixTypography ) ); ?>" class="noptin-form-prefix"><?php echo wp_kses_post( do_shortcode( $form->prefix ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->prefixColor, $form->prefixTypography ) ); ?>" class="noptin-form-prefix">
+									<?php echo wp_kses_post( self::format_text( $form->prefix ) ); ?>
+								</div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideTitle ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->titleColor, $form->titleTypography ) ); ?>" class="noptin-form-heading"><?php echo wp_kses_post( do_shortcode( $form->title ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->titleColor, $form->titleTypography ) ); ?>" class="noptin-form-heading">
+									<?php echo wp_kses_post( self::format_text( $form->title ) ); ?>
+								</div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideDescription ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->descriptionColor, $form->descriptionTypography ) ); ?>" class="noptin-form-description"><?php echo wp_kses_post( do_shortcode( $form->description ) ); ?></div>
+								<div style="<?php echo esc_attr( self::get_typography_css( $form->descriptionColor, $form->descriptionTypography ) ); ?>" class="noptin-form-description">
+									<?php echo wp_kses_post( self::format_text( $form->description ) ); ?>
+								</div>
 							<?php endif; ?>
 
 						</div>
@@ -414,19 +434,17 @@ class Renderer {
 	 * Displays form fields.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 */
 	protected static function display_fields( $args, $form ) {
 		// Prepare form fields.
 		$fields         = empty( $args['fields'] ) ? 'email' : $args['fields'];
 		$fields         = prepare_noptin_form_fields( $fields );
 		$wrap           = empty( $args['wrap'] ) ? 'p' : sanitize_html_class( $args['wrap'] );
-		$is_legacy_form = $form && is_legacy_noptin_form( $form->id );
-		$hide_fields    = $is_legacy_form && ! empty( $form->hideFields );
-		$is_single_line = $is_legacy_form && $form->singleLine;
+		$is_single_line = $form && $form->singleLine;
 		$current_email  = '';
 
-		if ( $is_legacy_form && ! empty( $form->hideEmail ) ) {
+		if ( ! empty( $args['hide_email'] ) ) {
 			$subscriber = noptin_get_subscriber( (int) get_current_noptin_subscriber_id() );
 
 			if ( $subscriber->exists() ) {
@@ -451,11 +469,12 @@ class Renderer {
 			}
 		}
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			echo '<div class="noptin-form-footer">';
 		}
 
-		if ( ! $hide_fields ) {
+		// Show form fields.
+		if ( ! $form || empty( $form->hideFields ) ) {
 			echo '<div class="noptin-form-fields">';
 
 			do_action( 'before_display_noptin_form_fields', $fields, $args, $form );
@@ -480,13 +499,13 @@ class Renderer {
 				self::display_opening_wrapper( $custom_field['merge_tag'], $wrap, $custom_field, $form );
 
 				// Display the actual form field.
-				if ( $form && is_legacy_noptin_form( $form->id ) && ! empty( $custom_field['type'] ) ) {
+				if ( $form && ! empty( $custom_field['type'] ) ) {
 					printf( '<div class="noptin-field-%s">', esc_attr( $custom_field['type'] ) );
 				}
 
 				display_noptin_custom_field_input( $custom_field );
 
-				if ( $form && is_legacy_noptin_form( $form->id ) && ! empty( $custom_field['type'] ) ) {
+				if ( $form && ! empty( $custom_field['type'] ) ) {
 					echo '</div>';
 				}
 
@@ -513,10 +532,12 @@ class Renderer {
 			}
 		}
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			?>
 			<?php if ( ! $form->hideNote && ! empty( $form->note ) ) : ?>
-				<div style="<?php echo esc_attr( self::get_typography_css( $form->noteColor, $form->noteTypography ) ); ?>" class="noptin-form-note"><?php echo wp_kses_post( do_shortcode( $form->note ) ); ?></div>
+				<div style="<?php echo esc_attr( self::get_typography_css( $form->noteColor, $form->noteTypography ) ); ?>" class="noptin-form-note">
+					<?php echo wp_kses_post( self::format_text( $form->note ) ); ?>
+				</div>
 			<?php endif; ?>
 			<div class="noptin-form-notice noptin-response" role="alert"></div>
 			</div>
@@ -532,7 +553,7 @@ class Renderer {
 	 * @param string $field_key Field key
 	 * @param string $wrap The element to wrap the field in.
 	 * @param array $extra_args Extra args parsed to hooks.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 */
 	protected static function display_opening_wrapper( $field_key, $wrap, $extra_args = array(), $form = false ) {
 
@@ -540,7 +561,7 @@ class Renderer {
 			'class' => 'noptin-form-field-wrapper noptin-form-field-' . sanitize_html_class( $field_key ),
 		);
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			$args['class'] .= ' noptin-optin-field-wrapper noptin-optin-field-' . sanitize_html_class( $field_key );
 		}
 
@@ -573,7 +594,7 @@ class Renderer {
 	 * Displays the consent field.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 */
 	protected static function display_consent_field( $args, $form, $wrap ) {
 		do_action( 'before_display_consent_field', $args, $form, $wrap );
@@ -606,7 +627,7 @@ class Renderer {
 	 *
 	 * @param string $wrap The element to wrap the field in.
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy|false $form The form to display.
+	 * @param Form|false $form The form to display.
 	 */
 	protected static function display_submit_button( $wrap, $args, $form ) {
 		do_action( 'before_output_noptin_form_submit_button', $form );
@@ -623,7 +644,7 @@ class Renderer {
 			'value' => empty( $args['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $args['submit'],
 		);
 
-		if ( $form && is_legacy_noptin_form( $form->id ) ) {
+		if ( $form ) {
 			$button_atts['style'] = '';
 
 			if ( ! empty( $form->noptinButtonBg ) ) {
@@ -655,7 +676,7 @@ class Renderer {
 	 * Renders the opening wrapper for a form.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy $form The form to display.
+	 * @param Form $form The form to display.
 	 */
 	private static function before_display( $form, $args = array() ) {
 
@@ -749,7 +770,7 @@ class Renderer {
 		}
 
 		$wrapper_styles = '';
-		foreach ( $styles as $prop => $val ) {
+		foreach ( array_filter( $styles ) as $prop => $val ) {
 			$val             = esc_attr( $val );
 			$wrapper_styles .= " $prop:$val;";
 		}
@@ -801,7 +822,7 @@ class Renderer {
 	 * Renders the closing wrapper for a form.
 	 *
 	 * @param array $args The args with which to display the opt-in form.
-	 * @param \Noptin_Form|\Noptin_Form_Legacy $form The form to display.
+	 * @param Form $form The form to display.
 	 */
 	private static function after_display( $form, $args = array() ) {
 		if ( ! empty( $form->imageMain ) ) {
