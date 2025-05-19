@@ -25,11 +25,6 @@ class Noptin_Form_Manager {
 	public $tags;
 
 	/**
-	 * @var Noptin_Form_Admin
-	 */
-	public $admin;
-
-	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -51,7 +46,6 @@ class Noptin_Form_Manager {
 
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-element.php'; // Displays opt-in forms.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-tags.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-form-admin.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-form.php'; // Container for a single form.
 		require_once plugin_dir_path( __FILE__ ) . 'class-form-legacy.php'; // Container for a single legacy form.
 	}
