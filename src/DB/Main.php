@@ -108,6 +108,8 @@ class Main {
 	 */
 	public function load() {
 
+		do_action( 'noptin_db_before_init', $this );
+
 		// Migrator.
 		$this->migrate = new Migrate();
 
@@ -124,7 +126,7 @@ class Main {
 		$this->webhooks = new \Hizzle\Store\Webhooks( $this->store );
 
 		// Fire action hook.
-		do_action( 'hizzle_noptin_db_init', $this );
+		do_action( 'noptin_db_init', $this );
 	}
 
 	/**
@@ -171,7 +173,7 @@ class Main {
 			$record_id = $record_id->ID;
 		}
 
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return new \WP_Error( 'noptin_not_initialized', 'Noptin is not yet initialized. Ensure your code runs after the after_setup_theme hook' );
 		}
@@ -200,7 +202,7 @@ class Main {
 	 */
 	public function get_id_by_prop( $prop, $value, $collection_name = 'subscribers' ) {
 
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -217,7 +219,7 @@ class Main {
 	 * @return int|false — The number of rows deleted, or false on error.
 	 */
 	public function delete_where( $where, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -232,7 +234,7 @@ class Main {
 	 * @param string $collection_name The collection name.
 	 */
 	public function delete_all( $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -253,7 +255,7 @@ class Main {
 	 * @since   2.0.0
 	 */
 	public function get_record_meta( $record_id, $meta_key = '', $single = false, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -275,7 +277,7 @@ class Main {
 	 * @since   2.0.0
 	 */
 	public function add_record_meta( $record_id, $meta_key, $meta_value, $unique = false, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -301,7 +303,7 @@ class Main {
 	 * @since   1.0.0
 	 */
 	public function update_record_meta( $record_id, $meta_key, $meta_value, $prev_value = '', $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -324,7 +326,7 @@ class Main {
 	 * @since   1.0.0
 	 */
 	public function delete_record_meta( $record_id, $meta_key, $meta_value = '', $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -342,7 +344,7 @@ class Main {
 	 * @since   1.0.0
 	 */
 	public function delete_all_meta_by_key( $meta_key, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -360,7 +362,7 @@ class Main {
 	 * @since   1.0.0
 	 */
 	public function delete_all_record_meta( $record_id, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -378,7 +380,7 @@ class Main {
 	 * @since   1.0.0
 	 */
 	public function get_all_meta_by_key( $meta_key, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -396,7 +398,7 @@ class Main {
 	 *
 	 */
 	public function record_meta_exists( $record_id, $meta_key, $collection_name = 'subscribers' ) {
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return false;
 		}
@@ -416,7 +418,7 @@ class Main {
 	 */
 	public function query( $collection_name, $args = array(), $to_return = 'results' ) {
 
-		if ( ! did_action( 'hizzle_noptin_db_init' ) ) {
+		if ( ! did_action( 'noptin_db_init' ) ) {
 			_doing_it_wrong( __METHOD__, 'Noptin database is not yet initialized. Ensure your code runs after the after_setup_theme hook', '1.8.4' );
 			return new \WP_Error( 'noptin_not_initialized', 'Noptin is not yet initialized. Ensure your code runs after the after_setup_theme hook' );
 		}
