@@ -58,6 +58,7 @@ class Main {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_filter( 'noptin_load_form_scripts', array( __CLASS__, 'should_enqueue_scripts' ), 20 );
 		add_action( 'init', array( __CLASS__, 'register_blocks' ) );
+		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );
 	}
 
 	/**
@@ -356,5 +357,16 @@ class Main {
 		register_block_type( plugin_dir_path( __FILE__ ) . '/assets/block' );
 
 		do_action( 'register_noptin_form_block_type' );
+	}
+
+	/**
+	 * Breeze compatibility.
+	 *
+	 * @param array $scripts
+	 * @return array
+	 */
+	public static function breeze_compatibility( $scripts ) {
+		$scripts[] = 'noptin';
+		return $scripts;
 	}
 }

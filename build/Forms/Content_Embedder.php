@@ -22,7 +22,7 @@ class Content_Embedder {
 	/**
 	 * Cached forms to embed.
 	 *
-	 * @var \Noptin_Form[]|\Noptin_Form_Legacy[]
+	 * @var Form[]
 	 */
 	private static $forms = null;
 
@@ -72,12 +72,12 @@ class Content_Embedder {
 
 			// If we are to prepend.
 			if ( 'both' === $position || 'before' === $position ) {
-				$content = show_noptin_form( $form->id, false ) . $content;
+				$content = $form->get_html() . $content;
 			}
 
 			// If we are to append.
 			if ( 'both' === $position || 'after' === $position ) {
-				$content .= show_noptin_form( $form->id, false );
+				$content .= $form->get_html();
 			}
 		}
 
@@ -87,7 +87,7 @@ class Content_Embedder {
 	/**
 	 * Get forms to embed.
 	 *
-	 * @return \Noptin_Form[]|\Noptin_Form_Legacy[]
+	 * @return Form[]
 	 */
 	private static function get_forms_to_embed() {
 		global $post;
@@ -136,7 +136,7 @@ class Content_Embedder {
 
 			if ( is_array( $forms ) ) {
 				foreach ( $forms as $form ) {
-					$form = noptin_get_optin_form( $form );
+					$form = new Form( $form );
 
 					// Can it be displayed?
 					if ( $form->can_embed() ) {

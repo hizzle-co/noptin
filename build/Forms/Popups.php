@@ -23,7 +23,7 @@ class Popups {
 	/**
 	 * Cached popups.
 	 *
-	 * @var \Noptin_Form[]|\Noptin_Form_Legacy[]
+	 * @var Form[]
 	 */
 	private static $popups = null;
 
@@ -91,7 +91,7 @@ class Popups {
 
 		do_action( 'before_noptin_popup_display' );
 		foreach ( $popups as $popup ) {
-			show_noptin_form( $popup->id );
+			$popup->display();
 		}
 		do_action( 'after_noptin_popup_display' );
 	}
@@ -99,7 +99,7 @@ class Popups {
 	/**
 	 * Fetches popups to be displayed.
 	 *
-	 * @return \Noptin_Form[]|\Noptin_Form_Legacy[] Array of popup data.
+	 * @return Form[] Array of popup data.
 	 */
 	private static function get_popups() {
 		// Maybe abort early.
@@ -120,11 +120,6 @@ class Popups {
 						'post_type'   => 'noptin-form',
 						'post_status' => 'publish',
 						'meta_query'  => array(
-							'relation' => 'OR',
-							array(
-								'key'     => 'form_settings',
-								'compare' => 'EXISTS',
-							),
 							array(
 								'key'     => '_noptin_optin_type',
 								'value'   => array( 'popup', 'slide_in' ),
@@ -140,7 +135,7 @@ class Popups {
 			self::$popups = array();
 
 			foreach ( $forms as $popup ) {
-				$form = noptin_get_optin_form( $popup );
+				$form = new Form( $popup );
 
 				// Can it be displayed?
 				if ( $form->is_slide_in() || $form->is_popup() ) {
