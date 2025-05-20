@@ -23,9 +23,6 @@
 		"url": "https://github.com/hizzle-co/noptin/issues"
 	},
 	"homepage": "https://github.com/hizzle-co/noptin#readme",
-	"dependencies": {
-		"@wordpress/components": "^29.0.0"
-	},
 	"devDependencies": {
 		"autoprefixer": "10.4.21",
 		"postcss": "8.5.3",
