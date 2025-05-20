@@ -189,31 +189,6 @@ $noptin_color: #ff6f00;
 	flex: 1 0 0;
 }
 
-.noptin-add-button,
-.noptin-add-button:hover,
-.noptin-add-button:active,
-.noptin-add-button:visited {
-	background: #1ea9ea;
-	border: 1px solid #1ea9ea;
-	color: #fff;
-	border: 0;
-	border-radius: 4px;
-	cursor: pointer;
-	display: inline-block;
-	font-size: 17px;
-	padding: 10px 30px;
-	text-align: center;
-	text-decoration: none;
-	text-transform: uppercase;
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-}
-
-.noptin-add-button .dashicons {
-	vertical-align: bottom;
-}
-
 .noptin-textarea-wrapper label {
 	display: block;
 	margin-bottom: 6px;
