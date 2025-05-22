@@ -32,6 +32,9 @@ class Main {
 	 */
 	public static function init() {
 
+		// Load functions.
+		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
+
 		// Load modules.
 		self::$listener = new Listener();
 		Widgets\Main::init();
