@@ -27,6 +27,7 @@ class Main {
 		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init' );
 		add_action( 'noptin_subscribers_before_prepare_query', __CLASS__ . '::hide_blocked_subscribers' );
 
+		// Subscribers menu.
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );

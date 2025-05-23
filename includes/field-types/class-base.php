@@ -43,7 +43,7 @@ abstract class Noptin_Custom_Field_Type {
 	 *
 	 * @since 1.5.5
 	 * @param array $args Field args
-	 * @param false|Noptin_Subscriber $subscriber
+	 * @param false|\Hizzle\Noptin\DB\Subscriber $subscriber
 	 */
 	abstract public function output( $args, $subscriber );
 

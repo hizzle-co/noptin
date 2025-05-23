@@ -40,11 +40,7 @@ class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
 	}
 
 	/**
-	 * Displays the actual markup for this field.
-	 *
-	 * @since 1.8.0
-	 * @param array $args Field args
-	 * @param false|Noptin_Subscriber $subscriber
+	 * @inheritdoc
 	 */
 	public function output( $args, $subscriber ) {
 		$args['options'] = $this->get_languages();

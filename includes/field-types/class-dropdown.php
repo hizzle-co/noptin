@@ -42,11 +42,7 @@ class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
 	}
 
 	/**
-	 * Displays the actual markup for this field.
-	 *
-	 * @since 1.5.5
-	 * @param array $args Field args
-	 * @param false|Noptin_Subscriber $subscriber
+	 * @inheritdoc
 	 */
 	public function output( $args, $subscriber ) {
 
