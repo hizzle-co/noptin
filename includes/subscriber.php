@@ -35,11 +35,6 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 		$subscriber = $subscriber->get_id();
 	}
 
-	// Deprecated subscriber.
-	if ( $subscriber instanceof Noptin_Subscriber ) {
-		$subscriber = $subscriber->id;
-	}
-
 	// WP_User.
 	if ( is_object( $subscriber ) && $subscriber instanceof \WP_User ) {
 		$subscriber = $subscriber->user_email;
@@ -675,35 +670,6 @@ function clear_noptin_subscriber_cache() {
 }
 
 /**
- * Retrieves a subscriber
- *
- * @access  public
- * @since   1.1.1
- * @param int|string|Noptin_Subscriber|object|array subscriber The subscribers's ID, email, confirm key, a Noptin_Subscriber object,
- *                                                                or a subscriber object from the DB.
- * @deprecated 2.0.0 User noptin_get_subscriber
- * @return Noptin_Subscriber
- */
-function get_noptin_subscriber( $subscriber ) {
-	_deprecated_function( __FUNCTION__, '2.0.0', 'noptin_get_subscriber' );
-	return new Noptin_Subscriber( $subscriber );
-}
-
-/**
- * Retrieves a subscriber by email
- *
- * @access  public
- * @since   1.1.2
- * @param int|string|Noptin_Subscriber|object|array subscriber The subscriber to retrieve.
- * @deprecated 2.0.0 User noptin_get_subscriber
- * @return Noptin_Subscriber
- */
-function get_noptin_subscriber_by_email( $email ) {
-	_deprecated_function( __FUNCTION__, '2.0.0', 'noptin_get_subscriber' );
-	return new Noptin_Subscriber( $email );
-}
-
-/**
  * Retrieves a subscriber id by email
  *
  * @access  public
@@ -1162,7 +1128,7 @@ function get_noptin_custom_field_types() {
  * @since 1.5.5
  * @see Noptin_Custom_Field_Type::output
  * @param array $custom_field
- * @param false|Noptin_Subscriber $subscriber
+ * @param false|\Hizzle\Noptin\DB\Subscriber $subscriber
  */
 function display_noptin_custom_field_input( $custom_field, $subscriber = false ) {
 	$custom_field['name']  = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
@@ -1186,35 +1152,6 @@ function display_noptin_custom_field_input( $custom_field, $subscriber = false )
 
 	do_action( 'noptin_display_custom_field_input', $custom_field, $subscriber );
 	do_action( "noptin_display_{$custom_field['type']}_input", $custom_field, $subscriber );
-}
-
-/**
- * Sanitize a custom field value.
- *
- * @since 1.5.5
- * @see Noptin_Custom_Field_Type::sanitize_value
- * @param mixed $value
- * @param string $type
- * @param false|Noptin_Subscriber $subscriber
- * @deprecated 2.0.0
- */
-function sanitize_noptin_custom_field_value( $value, $type, $subscriber = false ) {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return apply_filters( "noptin_sanitize_{$type}_value", $value, $subscriber );
-}
-
-/**
- * Formats a custom field value for display.
- *
- * @since 1.5.5
- * @see Noptin_Custom_Field_Type::sanitize_value
- * @param mixed $value
- * @param string $type
- * @deprecated 2.0.0
- */
-function format_noptin_custom_field_value( $value, $type, $subscriber ) {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return (string) $value;
 }
 
 /**
