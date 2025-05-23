@@ -114,7 +114,7 @@ class Noptin_Post_Types {
 		unset( $columns['author'] );
 		unset( $columns['date'] );
 		$columns['title']         = __( 'Form Name', 'newsletter-optin-box' );
-		$columns['type']          = is_using_new_noptin_forms() ? __( 'Shortcode', 'newsletter-optin-box' ) : __( 'Form Type', 'newsletter-optin-box' );
+		$columns['type']          = __( 'Form Type', 'newsletter-optin-box' );
 		$columns['impressions']   = __( 'Impressions', 'newsletter-optin-box' );
 		$columns['subscriptions'] = __( 'Subscriptions', 'newsletter-optin-box' );
 		$columns['conversion']    = __( 'Conversion Rate', 'newsletter-optin-box' );
@@ -142,11 +142,25 @@ class Noptin_Post_Types {
 				} else {
 
 					// Link to the list of subscribers who signed up using this specific form.
-					$url   = get_noptin_subscribers_overview_url();
-					$url   = esc_url( add_query_arg( 'source', $post_id, $url ) );
-					$title = esc_attr__( 'View the list of subscribers who signed up using this form.', 'newsletter-optin-box' );
-					$subs  = "<a href='$url' title='$title'>$subs</a>";
-
+					$subs  = sprintf(
+						'<a href="%s" title="%s">%d</a>',
+						 esc_url(
+							add_query_arg(
+								array(
+									'hizzlewp_filters' => rawurlencode(
+										wp_json_encode(
+											array(
+												'source' => (string) $post_id,
+											)
+										)
+									),
+								),
+								get_noptin_subscribers_overview_url()
+							)
+						),
+						esc_attr( __( 'View the list of subscribers who signed up using this form.', 'newsletter-optin-box' ) ),
+						(int) $subs
+					);
 				}
 
 				echo wp_kses_post( $subs );
@@ -154,7 +168,7 @@ class Noptin_Post_Types {
 				break;
 
 			case 'type':
-				if ( is_using_new_noptin_forms() || ! is_legacy_noptin_form( $post_id ) ) {
+				if ( ! is_legacy_noptin_form( $post_id ) ) {
 
 					printf(
 						'<input onClick="this.select();" type="text" value="[noptin form=%d]" readonly="readonly" />',
@@ -180,7 +194,7 @@ class Noptin_Post_Types {
 					if ( 'inpost' === $type ) {
 
 						printf(
-							'<br><input title="%s" style="color: #607D8B;" onClick="this.select();" type="text" value="[noptin-form id=%d]" readonly="readonly" />',
+							'<br><input title="%s" style="color: #607D8B;" onClick="this.select();" type="text" value="[noptin form=%d]" readonly="readonly" />',
 							esc_attr__( 'Use this shortcode to display the form on your website', 'newsletter-optin-box' ),
 							(int) $post_id
 						);
