@@ -310,7 +310,7 @@ class Task extends \Hizzle\Store\Record {
 	 */
 	public function process() {
 		global $current_noptin_task;
-		$old_task = $current_noptin_task;
+		$old_task            = $current_noptin_task;
 		$current_noptin_task = $this;
 
 		try {
@@ -443,7 +443,7 @@ class Task extends \Hizzle\Store\Record {
 		$result = parent::save();
 
 		if ( $this->exists() && $this->get_status() === 'pending' && $this->has_expired() ) {
-			if ( $this->get_subject() ) {
+			if ( $this->get_subject() || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
 				$this->process();
 			} else {
 				do_action( 'noptin_tasks_run_pending' );
@@ -454,81 +454,92 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
-	 * Returns the record's overview.
+	 * Returns the record's actions.
 	 *
 	 * @since 1.0.0
 	 * @return array
 	 */
-	public function get_overview() {
-
-		$overview = array();
-
-		// Prepare action links.
-		$action_links = array();
+	public function get_hizzlewp_actions() {
+		$actions = parent::get_hizzlewp_actions();
 
 		if ( 'pending' === $this->get_status() ) {
-			$action_links[] = array(
-				'label' => __( 'Run', 'newsletter-optin-box' ),
-				'value' => wp_nonce_url(
-					add_query_arg(
-						array(
-							'task_action' => 'run',
-							'task_id'     => $this->get_id(),
-							'page'        => 'noptin-tasks',
-						),
-						admin_url( 'admin.php' )
-					),
-					'noptin_task_action',
-					'task_nonce'
-				),
+			$actions[] = array(
+				'id'         => 'run',
+				'text'       => __( 'Run', 'newsletter-optin-box' ),
+				'type'       => 'remote',
+				'actionName' => 'run',
+				'icon'       => 'controls-play',
 			);
 
-			$action_links[] = array(
-				'label' => __( 'Cancel', 'newsletter-optin-box' ),
-				'value' => wp_nonce_url(
-					add_query_arg(
-						array(
-							'task_action' => 'cancel',
-							'task_id'     => $this->get_id(),
-							'page'        => 'noptin-tasks',
-						),
-						admin_url( 'admin.php' )
-					),
-					'noptin_task_action',
-					'task_nonce'
-				),
+			$actions[] = array(
+				'id'         => 'cancel',
+				'text'       => __( 'Cancel', 'newsletter-optin-box' ),
+				'type'       => 'remote',
+				'actionName' => 'cancel',
+				'icon'       => 'no',
 			);
 		} else {
-			$action_links[] = array(
-				'label' => __( 'Re-run', 'newsletter-optin-box' ),
-				'value' => wp_nonce_url(
-					add_query_arg(
-						array(
-							'task_action' => 're_run',
-							'task_id'     => $this->get_id(),
-							'page'        => 'noptin-tasks',
-						),
-						admin_url( 'admin.php' )
-					),
-					'noptin_task_action',
-					'task_nonce'
-				),
+			$actions[] = array(
+				'id'         => 're_run',
+				'text'       => __( 'Re-run', 'newsletter-optin-box' ),
+				'type'       => 'remote',
+				'actionName' => 're_run',
+				'icon'       => 'controls-repeat',
 			);
 		}
 
-		// Delete task.
-		$action_links[] = array(
-			'label'  => __( 'Delete', 'newsletter-optin-box' ),
-			'value'  => __( 'Are you sure you want to delete this record?', 'newsletter-optin-box' ),
-			'action' => 'delete',
-		);
+		return $actions;
+	}
 
-		$overview['action_links'] = array(
-			'type'  => 'action_links',
-			'links' => $action_links,
-		);
+	/**
+	 * Runs the task.
+	 *
+	 * @since 1.0.0
+	 * @return array|\WP_Error
+	 */
+	public function do_run() {
 
-		return apply_filters( 'noptin_task_overview', $overview, $this );
+		if ( $this->get_status() !== 'pending' ) {
+			return new \WP_Error( 'invalid_task', 'Task is not pending', array( 'status' => 400 ) );
+		}
+
+		$this->process();
+
+		return array(
+			'message' => 'Processed task',
+		);
+	}
+
+	/**
+	 * Cancels the task.
+	 *
+	 * @since 1.0.0
+	 * @return array|\WP_Error
+	 */
+	public function do_cancel() {
+		$this->task_canceled( $this );
+
+		return array(
+			'message' => 'Canceled task',
+		);
+	}
+
+	/**
+	 * Re-runs the task.
+	 *
+	 * @since 1.0.0
+	 * @return array|\WP_Error
+	 */
+	public function do_re_run() {
+
+		add_filter( 'noptin_saved_task_background_run', '__return_false' );
+
+		// Re-run the task.
+		Main::retry_task( $this, 0 );
+
+		return array(
+			'message' => 'Re-run task',
+		);
 	}
 
 	public function clone() {
