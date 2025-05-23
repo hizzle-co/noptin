@@ -771,10 +771,14 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			esc_html__( 'Tasks', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-tasks',
-			'\Hizzle\Noptin\Misc\Store_UI::render_admin_page'
+			'\Hizzle\WordPress\ScriptManager::render_collection'
 		);
 
-		\Hizzle\Noptin\Misc\Store_UI::collection_menu( $hook_suffix, 'noptin/tasks' );
+		\Hizzle\WordPress\ScriptManager::add_collection(
+			$hook_suffix,
+			'noptin',
+			'tasks'
+		);
 	}
 
 	/**

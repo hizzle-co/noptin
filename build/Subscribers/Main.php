@@ -31,10 +31,6 @@ class Main {
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
-
-			if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING ) {
-				add_action( 'admin_menu', array( __CLASS__, 'old_subscribers_menu' ), 33 );
-			}
 		}
 
 		// Initialize the privacy class.
@@ -176,23 +172,6 @@ class Main {
 			'noptin',
 			'subscribers'
 		);
-	}
-
-	/**
-	 * Subscribers menu.
-	 */
-	public static function old_subscribers_menu() {
-
-		$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
-			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ) . ' <span class="menu-counter">Old</span>',
-			get_noptin_capability(),
-			'noptin-subscribers__old',
-			'\Hizzle\Noptin\Misc\Store_UI::render_admin_page'
-		);
-
-		\Hizzle\Noptin\Misc\Store_UI::collection_menu( $hook_suffix, 'noptin/subscribers' );
 	}
 
 	/**
