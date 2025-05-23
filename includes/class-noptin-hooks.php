@@ -14,26 +14,11 @@ class Noptin_Hooks {
 	 */
 	public function __construct() {
 
-		// Temporarily hide opt-in forms.
-		add_action( 'init', array( $this, 'maybe_hide_optin_forms' ) );
-
 		// (Maybe) schedule a cron that runs daily.
 		add_action( 'admin_init', array( $this, 'maybe_create_scheduled_event' ) );
 
 		// (Maybe) subscribe users from custom forms.
 		add_action( 'init', array( $this, 'maybe_subscribe' ), 1000 );
-	}
-
-	/**
-	 * Hide opt-in forms from existing users.
-	 *
-	 * @since 1.3.2
-	 */
-	public function maybe_hide_optin_forms() {
-
-		if ( ! empty( $_GET['noptin_hide'] ) ) {
-			setcookie( 'noptin_hide', 'true', time() + HOUR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
-		}
 	}
 
 	/**

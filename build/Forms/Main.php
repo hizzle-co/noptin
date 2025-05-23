@@ -62,6 +62,7 @@ class Main {
 		add_filter( 'noptin_load_form_scripts', array( __CLASS__, 'should_enqueue_scripts' ), 20 );
 		add_action( 'init', array( __CLASS__, 'register_blocks' ) );
 		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );
+		add_action( 'init', array( __CLASS__, 'maybe_hide_optin_forms' ) );
 	}
 
 	/**
@@ -371,5 +372,17 @@ class Main {
 	public static function breeze_compatibility( $scripts ) {
 		$scripts[] = 'noptin';
 		return $scripts;
+	}
+
+	/**
+	 * Hide opt-in forms from existing users.
+	 *
+	 * @since 1.3.2
+	 */
+	public static function maybe_hide_optin_forms() {
+
+		if ( ! empty( $_GET['noptin_hide'] ) ) {
+			setcookie( 'noptin_hide', 'true', time() + HOUR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
+		}
 	}
 }
