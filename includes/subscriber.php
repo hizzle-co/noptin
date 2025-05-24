@@ -178,30 +178,6 @@ function log_noptin_subscriber_campaign_open( $subscriber_id, $campaign_id ) {
 }
 
 /**
- * Retrieves all the campaigns a given subscriber has opened
- *
- * @deprecated 2.0.0
- * @since   1.2.0
- * @return  int[] Array of opened campaigns.
- */
-function get_noptin_subscriber_opened_campaigns() {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return array();
-}
-
-/**
- * Checks whether a subscriber opened a given campaign
- *
- * @deprecated 2.0.0
- * @access  public
- * @since   1.2.0
- */
-function did_noptin_subscriber_open_campaign() {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return false;
-}
-
-/**
  * Logs whenever a subscriber clicks on a link in an email
  *
  * @param   int    $subscriber_id  Subscriber ID.
@@ -868,29 +844,6 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 	);
 }
 add_action( 'noptin_subscriber_created', 'send_new_noptin_subscriber_double_optin_email' );
-
-/**
- *  Returns the name of the subscribers' table
- *
- * @since 1.2.2
- * @deprecated 2.0.0
- * @return string The name of our subscribers table
- */
-function get_noptin_subscribers_table_name() {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return $GLOBALS['wpdb']->prefix . 'noptin_subscribers';
-}
-
-/**
- *  Returns the name of the subscribers' meta table
- *
- * @since 1.2.2
- * @return string The name of our subscribers meta table
- */
-function get_noptin_subscribers_meta_table_name() {
-	_deprecated_function( __FUNCTION__, '2.0.0' );
-	return $GLOBALS['wpdb']->prefix . 'noptin_subscriber_meta';
-}
 
 /**
  * Retrieves the current user's Noptin subscriber id.

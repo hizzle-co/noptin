@@ -504,45 +504,6 @@ $noptin_color: #ff6f00;
 	overflow: auto;
 }
 
-.noptin-save-saved,
-.noptin-save-error {
-	margin: 5px 0 15px;
-	background: #fff;
-	border-left: 4px solid #fff;
-	border-left-color: #46b450;
-	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, .1);
-	padding: 1px 12px;
-}
-
-.noptin-save-error {
-	border-left-color: #dc3232;
-}
-
-.noptin-form-usage-details p {
-	display: flex;
-
-	strong {
-		margin: 0 4px;
-	}
-
-	.noptin-copy-button {
-		transition: all 0.2s ease;
-		background-color: transparent;
-		color: #43A047;
-		text-transform: capitalize;
-		font-weight: 600;
-		border: none;
-		outline: none;
-		margin-left: 10px;
-		display: none;
-	}
-
-	.noptin-copy-button.copied {
-		display: inline-block;
-		animation: noptin-vibrate 0.9s infinite both;
-	}
-}
-
 .noptin-sortable-ghost {
 	background-color: #f3f3f3;
 	color: #3c3b3b;
@@ -868,40 +829,6 @@ $noptin_color: #ff6f00;
 	}
 }
 
-.noptin-settings {
-
-	&-panel {
-		background: #fff;
-		border: 1px solid #c3c4c7;
-		border-radius: 3px;
-		box-shadow: 0 1px 1px rgb(0 0 0 / 4%);
-		box-sizing: border-box;
-		margin-bottom: 20px;
-
-		&__content {
-			border-top: 1px solid #c3c4c7;
-			padding: 1em 1em 1.25em;
-		}
-
-		&__hidden > &__content {
-			display: none;
-		}
-
-		&__compact {
-
-			border-radius: 0;
-
-			&:not(:last-of-type){
-				border-bottom: 0;
-				margin-bottom: 0;
-			}
-
-		}
-	}
-
-}
-
-
 #noptin-form-welcome-email-content_ifr {
 	min-height: 300px;
 }
@@ -1069,25 +996,4 @@ $noptin_color: #ff6f00;
 
 .noptin__section-footer {
 	padding: 16px;
-}
-
-.noptin-component-editor__sidebar {
-	width: 300px;
-}
-
-.noptin-component__field {
-	margin-bottom: 1rem;
-}
-
-.noptin-component__field-lg {
-	margin-bottom: 1.6rem;
-	max-width: 600px;
-
-	&:last-child {
-		margin-bottom: 0;
-	}
-
-	.noptin-conditional-logic-rules & {
-		max-width: 100%;
-	}
 }
