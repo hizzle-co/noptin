@@ -139,21 +139,12 @@ function get_noptin_optin_field_types() {
 /**
  * Retrieves an optin form.
  *
- * @param int|Noptin_Form $id The id or Noptin_Form object of the optin to retrieve.
+ * @param int|Hizzle\Noptin\Forms\Form $id The id or Hizzle\Noptin\Forms\Form object of the optin to retrieve.
  * @since 1.0.5
- * @return Noptin_Form|Noptin_Form_Legacy
+ * @return Hizzle\Noptin\Forms\Form
  */
 function noptin_get_optin_form( $id ) {
-
-	// Prepare form id.
-	$_form_id = is_object( $id ) ? $id->id : $id;
-
-	// Check whether to load a new or legacy form.
-	if ( is_legacy_noptin_form( $_form_id ) ) {
-		return new Noptin_Form_Legacy( $id );
-	}
-
-	return new Noptin_Form( $id );
+	return new Hizzle\Noptin\Forms\Form( $id );
 }
 
 /**
