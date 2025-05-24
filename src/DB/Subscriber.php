@@ -146,30 +146,6 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
-	 * Returns the status formatted for display.
-	 *
-	 * @return string
-	 */
-	public function the_status() {
-
-		$statuses = noptin_get_subscriber_statuses();
-		$badges   = array(
-			'subscribed'   => 'success',
-			'unsubscribed' => 'notification',
-			'pending'      => 'new',
-		);
-
-		$status_label = isset( $statuses[ $this->get_status() ] ) ? $statuses[ $this->get_status() ] : $this->get_status();
-		$status_badge = isset( $badges[ $this->get_status() ] ) ? $badges[ $this->get_status() ] : 'info';
-
-		return sprintf(
-			'<span class="noptin-badge %s">%s</span>',
-			esc_html( $status_badge ),
-			esc_html( $status_label )
-		);
-	}
-
-	/**
 	 * Gets the subscriber source.
 	 *
 	 * @return string
@@ -186,15 +162,6 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function set_source( $value ) {
 		$source = is_null( $value ) ? null : sanitize_text_field( $value );
 		$this->set_prop( 'source', $source );
-	}
-
-	/**
-	 * Returns the source formatted for display.
-	 *
-	 * @return string
-	 */
-	public function the_source() {
-		return wp_kses_post( noptin_format_subscription_source( $this->get_source() ) );
 	}
 
 	/**

@@ -1399,43 +1399,6 @@ function get_noptin_subscriber_filters() {
 }
 
 /**
- * Retrieves Noptin subscription sources.
- *
- * @param string $source Subscrption source.
- * @since 1.5.5
- * @return string
- */
-function noptin_format_subscription_source( $source ) {
-
-	if ( is_null( $source ) ) {
-		return __( 'Unknown', 'newsletter-optin-box' );
-	}
-
-	if ( is_numeric( $source ) ) {
-		$title = get_the_title( $source );
-
-		if ( empty( $title ) ) {
-			return __( 'Newsletter Form', 'newsletter-optin-box' );
-		}
-
-		$url = get_edit_post_link( (int) $source, 'url' );
-		return empty( $url ) ? $title : "<a href='$url'>$title</a>";
-	}
-
-	if ( 'default_user' === $source ) {
-		return __( 'Default', 'newsletter-optin-box' );
-	}
-
-	$sources = noptin_get_subscription_sources();
-
-	if ( isset( $sources[ $source ] ) ) {
-		return $sources[ $source ];
-	}
-
-	return $source;
-}
-
-/**
  * Clears cache of known subscription sources.
  *
  * @since 2.0.0
