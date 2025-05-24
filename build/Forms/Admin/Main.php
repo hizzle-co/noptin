@@ -27,7 +27,11 @@ class Main {
 	 *
 	 */
 	public static function init() {
+		// Enqueue scripts and styles.
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+
+		// Forms list table.
+		List_Table::init();
 	}
 
 	/**

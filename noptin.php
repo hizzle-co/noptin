@@ -195,13 +195,6 @@ class Noptin {
 	public $actions_page;
 
 	/**
-	 * Post types.
-	 *
-	 * @var Noptin_Post_Types
-	 */
-	public $post_types;
-
-	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -380,9 +373,6 @@ class Noptin {
 
 		// Actions page controller.
 		$this->actions_page = new Noptin_Page();
-
-		// Post types controller.
-		$this->post_types = new Noptin_Post_Types();
 
 		// Automation tasks.
 		$this->automation_rules   = new Noptin_Automation_Rules();

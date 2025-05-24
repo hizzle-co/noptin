@@ -598,18 +598,13 @@ class Listener {
 		$source   = $this->get_submitted( 'source' );
 		$messages = array();
 
+		// Get messages from the form settings.
 		if ( is_numeric( $source ) ) {
-			$messages = get_post_meta( $source, 'form_messages', true );
+			$form = new Form( (int) $source );
 
-			if ( is_legacy_noptin_form( $source ) ) {
-				$form = noptin_get_optin_form( $source );
-
-				if ( $form ) {
-					$messages = array();
-
-					foreach ( array_keys( get_default_noptin_form_messages() ) as $message_id ) {
-						$messages[ $message_id ] = $form->__get( "{$message_id}Message" );
-					}
+			if ( $form->exists() ) {
+				foreach ( array_keys( get_default_noptin_form_messages() ) as $message_id ) {
+					$messages[ $message_id ] = $form->__get( "{$message_id}Message" );
 				}
 			}
 		}

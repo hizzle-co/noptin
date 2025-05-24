@@ -115,55 +115,6 @@ function noptin_attr( $context, $attributes = array(), $args = array() ) {
 }
 
 /**
- * Retrieves the URL to the forms creation page
- *
- * @since   1.0.5
- * @return  string
- */
-function get_noptin_new_form_url() {
-	return admin_url( 'post-new.php?post_type=noptin-form' );
-}
-
-/**
- * Retrieves the URL to a forms edit url
- *
- * @param int $form_id
- * @since   1.1.1
- * @return  string
- */
-function get_noptin_edit_form_url( $form_id ) {
-	return get_edit_post_link( $form_id, 'edit' );
-}
-
-/**
- * Retrieves the URL to a form's preview page
- *
- * @param int $form_id
- * @since   1.6.2
- * @return  string
- */
-function get_noptin_preview_form_url( $form_id ) {
-
-	return add_query_arg(
-		array(
-			'noptin_preview_form' => $form_id,
-		),
-		site_url( '/', 'admin' )
-	);
-
-}
-
-/**
- * Retrieves the URL to the forms overview page
- *
- * @since   1.0.5
- * @return  string   The forms page url
- */
-function get_noptin_forms_overview_url() {
-	return admin_url( 'edit.php?post_type=noptin-form' );
-}
-
-/**
  * Returns opt-in forms field types
  *
  * @return  array
