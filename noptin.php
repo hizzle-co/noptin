@@ -156,14 +156,6 @@ class Noptin {
 	public $custom_fields;
 
 	/**
-	 * The main forms class.
-	 *
-	 * @var Noptin_Form_Manager
-	 * @since       1.6.2
-	 */
-	public $forms;
-
-	/**
 	 * The main emails class.
 	 *
 	 * @var Noptin_Email_Manager
@@ -252,7 +244,6 @@ class Noptin {
 		require_once $plugin_path . 'vendor/autoload.php';
 		require_once $plugin_path . 'includes/functions.php';
 		require_once $plugin_path . 'includes/subscriber.php';
-		require_once $plugin_path . 'includes/forms/class-form-manager.php';
 		require_once $plugin_path . 'includes/emails/class-manager.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
@@ -277,9 +268,6 @@ class Noptin {
 		$this->plugin_path = plugin_dir_path( __FILE__ );
 		$this->plugin_url  = plugins_url( '/', __FILE__ );
 		$this->is_test     = 'production' !== wp_get_environment_type();
-
-		// Form manager.
-		$this->forms = new Noptin_Form_Manager();
 
 		// Email manager.
 		$this->emails = new Noptin_Email_Manager();

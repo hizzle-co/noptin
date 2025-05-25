@@ -119,6 +119,8 @@ abstract class Noptin_Dynamic_Content_Tags {
 			'callback'    => array( $this, 'get_post_property' ),
 			'example'     => "post property='ID'",
 		);
+
+		do_action( 'noptin_register_dynamic_content_tags', $this );
 	}
 
 	/**

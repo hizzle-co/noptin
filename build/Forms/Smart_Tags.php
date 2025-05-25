@@ -8,31 +8,29 @@
  * @package Noptin
  */
 
+namespace Hizzle\Noptin\Forms;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Allows users to use dynamic tags in opt-in forms.
+ * Allows users to use dynamic tags in newsletter forms.
  *
  * @internal
  * @access private
  * @since 1.6.2
  * @ignore
  */
-class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
+class Smart_Tags extends \Noptin_Dynamic_Content_Tags {
 
 	/**
 	 * Register core hooks.
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'register' ) );
-		add_filter( 'noptin_subscription_response_html', array( $this, 'replace_in_form_response' ) );
+		add_filter( 'noptin_form_response_html', array( $this, 'replace_in_form_response' ) );
 		add_filter( 'noptin_form_text', array( $this, 'replace_in_form_content' ) );
-		add_filter( 'noptin_form_html', array( $this, 'replace_in_form_content' ) );
-		add_filter( 'noptin_optin_form_html', array( $this, 'replace_in_form_content' ) );
-		add_filter( 'noptin_form_redirect_url', array( $this, 'replace_in_form_redirect_url' ) );
-		add_filter( 'noptin_form_welcome_email_subject', array( $this, 'replace_in_form_content' ) );
-		add_filter( 'noptin_form_welcome_email_body', array( $this, 'replace_in_form_content' ) );
+		add_filter( 'noptin_form_redirect_url', array( $this, 'replace_in_url' ) );
 	}
 
 	/**
@@ -60,15 +58,6 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
-	 * Returns the number of subscribers.
-	 *
-	 * @return int
-	 */
-	public function replace_in_form_redirect_url( $string ) {
-		return $this->replace_in_url( $string );
-	}
-
-	/**
 	 * Register template tags
 	 */
 	public function register() {
@@ -89,7 +78,6 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 			'description' => __( 'Replaced with the total number of subscribers', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_subscriber_count' ),
 		);
-
 	}
 
 	/**
@@ -98,7 +86,7 @@ class Noptin_Form_Tags extends Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function get_form_response() {
-		$listener = \Hizzle\Noptin\Forms\Main::$listener;
+		$listener = Main::$listener;
 		return $listener ? $listener->get_response_html() : '';
 	}
 

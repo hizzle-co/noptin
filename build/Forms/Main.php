@@ -22,6 +22,11 @@ class Main {
 	public static $listener;
 
 	/**
+	 * @var Listener Form smart tags.
+	 */
+	public static $smart_tags;
+
+	/**
 	 * @var bool Whether the form scripts have been enqueued.
 	 */
 	public static $scripts_loaded = false;
@@ -37,6 +42,7 @@ class Main {
 
 		// Load modules.
 		self::$listener = new Listener();
+		self::$smart_tags = new Smart_Tags();
 		Widgets\Main::init();
 		Popups::init();
 
