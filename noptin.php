@@ -240,6 +240,13 @@ class Noptin {
 
 		$plugin_path = plugin_dir_path( __FILE__ );
 
+		// Register autoloader.
+		try {
+			spl_autoload_register( array( $this, 'autoload' ), true );
+		} catch ( Exception $e ) {
+			log_noptin_message( $e->getMessage() );
+		}
+
 		// Non-class files.
 		require_once $plugin_path . 'vendor/autoload.php';
 		require_once $plugin_path . 'includes/functions.php';
@@ -247,12 +254,6 @@ class Noptin {
 		require_once $plugin_path . 'includes/emails/class-manager.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
 
-		// Register autoloader.
-		try {
-			spl_autoload_register( array( $this, 'autoload' ), true );
-		} catch ( Exception $e ) {
-			log_noptin_message( $e->getMessage() );
-		}
 	}
 
 	/**
