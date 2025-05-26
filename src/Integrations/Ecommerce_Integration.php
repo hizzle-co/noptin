@@ -107,7 +107,7 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 		// Either create a new subscriber...
 		if ( empty( $subscriber_id ) ) {
 
-			// Should we process the subsriber?
+			// Should we process the subscriber?
 			if ( ! $this->triggered( $order_id ) ) {
 				return null;
 			}
@@ -262,16 +262,6 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 	}
 
 	/**
-	 * Returns an array of all published products.
-	 *
-	 * @since 1.2.6
-	 * @return array
-	 */
-	public function get_products() {
-		return array();
-	}
-
-	/**
 	 * Fired when a product is bought.
 	 *
 	 * @param int $product_id The product id.
@@ -341,7 +331,7 @@ abstract class Ecommerce_Integration extends \Noptin_Abstract_Integration {
 					array(
 						'key'      => 'type',
 						'operator' => '!includes',
-						'value'    => \Noptin_Custom_Fields::predefined_fields(),
+						'value'    => get_noptin_predefined_custom_fields(),
 					),
 				),
 				'options'     => $customer_fields,

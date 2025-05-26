@@ -1042,7 +1042,7 @@ function get_noptin_custom_fields( $public_only = false ) {
 	// Fetch available fields.
 	$custom_fields = get_noptin_option(
 		'custom_fields',
-		Noptin_Custom_Fields::default_fields()
+		\Hizzle\Noptin\Fields\Main::default_fields()
 	);
 
 	// Remove birthday field.

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
  * Returns an array of available custom field types.
  *
  * @since 1.5.5
- * @see Noptin_Custom_Fields::get_custom_field_types
+ * @see \Hizzle\Noptin\Fields\Main::get_custom_field_types
  * @return array
  */
 function get_noptin_custom_field_types() {

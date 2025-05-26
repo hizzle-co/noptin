@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since       1.2.6
  */
-class Noptin_EDD extends Noptin_Abstract_Ecommerce_Integration {
+class Noptin_EDD extends \Hizzle\Noptin\Integrations\Ecommerce_Integration {
 
 	/**
 	 * @var string source of subscriber.

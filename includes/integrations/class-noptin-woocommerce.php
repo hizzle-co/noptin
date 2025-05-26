@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since       1.2.6
  */
-class Noptin_WooCommerce extends Noptin_Abstract_Ecommerce_Integration {
+class Noptin_WooCommerce extends \Hizzle\Noptin\Integrations\Ecommerce_Integration {
 
 	/**
 	 * @var string Slug, used as an unique identifier for this integration.
