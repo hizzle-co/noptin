@@ -12,17 +12,6 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Are we using the new forms?
- *
- * @since 1.6.1
- * @return bool
- */
-function is_using_new_noptin_forms() {
-	$use_new_forms = get_option( 'noptin_use_new_forms' );
-	return apply_filters( 'is_using_new_noptin_forms', ! empty( $use_new_forms ) );
-}
-
-/**
  * Checks whether or not this is a new or legacy form.
  *
  * @since 1.6.2
@@ -48,7 +37,7 @@ function is_legacy_noptin_form( $form_id ) {
 	}
 
 	// This is a new form.
-	return ! is_using_new_noptin_forms();
+	return true;
 }
 
 /**
@@ -171,39 +160,6 @@ function noptin_count_optin_forms( $type = '' ) {
 	}
 
 	return $wpdb->get_var( "$sql $where;" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-}
-
-/**
- * Creates an optin form.
- *
- * @since 1.0.5
- * @return WP_Error|int
- */
-function noptin_create_optin_form( $data = false ) {
-
-	if ( is_using_new_noptin_forms() ) {
-		$form = new Noptin_Form( $data );
-	} else {
-		$form = new Noptin_Form( $data );
-	}
-
-	$created = $form->save();
-
-	if ( is_wp_error( $created ) ) {
-		return $created;
-	}
-
-	return $form->id;
-
-}
-
-/**
- * Deletes an optin form.
- *
- * @since 1.0.5
- */
-function noptin_delete_optin_form( $id ) {
-	return wp_delete_post( $id, true );
 }
 
 /**
