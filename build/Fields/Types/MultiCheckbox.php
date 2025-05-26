@@ -6,6 +6,8 @@
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -14,6 +16,6 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 2.0.0
  */
-class Noptin_Custom_Field_Multi_Checkbox extends Noptin_Custom_Field_Dropdown {
+class MultiCheckbox extends Dropdown {
 	protected $is_multiple = true;
 }

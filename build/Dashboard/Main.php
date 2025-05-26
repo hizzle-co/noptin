@@ -99,7 +99,6 @@ class Main {
 
 		$data = array(
 			'brand'               => noptin()->white_label->get_details(),
-			'forms'               => noptin_count_optin_forms(),
 			'subscriber_statuses' => noptin_get_subscriber_statuses(),
 			'plugins'             => $plugins,
 			'links'               => array(

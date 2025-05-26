@@ -6,6 +6,8 @@
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -14,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.5.5
  */
-class Noptin_Custom_Field_Checkbox extends Noptin_Custom_Field_Type {
+class Checkbox extends Base {
 
 	/**
 	 * @inheritdoc

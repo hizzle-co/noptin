@@ -7,6 +7,8 @@
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -15,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.5.5
  */
-class Noptin_Custom_Field_Dropdown extends Noptin_Custom_Field_Type {
+class Dropdown extends Base {
 
 	/**
 	 * Whether or not this field type supports multiple values.

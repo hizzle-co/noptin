@@ -9,6 +9,8 @@
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -17,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.5.5
  */
-abstract class Noptin_Custom_Field_Type {
+abstract class Base {
 
 	/**
 	 * Custom field type.

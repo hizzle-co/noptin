@@ -1,20 +1,22 @@
 <?php
 /**
- * Handles numbers.
+ * Handles dates.
  *
  * @since 1.0.0
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Handles numbers.
+ * Handles dates.
  *
  * @since 1.5.5
  */
-class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
+class Date extends Text {
 
 	/**
 	 * Retreives the input type.
@@ -23,7 +25,7 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 	 * @return string
 	 */
 	public function get_input_type() {
-		return 'number';
+		return 'date';
 	}
 
 	/**
@@ -40,10 +42,12 @@ class Noptin_Custom_Field_Number extends Noptin_Custom_Field_Text {
 		$schema[ $column ] = array_merge(
 			$schema[ $column ],
 			array(
-				'type'   => 'DECIMAL',
-				'length' => '26,8',
+				'type' => 'DATE',
 			)
 		);
+
+		// Remove the length.
+		unset( $schema[ $column ]['length'] );
 
 		return $schema;
 	}

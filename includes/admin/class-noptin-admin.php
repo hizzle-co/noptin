@@ -54,20 +54,6 @@ class Noptin_Admin {
 	public $admin_menus;
 
 	/**
-	 * Assets URL.
-	 *
-	 * @var string
-	 */
-	public $assets_url;
-
-	/**
-	 * Assets path.
-	 *
-	 * @var string
-	 */
-	public $assets_path;
-
-	/**
 	 * Get active instance
 	 *
 	 * @access      public
@@ -95,10 +81,8 @@ class Noptin_Admin {
 		do_action( 'noptin_before_admin_load', $this );
 
 		// Set global variables.
-		$this->admin_path  = plugin_dir_path( __FILE__ );
-		$this->admin_url   = plugins_url( '/', __FILE__ );
-		$this->assets_url  = plugin_dir_url( Noptin::$file ) . 'includes/assets/';
-		$this->assets_path = plugin_dir_path( Noptin::$file ) . 'includes/assets/';
+		$this->admin_path = plugin_dir_path( __FILE__ );
+		$this->admin_url  = plugins_url( '/', __FILE__ );
 
 		$this->admin_menus = new Noptin_Admin_Menus();
 
@@ -138,7 +122,6 @@ class Noptin_Admin {
 
 		add_action( 'noptin_admin_reset_data', array( $this, 'reset_data' ) );
 
-		Noptin_Vue::init_hooks();
 		Noptin_Tools::add_hooks();
 
 		/**

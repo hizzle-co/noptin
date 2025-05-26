@@ -631,7 +631,7 @@ class Menu {
 								'el'          => 'input',
 								'type'        => 'checkbox_alt',
 								'label'       => __( 'Editable', 'newsletter-optin-box' ),
-								'description' => __( "Can subscriber's view and edit this field?", 'newsletter-optin-box' ),
+								'description' => __( "Can subscribers view and edit this field?", 'newsletter-optin-box' ),
 								'default'     => true,
 								'conditions'  => array(
 									array(

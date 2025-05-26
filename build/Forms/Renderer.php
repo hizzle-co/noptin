@@ -31,6 +31,13 @@ class Renderer {
 	public static $shortcode_atts = array();
 
 	/**
+	 * Constructor.
+	 */
+	public static function init() {
+		add_action( 'init', array( __CLASS__, 'register_shortcodes' ) );
+	}
+
+	/**
 	 * Registers the [noptin] and [noptin-form] shortcodes
 	 */
 	public static function register_shortcodes() {

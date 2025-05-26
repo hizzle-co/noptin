@@ -1,47 +1,51 @@
 <?php
 
+namespace Hizzle\Noptin\Fields;
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 /**
- * This class handles the display and management of custom fields.
+ * Main fields class.
  *
- * @since 1.5.5
+ * @since 3.0.0
  */
-class Noptin_Custom_Fields {
+class Main {
 
 	/**
-	 * @param Noptin_Custom_Field_Type
-	 */
-	public $custom_field_types = array();
-
-	/**
-	 * Class Constructor.
+	 * Custom field types.
 	 *
-	 * @since 1.5.5
+	 * @var Field[]
 	 */
-	public function __construct() {
+	public static $custom_field_types = array();
 
-		// Load dependancies.
-		foreach ( array( 'base', 'text', 'textarea', 'checkbox', 'date', 'dropdown', 'email', 'number', 'radio', 'multi-checkbox', 'language' ) as $file ) {
-			require_once plugin_dir_path( __FILE__ ) . "field-types/class-$file.php";
-		}
+	/**
+	 * Main custom fields class.
+	 */
+	public static function init() {
 
-		do_action( 'noptin_load_custom_field_files' );
+		// Load functions.
+		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
 
 		// Load custom field types.
-		add_action( 'after_setup_theme', array( $this, 'load_custom_field_types' ) );
+		add_action( 'after_setup_theme', array( __CLASS__, 'load_custom_field_types' ) );
 
-		add_filter( 'noptin_form_editor_data', array( $this, 'form_editor_data' ) );
+		// Add field preview data to form editor.
+		add_filter( 'noptin_form_editor_data', array( __CLASS__, 'form_editor_data' ) );
 	}
 
 	/**
 	 * Loads custom field types.
 	 */
-	public function load_custom_field_types() {
+	public static function load_custom_field_types() {
 		foreach ( get_noptin_custom_field_types() as $type => $data ) {
 
 			if ( ! empty( $data['class'] ) ) {
-				$this->custom_field_types[ $type ] = new $data['class']( $type );
+				self::$custom_field_types[ $type ] = new $data['class']( $type );
 			}
 		}
+
+		do_action( 'noptin_load_custom_field_types' );
 	}
 
 	/**
@@ -125,12 +129,12 @@ class Noptin_Custom_Fields {
 	 * Filters the form editor data.
 	 *
 	 */
-	public function form_editor_data( $data ) {
+	public static function form_editor_data( $data ) {
 		$data['fields'] = array();
 
 		foreach ( get_noptin_custom_fields() as $custom_field ) {
 
-			if ( empty( $custom_field['type'] ) || empty( $this->custom_field_types[ $custom_field['type'] ] ) ) {
+			if ( empty( $custom_field['type'] ) || empty( self::$custom_field_types[ $custom_field['type'] ] ) ) {
 				continue;
 			}
 
@@ -139,8 +143,8 @@ class Noptin_Custom_Fields {
 			$custom_field['value'] = '';
 			$custom_field['react'] = true;
 
-			/**@var Noptin_Custom_Field_Type */
-			$field = $this->custom_field_types[ $custom_field['type'] ];
+			/** @var Types\Base */
+			$field = self::$custom_field_types[ $custom_field['type'] ];
 
 			ob_start();
 			$field->output( $custom_field, false );

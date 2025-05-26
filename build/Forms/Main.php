@@ -53,6 +53,9 @@ class Main {
 		// Adds forms before and after post content.
 		Content_Embedder::init();
 
+		// Renders forms.
+		Renderer::init();
+
 		// Previewer.
 		Previewer::init();
 
@@ -70,9 +73,6 @@ class Main {
 		add_action( 'init', array( __CLASS__, 'register_blocks' ) );
 		add_filter( 'default_scripts_gnore_from_delay', __CLASS__ . '::breeze_compatibility' );
 		add_action( 'init', array( __CLASS__, 'maybe_hide_optin_forms' ) );
-
-		// Shortcodes.
-		add_action( 'init', array( Renderer::class, 'register_shortcodes' ) );
 	}
 
 	/**

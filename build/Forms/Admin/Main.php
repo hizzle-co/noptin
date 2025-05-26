@@ -90,7 +90,7 @@ class Main {
 		);
 
 		// Check if it was created by the legacy editor.
-		$state = get_post_meta( $form_id, '_noptin_state', true );
+		$state = get_post_meta( $post->ID, '_noptin_state', true );
 
 		if ( is_object( $state ) ) {
 			$state = (array) $state;

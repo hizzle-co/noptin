@@ -7,6 +7,8 @@
  *
  */
 
+namespace Hizzle\Noptin\Fields\Types;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -15,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.8.0
  */
-class Noptin_Custom_Field_Language extends Noptin_Custom_Field_Dropdown {
+class Language extends Dropdown {
 
 	/**
 	 * Retrieves the list of available languages.
