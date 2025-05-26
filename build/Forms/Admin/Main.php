@@ -32,6 +32,10 @@ class Main {
 
 		// Forms list table.
 		List_Table::init();
+
+		// Admin menu.
+		add_action( 'admin_menu', array( __CLASS__, 'forms_menu' ), 30 );
+		add_action( 'admin_menu', array( __CLASS__, 'menu_highlight' ), 15 );
 	}
 
 	/**
@@ -233,5 +237,29 @@ class Main {
 	public static function add_block_editor_body_class( $classes ) {
 		$classes .= ' block-editor-page is-fullscreen-mode';
 		return $classes;
+	}
+
+	/**
+	 * Add forms menu item.
+	 */
+	public static function forms_menu() {
+		add_submenu_page(
+			'noptin',
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
+			get_noptin_capability(),
+			'edit.php?post_type=noptin-form'
+		);
+	}
+
+	/**
+	 * Highlights the correct top level admin menu item for post type add screens.
+	 */
+	public static function menu_highlight() {
+		global $parent_file, $post_type;
+
+		if ( 'noptin-form' === $post_type ) {
+			$parent_file  = 'noptin'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
 	}
 }
