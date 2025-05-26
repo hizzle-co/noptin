@@ -21,7 +21,8 @@ defined( 'ABSPATH' ) || exit;
 function get_noptin_custom_field_types() {
 
 	$field_types = apply_filters(
-		'noptin_custom_field_types',		array(
+		'noptin_custom_field_types',
+		array(
 			'email'          => array(
 				'predefined' => true,
 				'merge_tag'  => 'email',
@@ -97,4 +98,42 @@ function get_noptin_custom_field_types() {
 	}
 
 	return $field_types;
+}
+
+/**
+ * Returns an array of predefined custom field keys.
+ *
+ * @since 1.6.0
+ * @return array
+ */
+function get_noptin_predefined_custom_fields() {
+	$field_types       = get_noptin_custom_field_types();
+	$predefined_fields = array();
+
+	foreach ( $field_types as $key => $field ) {
+		if ( ! empty( $field['predefined'] ) ) {
+			$predefined_fields[] = $key;
+		}
+	}
+
+	return $predefined_fields;
+}
+
+/**
+ * Returns an array of custom field keys that support options.
+ *
+ * @since 1.6.0
+ * @return array
+ */
+function get_noptin_option_supported_fields() {
+	$field_types   = get_noptin_custom_field_types();
+	$option_fields = array();
+
+	foreach ( $field_types as $key => $field ) {
+		if ( ! empty( $field['supports_options'] ) ) {
+			$option_fields[] = $key;
+		}
+	}
+
+	return $option_fields;
 }

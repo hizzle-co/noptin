@@ -148,14 +148,6 @@ class Noptin {
 	public $admin;
 
 	/**
-	 * The main custom fields class.
-	 *
-	 * @var Noptin_Custom_Fields
-	 * @since       1.5.5
-	 */
-	public $custom_fields;
-
-	/**
 	 * The main emails class.
 	 *
 	 * @var Noptin_Email_Manager
@@ -295,9 +287,6 @@ class Noptin {
 		// Integrations.
 		$this->integrations_new = new \Hizzle\Noptin\Integrations\Main();
 		$this->integrations     = new Noptin_Integrations();
-
-		// Custom fields.
-		$this->custom_fields = new Noptin_Custom_Fields();
 
 		// DB.
 		$this->db();
