@@ -23,6 +23,11 @@ class Main {
 	public $migrate;
 
 	/**
+	 * @var Subscription_Checkbox Subscription checkbox integration.
+	 */
+	public $subscription_checkbox;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 2.2.0
@@ -32,8 +37,9 @@ class Main {
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 		add_filter( 'noptin_format_price_callback', __CLASS__ . '::price_format_cb' );
-		$this->email_template = new Template();
-		$this->migrate        = new Migrate();
+		$this->email_template        = new Template();
+		$this->migrate               = new Migrate();
+		$this->subscription_checkbox = new Subscription_Checkbox();
 	}
 
 	public static function price_format_cb() {

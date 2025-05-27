@@ -39,39 +39,39 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 	public function get_fields() {
 
 		return array(
-			'id'                => array(
+			'id'           => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'product_id'        => array(
+			'product_id'   => array(
 				'label' => __( 'Product ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'variation_id'      => array(
+			'variation_id' => array(
 				'label' => __( 'Variation ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'name'              => array(
+			'name'         => array(
 				'label' => __( 'Name', 'newsletter-optin-box' ),
 				'type'  => 'string',
 			),
-			'quantity'          => array(
+			'quantity'     => array(
 				'label' => __( 'Quantity', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'subtotal'          => array(
+			'subtotal'     => array(
 				'label' => __( 'Subtotal', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'total'             => array(
+			'total'        => array(
 				'label' => __( 'Total', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'total_tax'         => array(
+			'total_tax'    => array(
 				'label' => __( 'Total tax', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
-			'attribute'         => array(
+			'attribute'    => array(
 				'label'          => __( 'Attribute', 'newsletter-optin-box' ),
 				'type'           => 'string',
 				'example'        => 'key="my_key"',
@@ -104,7 +104,7 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 					),
 				),
 			),
-			'meta'              => $this->meta_key_tag_config(),
+			'meta'         => $this->meta_key_tag_config(),
 		);
 	}
 

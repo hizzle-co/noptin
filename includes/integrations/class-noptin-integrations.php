@@ -23,11 +23,6 @@ class Noptin_Integrations {
 	}
 
 	public function load_integrations() {
-		// WooCommerce integration.
-		if ( class_exists( 'WooCommerce' ) ) {
-			$this->integrations['woocommerce'] = new Noptin_WooCommerce();
-		}
-
 		// EDD integration.
 		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
 			$this->integrations['edd'] = new Noptin_EDD();

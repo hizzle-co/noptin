@@ -457,6 +457,7 @@ function add_noptin_subscriber( $fields ) {
 
 	return $subscriber->get_id();
 }
+add_action( 'noptin_checkbox_integration_process_submission', 'add_noptin_subscriber' );
 
 /**
  * Updates a Noptin subscriber

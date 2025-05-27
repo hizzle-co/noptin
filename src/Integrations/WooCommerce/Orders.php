@@ -911,7 +911,7 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			noptin_attribute_revenue_by_email_address( $order->get_billing_email() );
 
 			if ( self::is_complete() ) {
-				noptin_record_ecommerce_purchase( $order->get_total(), $order->get_billing_email());
+				noptin_record_ecommerce_purchase( $order->get_total(), $order->get_billing_email() );
 			}
 		}
 
