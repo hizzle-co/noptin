@@ -16,13 +16,13 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 	 * @var string The template slug.
 	 * @since 2.0.0
 	 */
-	public $slug = 'woocommerce';
+	public $slug = 'edd';
 
 	/**
 	 * @var string The template name.
 	 * @since 2.0.0
 	 */
-	public $name = 'WooCommerce';
+	public $name = 'Easy Digital Downloads';
 
 	/**
 	 * Processes the template.

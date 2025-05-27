@@ -283,6 +283,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 					'first_name' => $order->get_billing_first_name(),
 					'last_name'  => $order->get_billing_last_name(),
 					'ip_address' => $order->get_customer_ip_address(),
+					'language'   => apply_filters( 'noptin_woocommerce_order_locale', get_locale(), $order->get_id() ),
 				),
 				$this->map_custom_fields( $order_data )
 			)

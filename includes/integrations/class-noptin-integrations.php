@@ -23,10 +23,6 @@ class Noptin_Integrations {
 	}
 
 	public function load_integrations() {
-		// EDD integration.
-		if ( class_exists( 'Easy_Digital_Downloads' ) ) {
-			$this->integrations['edd'] = new Noptin_EDD();
-		}
 
 		// WP Registration form integration.
 		$this->integrations['wp_registration_form'] = new Noptin_WP_Registration_Form();

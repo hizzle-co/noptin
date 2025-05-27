@@ -18,12 +18,18 @@ class Main {
 	public $email_template;
 
 	/**
+	 * @var Subscription_Checkbox Subscription checkbox.
+	 */
+	public $subscription_checkbox;
+
+	/**
 	 * Init variables.
 	 *
 	 * @since       1.2.6
 	 */
 	public function __construct() {
-		$this->email_template = new Template();
+		$this->email_template        = new Template();
+		$this->subscription_checkbox = new Subscription_Checkbox();
 		add_action( 'init', array( $this, 'register_custom_objects' ), 5 );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 	}
