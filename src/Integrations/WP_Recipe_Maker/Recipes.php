@@ -91,7 +91,7 @@ class Recipes extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 							'el'          => 'image_size_select',
 							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Select image size', 'newsletter-optin-box' ),
-							'default'     => 'woocommerce_thumbnail',
+							'default'     => 'thumbnail',
 						),
 					),
 				),
