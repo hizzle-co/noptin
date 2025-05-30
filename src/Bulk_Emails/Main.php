@@ -75,7 +75,6 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		// Send newsletter emails.
 		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
 		add_action( 'noptin_resume_email_campaign', array( $this, 'send_newsletter_campaign' ), 1000 );
-		add_action( 'noptin_cleanup_hourly_email_count', array( __CLASS__, 'cleanup_hourly_email_count' ) );
 
 		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
 	}
@@ -242,7 +241,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		}
 
 		// ... or we've reached the max number of emails.
-		if ( $this->exceeded_hourly_limit() ) {
+		if ( noptin_email_sending_limit_reached() ) {
 			return false;
 		}
 
@@ -327,54 +326,5 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			);
 			$this->unlock_process();
 		}
-	}
-
-	/**
-	 * Returns the current hour.
-	 *
-	 * @return string
-	 */
-	public static function current_hour() {
-		return gmdate( 'YmdH' );
-	}
-
-	/**
-	 * Returns the number sent this hour.
-	 *
-	 * @return int
-	 */
-	public static function emails_sent_this_hour() {
-		$args = array(
-			'activity'           => 'send',
-			'date_created_after' => gmdate( 'Y-m-d H:59:59 e', time() - HOUR_IN_SECONDS ),
-		);
-
-		$limit_type = get_noptin_option( 'email_limit_type', 'hourly' );
-
-		if ( 'daily' === $limit_type ) {
-			$args['date_created_after'] = gmdate( 'Y-m-d 00:00:00 e', time() - DAY_IN_SECONDS );
-		}
-
-		return (int) noptin()->db()->query( 'email_logs', $args, 'count' );
-	}
-
-	/**
-	 * Checks if we've exceeded the hourly limit.
-	 *
-	 * @return bool
-	 */
-	public static function exceeded_hourly_limit() {
-		$limited = noptin_max_emails_per_period();
-		return ! empty( $limited ) && self::emails_sent_this_hour() >= (int) $limited;
-	}
-
-	/**
-	 * Cleanup expired hour counters.
-	 *
-	 * @param string $option_name The option name to cleanup
-	 * @return void
-	 */
-	public static function cleanup_hourly_email_count( $option_name ) {
-		delete_option( $option_name );
 	}
 }

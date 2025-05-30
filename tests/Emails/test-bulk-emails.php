@@ -154,7 +154,7 @@ class Test_Main extends \WP_UnitTestCase {
 	public function test_hourly_email_limit() {
 		// Test initial count
 		noptin()->db()->delete_all( 'email_logs' );
-		$this->assertEquals(0, Main::emails_sent_this_hour());
+		$this->assertEquals(0, noptin_emails_sent_this_period());
 
 		// Use reflection to access protected process_task method
 		$reflection = new \ReflectionClass($this->bulk_emails);
@@ -172,14 +172,14 @@ class Test_Main extends \WP_UnitTestCase {
 		}
 
 		// Check updated count
-		$this->assertEquals(3, Main::emails_sent_this_hour());
+		$this->assertEquals(3, noptin_emails_sent_this_period());
 
 		// Test exceeding limit
 		add_filter('noptin_max_emails_per_period', function() {
 			return 2;
 		});
 
-		$this->assertTrue(Main::exceeded_hourly_limit());
+		$this->assertTrue(noptin_email_sending_limit_reached());
 	}
 
 	/**

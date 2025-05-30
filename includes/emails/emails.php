@@ -758,3 +758,83 @@ function noptin_record_ecommerce_purchase( $amount, $email_address = null ) {
 function noptin_max_emails_per_period() {
 	return apply_filters( 'noptin_max_emails_per_period', get_noptin_option( 'per_hour', 0 ) );
 }
+
+/**
+ * Checks if the email sending limit has been reached.
+ */
+function noptin_email_sending_limit_reached() {
+	$max_emails = (int) noptin_max_emails_per_period();
+	if ( empty( $max_emails ) ) {
+		return false; // No limit.
+	}
+
+	$has_reached_limit = ! empty( $max_emails ) && noptin_emails_sent_this_period() >= $max_emails;
+	return apply_filters( 'noptin_email_sending_limit_reached', $has_reached_limit );
+}
+
+/**
+ * Returns the email sending rolling period in seconds.
+ *
+ * @return int Number of seconds for the rolling period. Default is 1 hour (3600 seconds).
+ */
+function noptin_get_emails_sending_rolling_period() {
+	$seconds = (int) get_noptin_option( 'email_limit_reset_seconds', HOUR_IN_SECONDS );
+	if ( empty( $seconds ) ) {
+		$seconds = HOUR_IN_SECONDS; // Default to 1 hour.
+	}
+
+	return apply_filters( 'noptin_emails_sending_rolling_period', $seconds );
+}
+
+/**
+ * Returns the number of emails sent this period.
+ *
+ * @return int Zero if unlimited.
+ */
+function noptin_emails_sent_this_period() {
+	$args = array(
+		'activity'           => 'send',
+		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_emails_sending_rolling_period() ),
+	);
+
+	$emails_sent = (int) Hizzle\Noptin\Emails\Logs\Main::query( $args, 'count' );
+
+	return apply_filters( 'noptin_emails_sent_this_period', $emails_sent );
+}
+
+/**
+ * Returns the next email send time.
+ *
+ * @return int|false
+ */
+function noptin_get_next_email_send_time() {
+
+	$args = array(
+		'activity'           => 'send',
+		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_emails_sending_rolling_period() ),
+		'orderby'            => 'date_created',
+		'order'              => 'ASC',
+		'number'             => 1,
+	);
+
+	/** @var \Hizzle\Noptin\Emails\Logs\Log[] $oldest_log */
+	$oldest_log = Hizzle\Noptin\Emails\Logs\Main::query( $args );
+
+	if ( empty( $oldest_log ) ) {
+		return false;
+	}
+
+	/** @var \Hizzle\Store\Date_Time $time */
+	$time = $oldest_log[0]->get( 'date_created' );
+	if ( ! $time instanceof Hizzle\Store\Date_Time ) {
+		return false;
+	}
+
+	$time = $time->getTimestamp() + noptin_get_emails_sending_rolling_period();
+	if ( $time < time() ) {
+		// If the time is in the past, we return the current time.
+		return time();
+	}
+
+	return $time;
+}

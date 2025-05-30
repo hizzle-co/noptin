@@ -48,21 +48,27 @@ if ( $parent ) {
 		noptin()->admin->show_notices();
 
 		// Check if sending has been paused due to limits.
-		$emails_sent_this_hour = \Hizzle\Noptin\Bulk_Emails\Main::emails_sent_this_hour();
-		$email_sending_limit   = get_noptin_option( 'per_hour', 0 );
+		if ( noptin_email_sending_limit_reached() ) {
 
-	if ( ! empty( $email_sending_limit ) && $emails_sent_this_hour >= $email_sending_limit ) {
+			$message = sprintf(
+				/* translators: %1$s: number of emails allowed to be sent per period, %2$s: time period in seconds */
+				esc_html__( 'Sending has been paused due to sending limits. You can send up-to %1$s emails within %2$n seconds.', 'newsletter-optin-box' ),
+				'<strong>' . esc_html( noptin_max_emails_per_period() ) . '</strong>',
+				'<strong>' . esc_html( noptin_get_emails_sending_rolling_period() ) . '</strong>'
+			);
 
-		$message = sprintf(
-			/* translators: %1$s: number of emails sent this hour, %2$s: number of emails allowed to be sent per hour */
-			esc_html__( 'Sending has been paused due to sending limits. %1$s emails have been sent this hour. You can send %2$s emails per hour.', 'newsletter-optin-box' ),
-			'<strong>' . esc_html( $emails_sent_this_hour ) . '</strong>',
-			'<strong>' . esc_html( $email_sending_limit ) . '</strong>'
-		);
+			$next_send = noptin_get_next_email_send_time();
 
-		noptin()->admin->print_notice( 'error', $message );
+			if ( $next_send ) {
+				$message .= ' <br />' . sprintf(
+					/* translators: %s: time until next email can be sent */
+					esc_html__( 'Next email can be sent in %s.', 'newsletter-optin-box' ),
+					'<strong>' . esc_html( human_time_diff( $next_send ) ) . '</strong>'
+				);
+			}
 
-	}
+			noptin()->admin->print_notice( 'error', $message );
+		}
 	?>
 
 	<!-- Display tabs -->

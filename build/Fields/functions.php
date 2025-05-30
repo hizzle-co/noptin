@@ -137,3 +137,50 @@ function get_noptin_option_supported_fields() {
 
 	return $option_fields;
 }
+
+/**
+ * Displays a custom field input.
+ *
+ * @since 1.5.5
+ * @see Noptin_Custom_Field_Type::output
+ * @param array $custom_field
+ * @param false|\Hizzle\Noptin\DB\Subscriber $subscriber
+ */
+function display_noptin_custom_field_input( $custom_field, $subscriber = false ) {
+	$custom_field['name']  = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
+
+	if ( ! isset( $custom_field['value'] ) ) {
+		$custom_field['value'] = '';
+	}
+
+	if ( empty( $custom_field['id'] ) ) {
+		$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) . '_' ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
+	}
+
+	// phpcs:disable WordPress.Security.NonceVerification.Missing
+	if ( ( '' === $custom_field['value'] || array() === $custom_field['value'] ) && ! empty( $_POST ) ) {
+
+		// Below is cleaned on output.
+		if ( isset( $_POST['noptin_fields'][ $custom_field['merge_tag'] ] ) ) {
+			$custom_field['value'] = $_POST['noptin_fields'][ $custom_field['merge_tag'] ];
+		} elseif ( isset( $_POST[ $custom_field['merge_tag'] ] ) ) {
+			$custom_field['value'] = $_POST[ $custom_field['merge_tag'] ];
+		}
+	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+	do_action( 'noptin_display_custom_field_input', $custom_field, $subscriber );
+	do_action( "noptin_display_{$custom_field['type']}_input", $custom_field, $subscriber );
+}
+
+/**
+ * Converts a custom field to schema.
+ *
+ * @param array $custom_field
+ * @since 2.0.0
+ * @return array
+ */
+function noptin_convert_custom_field_to_schema( $custom_field ) {
+	$field_type = $custom_field['type'];
+	return apply_filters( "noptin_filter_{$field_type}_schema", array(), $custom_field );
+}
