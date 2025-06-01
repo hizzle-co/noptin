@@ -349,9 +349,13 @@ class Noptin_Admin {
 	 */
 	public function print_notice( $type, $message, $custom_dismiss_url = '' ) {
 
+		if ( false === strpos( $message, '<p>' ) ) {
+			$message = '<p>' . $message . '</p>';
+		}
+
 		if ( ! empty( $custom_dismiss_url ) ) {
 			printf(
-				'<div class="notice notice-%s noptin-notice" style="position: relative;"><p>%s</p><a href="%s" class="notice-dismiss" style="text-decoration: none;">&nbsp;</a></div>',
+				'<div class="notice notice-%s noptin-notice" style="position: relative;">%s<a href="%s" class="notice-dismiss" style="text-decoration: none;">&nbsp;</a></div>',
 				esc_attr( sanitize_html_class( $type ) ),
 				wp_kses_post( $message ),
 				esc_url( $custom_dismiss_url )
@@ -360,7 +364,7 @@ class Noptin_Admin {
 		}
 
 		printf(
-			'<div class="notice notice-%s noptin-notice is-dismissible"><p>%s</p></div>',
+			'<div class="notice notice-%s noptin-notice is-dismissible">%s</div>',
 			esc_attr( sanitize_html_class( $type ) ),
 			wp_kses_post( $message )
 		);
