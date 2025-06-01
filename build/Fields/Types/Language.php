@@ -44,9 +44,9 @@ class Language extends Dropdown {
 	/**
 	 * @inheritdoc
 	 */
-	public function output( $args, $subscriber ) {
+	public function output( $args ) {
 		$args['options'] = $this->get_languages();
-		parent::output( $args, $subscriber );
+		parent::output( $args );
 	}
 
 	/**

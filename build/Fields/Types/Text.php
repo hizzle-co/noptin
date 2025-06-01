@@ -31,26 +31,38 @@ class Text extends Base {
 	/**
 	 * @inheritdoc
 	 */
-	public function output( $args, $subscriber ) {
+	public function output( $args ) {
 
 		$placeholder        = empty( $args['placeholder'] ) ? $args['label'] : $args['placeholder'];
 		$has_no_placeholder = empty( $args['placeholder'] ) || $placeholder === $args['label'];
+
+		$attrs = array(
+			'name' => $args['name'],
+			'id'   => $args['id'],
+			'type'  => $this->get_input_type(),
+			'value' => $args['value'],
+			'class' => array(
+				'noptin-text',
+				'noptin-form-field',
+				'noptin-form-field__' . $args['merge_tag'],
+				$has_no_placeholder ? 'noptin-form-field__has-no-placeholder' : 'noptin-form-field__has-placeholder',
+			),
+		);
+
+		if ( empty( $args['react'] ) ) {
+			$attrs['placeholder'] = $placeholder;
+		} else {
+			$attrs[':placeholder'] = 'field.type.label';
+		}
+
+		if ( ! empty( $args['required'] ) ) {
+			$attrs['required'] = true;
+		}
+
 		?>
 
 			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['react'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
-			<input
-				name="<?php echo esc_attr( $args['name'] ); ?>"
-				id="<?php echo esc_attr( $args['id'] ); ?>"
-				type="<?php echo esc_attr( $this->get_input_type() ); ?>"
-				value="<?php echo esc_attr( $args['value'] ); ?>"
-				class="noptin-text noptin-form-field <?php echo $has_no_placeholder ? 'noptin-form-field__has-no-placeholder' : 'noptin-form-field__has-placeholder'; ?>"
-				<?php if ( empty( $args['react'] ) ) : ?>
-					placeholder="<?php echo esc_attr( $placeholder ); ?>"
-				<?php else : ?>
-					:placeholder="field.type.label"
-				<?php endif; ?>
-				<?php echo empty( $args['required'] ) ? '' : 'required'; ?>
-			/>
+			<input <?php noptin_attr( 'custom_field_' . $attrs['type'], $attrs, $args ) ?>/>
 
 		<?php
 

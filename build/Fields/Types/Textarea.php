@@ -21,7 +21,7 @@ class Textarea extends Base {
 	/**
 	 * @inheritdoc
 	 */
-	public function output( $args, $subscriber ) {
+	public function output( $args ) {
 
 		$placeholder        = empty( $args['placeholder'] ) ? $args['label'] : $args['placeholder'];
 		$has_no_placeholder = empty( $args['placeholder'] ) || $placeholder === $args['label'];

@@ -175,8 +175,12 @@ class Manage_Preferences {
 					$custom_field['wrap_name'] = true;
 					$custom_field['show_id']   = true;
 
+					if ( $subscriber ) {
+						$custom_field['value'] = $subscriber->get( $custom_field['merge_tag'] );
+					}
+
 					echo '<div class="noptin-field-wrapper noptin-field-wrapper--' . esc_attr( $custom_field['merge_tag'] ) . '">';
-					display_noptin_custom_field_input( $custom_field, $subscriber );
+					display_noptin_custom_field_input( $custom_field );
 					echo '</div>';
 				}
 

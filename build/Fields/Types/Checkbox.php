@@ -21,7 +21,7 @@ class Checkbox extends Base {
 	/**
 	 * @inheritdoc
 	 */
-	public function output( $args, $subscriber ) {
+	public function output( $args ) {
 
 		?>
 			<input type="hidden" name="<?php echo esc_attr( $args['name'] ); ?>" value="0" />

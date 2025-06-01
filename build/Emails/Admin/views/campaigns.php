@@ -51,20 +51,27 @@ if ( $parent ) {
 		if ( noptin_email_sending_limit_reached() ) {
 
 			$message = sprintf(
-				/* translators: %1$s: number of emails allowed to be sent per period, %2$s: time period in seconds */
-				esc_html__( 'Sending has been paused due to sending limits. You can send up-to %1$s emails within %2$n seconds.', 'newsletter-optin-box' ),
-				'<strong>' . esc_html( noptin_max_emails_per_period() ) . '</strong>',
-				'<strong>' . esc_html( noptin_get_emails_sending_rolling_period() ) . '</strong>'
+				'<h3>%s</h3>',
+				__( 'Email sending has been paused', 'newsletter-optin-box')
 			);
+
+			$message .= '<p>' .
+				sprintf(
+					/* translators: %1$s: number of emails allowed to be sent per period, %2$s: time period */
+					esc_html__( 'You’ve sent %1$s emails in the past %2$s, triggering the sending limit.', 'newsletter-optin-box' ),
+					'<strong>' . esc_html( noptin_max_emails_per_period() ) . '</strong>',
+					'<strong>' . esc_html( human_time_diff( time() + noptin_get_email_sending_rolling_period() ) ) . '</strong>'
+				) . '</p>';
 
 			$next_send = noptin_get_next_email_send_time();
 
 			if ( $next_send ) {
-				$message .= ' <br />' . sprintf(
-					/* translators: %s: time until next email can be sent */
-					esc_html__( 'Next email can be sent in %s.', 'newsletter-optin-box' ),
-					'<strong>' . esc_html( human_time_diff( $next_send ) ) . '</strong>'
-				);
+				$message .= ' <p>' .
+					sprintf(
+						/* translators: %s: time until next email can be sent */
+						esc_html__( 'Email sending will resume in %s.', 'newsletter-optin-box' ),
+						'<strong>' . esc_html( human_time_diff( $next_send ) ) . '</strong>'
+					) . '</p>';
 			}
 
 			noptin()->admin->print_notice( 'error', $message );

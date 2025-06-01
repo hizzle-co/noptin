@@ -46,7 +46,7 @@ class Dropdown extends Base {
 	/**
 	 * @inheritdoc
 	 */
-	public function output( $args, $subscriber ) {
+	public function output( $args ) {
 
 		printf(
 			'<label class="noptin-label" for="%s">%s</label>',

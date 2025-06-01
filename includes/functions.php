@@ -2278,3 +2278,36 @@ function noptin_get_smallest_acceptable_image_size( $minimum_width = 150 ) {
 
 	return $smallest_size;
 }
+
+/**
+ * Converts a time unit to seconds.
+ *
+ * @param string $unit
+ * @return int|false
+ */
+function noptin_convert_time_unit_to_seconds( $unit ) {
+	// Parse value and unit, e.g. "1hours", "30minutes"
+	if ( preg_match( '/^(\d+)\s*(seconds?|minutes?|hours?|days?|weeks?|months?|years?)$/i', trim( $unit ), $matches ) ) {
+		$value = (int) $matches[1];
+		$unit  = strtolower( rtrim( $matches[2], 's' ) ); // normalize to singular
+
+		switch ( $unit ) {
+			case 'second':
+				return $value;
+			case 'minute':
+				return $value * MINUTE_IN_SECONDS;
+			case 'hour':
+				return $value * HOUR_IN_SECONDS;
+			case 'day':
+				return $value * DAY_IN_SECONDS;
+			case 'week':
+				return $value * WEEK_IN_SECONDS;
+			case 'month':
+				return $value * 30 * DAY_IN_SECONDS;
+			case 'year':
+				return $value * YEAR_IN_SECONDS;
+		}
+	}
+
+	return false;
+}

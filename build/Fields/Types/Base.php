@@ -36,7 +36,7 @@ abstract class Base {
 	public function __construct( $type ) {
 		$this->type = $type;
 
-		add_action( "noptin_display_{$this->type}_input", array( $this, 'output' ), 10, 2 );
+		add_action( "noptin_display_{$this->type}_input", array( $this, 'output' ) );
 		add_filter( "noptin_filter_{$this->type}_schema", array( $this, 'filter_db_schema' ), 10, 2 );
 	}
 
@@ -45,9 +45,8 @@ abstract class Base {
 	 *
 	 * @since 1.5.5
 	 * @param array $args Field args
-	 * @param false|\Hizzle\Noptin\DB\Subscriber $subscriber
 	 */
-	abstract public function output( $args, $subscriber );
+	abstract public function output( $args );
 
 	/**
 	 * Fetches a field's column name.

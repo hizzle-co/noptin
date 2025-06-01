@@ -125,7 +125,13 @@ class Listener {
 
 		// validate email field.
 		if ( ! is_email( $this->get_field_value( 'email' ) ) ) {
-			return $this->error->add( 'invalid_email', get_noptin_form_message( 'invalid_email' ) );
+			return $this->error->add(
+				'invalid_email',
+				get_noptin_form_message( 'invalid_email' ),
+				array(
+					'selector' => 'input.noptin-form-field__email',
+				)
+			);
 		}
 
 		$source = $this->get_submitted( 'source' );
@@ -135,6 +141,7 @@ class Listener {
 		}
 
 		// Validate other required fields.
+		$missing_fields = array();
 		foreach ( $this->get_fields_for_request() as $custom_field ) {
 
 			if ( ! empty( $custom_field['required'] ) ) {
@@ -142,16 +149,32 @@ class Listener {
 				$value = $this->get_field_value( $custom_field['merge_tag'] );
 
 				if ( '' === $value || array() === $value ) {
-					return $this->error->add( 'required_field_missing', get_noptin_form_message( 'required_field_missing' ) );
+					$missing_fields[] = '.noptin-form-field__' . $custom_field['merge_tag'];
 				}
 			}
+		}
+
+		if ( ! empty( $missing_fields ) ) {
+			return $this->error->add(
+				'required_field_missing',
+				get_noptin_form_message( 'required_field_missing' ),
+				array(
+					'selector' => implode( ', ', $missing_fields ),
+				)
+			);
 		}
 
 		// Make sure acceptance checkbox is checked.
 		$acceptance = trim( $this->get_cached( 'acceptance' ) );
 
 		if ( ! empty( $acceptance ) && empty( $this->submitted['GDPR_consent'] ) ) {
-			return $this->error->add( 'accept_terms', get_noptin_form_message( 'accept_terms' ) );
+			return $this->error->add(
+				'accept_terms',
+				get_noptin_form_message( 'accept_terms' ),
+				array(
+					'selector' => '.noptin-gdpr-checkbox-wrapper',
+				)
+			);
 		}
 
 		/**
@@ -690,8 +713,16 @@ class Listener {
 		// Check if we have an error.
 		if ( $this->error->has_errors() ) {
 
+			$errors = array();
+			foreach ( $this->error->get_error_codes() as $code ) {
+				if ( ! empty( $this->error->error_data[ $code ]['selector'] ) ) {
+					$errors[ $this->error->error_data[ $code ]['selector'] ] = $this->error->get_error_message( $code );
+				}
+			}
+
 			return array(
 				'success' => false,
+				'errors'  => (object) $errors,
 				'data'    => $html_response,
 			);
 		}
