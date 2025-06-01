@@ -41,6 +41,9 @@ class Main {
 		add_action( 'admin_init', array( __CLASS__, 'maybe_do_action' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'email_campaigns_menu' ), 35 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+
+		// Email settings.
+		add_filter( 'noptin_get_settings', array( __CLASS__, 'email_settings' ), 10 );
 	}
 
 	/**
@@ -427,7 +430,7 @@ class Main {
 									'disableMergeTags' => false,
 									'fields'           => array(
 										'recipients' => array(
-											'label' => __( 'Recipient(s)', 'newsletter-optin-box' ),
+											'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
 											'description' => sprintf(
 												'%s<br /> <br />%s',
 												__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
@@ -437,7 +440,7 @@ class Main {
 													'<code>--notracking</code>'
 												)
 											),
-											'type'  => 'text',
+											'type'        => 'text',
 											'placeholder' => sprintf(
 												/* translators: %s: Example */
 												__( 'For example, %s', 'newsletter-optin-box' ),
@@ -621,5 +624,280 @@ class Main {
 			// Print the translations
 			wp_add_inline_script( 'wp-i18n', $translations, 'after' );
 		}
+	}
+
+	/**
+	 * Add email settings.
+	 *
+	 * @param array $settings
+	 */
+	public static function email_settings( $settings ) {
+		$double_optin = get_default_noptin_subscriber_double_optin_email();
+
+		return array_merge(
+			$settings,
+			array(
+				'general_email_info'  => array(
+					'el'       => 'settings_group',
+					'label'    => __( 'General', 'newsletter-optin-box' ),
+					'section'  => 'emails',
+					'settings' => array(
+						'reply_to'         => array(
+							'el'      => 'input',
+							'section' => 'emails',
+							'type'    => 'email',
+							'label'   => __( '"Reply-to" Email', 'newsletter-optin-box' ),
+							'default' => get_option( 'admin_email' ),
+							'tooltip' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
+						),
+
+						'from_email'       => array(
+							'el'      => 'input',
+							'section' => 'emails',
+							'type'    => 'email',
+							'label'   => __( '"From" Email', 'newsletter-optin-box' ),
+							'tooltip' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
+						),
+
+						'from_name'        => array(
+							'el'          => 'input',
+							'section'     => 'emails',
+							'label'       => __( '"From" Name', 'newsletter-optin-box' ),
+							'placeholder' => get_option( 'blogname' ),
+							'default'     => get_option( 'blogname' ),
+							'tooltip'     => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
+						),
+
+						'delete_campaigns' => array(
+							'el'               => 'input',
+							'type'             => 'number',
+							'section'          => 'emails',
+							'label'            => __( 'Auto-Delete Campaigns', 'newsletter-optin-box' ),
+							'placeholder'      => __( 'Never Delete', 'newsletter-optin-box' ),
+							'tooltip'          => __( 'The number of days after which to delete a sent campaign. Leave empty if you do not want to automatically delete campaigns.', 'newsletter-optin-box' ),
+							'customAttributes' => array(
+								'min'    => 0,
+								'prefix' => __( 'After', 'newsletter-optin-box' ),
+								'suffix' => array( __( 'day', 'newsletter-optin-box' ), __( 'days', 'newsletter-optin-box' ) ),
+							),
+						),
+					),
+				),
+
+				'email_sending_limit' => array(
+					'el'       => 'settings_group',
+					'label'    => __( 'Email Sending Limit', 'newsletter-optin-box' ),
+					'section'  => 'emails',
+					'help_url' => noptin_get_guide_url( 'Settings', 'sending-emails/email-sending-limits/' ),
+					'settings' => array(
+						'sending_frequency' => array(
+							'el'       => 'horizontal',
+							'settings' => array(
+								'per_hour' => array(
+									'el'               => 'input',
+									'type'             => 'number',
+									'section'          => 'emails',
+									'label'            => __( 'Maximum Emails', 'newsletter-optin-box' ),
+									'placeholder'      => __( 'Unlimited', 'newsletter-optin-box' ),
+									'customAttributes' => array(
+										'min'    => 1,
+										'suffix' => array( __( 'email', 'newsletter-optin-box' ), __( 'emails', 'newsletter-optin-box' ) ),
+									),
+								),
+								'email_sending_rolling_period' => array(
+									'el'               => 'unit',
+									'section'          => 'emails',
+									'label'            => __( 'Time Period', 'newsletter-optin-box' ),
+									'default'          => '1hours',
+									'customAttributes' => array(
+										'min'           => 1,
+										'placeholder'   => '1 hour',
+										'prefix'        => __( 'per', 'newsletter-optin-box' ),
+										'className'     => 'hizzlewp-components-unit-control__select--large',
+										'units'         => array(
+											array(
+												'default' => HOUR_IN_SECONDS,
+												'label'   => __( 'second(s)', 'newsletter-optin-box' ),
+												'value'   => 'seconds',
+											),
+											array(
+												'default' => MINUTE_IN_SECONDS,
+												'label'   => __( 'minute(s)', 'newsletter-optin-box' ),
+												'value'   => 'minutes',
+											),
+											array(
+												'default' => 1,
+												'label'   => __( 'hour(s)', 'newsletter-optin-box' ),
+												'value'   => 'hours',
+											),
+											array(
+												'default' => 1,
+												'label'   => __( 'day(s)', 'newsletter-optin-box' ),
+												'value'   => 'days',
+											),
+										),
+										'__unstableInputWidth' => null,
+										'labelPosition' => 'top',
+									),
+								),
+							),
+						),
+					),
+				),
+
+				'brand_info'          => array(
+					'el'       => 'settings_group',
+					'label'    => __( 'Brand Info', 'newsletter-optin-box' ),
+					'section'  => 'emails',
+					'settings' => array(
+						'company'     => array(
+							'el'          => 'input',
+							'label'       => __( 'Company', 'newsletter-optin-box' ),
+							'placeholder' => get_option( 'blogname' ),
+							'tooltip'     => __( 'What is the name of your company or website?', 'newsletter-optin-box' ),
+						),
+						'logo_url'    => array(
+							'el'      => 'input',
+							'type'    => 'image',
+							'label'   => __( 'Logo', 'newsletter-optin-box' ),
+							'tooltip' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
+						),
+						'brand_color' => array(
+							'el'          => 'color',
+							'label'       => __( 'Brand Color', 'newsletter-optin-box' ),
+							'placeholder' => '#1a82e2',
+							'default'     => '#1a82e2',
+							'description' => __( 'Used as the link color and button background.', 'newsletter-optin-box' ),
+						),
+					),
+				),
+
+				'template_info'       => array(
+					'el'       => 'settings_group',
+					'label'    => __( 'Email Template', 'newsletter-optin-box' ),
+					'section'  => 'emails',
+					'settings' => array(
+						'email_template' => array(
+							'el'          => 'select',
+							'label'       => __( 'Email Template', 'newsletter-optin-box' ),
+							'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
+							'options'     => get_noptin_email_templates(),
+							'default'     => 'paste',
+							'tooltip'     => __( 'Select "No Template" if you are using an email templates plugin.', 'newsletter-optin-box' ),
+						),
+						'footer_text'    => array(
+							'el'          => 'textarea',
+							'label'       => __( 'Footer text', 'newsletter-optin-box' ),
+							'placeholder' => get_default_noptin_footer_text(),
+							'default'     => get_default_noptin_footer_text(),
+							'tooltip'     => __( 'This text appears below all emails.', 'newsletter-optin-box' ),
+						),
+						'custom_css'     => array(
+							'el'      => 'textarea',
+							'label'   => __( 'Custom CSS', 'newsletter-optin-box' ),
+							'tooltip' => __( 'Optional. Add any custom CSS to style your emails.', 'newsletter-optin-box' ),
+						),
+					),
+				),
+
+				'enable_double_optin' => array(
+					'el'          => 'settings_group',
+					'label'       => __( 'Enable Double Opt-in', 'newsletter-optin-box' ),
+					'section'     => 'emails',
+					'sub_section' => 'double_opt_in',
+					'settings'    => array(
+						'double_optin'               => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'label'       => __( 'Double Opt-in', 'newsletter-optin-box' ),
+							'description' => __( 'Require new subscribers to confirm their email addresses.', 'newsletter-optin-box' ),
+							'default'     => false,
+						),
+
+						'disable_double_optin_email' => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'label'       => __( 'Disable default double opt-in email', 'newsletter-optin-box' ),
+							'default'     => false,
+							'description' => sprintf(
+								'%s <a href="%s" target="_blank">%s</a>',
+								__( 'You can disable the default double opt-in email if you wish to use a custom email or set-up different emails.', 'newsletter-optin-box' ),
+								noptin_get_upsell_url( '/guide/email-subscribers/double-opt-in/#how-to-customize-the-email-or-set-up-multiple-double-opt-in-emails', 'double-opt', 'settings' ),
+								__( 'Learn more', 'newsletter-optin-box' )
+							),
+							'restrict'    => 'double_optin',
+						),
+					),
+				),
+
+				'double_optin_email'  => array(
+					'el'          => 'settings_group',
+					'label'       => __( 'Double Opt-in Email', 'newsletter-optin-box' ),
+					'section'     => 'emails',
+					'sub_section' => 'double_opt_in',
+					'conditions'  => array(
+						array(
+							'key'      => 'double_optin',
+							'operator' => '==',
+							'value'    => true,
+						),
+						array(
+							'key'      => 'disable_double_optin_email',
+							'operator' => '!=',
+							'value'    => true,
+						),
+					),
+					'settings'    => array(
+						'double_optin_email_subject'   => array(
+							'el'          => 'input',
+							'label'       => __( 'Email Subject', 'newsletter-optin-box' ),
+							'default'     => $double_optin['email_subject'],
+							'placeholder' => $double_optin['email_subject'],
+							'tooltip'     => __( 'The subject of the subscription confirmation email', 'newsletter-optin-box' ),
+						),
+
+						'double_optin_hero_text'       => array(
+							'el'          => 'input',
+							'label'       => __( 'Email Title', 'newsletter-optin-box' ),
+							'default'     => $double_optin['hero_text'],
+							'placeholder' => $double_optin['hero_text'],
+							'tooltip'     => __( 'The title of the email', 'newsletter-optin-box' ),
+						),
+
+						'double_optin_email_body'      => array(
+							'el'          => 'textarea',
+							'label'       => __( 'Email Body', 'newsletter-optin-box' ),
+							'placeholder' => $double_optin['email_body'],
+							'default'     => $double_optin['email_body'],
+							'tooltip'     => __( 'This is the main content of the email', 'newsletter-optin-box' ),
+						),
+
+						'double_optin_cta_text'        => array(
+							'el'          => 'input',
+							'label'       => __( 'Call to Action', 'newsletter-optin-box' ),
+							'default'     => $double_optin['cta_text'],
+							'placeholder' => $double_optin['cta_text'],
+							'tooltip'     => __( 'The text of the call to action button', 'newsletter-optin-box' ),
+						),
+
+						'double_optin_after_cta_text'  => array(
+							'el'          => 'textarea',
+							'label'       => __( 'Extra Text', 'newsletter-optin-box' ),
+							'default'     => $double_optin['after_cta_text'],
+							'placeholder' => $double_optin['after_cta_text'],
+							'tooltip'     => __( 'This text is shown after the call to action button', 'newsletter-optin-box' ),
+						),
+
+						'double_optin_permission_text' => array(
+							'el'          => 'textarea',
+							'label'       => __( 'Permission Text', 'newsletter-optin-box' ),
+							'default'     => $double_optin['permission_text'],
+							'placeholder' => $double_optin['permission_text'],
+							'tooltip'     => __( 'Remind the subscriber how they signed up.', 'newsletter-optin-box' ),
+						),
+					),
+				),
+			)
+		);
 	}
 }

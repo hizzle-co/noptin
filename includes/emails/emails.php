@@ -777,13 +777,19 @@ function noptin_email_sending_limit_reached() {
  *
  * @return int Number of seconds for the rolling period. Default is 1 hour (3600 seconds).
  */
-function noptin_get_emails_sending_rolling_period() {
-	$seconds = (int) get_noptin_option( 'email_limit_reset_seconds', HOUR_IN_SECONDS );
-	if ( empty( $seconds ) ) {
+function noptin_get_email_sending_rolling_period() {
+	$period = get_noptin_option( 'email_sending_rolling_period', '1hours' );
+	if ( empty( $period ) ) {
+		$period = '1hours'; // Default to 1 hour.
+	}
+
+	$seconds = noptin_convert_time_unit_to_seconds( $period );
+
+	if ( empty( $seconds ) || ! is_numeric( $seconds ) || $seconds < 1 ) {
 		$seconds = HOUR_IN_SECONDS; // Default to 1 hour.
 	}
 
-	return apply_filters( 'noptin_emails_sending_rolling_period', $seconds );
+	return apply_filters( 'noptin_email_sending_rolling_period', $seconds );
 }
 
 /**
@@ -794,7 +800,7 @@ function noptin_get_emails_sending_rolling_period() {
 function noptin_emails_sent_this_period() {
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_emails_sending_rolling_period() ),
+		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_email_sending_rolling_period() ),
 	);
 
 	$emails_sent = (int) Hizzle\Noptin\Emails\Logs\Main::query( $args, 'count' );
@@ -811,7 +817,7 @@ function noptin_get_next_email_send_time() {
 
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_emails_sending_rolling_period() ),
+		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_email_sending_rolling_period() ),
 		'orderby'            => 'date_created',
 		'order'              => 'ASC',
 		'number'             => 1,
@@ -830,7 +836,7 @@ function noptin_get_next_email_send_time() {
 		return false;
 	}
 
-	$time = $time->getTimestamp() + noptin_get_emails_sending_rolling_period();
+	$time = $time->getTimestamp() + noptin_get_email_sending_rolling_period();
 	if ( $time < time() ) {
 		// If the time is in the past, we return the current time.
 		return time();
