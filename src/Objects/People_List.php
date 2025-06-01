@@ -142,7 +142,8 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 		}
 
 		// Get user locale.
-		if ( ! empty( $options['locale'] ) && $person->get( 'locale' ) !== $options['locale'] ) {
+		$locale = $options['locale'] ?? ( $options['user_locale'] ?? '' );
+		if ( ! empty( $locale ) && $person->get( 'locale' ) !== $locale ) {
 			return false;
 		}
 
@@ -228,7 +229,10 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 
 		$settings = array(
 			'key'    => $this->options_key,
-			'fields' => $this->get_collection()->get_sender_settings(),
+			'fields' => apply_filters(
+				'noptin_' . $this->collection_type . '_sending_options',
+				$this->get_collection()->get_sender_settings()
+			),
 		);
 
 		if ( 'noptin' === $this->sender ) {
