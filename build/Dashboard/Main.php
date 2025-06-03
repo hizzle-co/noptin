@@ -129,10 +129,19 @@ class Main {
 		if ( isset( $_GET['noptin_campaign'] ) && current_user_can( 'edit_post', $_GET['noptin_campaign'] ) ) {
 			$campaign         = noptin_get_email_campaign_object( (int) $_GET['noptin_campaign'] );
 			$data['campaign'] = array(
-				'id'          => $campaign->id,
-				'edit_url'    => $campaign->get_edit_url(),
-				'preview_url' => $campaign->get_preview_url(),
-				'name'        => $campaign->name,
+				'id'           => $campaign->id,
+				'edit_url'     => $campaign->get_edit_url(),
+				'preview_url'  => $campaign->get_preview_url(),
+				'name'         => $campaign->name,
+				// Fetch all children ids where post_parent is the campaign id.
+				'children_ids' => wp_parse_id_list(
+					\Hizzle\Noptin\Emails\Logs\Main::query(
+						array(
+							'parent_id' => $campaign->id,
+							'fields'    => 'campaign_id',
+						)
+					)
+				),
 			);
 
 			// Query the date range so that we can display the correct date range in the dashboard.
@@ -142,6 +151,10 @@ class Main {
 				'fields'      => 'date_created',
 				'per_page'    => 1,
 			);
+
+			if ( ! empty( $data['campaign']['children_ids'] ) ) {
+				$query['campaign_id'] = array_merge( array( $query['campaign_id'] ), $data['campaign']['children_ids'] );
+			}
 
 			if ( isset( $_GET['noptin_activity'] ) ) {
 				$query['activity']            = sanitize_key( urldecode( $_GET['noptin_activity'] ) );
@@ -170,7 +183,7 @@ class Main {
 
 			// Calaulate the correct group by.
 			// Calculate the correct group by based on date difference
-			$first_timestamp     = strtotime( $date_first );
+			$first_timestamp = strtotime( $date_first );
 			$last_timestamp  = strtotime( $date_last );
 			$diff_in_seconds = $last_timestamp - $first_timestamp;
 			$diff_in_hours   = $diff_in_seconds / HOUR_IN_SECONDS;

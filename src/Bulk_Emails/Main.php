@@ -293,7 +293,21 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$sender = $this->current_campaign->get_sender();
 
 		// Send the email.
-		$result = $this->senders[ $sender ]->send( $this->current_campaign, $recipient );
+		try {
+			$result = $this->senders[ $sender ]->send( $this->current_campaign, $recipient );
+		} catch ( \Throwable $t ) {
+
+			// Log the error.
+			noptin_pause_email_campaign(
+				sprintf(
+					// Translators: %s The error message.
+					__( 'Error sending email: %s', 'newsletter-optin-box' ),
+					esc_html( $t->getMessage() )
+				)
+			);
+
+			return;
+		}
 
 		// Pause the campaign if there was an error.
 		if ( false === $result ) {

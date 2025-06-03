@@ -460,16 +460,19 @@ class Table extends \WP_List_Table {
 			'action' => $this->get_email_action( $item ),
 		);
 
-		if ( 'publish' === $item->status && 'newsletter' === $item->type ) {
-			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
-				$app['label'] = __( 'Sent', 'newsletter-optin-box' );
-			} elseif ( '' !== get_post_meta( $item->id, 'paused', true ) ) {
-				$app['label'] = __( 'Paused', 'newsletter-optin-box' );
-			} else {
-				$app['label'] = __( 'Sending', 'newsletter-optin-box' );
+		if ( 'publish' === $item->status ) {
+			if ( 'newsletter' === $item->type ) {
+				if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
+					$app['label'] = __( 'Sent', 'newsletter-optin-box' );
+				} elseif ( '' !== get_post_meta( $item->id, 'paused', true ) ) {
+					$app['label'] = __( 'Paused', 'newsletter-optin-box' );
+				} else {
+					$app['label'] = __( 'Sending', 'newsletter-optin-box' );
+				}
 			}
-		}
 
+			$app['statsUrl'] = $item->get_activity_url();
+		}
 		?>
 			<div class="noptin-email-status__app" data-app="<?php echo esc_attr( wp_json_encode( $app ) ); ?>">
 				<!-- spinner -->
@@ -544,12 +547,18 @@ class Table extends \WP_List_Table {
 	 * @return int
 	 */
 	public function column_recipients( $item ) {
+		$count = $item->get_send_count();
+
+		if ( ! $count ) {
+			return '0';
+		}
+
 		return sprintf(
 			'<a href="%s">%s</a>',
 			esc_url(
 				$item->get_activity_url( 'send' )
 			),
-			esc_html( $item->get_send_count() )
+			esc_html( $count )
 		);
 	}
 
@@ -591,8 +600,8 @@ class Table extends \WP_List_Table {
 		$clicks  = $item->get_click_count();
 		$percent = ( $sends && $clicks ) ? round( ( $clicks / $sends ) * 100, 2 ) : 0;
 
-		if ( ! empty( $unsubscribed ) ) {
-			$unsubscribed = sprintf(
+		if ( ! empty( $clicks ) ) {
+			$clicks = sprintf(
 				'<a href="%s">%s</a>',
 				esc_url(
 					$item->get_activity_url( 'click' )
@@ -620,7 +629,7 @@ class Table extends \WP_List_Table {
 			$callback  = apply_filters( 'noptin_format_price_callback', '', $revenue );
 			$formatted = empty( $callback ) ? $revenue : call_user_func( $callback, $revenue );
 
-			if ( 0 === $revenue ) {
+			if ( empty( $revenue ) ) {
 				return $formatted;
 			}
 

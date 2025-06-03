@@ -44,7 +44,7 @@ class Users extends People {
 			$this->email_sender_options = 'wp_users_options';
 			$this->is_stand_alone       = false;
 			$this->can_list             = true;
-			add_filter( "noptin_can_email_{$this->type}_for_campaign", array( $this, 'can_email_user_for_campaign' ) );
+			add_filter( "noptin_can_email_{$this->type}_for_campaign", array( $this, 'can_email_user_for_campaign' ), 10, 3 );
 		}
 
 		self::$user_types[] = $type;
