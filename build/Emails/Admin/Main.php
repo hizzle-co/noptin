@@ -55,6 +55,12 @@ class Main {
 	 */
 	public static function maybe_do_action() {
 
+		// Dismiss external CRON notice.
+		if ( ! empty( $_REQUEST['noptin_dismiss_cron_notice'] ) && wp_verify_nonce( $_REQUEST['noptin_dismiss_cron_notice'], 'noptin_dismiss_cron_notice' ) ) {
+			update_user_meta( get_current_user_id(), 'noptin_dismiss_cron_notice', true );
+			wp_safe_redirect( remove_query_arg( 'noptin_dismiss_cron_notice' ) );
+		}
+
 		if (
 			! empty( $_REQUEST['noptin_campaign'] ) &&
 			! empty( $_REQUEST['noptin_email_action'] ) &&

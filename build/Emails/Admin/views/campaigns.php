@@ -76,6 +76,33 @@ if ( $parent ) {
 
 			noptin()->admin->print_notice( 'error', $message );
 		}
+
+		// Check if external CRON is not being used.
+		$can_display_cron_notice = ! apply_filters( 'noptin_display_cron_notice', get_user_meta( get_current_user_id(), 'noptin_dismiss_cron_notice', true ) );
+		if ( $can_display_cron_notice && ( ! defined( 'DISABLE_WP_CRON' ) || ! DISABLE_WP_CRON ) ) {
+			$message = sprintf(
+				'<h3>%s</h3>',
+				__( 'WP-Cron is being used for email sending', 'newsletter-optin-box')
+			);
+
+			$message .= '<p>' . __( 'Your site is using WordPress\' built-in cron system to send emails. This may cause delays in email delivery if your site is cached or doesn\'t receive regular traffic.', 'newsletter-optin-box' ) . '</p>';
+
+			$message .= '<p>' . sprintf(
+				/* translators: %s: link to documentation */
+				__( 'For better email delivery, consider setting up a real cron job. <a href="%s" target="_blank">Learn more</a>', 'newsletter-optin-box' ),
+				noptin_get_guide_url( 'External CRON', 'sending-emails/how-to-set-up-an-external-cron-job-in-wordpress-and-speed-up-email-sending/' )
+			) . '</p>';
+
+			noptin()->admin->print_notice(
+				'warning',
+				$message,
+				wp_nonce_url(
+					add_query_arg( array() ),
+					'noptin_dismiss_cron_notice',
+					'noptin_dismiss_cron_notice'
+				)
+			);
+		}
 	?>
 
 	<!-- Display tabs -->
