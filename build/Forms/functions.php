@@ -286,18 +286,26 @@ function prepare_noptin_form_fields( $fields ) {
 		if ( is_string( $custom_field ) ) {
 			$custom_field = get_noptin_custom_field( $custom_field );
 		} elseif ( is_array( $custom_field ) && ! empty( $custom_field['type'] ) ) {
+			// Backwards compatibility for custom fields.
 			if ( is_array( $custom_field['type'] ) ) {
 				$custom_field = $custom_field['type'];
 			}
 
-			$_custom_field = get_noptin_custom_field( $custom_field['type'] );
+			$_custom_field = $custom_field;
+			$custom_field  = get_noptin_custom_field( $custom_field['type'] );
 
-			if ( empty( $_custom_field ) ) {
+			// Abort if this is not a valid custom field.
+			if ( empty( $custom_field ) ) {
 				continue;
 			}
 
-			unset( $custom_field['type'] );
-			$custom_field  = array_merge( $_custom_field, $custom_field );
+			if ( ! empty( $_custom_field['label'] ) ) {
+				$custom_field['label'] = $_custom_field['label'];
+			}
+
+			if ( isset( $_custom_field['required'] ) ) {
+				$custom_field['required'] = $_custom_field['required'];
+			}
 		}
 
 		if ( ! empty( $custom_field ) ) {

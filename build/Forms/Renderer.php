@@ -794,7 +794,7 @@ class Renderer {
 		if ( $form->is_slide_in() || $form->is_popup() ) {
 			$trigger                   = defined( 'IS_NOPTIN_PREVIEW' ) ? 'immeadiate' : esc_attr( $form->triggerPopup );
 			$atts['data-trigger']      = $trigger;
-			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', WEEK_IN_SECONDS, $form->hideSeconds ) * 1000;
+			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', $form->hideSeconds );
 
 			if ( 'after_click' === $trigger ) {
 				$atts['data-value'] = $form->cssClassOfClick;

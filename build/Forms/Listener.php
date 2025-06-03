@@ -716,7 +716,9 @@ class Listener {
 			$errors = array();
 			foreach ( $this->error->get_error_codes() as $code ) {
 				if ( ! empty( $this->error->error_data[ $code ]['selector'] ) ) {
-					$errors[ $this->error->error_data[ $code ]['selector'] ] = $this->error->get_error_message( $code );
+					$errors[ $this->error->error_data[ $code ]['selector'] ] = 'required_field_missing' === $code ?
+					__( 'Please fill in this field.', 'newsletter-optin-box' ) :
+					$this->error->get_error_message( $code );
 				}
 			}
 

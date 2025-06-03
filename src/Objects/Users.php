@@ -40,9 +40,11 @@ class Users extends People {
 		);
 
 		if ( 'user' === $type && noptin_has_alk() ) {
-			$this->email_sender   = 'wp_users';
-			$this->is_stand_alone = false;
-			$this->can_list       = true;
+			$this->email_sender         = 'wp_users';
+			$this->email_sender_options = 'wp_users_options';
+			$this->is_stand_alone       = false;
+			$this->can_list             = true;
+			add_filter( "noptin_can_email_{$this->type}_for_campaign", array( $this, 'can_email_user_for_campaign' ) );
 		}
 
 		self::$user_types[] = $type;
@@ -202,6 +204,218 @@ class Users extends People {
 		return array(
 			$this->field_to_merge_tag( 'email' ) => 'current_user' === $this->type ? __( 'Logged in user', 'newsletter-optin-box' ) : $this->singular_label,
 		);
+	}
+
+	/**
+	 * Returns the setting fields.
+	 *
+	 * @return array
+	 */
+	public function get_sender_settings() {
+
+		$options = array();
+
+		if ( function_exists( 'get_editable_roles' ) ) {
+			$options = array_map( 'translate_user_role', wp_list_pluck( array_reverse( get_editable_roles() ), 'name' ) );
+		}
+
+		$fields = array(
+			'roles'   => array(
+				'description' => __( 'Select the user roles to send this email to', 'newsletter-optin-box' ),
+				'type'        => 'multi_checkbox',
+				'options'     => $options,
+			),
+
+			'exclude' => array(
+				'label'       => __( 'Exclude', 'newsletter-optin-box' ),
+				'type'        => 'text',
+				'placeholder' => sprintf(
+					// translators: %s: The Example
+					__( 'For example, %s', 'newsletter-optin-box' ),
+					'10, 30'
+				),
+				'description' => __( 'Enter a comma separated list of user ids who should not receive this email', 'newsletter-optin-box' ),
+			),
+
+		);
+
+		// Multi-lingual support.
+		if ( noptin_is_multilingual() ) {
+			$fields['user_locale'] = array(
+				'label'   => __( 'Language', 'newsletter-optin-box' ),
+				'type'    => 'select',
+				'options' => array_merge(
+					array(
+						'' => __( 'Any', 'newsletter-optin-box' ),
+					),
+					noptin_get_available_languages()
+				),
+			);
+		}
+
+		// Fetch custom fields.
+		foreach ( noptin_get_user_custom_fields() as $key => $field ) {
+
+			if ( empty( $field['options'] ) ) {
+				$fields[ "custom_fields.$key" ] = array(
+					'label'       => $field['label'],
+					'type'        => 'text',
+					'placeholder' => __( 'Any', 'newsletter-optin-box' ),
+				);
+			} else {
+				$fields[ "custom_fields.$key" ] = array(
+					'label'   => $field['label'],
+					'type'    => 'select',
+					'options' => array( '' => __( 'Any', 'newsletter-optin-box' ) ) + $field['options'],
+				);
+			}
+		}
+
+		return apply_filters( 'noptin_users_sending_options', $fields );
+	}
+
+	/**
+	 * Retrieves newsletter recipients.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 * @return int[] $users The user IDs.
+	 */
+	public function get_newsletter_recipients( $options, $email ) {
+		// Prepare arguments.
+		$args = array(
+			'number'  => -1,
+			'fields'  => 'ID',
+			'orderby' => 'ID',
+		);
+
+		$manual_recipients = $email->get_manual_recipients_ids();
+		if ( ! empty( $manual_recipients ) ) {
+			$args['include'] = $manual_recipients;
+		} elseif ( is_array( $options ) ) {
+
+			// Add roles.
+			if ( ! empty( $options['roles'] ) ) {
+				$args['role__in'] = $options['roles'];
+			}
+
+			// Exclude users.
+			if ( ! empty( $options['exclude'] ) ) {
+				$args['exclude'] = wp_parse_id_list( $options['exclude'] );
+			}
+		}
+
+		// Run the query...
+		return get_users( $args );
+	}
+
+	/**
+	 * Checks if the user can be emailed for the campaign.
+	 *
+	 * @param bool $can_email
+	 * @param \array $options
+	 * @param \WP_User $user
+	 * @return bool
+	 */
+	public function can_email_user_for_campaign( $can_email, $options, $user ) {
+
+		// Custom fields.
+		$custom_fields = $options['custom_fields'] ?? array();
+
+		foreach ( $custom_fields as $key => $value ) {
+
+			$value = trim( $value );
+
+			// Skip empty fields.
+			if ( empty( $key ) || '' === $value ) {
+				continue;
+			}
+
+			$current_value = get_user_meta( $user->ID, $key, true );
+
+			// Check if an operator was specified.
+			// For example, if the value is ">= 10", we'll use the >= operator.
+			if ( preg_match( '/^(\=|\!\=|\<\=|\>\=|\<|\>|LIKE|NOT LIKE|IN|NOT IN|BETWEEN|NOT BETWEEN|EXISTS|NOT EXISTS|REGEXP|NOT REGEXP|RLIKE)(.*)/', $value, $matches ) ) {
+				$value = isset( $matches[2] ) ? trim( $matches[2] ) : '';
+
+				// Maybe convert to array.
+				if ( in_array( $matches[1], array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
+					$value = array_map( 'trim', explode( ',', $value ) );
+				}
+
+				switch ( $matches[1] ) {
+					case 'EXISTS':
+						if ( empty( $current_value ) && 0 !== $current_value ) {
+							return false;
+						}
+						break;
+
+					case 'NOT EXISTS':
+						if ( ! empty( $current_value ) ) {
+							return false;
+						}
+						break;
+
+					case 'IN':
+						if ( ! in_array( $current_value, $value, true ) ) {
+							return false;
+						}
+						break;
+
+					case 'NOT IN':
+						if ( in_array( $current_value, $value, true ) ) {
+							return false;
+						}
+						break;
+
+					case 'BETWEEN':
+						if ( ! is_numeric( $current_value ) || $current_value < $value[0] || $current_value > $value[1] ) {
+							return false;
+						}
+						break;
+
+					case 'NOT BETWEEN':
+						if ( ! is_numeric( $current_value ) || $current_value >= $value[0] || $current_value <= $value[1] ) {
+							return false;
+						}
+						break;
+
+					case 'LIKE':
+						if ( false === strpos( $current_value, $value ) ) {
+							return false;
+						}
+						break;
+
+					case 'NOT LIKE':
+						if ( false !== strpos( $current_value, $value ) ) {
+							return false;
+						}
+						break;
+
+					case 'REGEXP':
+					case 'RLIKE':
+						if ( ! preg_match( $value, $current_value ) ) {
+							return false;
+						}
+						break;
+
+					case 'NOT REGEXP':
+						if ( preg_match( $value, $current_value ) ) {
+							return false;
+						}
+						break;
+
+					default:
+						if ( $current_value !== $value ) {
+							return false;
+						}
+						break;
+				}
+			} elseif ( $current_value !== $value ) {
+				return false;
+			}
+		}
+
+		return $can_email;
 	}
 
 	/**

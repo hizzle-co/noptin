@@ -39,7 +39,7 @@ abstract class People extends Collection {
 			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );
 
 			if ( ! empty( $this->email_sender_options ) ) {
-				add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ) );
+				add_filter( 'noptin_bulk_email_senders', array( $this, 'add_email_sender' ), 5 );
 			}
 		}
 
