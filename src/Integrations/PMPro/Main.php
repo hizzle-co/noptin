@@ -333,9 +333,13 @@ class Main {
 						$custom_field['wrap_name'] = true;
 						$custom_field['show_id']   = true;
 
+						if ( $subscriber ) {
+							$custom_field['value'] = $subscriber->get( $custom_field['merge_tag'] );
+						}
+
 						?>
 								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-' . $custom_field['merge_tag'], 'pmpro_form_field-' . $custom_field['merge_tag'] ) ); ?>">
-								<?php display_noptin_custom_field_input( $custom_field, $subscriber ); ?>
+								<?php display_noptin_custom_field_input( $custom_field ); ?>
 								</div>
 							<?php
 					}

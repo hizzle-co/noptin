@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Version: 3.8.7
-Stable tag: 3.8.7
+Version: 4.0.0
+Stable tag: 4.0.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,10 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.0.0 =
+* Fine-grained control over email sending limits.
+* Deleted legacy global JavaScript and asset files that are no longer in use.
 
 = 3.8.7 =
 * Added the ability to view detailed campaign engagement stats. You can now see exactly who opened, clicked, unsubscribed, or purchased from your newsletters — all linked directly to the activity logs.

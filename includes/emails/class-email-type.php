@@ -23,7 +23,7 @@ abstract class Noptin_Email_Type {
 	/**
 	 * @var string
 	 */
-	public $type; // newsletter, woocommerce_new_order, etc.
+	public $type; // newsletter, sequence, etc.
 
 	/**
 	 * True when email is being sent.
