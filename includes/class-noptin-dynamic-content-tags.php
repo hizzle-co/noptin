@@ -511,14 +511,13 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public static function get_date( $args = array() ) {
 		$time      = ! empty( $args['relative'] ) ? strtotime( $args['relative'] ) : time();
 		$time      = $time + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-		$format    = ! empty( $args['format'] ) ? $args['format'] : 'Y-m-d';
 		$localized = ! empty( $args['localized'] );
 
 		if ( $localized ) {
-			return date_i18n( $format, $time );
+			return date_i18n( ! empty( $args['format'] ) ? $args['format'] : get_option( 'date_format' ), $time );
 		}
 
-		return gmdate( $format, $time );
+		return gmdate( ! empty( $args['format'] ) ? $args['format'] : 'Y-m-d', $time );
 	}
 
 	/**
