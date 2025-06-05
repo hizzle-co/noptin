@@ -218,6 +218,69 @@ class ScriptManager {
 			</div>
 		<?php
 	}
+
+	/**
+	 * Prepares settings.
+	 *
+	 * @param array $sections Known sections.
+	 * @param array $settings Settings.
+	 */
+	public static function prepare_settings( $sections, $settings ) {
+
+		// Add settings.
+		$prepared = array();
+		foreach ( $settings as $setting_key => $setting ) {
+
+			// Do we have a section.
+			if ( empty( $setting['section'] ) ) {
+				$setting['section'] = 'general';
+			}
+
+			// Does section exist?
+			if ( empty( $sections[ $setting['section'] ] ) ) {
+				$sections[ $setting['section'] ] = ucwords( str_replace( '-', ' ', $setting['section'] ) );
+			}
+
+			// Ensure section is an array.
+			if ( ! is_array( $sections[ $setting['section'] ] ) ) {
+				$sections[ $setting['section'] ] = array(
+					'label'    => $sections[ $setting['section'] ],
+					'children' => array(
+						'main' => $sections[ $setting['section'] ],
+					),
+				);
+			}
+
+			// Do we have a sub-section?
+			if ( empty( $setting['sub_section'] ) ) {
+				$setting['sub_section'] = current( array_keys( $sections[ $setting['section'] ]['children'] ) );
+			}
+
+			// If sub-section does not exist, add it.
+			if ( empty( $sections[ $setting['section'] ]['children'][ $setting['sub_section'] ] ) ) {
+				$sections[ $setting['section'] ]['children'][ $setting['sub_section'] ] = ucwords( str_replace( '-', ' ', $setting['sub_section'] ) );
+			}
+
+			// Add setting to section.
+			if ( ! isset( $prepared[ $setting['section'] ] ) ) {
+				$prepared[ $setting['section'] ] = array(
+					'label'        => $sections[ $setting['section'] ]['label'],
+					'sub_sections' => array(),
+				);
+			}
+
+			if ( ! isset( $prepared[ $setting['section'] ]['sub_sections'][ $setting['sub_section'] ] ) ) {
+				$prepared[ $setting['section'] ]['sub_sections'][ $setting['sub_section'] ] = array(
+					'label'    => $sections[ $setting['section'] ]['children'][ $setting['sub_section'] ],
+					'settings' => array(),
+				);
+			}
+
+			$prepared[ $setting['section'] ]['sub_sections'][ $setting['sub_section'] ]['settings'][ $setting_key ] = $setting;
+		}
+
+		return $prepared;
+	}
 }
 
 ScriptManager::init();
