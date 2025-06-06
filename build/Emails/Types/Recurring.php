@@ -687,7 +687,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 	 * Filters automation summary.
 	 *
 	 * @param string $about
-	 * @param \Noptin_Automated_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function about_automation( $about, $campaign ) {
 
