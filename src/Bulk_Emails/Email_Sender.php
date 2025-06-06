@@ -41,7 +41,7 @@ abstract class Email_Sender {
 	/**
 	 * Fetch the next recipient.
 	 *
-	 * @param \Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 *
 	 * @return int[]|string[]
 	 */
@@ -50,7 +50,7 @@ abstract class Email_Sender {
 	/**
 	 * Sends the actual email.
 	 *
-	 * @param @param \Noptin_Newsletter_Email $campaign
+	 * @param @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @param int|string $recipient
 	 *
 	 * @return bool
@@ -60,7 +60,7 @@ abstract class Email_Sender {
 	/**
 	 * Fired after a campaign is done sending.
 	 *
-	 * @param @param \Noptin_Newsletter_Email $campaign
+	 * @param @param \Hizzle\Noptin\Emails\Email $campaign
 	 *
 	 */
 	abstract public function done_sending( $campaign );
