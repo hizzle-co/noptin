@@ -79,7 +79,7 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	/**
 	 * Fetches relevant contacts for the campaign.
 	 *
-	 * @param \Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function get_recipients( $campaign ) {
 
@@ -108,7 +108,7 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	/**
 	 * Fired after a campaign is done sending.
 	 *
-	 * @param @param \Noptin_Newsletter_Email $campaign
+	 * @param @param \Hizzle\Noptin\Emails\Email $campaign
 	 *
 	 */
 	public function done_sending( $campaign ) {
@@ -118,7 +118,7 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	/**
 	 * Checks if a contact is valid for a given email.
 	 *
-	 * @param \Noptin_Newsletter_Email $campaign The current campaign.
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The current campaign.
 	 * @param Person $person The person to check.
 	 * @param array $options The sender options.
 	 * @return bool
@@ -159,7 +159,7 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	/**
 	 * Sends a single email to a contact.
 	 *
-	 * @param \Noptin_Newsletter_Email $campaign
+	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 * @param int $contact_id
 	 *
 	 * @return bool
