@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Version: 4.0.0
-Stable tag: 4.0.0
+Version: 4.0.1
+Stable tag: 4.0.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.0.1 =
+* Fix: Update packages to ensure the sending limits setting is visible on all instances.
 
 = 4.0.0 =
 * Fine-grained control over email sending limits.
