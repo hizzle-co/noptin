@@ -396,6 +396,13 @@ class Main {
 				'plural_label'       => __( 'Newsletters', 'newsletter-optin-box' ),
 				'new_campaign_label' => __( 'New Campaign', 'newsletter-optin-box' ),
 				'click_to_add_first' => __( 'Click the button below to send your first newsletter campaign', 'newsletter-optin-box' ),
+				'defaults'           => array(
+					'name' => sprintf(
+						// Translators: %s is the current date.
+						__( 'Newsletter - %s', 'newsletter-optin-box' ),
+						date_i18n( get_option( 'date_format' ) )
+					),
+				)
 			)
 		);
 

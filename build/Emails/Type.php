@@ -102,6 +102,11 @@ class Type {
 	public $upsell = false;
 
 	/**
+	 * @var array Defaults for the email type.
+	 */
+	public $defaults = array();
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param array $args The email type args.

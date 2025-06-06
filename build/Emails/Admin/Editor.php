@@ -510,23 +510,26 @@ JS;
 		$email_type = \Hizzle\Noptin\Emails\Main::get_email_type( $edited_campaign->type );
 
 		// Prepare post args.
-		$defaults = apply_filters(
-			'noptin_get_default_email_props',
-			array(
-				'block_css' => array(
-					'footer-text' => ' #noptin-email-content .footer-text a { color: #111111 }',
-				),
-				'subject'          => $edited_campaign->get( 'subject' ),
-				'recipients'       => 'automation' === $edited_campaign->type ? '[[email]]' : '',
-				'content_visual'   => noptin_email_wrap_blocks( '', get_noptin_footer_text() ),
-				'email_sender'     => $edited_campaign->get_sender(),
-				'email_type'       => $edited_campaign->get_email_type(),
-				'template'         => $edited_campaign->get_template(),
-				'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
-				'footer_text'      => get_noptin_footer_text(),
+		$defaults = array(
+			'block_css' => array(
+				'footer-text' => ' #noptin-email-content .footer-text a { color: #111111 }',
 			),
-			$edited_campaign
+			'subject'          => $edited_campaign->get( 'subject' ),
+			'recipients'       => 'automation' === $edited_campaign->type ? '[[email]]' : '',
+			'content_visual'   => noptin_email_wrap_blocks( '', get_noptin_footer_text() ),
+			'email_sender'     => $edited_campaign->get_sender(),
+			'email_type'       => $edited_campaign->get_email_type(),
+			'template'         => $edited_campaign->get_template(),
+			'sends_after_unit' => $edited_campaign->get_sends_after_unit(),
+			'footer_text'      => get_noptin_footer_text(),
 		);
+
+		if ( $email_type && $email_type->defaults ) {
+			$defaults = array_merge( $defaults, $email_type->defaults );
+		}
+
+		$defaults = array_merge( $defaults, $email_type->defaults );
+		$defaults = apply_filters( 'noptin_get_default_email_props', $defaults, $edited_campaign );
 
 		if ( 'normal' !== $edited_campaign->get_email_type() ) {
 			$defaults = array_merge(

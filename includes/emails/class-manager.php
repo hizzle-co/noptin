@@ -30,9 +30,6 @@ class Noptin_Email_Manager {
 	/** @var Noptin_Automated_Email_Types */
 	public $automated_email_types;
 
-	/** @var Noptin_Newsletter_Email_Type */
-	public $newsletter;
-
 	/**
 	 * Class constructor.
 	 *
@@ -59,7 +56,6 @@ class Noptin_Email_Manager {
 		require_once plugin_dir_path( __FILE__ ) . 'class-html-to-text.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-type.php';
-		require_once plugin_dir_path( __FILE__ ) . 'class-newsletter-email-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-type-automation-rule.php';
 		require_once plugin_dir_path( __FILE__ ) . 'automated-email-types/class-types.php';
@@ -72,7 +68,6 @@ class Noptin_Email_Manager {
 		$this->sender                = new Noptin_Email_Sender();
 		$this->tags                  = new Noptin_Email_Tags();
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
-		$this->newsletter            = new Noptin_Newsletter_Email_Type();
 
 		do_action( 'noptin_email_manager_init', $this );
 	}
@@ -84,7 +79,6 @@ class Noptin_Email_Manager {
 	public function add_hooks() {
 		$this->sender->add_hooks();
 		$this->tags->add_hooks();
-		$this->newsletter->add_hooks();
 		$this->automated_email_types->add_hooks();
 	}
 }
