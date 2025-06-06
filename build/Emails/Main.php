@@ -37,6 +37,9 @@ class Main {
 	 */
 	public static function init() {
 
+		// Load functions.
+		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
+
 		// Register post types.
 		add_action( 'init', array( __CLASS__, 'register_post_types' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_fields' ) );
