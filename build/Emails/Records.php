@@ -144,7 +144,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		if ( empty( $result ) ) {
-			$error = \Noptin_Email_Sender::get_phpmailer_last_error();
+			$error = Main::get_phpmailer_last_error();
 			throw new \Exception( 'Failed sending an email' . ( $error ? ': ' . esc_html( $error ) : '' ) );
 		}
 

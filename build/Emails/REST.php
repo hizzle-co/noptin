@@ -157,7 +157,7 @@ class REST extends \WP_REST_Posts_Controller {
 		);
 
 		if ( empty( $result ) ) {
-			$error = \Noptin_Email_Sender::get_phpmailer_last_error();
+			$error = Main::get_phpmailer_last_error();
 			return new \WP_Error(
 				'noptin_rest_email_invalid',
 				sprintf(

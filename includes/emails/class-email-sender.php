@@ -207,7 +207,7 @@ class Noptin_Email_Sender {
 					/* Translators: %1$s Email address, %2$s Email subject & error. */
 					__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
 					is_array( $this->recipients ) ? implode( ', ', array_map( 'sanitize_email', $this->recipients ) ) : sanitize_email( $this->recipients ),
-					wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( $this->get_phpmailer_last_error() ) . '</code>'
+					wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() ) . '</code>'
 				)
 			);
 		}
@@ -224,7 +224,7 @@ class Noptin_Email_Sender {
 								/* Translators: %1$s Email address, %2$s Email subject & error. */
 								__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
 								sanitize_email( $recipient ),
-								wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( $this->get_phpmailer_last_error() ) . '</code>'
+								wp_specialchars_decode( $this->subject ) . '<code>' . esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() ) . '</code>'
 							)
 						);
 					} else {
@@ -425,24 +425,6 @@ class Noptin_Email_Sender {
 		remove_filter( 'wp_mail_content_type', array( $this, 'get_content_type' ), 1000 );
 		remove_filter( 'wp_mail', array( $this, 'ensure_email_content' ), 1000000 );
 		do_action( 'noptin_email_sender_after_sending', $this );
-	}
-
-	/**
-	 * Gets the most recent PHPMailer error message.
-	 *
-	 * @since 1.7.0
-	 *
-	 * @return string
-	 */
-	public static function get_phpmailer_last_error() {
-		global $phpmailer;
-
-		/** @var PHPMailer\PHPMailer\PHPMailer $phpmailer */
-		if ( $phpmailer && ! empty( $phpmailer->ErrorInfo ) ) {
-			return $phpmailer->ErrorInfo;
-		}
-
-		return __( 'The mail function returned false.', 'newsletter-optin-box' );
 	}
 
 	/**

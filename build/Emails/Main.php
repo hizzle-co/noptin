@@ -912,4 +912,22 @@ class Main {
 
 		return $prepared_post;
 	}
+
+	/**
+	 * Gets the most recent PHPMailer error message.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @return string
+	 */
+	public static function get_phpmailer_last_error() {
+		global $phpmailer;
+
+		/** @var \PHPMailer\PHPMailer\PHPMailer $phpmailer */
+		if ( $phpmailer && ! empty( $phpmailer->ErrorInfo ) ) {
+			return $phpmailer->ErrorInfo;
+		}
+
+		return 'The mail function returned false.';
+	}
 }

@@ -316,7 +316,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 				sprintf(
 					// Translators: %s The error message.
 					__( 'Error sending email: %s', 'newsletter-optin-box' ),
-					esc_html( \Noptin_Email_Sender::get_phpmailer_last_error() )
+					esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() )
 				)
 			);
 		}
