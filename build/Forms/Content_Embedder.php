@@ -55,7 +55,7 @@ class Content_Embedder {
 	 */
 	public static function embed_forms( $content ) {
 		// Abort if not a singular post or page.
-		if ( ! in_the_loop() || ! is_main_query() ) {
+		if ( ! in_the_loop() || ! is_main_query() || isset( $_GET['noptin_generate_integrations'] ) ) {
 			return $content;
 		}
 
