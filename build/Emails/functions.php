@@ -32,13 +32,12 @@ defined( 'ABSPATH' ) || exit;
  *     @type string|string[]  $recipients    Array or comma-separated list of email recipients.
  *     @type bool  $disable_template_plugins Default 'true'. Whether or not to disable email template plugins.
  * }
- * @param bool $background Whether or not to send the email in the background.
  * @see Noptin_Email_Sender
  * @return bool|void Whether the email was sent successfully. Returns nothing if sending in the background.
  */
-function noptin_send_email( $args, $background = false ) {
+function noptin_send_email( $args ) {
 
-	$args = apply_filters( 'noptin_send_email_args', $args, $background );
+	$args = apply_filters( 'noptin_send_email_args', $args );
 
 	if ( is_wp_error( $args['message'] ) ) {
 		log_noptin_message( $args['message'] );
@@ -49,13 +48,7 @@ function noptin_send_email( $args, $background = false ) {
 		return;
 	}
 
-	$background = isset( $args['background'] ) ? $args['background'] : $background;
-
-	if ( ! $background ) {
-		return noptin()->emails->sender->send( $args );
-	}
-
-	return noptin()->emails->sender->bg_send( $args );
+	return \Hizzle\Noptin\Emails\Sender::send( $args );
 }
 
 /**

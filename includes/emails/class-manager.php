@@ -21,9 +21,6 @@ defined( 'ABSPATH' ) || exit;
 #[AllowDynamicProperties]
 class Noptin_Email_Manager {
 
-	/** @var Noptin_Email_Sender */
-	public $sender;
-
 	/** @var Noptin_Email_Tags */
 	public $tags;
 
@@ -51,7 +48,6 @@ class Noptin_Email_Manager {
 	 */
 	public function load_files() {
 
-		require_once plugin_dir_path( __FILE__ ) . 'class-email-sender.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-generator.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-html-to-text.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
@@ -65,7 +61,6 @@ class Noptin_Email_Manager {
 	 * Init class properties.
 	 */
 	public function init() {
-		$this->sender                = new Noptin_Email_Sender();
 		$this->tags                  = new Noptin_Email_Tags();
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
 
@@ -77,7 +72,6 @@ class Noptin_Email_Manager {
 	 *
 	 */
 	public function add_hooks() {
-		$this->sender->add_hooks();
 		$this->tags->add_hooks();
 		$this->automated_email_types->add_hooks();
 	}
