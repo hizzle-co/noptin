@@ -70,27 +70,46 @@ abstract class Record {
 			return size_format( $raw_value, $decimals );
 		}
 
-		// Allow relative values.
-		if ( ! empty( $args['relative'] ) && in_array( $args['format'], array( 'date', 'time', 'datetime' ) ) ) {
-			$raw_value = strtotime( $args['relative'], is_numeric( $raw_value ) ? $raw_value : strtotime( $raw_value ) );
+		// Dates.
+		if ( in_array( $args['format'], array( 'date', 'time', 'datetime' ), true ) ) {
+
+			// ACF dates in YYYYMMDD format.
+			if ( is_numeric( $raw_value ) && strlen( (string) $raw_value ) === 8 ) {
+				$raw_value = sprintf(
+					'%s-%s-%s',
+					substr( $raw_value, 0, 4 ),
+					substr( $raw_value, 4, 2 ),
+					substr( $raw_value, 6, 2 )
+				);
+			}
+
+			// Allow relative values.
+			if ( ! empty( $args['relative'] ) ) {
+				$raw_value = strtotime( $args['relative'], is_numeric( $raw_value ) ? $raw_value : strtotime( $raw_value ) );
+			}
+
+			// Convert to timestamp if not numeric.
+			if ( ! is_numeric( $raw_value ) ) {
+				$raw_value = strtotime( $raw_value );
+			}
 		}
 
 		// Format dates.
 		if ( 'date' === $args['format'] ) {
 			$as = isset( $args['as'] ) ? $args['as'] : get_option( 'date_format' );
-			return date_i18n( $as, is_numeric( $raw_value ) ? $raw_value : strtotime( $raw_value ) );
+			return date_i18n( $as, $raw_value );
 		}
 
 		// Format times.
 		if ( 'time' === $args['format'] ) {
 			$as = isset( $args['as'] ) ? $args['as'] : get_option( 'time_format' );
-			return date_i18n( $as, is_numeric( $raw_value ) ? $raw_value : strtotime( $raw_value ) );
+			return date_i18n( $as, $raw_value );
 		}
 
 		// Format datetimes.
 		if ( 'datetime' === $args['format'] ) {
 			$as = isset( $args['as'] ) ? $args['as'] : get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
-			return date_i18n( $as, is_numeric( $raw_value ) ? $raw_value : strtotime( $raw_value ) );
+			return date_i18n( $as, $raw_value );
 		}
 
 		// Format as a list.
