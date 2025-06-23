@@ -298,14 +298,30 @@ $editor_settings = array(
 							'operator' => 'empty',
 						),
 					),
-					'placeholder' => '1,10,25,' . noptin_clean_url( home_url( 'contact' ) ),
+					'placeholder' => implode(
+						',',
+						array(
+							'1',
+							'10',
+							'25',
+							noptin_clean_url( home_url( 'contact' ) ),
+						)
+					),
 					'description' => __( 'Use a comma to separate post ids or urls where this form should not be displayed. All post type ids (page, products, etc) are supported, not just blog post ids.', 'newsletter-optin-box' ),
 				),
 
 				'onlyShowOn'          => array(
 					'el'          => 'input',
 					'label'       => 'Only show on:',
-					'placeholder' => '3,14,5,' . noptin_clean_url( home_url( 'about' ) ),
+					'placeholder' => implode(
+						',',
+						array(
+							'3',
+							'14',
+							'20',
+							noptin_clean_url( home_url( 'blog/*' ) ),
+						)
+					),
 					'description' => __( 'If you specify any posts here, all other targeting rules will be ignored, and this form will only be displayed on posts or urls that you specify here.', 'newsletter-optin-box' ),
 					'options'     => array(),
 				),
