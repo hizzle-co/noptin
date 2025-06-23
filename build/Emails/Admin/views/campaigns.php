@@ -153,9 +153,13 @@ if ( $parent ) {
 		</div>
 	<?php endif; ?>
 
+	<div>
+		<?php $table->views(); ?>
+	</div>
+
 	<!-- Display actual content -->
 	<div class="noptin-email-campaigns-tab-content">
-		<form id="noptin-email-campaigns-table" method="post">
+		<form id="noptin-email-campaigns-table" method="get">
 			<?php foreach ( $query_args as $key => $value ) : ?>
 				<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"/>
 			<?php endforeach; ?>
