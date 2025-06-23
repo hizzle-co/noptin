@@ -86,25 +86,37 @@ class Table extends \WP_List_Table {
 
 		$post_type_object = get_post_type_object( 'noptin-campaign' );
 
-		// Prepare query params.
-		$orderby = empty( $_GET['orderby'] ) ? 'id' : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$order   = empty( $_GET['order'] ) ? 'desc' : sanitize_text_field( $_GET['order'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
+		$orderby = 'id';
+		$order   = 'desc';
 		if ( $this->email_type->supports_menu_order ) {
 			$orderby = 'menu_order';
 			$order   = 'asc';
 		}
 
+		// Prepare query params.
+		$orderby = empty( $_GET['orderby'] ) ? $orderby : sanitize_text_field( $_GET['orderby'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$order   = empty( $_GET['order'] ) ? $order : sanitize_text_field( $_GET['order'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
 		$query_args = array(
 			'post_type'      => 'noptin-campaign',
 			'post_status'    => array( 'pending', 'draft', 'future', 'publish' ),
-			'meta_key'       => 'campaign_type',
-			'meta_value'     => $this->email_type->type,
 			'orderby'        => $orderby,
 			'order'          => $order,
 			'posts_per_page' => $this->per_page,
 			'paged'          => $this->get_pagenum(),
+			'meta_query'     => array(
+				array(
+					'key'   => 'campaign_type',
+					'value' => $this->email_type->type,
+				)
+			),
 		);
+
+		// Handle meta-based sorting for statistics columns.
+		if ( 0 === strpos( $orderby, '_' ) ) {
+			$query_args['meta_key'] = $orderby;
+			$query_args['orderby']  = 'meta_value_num';
+		}
 
 		// Trash campaigns.
 		if ( 'trash' === $this->email_type->type ) {
@@ -958,9 +970,13 @@ class Table extends \WP_List_Table {
 		}
 
 		$sortable = array(
-			'id'        => array( 'id', true ),
-			'title'     => array( 'post_title', true ),
-			'date_sent' => array( 'post_date', true ),
+			'id'           => array( 'id', true ),
+			'title'        => array( 'title', true ),
+			'date_sent'    => array( 'date', true ),
+			'recipients'   => array( '_noptin_sends', false ),
+			'opens'        => array( '_noptin_opens', false ),
+			'clicks'       => array( '_noptin_clicks', false ),
+			'unsubscribed' => array( '_noptin_unsubscribed', false ),
 		);
 		return apply_filters( 'manage_noptin_emails_sortable_table_columns', $sortable );
 	}
