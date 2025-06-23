@@ -177,6 +177,11 @@ class Table extends \WP_List_Table {
 			}
 		}
 
+		// Handle search functionality.
+		if ( ! empty( $_GET['s'] ) ) {
+			$query_args['s'] = sanitize_text_field( rawurldecode( $_GET['s'] ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
 		$query_args = apply_filters( 'manage_noptin_emails_wp_query_args', $query_args, $this );
 
 		// If the current user can't edit others' campaigns, only show their own.
