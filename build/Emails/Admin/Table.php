@@ -108,7 +108,7 @@ class Table extends \WP_List_Table {
 				array(
 					'key'   => 'campaign_type',
 					'value' => $this->email_type->type,
-				)
+				),
 			),
 		);
 
@@ -557,11 +557,32 @@ class Table extends \WP_List_Table {
 			// Resend the newsletter.
 			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
 				return array(
-					'actionUrl'        => $item->get_action_url( 'resend_campaign' ),
-					'buttonText'       => __( 'Resend', 'newsletter-optin-box' ),
-					'modalTitle'       => __( 'Resend Campaign', 'newsletter-optin-box' ),
-					'modalDescription' => __( 'Are you sure you want to resend this campaign?', 'newsletter-optin-box' ),
-					'icon'             => 'update',
+					'actionUrl'  => $item->get_action_url( 'resend_campaign' ),
+					'buttonText' => __( 'Resend', 'newsletter-optin-box' ),
+					'modalTitle' => __( 'Resend Campaign', 'newsletter-optin-box' ),
+					'icon'       => 'update',
+					'options'    => array(
+						'recipients' => array(
+							'label'            => __( 'Send to', 'newsletter-optin-box' ),
+							'el'               => 'radio',
+							'options'          => array(
+								array(
+									'label'       => __( 'All recipients', 'newsletter-optin-box' ),
+									'description' => __( 'Send to all matching recipients', 'newsletter-optin-box' ),
+									'value'       => 'all',
+								),
+								array(
+									'label'       => __( 'Only new recipients', 'newsletter-optin-box' ),
+									'description' => __( 'Send only to matching recipients who have not received this campaign before', 'newsletter-optin-box' ),
+									'value'       => 'new',
+								),
+							),
+							'default'          => 'all',
+							'customAttributes' => array(
+								'hideLabelFromVision' => true,
+							),
+						),
+					),
 				);
 			}
 
@@ -1091,9 +1112,9 @@ class Table extends \WP_List_Table {
 		?>
 		<div class="alignleft actions">
 			<select name="<?php echo esc_attr( $input_name ); ?>" id="filter-by-subtype">
-				<option value="" <?php selected( $current_subtype, '' ) ?>><?php esc_html_e( 'All', 'newsletter-optin-box' ); ?></option>
+				<option value="" <?php selected( $current_subtype, '' ); ?>><?php esc_html_e( 'All', 'newsletter-optin-box' ); ?></option>
 				<?php foreach ( $this->get_email_subtypes() as $value => $label ) : ?>
-					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current_subtype, $value ) ?>>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $current_subtype, $value ); ?>>
 						<?php echo esc_html( $label ); ?>
 					</option>
 				<?php endforeach; ?>
@@ -1146,7 +1167,7 @@ class Table extends \WP_List_Table {
 				'url'     => esc_url( remove_query_arg( 'email_status_filter' ) ),
 				'label'   => __( 'All', 'newsletter-optin-box' ),
 				'current' => ! isset( $_REQUEST['email_status_filter'] ),
-			)
+			),
 		);
 
 		foreach ( $statuses as $key => $label ) {
