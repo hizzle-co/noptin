@@ -70,6 +70,8 @@ class Renderer {
 	 * @return string
 	 */
 	public static function shortcode( $atts ) {
+		$atts['is_shortcode'] = true;
+
 		ob_start();
 		self::display_form( $atts );
 		return ob_get_clean();
@@ -133,6 +135,15 @@ class Renderer {
 
 			// Set a flag if we're displaying a popup or slide-in.
 			if ( $form->is_popup() || $form->is_slide_in() ) {
+				if ( ! empty( $atts['is_shortcode'] ) ) {
+					printf(
+						'<p class="noptin-alert noptin-error">%s</p>',
+						'You can not use shortcodes to display a popup or slide-in form.'
+					);
+
+					return;
+				}
+
 				$GLOBALS['noptin_showing_popup'] = true;
 			}
 
