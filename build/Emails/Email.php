@@ -799,7 +799,7 @@ class Email {
 		}
 
 		// Send once unless resending to all.
-		return noptin_email_campaign_sent_to( $this->id, $email_address, $date_since );
+		return ! noptin_email_campaign_sent_to( $this->id, $email_address, $date_since );
 	}
 
 	/**

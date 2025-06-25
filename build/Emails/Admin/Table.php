@@ -556,7 +556,7 @@ class Table extends \WP_List_Table {
 
 			// Resend the newsletter.
 			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
-				return array(
+				$action = array(
 					'actionUrl'  => $item->get_action_url( 'resend_campaign' ),
 					'buttonText' => __( 'Resend', 'newsletter-optin-box' ),
 					'modalTitle' => __( 'Resend Campaign', 'newsletter-optin-box' ),
@@ -584,6 +584,13 @@ class Table extends \WP_List_Table {
 						),
 					),
 				);
+
+				$sender = $item->get_sender();
+				if ( $item->is_mass_mail() && ! apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $item ) ) {
+					unset( $action['options'] );
+				}
+
+				return $action;
 			}
 
 			// Resume a paused newsletter.

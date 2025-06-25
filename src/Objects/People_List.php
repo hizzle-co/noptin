@@ -35,6 +35,7 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 		$this->collection_type = $collection->type;
 		$this->options_key     = $collection->email_sender_options;
 
+		add_filter( "noptin_{$this->sender}_email_sender_supports_partial_sending", '__return_true' );
 		parent::__construct();
 	}
 
@@ -124,6 +125,11 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	 * @return bool
 	 */
 	public function can_email_contact( $campaign, $person, $options ) {
+
+		// Don't email twice, unless resending.
+		if ( ! $campaign->can_send_to( $person->get_email() ) ) {
+			return false;
+		}
 
 		// Check per subject conditions.
 		$conditional_logic = $campaign->get( 'extra_conditional_logic' );

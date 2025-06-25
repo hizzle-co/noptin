@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 4.0.2 =
+* Allow resending a newsletter only to recipients who were not send the newsletter before.
+
 = 4.0.1 =
 * Fix: Update packages to ensure the sending limits setting is visible on all instances.
 

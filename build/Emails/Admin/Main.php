@@ -104,7 +104,7 @@ class Main {
 	 */
 	public static function redirect_from_action_with_success( $success ) {
 		noptin()->admin->show_success( $success );
-		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign' ) ) );
+		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign', 'noptin_email_recipients' ) ) );
 		exit;
 	}
 
