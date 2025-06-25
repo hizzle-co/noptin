@@ -562,7 +562,7 @@ class Table extends \WP_List_Table {
 					'modalTitle' => __( 'Resend Campaign', 'newsletter-optin-box' ),
 					'icon'       => 'update',
 					'options'    => array(
-						'recipients' => array(
+						'noptin_email_recipients' => array(
 							'label'            => __( 'Send to', 'newsletter-optin-box' ),
 							'el'               => 'radio',
 							'options'          => array(

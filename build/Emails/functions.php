@@ -553,54 +553,6 @@ function get_noptin_email_recipients_url( $recipients, $sender ) {
 }
 
 /**
- * Logs a debugging message.
- *
- * @param string $log The message to log.
- * @param string|bool $title The title of the message, or pass false to disable the backtrace.
- * @param string $file The file from which the error was logged.
- * @param string $line The line that contains the error.
- * @param bool $exit Whether or not to exit function execution.
- */
-function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = false ) {
-
-	if ( true === apply_filters( 'noptin_error_log', true ) ) {
-
-		// Ensure the log is a scalar.
-		if ( ! is_scalar( $log ) ) {
-			$log = print_r( $log, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		}
-
-		// Add title.
-		if ( ! empty( $title ) ) {
-			$log  = $title . ' ' . trim( $log );
-		}
-
-		// Add the file to the label.
-		if ( ! empty( $file ) ) {
-			$log .= ' in ' . $file;
-		}
-
-		// Add the line number to the label.
-		if ( ! empty( $line ) ) {
-			$log .= ' on line ' . $line;
-		}
-
-		// Log the message.
-		error_log( trim( $log ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-
-		// ... and a backtrace.
-		if ( false !== $title && false !== $file ) {
-			error_log( 'Backtrace ' . wp_debug_backtrace_summary() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_wp_debug_backtrace_summary
-		}
-	}
-
-	// Maybe exit.
-	if ( $exit ) {
-		exit;
-	}
-}
-
-/**
  * Wraps blocks in a section.
  */
 function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '' ) {
@@ -836,4 +788,41 @@ function noptin_get_next_email_send_time() {
 	}
 
 	return $time;
+}
+
+/**
+ * Checks if an email campaign was sent to a given email address.
+ *
+ * @param int $campaign_id
+ * @param int $email_address
+ * @param int|string $since
+ */
+function noptin_email_campaign_sent_to( $campaign_id, $email_address, $since = false ) {
+	static $cache = array();
+
+	if ( empty( $campaign_id ) || empty( $email_address ) ) {
+		return false;
+	}
+
+	// Check cache.
+	$cache_key = $campaign_id . '-' . $email_address . '-' . ( $since ? $since : 'any' );
+	if ( isset( $cache[ $cache_key ] ) ) {
+		return $cache[ $cache_key ];
+	}
+
+	$was_send = \Hizzle\Noptin\Emails\Logs\Main::query(
+		array_filter(
+			array(
+				'email'              => $email_address,
+				'campaign_id'        => $campaign_id,
+				'activity'           => 'send',
+				'number'             => 1,
+				'date_created_after' => $since,
+			)
+		),
+		'count'
+	);
+
+	$cache[ $cache_key ] = ! empty( $was_send );
+	return $cache[ $cache_key ];
 }

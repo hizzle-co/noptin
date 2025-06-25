@@ -617,13 +617,15 @@ class Email {
 		// Send to each recipient.
 		$result = true;
 		foreach ( $recipients as $email => $track ) {
-			$result = $this->send_to(
-				array(
-					'email' => $email,
-					'track' => $track,
-				),
-				false
-			);
+			if ( $this->can_send_to( $email ) ) {
+				$result = $this->send_to(
+					array(
+						'email' => $email,
+						'track' => $track,
+					),
+					false
+				);
+			}
 		}
 
 		return $result;
@@ -777,6 +779,27 @@ class Email {
 		Main::$current_email_recipient = array();
 
 		return $result;
+	}
+
+	/**
+	 * Checks if we can send this campaign to a given email address.
+	 *
+	 * This function ensures that an email is not sent to a given recipient twice.
+	 *
+	 * @param $email_address
+	 * @return bool
+	 */
+	public function can_send_to( $email_address ) {
+		// If we're resending the campaign, limit our check to the date since the last send.
+		$date_since = get_post_meta( $this->id, '_resent_on', true );
+
+		// If we're only resending to new recipients, don't limit the check to a specific date.
+		if ( 'new' === get_post_meta( $this->id, '_resend_to', true ) ) {
+			$date_since = false;
+		}
+
+		// Send once unless resending to all.
+		return noptin_email_campaign_sent_to( $this->id, $email_address, $date_since );
 	}
 
 	/**
