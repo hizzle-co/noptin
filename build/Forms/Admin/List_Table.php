@@ -27,7 +27,8 @@ class List_Table {
 
 		// Add some actions.
 		add_filter( 'post_row_actions', array( __CLASS__, 'row_actions' ), 10, 2 );
-		add_action( 'noptin_reset_form_stats', array( __CLASS__, 'reset_form_stats' ), 10, 2 );
+		add_action( 'noptin_reset_form_stats', array( __CLASS__, 'reset_form_stats' ) );
+		add_action( 'noptin_duplicate_form', array( __CLASS__, 'duplicate_form' ) );
 
 		// Filter form columns.
 		add_filter( 'manage_noptin-form_posts_columns', array( __CLASS__, 'manage_form_columns' ) );
@@ -69,8 +70,6 @@ class List_Table {
 						),
 						esc_html__( 'Preview', 'newsletter-optin-box' )
 					),
-				),
-				array(
 					'reset' => sprintf(
 						'<a href="%s">%s</a>',
 						esc_url(
@@ -87,6 +86,22 @@ class List_Table {
 						),
 						esc_html( __( 'Reset Stats', 'newsletter-optin-box' ) )
 					),
+					'duplicate' => sprintf(
+						'<a href="%s">%s</a>',
+						esc_url(
+							wp_nonce_url(
+								add_query_arg(
+									array(
+										'noptin_admin_action' => 'noptin_duplicate_form',
+										'form_id' => $post->ID,
+									)
+								),
+								'noptin-duplicate-nonce',
+								'noptin-duplicate-nonce'
+							)
+						),
+						esc_html( __( 'Duplicate', 'newsletter-optin-box' ) )
+					),
 				),
 				$actions
 			);
@@ -94,6 +109,25 @@ class List_Table {
 		}
 
 		return $actions;
+	}
+
+	/**
+	 * Duplicates a form.
+	 *
+	 */
+	public static function duplicate_form() {
+
+		if ( empty( $_GET['form_id'] ) || empty( $_GET['noptin-duplicate-nonce'] ) || ! wp_verify_nonce( $_GET['noptin-duplicate-nonce'], 'noptin-duplicate-nonce' ) ) {
+			return;
+		}
+
+		$form = new \Hizzle\Noptin\Forms\Form( $_GET['form_id'] );
+
+		if ( $form->exists() ) {
+			$form->duplicate();
+			wp_safe_redirect( get_edit_post_link( $form->id, 'raw' ) );
+			exit;
+		}
 	}
 
 	/**
