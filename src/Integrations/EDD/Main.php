@@ -28,8 +28,13 @@ class Main {
 	 * @since       1.2.6
 	 */
 	public function __construct() {
-		$this->email_template        = new Template();
-		$this->subscription_checkbox = new Subscription_Checkbox();
+		$this->email_template = new Template();
+
+		// Backwards compatiblity, check if the class exists before instantiating.
+		if ( class_exists( '\Hizzle\Noptin\Integrations\Checkbox_Integration' ) ) {
+			$this->subscription_checkbox = new Subscription_Checkbox();
+		}
+
 		add_action( 'init', array( $this, 'register_custom_objects' ), 5 );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 	}

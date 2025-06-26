@@ -43,6 +43,11 @@ abstract class Checkbox_Integration {
 	public $priority = 20;
 
 	/**
+	 * @var string Documentation URL.
+	 */
+	public $documentation_url = '';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
@@ -179,6 +184,11 @@ abstract class Checkbox_Integration {
 		$options = $this->get_options( array() );
 		$options = apply_filters( 'noptin_checkbox_integration_settings', $options, $slug, $this );
 
+		// Documentation URL.
+		if ( empty( $this->documentation_url ) ) {
+			$this->documentation_url = noptin_get_guide_url( 'Settings', 'getting-email-subscribers/' );
+		}
+
 		$_options[ "settings_section_$slug" ] = array(
 			'id'          => "noptin-integration-settings__$slug",
 			'el'          => 'integration_panel',
@@ -190,6 +200,7 @@ abstract class Checkbox_Integration {
 				__( 'Add a subscription checkbox to %s', 'newsletter-optin-box' ),
 				$this->name
 			),
+			'help_url'    => $this->documentation_url,
 			'badges'      => $this->get_hero_extra(),
 			'className'   => 'noptin-integration-settings__' . $slug,
 		);
@@ -808,7 +819,7 @@ abstract class Checkbox_Integration {
 			}
 		}
 
-		return $prepared;
+		return array_merge( $submission, $prepared );
 	}
 
 	/**
@@ -817,6 +828,8 @@ abstract class Checkbox_Integration {
 	 * @param array $submission The submission data.
 	 */
 	public function process_submission( $submission ) {
+		$submission = $this->map_custom_fields( $submission );
+
 		// Abort if no email.
 		if ( empty( $submission['email'] ) || ! is_email( $submission['email'] ) ) {
 			return;

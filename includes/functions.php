@@ -1046,7 +1046,7 @@ function noptin_upsell_integrations() {
 function noptin_get_upsell_url( $url, $utm_campaign, $utm_medium, $utm_source = 'Noptin Plugin Dashboard' ) {
 	$screen_id = false;
 
-	if ( is_admin() && get_current_screen() && get_current_screen()->id ) {
+	if ( is_admin() && function_exists( 'get_current_screen' ) && get_current_screen() && get_current_screen()->id ) {
 		$screen_id = get_current_screen()->id;
 	}
 

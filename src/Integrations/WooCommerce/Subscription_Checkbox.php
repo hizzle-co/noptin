@@ -254,6 +254,13 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 
 		// Prepare order data.
 		$order_data = array(
+			'source'            => $this->source,
+			'email'             => $order->get_billing_email(),
+			'name'              => trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ),
+			'first_name'        => $order->get_billing_first_name(),
+			'last_name'         => $order->get_billing_last_name(),
+			'ip_address'        => $order->get_customer_ip_address(),
+			'language'          => apply_filters( 'noptin_woocommerce_order_locale', get_locale(), $order->get_id() ),
 			'user_id'           => $order->get_user_id(),
 			'ip_address'        => $order->get_customer_ip_address(),
 			'phone'             => $order->get_billing_phone(),
@@ -274,20 +281,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 		}
 
 		// Process the submission.
-		$this->process_submission(
-			array_merge(
-				array(
-					'source'     => $this->source,
-					'email'      => $order->get_billing_email(),
-					'name'       => trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() ),
-					'first_name' => $order->get_billing_first_name(),
-					'last_name'  => $order->get_billing_last_name(),
-					'ip_address' => $order->get_customer_ip_address(),
-					'language'   => apply_filters( 'noptin_woocommerce_order_locale', get_locale(), $order->get_id() ),
-				),
-				$this->map_custom_fields( $order_data )
-			)
-		);
+		$this->process_submission( $order_data );
 	}
 
 	/**
@@ -295,6 +289,9 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 	 */
 	public function custom_fields() {
 		return array(
+			'name'              => __( 'Name', 'newsletter-optin-box' ),
+			'first_name'        => __( 'First Name', 'newsletter-optin-box' ),
+			'last_name'         => __( 'Last Name', 'newsletter-optin-box' ),
 			'user_id'           => __( 'User ID', 'newsletter-optin-box' ),
 			'phone'             => __( 'Billing Phone', 'newsletter-optin-box' ),
 			'company'           => __( 'Billing Company', 'newsletter-optin-box' ),

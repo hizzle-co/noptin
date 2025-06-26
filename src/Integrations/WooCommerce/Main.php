@@ -37,9 +37,13 @@ class Main {
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 		add_filter( 'noptin_format_price_callback', __CLASS__ . '::price_format_cb' );
-		$this->email_template        = new Template();
-		$this->migrate               = new Migrate();
-		$this->subscription_checkbox = new Subscription_Checkbox();
+		$this->email_template = new Template();
+		$this->migrate        = new Migrate();
+
+		// Backwards compatiblity, check if the class exists before instantiating.
+		if ( class_exists( '\Hizzle\Noptin\Integrations\Checkbox_Integration' ) ) {
+			$this->subscription_checkbox = new Subscription_Checkbox();
+		}
 	}
 
 	public static function price_format_cb() {
