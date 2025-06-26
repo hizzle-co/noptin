@@ -45,7 +45,7 @@ abstract class Checkbox_Integration {
 	/**
 	 * @var string Documentation URL.
 	 */
-	public $documentation_url = '';
+	public $url = '';
 
 	/**
 	 * Constructor
@@ -185,8 +185,8 @@ abstract class Checkbox_Integration {
 		$options = apply_filters( 'noptin_checkbox_integration_settings', $options, $slug, $this );
 
 		// Documentation URL.
-		if ( empty( $this->documentation_url ) ) {
-			$this->documentation_url = noptin_get_guide_url( 'Settings', 'getting-email-subscribers/' );
+		if ( empty( $this->url ) ) {
+			$this->url = 'getting-email-subscribers/';
 		}
 
 		$_options[ "settings_section_$slug" ] = array(
@@ -200,7 +200,7 @@ abstract class Checkbox_Integration {
 				__( 'Add a subscription checkbox to %s', 'newsletter-optin-box' ),
 				$this->name
 			),
-			'help_url'    => $this->documentation_url,
+			'help_url'    => noptin_get_guide_url( 'Settings', $this->url ),
 			'badges'      => $this->get_hero_extra(),
 			'className'   => 'noptin-integration-settings__' . $slug,
 		);

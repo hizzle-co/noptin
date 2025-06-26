@@ -22,6 +22,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 		$this->slug    = 'woocommerce';
 		$this->name    = 'WooCommerce';
 		$this->source  = 'woocommerce_checkout';
+		$this->url     = '/getting-email-subscribers/woocommerce-checkout/';
 
 		// Parent constructor.
 		parent::__construct();

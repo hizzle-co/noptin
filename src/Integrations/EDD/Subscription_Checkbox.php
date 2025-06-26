@@ -22,6 +22,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 		$this->slug    = 'edd';
 		$this->name    = 'Easy Digital Downloads';
 		$this->source  = 'edd_checkout';
+		$this->url     = '/getting-email-subscribers/edd-checkout/';
 
 		// Parent constructor.
 		parent::__construct();

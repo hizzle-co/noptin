@@ -1,30 +1,34 @@
 <?php
 
-// Exit if accessed directly.
+/**
+ * Handles integrations with the WP comment form.
+ *
+ * @since 1.0.0
+ */
+
+namespace Hizzle\Noptin\Integrations\WordPress_Comment_Form;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
  * Handles integrations with the WP comment form.
  *
- * @since       1.2.6
+ * @since 1.2.6
  */
-class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
-
-	/**
-	 * @var string source of subscriber.
-	 * @since 1.7.0
-	 */
-	public $subscriber_via = 'comment';
+class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 
 	/**
 	 * Init variables.
 	 *
-	 * @since       1.2.6
+	 * @since 1.2.6
 	 */
-	public function before_initialize() {
-		$this->slug        = 'comment_form';
-		$this->name        = __( 'Comment Form', 'newsletter-optin-box' );
-		$this->description = __( 'Subscribes people from your WordPress comment form.', 'newsletter-optin-box' );
+	public function __construct() {
+		$this->slug   = 'comment_form';
+		$this->source = 'comment';
+		$this->name   = __( 'Comment Form', 'newsletter-optin-box' );
+		$this->url    = 'getting-email-subscribers/wordpress-comment-forms/';
+
+		parent::__construct();
 	}
 
 	/**
@@ -90,46 +94,44 @@ class Noptin_WP_Comment_Form extends Noptin_Abstract_Integration {
 	 */
 	public function subscribe_from_comment( $comment_id, $comment_approved = '' ) {
 
+		// Abort if checkbox was not checked.
+		if ( ! $this->triggered() ) {
+			return;
+		}
+
 		// is this a spam comment?
 		if ( 'spam' === $comment_approved ) {
 			return false;
 		}
 
-		// Check if the user exists.
+		// Commentor.
 		$author = get_comment_author( $comment_id );
 
 		if ( 'Anonymous' === $author ) {
 			$author = '';
 		}
 
-		// Prepare subscriber fields.
-		$noptin_fields = array(
-			'source'     => 'comment',
-			'comment_id' => $comment_id,
-			'email'      => get_comment_author_email( $comment_id ),
-			'name'       => $author,
-			'website'    => get_comment_author_url( $comment_id ),
-			'ip_address' => get_comment_author_IP( $comment_id ),
+		// Process the submission.
+		$this->process_submission(
+			array(
+				'source'     => $this->source,
+				'comment_id' => $comment_id,
+				'email'      => get_comment_author_email( $comment_id ),
+				'name'       => $author,
+				'website'    => get_comment_author_url( $comment_id ),
+				'ip_address' => get_comment_author_IP( $comment_id ),
+			)
 		);
-
-		$noptin_fields = array_filter( $noptin_fields );
-		$subscriber_id = get_noptin_subscriber_id_by_email( $noptin_fields['email'] );
-
-		// If the subscriber does not exist, create a new one.
-		if ( empty( $subscriber_id ) ) {
-
-			// Ensure the subscription checkbox was triggered.
-			if ( $this->triggered() ) {
-				return $this->add_subscriber( $noptin_fields, $comment_id );
-			}
-			return null;
-
-		}
-
-		// Else, update the existing subscriber.
-		unset( $noptin_fields['source'] );
-		return $this->update_subscriber( $subscriber_id, $noptin_fields, $comment_id );
-
 	}
 
+	/**
+	 * @inheritdoc
+	 */
+	public function custom_fields() {
+		return array(
+			'comment_id' => __( 'Comment ID', 'newsletter-optin-box' ),
+			'name'       => __( 'Name', 'newsletter-optin-box' ),
+			'website'    => __( 'Website', 'newsletter-optin-box' ),
+		);
+	}
 }

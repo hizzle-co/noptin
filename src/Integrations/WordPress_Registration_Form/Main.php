@@ -18,12 +18,6 @@ defined( 'ABSPATH' ) || exit;
 class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 
 	/**
-	 * @var string source of subscriber.
-	 * @since 1.7.0
-	 */
-	public $source = 'registration';
-
-	/**
 	 * Init variables.
 	 *
 	 * @since 1.2.6
@@ -32,6 +26,7 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 		$this->slug   = 'registration_form';
 		$this->source = 'registration';
 		$this->name   = __( 'Registration Form', 'newsletter-optin-box' );
+		$this->url    = 'getting-email-subscribers/wordpress-registration-forms/';
 
 		parent::__construct();
 	}

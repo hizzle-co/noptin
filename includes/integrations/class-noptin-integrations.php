@@ -24,9 +24,6 @@ class Noptin_Integrations {
 
 	public function load_integrations() {
 
-		// WP Comment form integration.
-		$this->integrations['wp_comment_form'] = new Noptin_WP_Comment_Form();
-
 		do_action( 'noptin_integrations_load', $this );
 	}
 }
