@@ -895,13 +895,16 @@ class Main {
 		// Get the request parameters.
 		$params = $request->get_params();
 
-		// If meta is being updated, filter out Elementor fields
+		// If meta is being updated, ensure it only contains our meta keys.
+		// The WP Meta API is still buggy and errors when updating some third party meta keys.
 		if ( isset( $params['meta'] ) && is_array( $params['meta'] ) ) {
+			$our_meta_keys = array_keys( get_registered_meta_keys( 'post', $prepared_post->post_type ) );
+
 			$filtered_meta = array_filter(
 				$params['meta'],
-				function ( $key ) {
+				function ( $key ) use ( $our_meta_keys ) {
 					// Filter out protected meta keys.
-					return strpos( $key, '_' ) !== 0;
+					return strpos( $key, '_' ) !== 0 && in_array( $key, $our_meta_keys, true );
 				},
 				ARRAY_FILTER_USE_KEY
 			);

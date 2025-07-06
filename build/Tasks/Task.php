@@ -435,6 +435,7 @@ class Task extends \Hizzle\Store\Record {
 	 * @inheritDoc
 	 */
 	public function save() {
+		static $attached_hooks = false;
 
 		if ( ! $this->exists() && is_null( $this->get_meta( 'current_task_user' ) ) ) {
 			$this->update_meta( 'current_task_user', get_current_user_id() );
@@ -443,10 +444,15 @@ class Task extends \Hizzle\Store\Record {
 		$result = parent::save();
 
 		if ( $this->exists() && $this->get_status() === 'pending' && $this->has_expired() ) {
-			if ( $this->get_subject() || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
+			$is_publish = $this->get_lookup_key() && strpos( $this->get_lookup_key(), '_published' );
+
+			// If publishing a post, run the task in the background.
+			// so that poorly coded plugins will have a chance to save post meta before the task runs.
+			if ( ( ! $is_publish && $this->get_subject() ) || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
 				$this->process();
-			} else {
-				do_action( 'noptin_tasks_run_pending' );
+			} else if ( ! $attached_hooks ) {
+				add_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ), -1000 );
+				$attached_hooks = true;
 			}
 		}
 

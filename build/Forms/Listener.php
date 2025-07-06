@@ -297,7 +297,6 @@ class Listener {
 
 			// Set default values.
 			foreach ( prepare_noptin_subscriber_source_fields( $source, array() ) as $merge_tag => $to_add ) {
-				noptin_error_log( array( $subscriber_obj->get( $merge_tag ), $subscriber_obj->get_changes(), 'CURRENT' ), 'CURRENT' );
 				$subscriber_obj->set( $merge_tag . '::add', $to_add );
 			}
 

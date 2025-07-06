@@ -318,19 +318,27 @@ abstract class Collection {
 			return '';
 		}
 
-		if ( ! empty( $attributes ) ) {
+		// If we have an array of attributes, convert it to a string.
+		if ( is_array( $attributes ) ) {
+			$prepared = '';
 
-			// If we have an array of attributes, convert it to a string.
-			if ( is_array( $attributes ) ) {
-				$prepared = '';
-
-				foreach ( $attributes as $key => $value ) {
-					$prepared .= " {$key}='{$value}'";
+			foreach ( $attributes as $key => $value ) {
+				if ( is_null( $value ) ) {
+					continue;
 				}
 
-				$attributes = $prepared;
+				// Backwards compatibility: Do not add quotes to numeric values.
+				if ( is_int( $value ) || is_float( $value ) ) {
+					$prepared .= " {$key}={$value}";
+				} else {
+					$prepared .= " {$key}=\"{$value}\"";
+				}
 			}
 
+			$attributes = trim( $prepared );
+		}
+
+		if ( ! empty( $attributes ) ) {
 			$attributes = ' ' . $attributes;
 		}
 
@@ -341,7 +349,7 @@ abstract class Collection {
 	 * Converts a field to an image block.
 	 *
 	 */
-	public function featured_image_block() {
+	public function featured_image_block( $atts = array() ) {
 		$block_name  = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->image_field ) );
 		$block_class = str_replace( '/', '-', $block_name );
 		$class_name  = 'wp-block-' . $block_class . ' noptin-image-block__wrapper ' . $block_class;
@@ -358,7 +366,7 @@ abstract class Collection {
 									<a href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="display:block;text-decoration:none;max-width:100%;line-height:0">
 								<?php endif; ?>
 									<img
-										src="<?php echo esc_html( $this->field_to_merge_tag( $this->image_field ) ); ?>"
+										src="<?php echo esc_html( $this->field_to_merge_tag( $this->image_field, $atts ) ); ?>"
 										alt="<?php echo esc_html( $this->field_to_merge_tag( $this->title_field ) ); ?>"
 										border="0"
 										style="max-width:100%" />

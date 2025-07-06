@@ -121,28 +121,11 @@ class Table extends \WP_List_Table {
 		// Trash campaigns.
 		if ( 'trash' === $this->email_type->type ) {
 			$query_args['post_status'] = 'trash';
-			unset( $query_args['meta_key'], $query_args['meta_value'] );
-		}
-
-		if ( isset( $_GET['noptin_parent_id'] ) ) {
-			$query_args['post_parent'] = intval( $_GET['noptin_parent_id'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
-
-		if ( isset( $_GET['post_status'] ) ) {
-			$query_args['post_status'] = sanitize_text_field( $_GET['post_status'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		}
-
-		// Filter by email subtype.
-		$sub_type = $this->email_type->type . '_type';
-		if ( ! empty( $_GET[ $sub_type ] ) ) {
-			$query_args['meta_query'][] = array(
-				'key'   => $sub_type,
-				'value' => sanitize_text_field( rawurldecode( $_GET[ $sub_type ] ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			);
+			$query_args['meta_query']  = array();
 		}
 
 		// Filter by status (additional status filtering beyond post_status)
-		if ( ! empty( $_GET['email_status_filter'] ) ) {
+		else if ( ! empty( $_GET['email_status_filter'] ) ) {
 			$status_filter = sanitize_text_field( rawurldecode( $_GET['email_status_filter'] ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			$query_args['post_status'] = 'publish';
@@ -175,6 +158,19 @@ class Table extends \WP_List_Table {
 				default:
 					$query_args['post_status'] = $status_filter;
 			}
+		}
+
+		if ( isset( $_GET['noptin_parent_id'] ) ) {
+			$query_args['post_parent'] = intval( $_GET['noptin_parent_id'] );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		// Filter by email subtype.
+		$sub_type = $this->email_type->type . '_type';
+		if ( ! empty( $_GET[ $sub_type ] ) ) {
+			$query_args['meta_query'][] = array(
+				'key'   => $sub_type,
+				'value' => sanitize_text_field( rawurldecode( $_GET[ $sub_type ] ) ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			);
 		}
 
 		// Handle search functionality.
@@ -895,7 +891,7 @@ class Table extends \WP_List_Table {
 
 		$action = 'bulk-' . $this->_args['plural'];
 
-		if ( empty( $_POST['_wpnonce'] ) || ! wp_verify_nonce( $_POST['_wpnonce'], $action ) ) {
+		if ( empty( $_REQUEST['_wpnonce'] ) || ! wp_verify_nonce( $_REQUEST['_wpnonce'], $action ) ) {
 			return;
 		}
 
@@ -923,12 +919,12 @@ class Table extends \WP_List_Table {
 			return;
 		}
 
-		if ( empty( $_POST['id'] ) ) {
+		if ( empty( $_REQUEST['id'] ) ) {
 			return;
 		}
 
 		$notice = '';
-		foreach ( $_POST['id'] as $id ) {
+		foreach ( wp_parse_id_list( $_REQUEST['id'] ) as $id ) {
 			$email = new Email( $id );
 
 			// Abort if not exists.
@@ -1145,7 +1141,7 @@ class Table extends \WP_List_Table {
 		$available_subtypes = $this->email_type->get_sub_types();
 		if ( ! empty( $available_subtypes ) ) {
 			foreach ( $available_subtypes as $key => $subtype ) {
-				if ( is_array( $subtype ) && isset( $subtype['label'] ) ) {
+				if ( is_array( $subtype ) && isset( $subtype['label'] ) && ! empty( $subtype['category'] ) ) {
 					$subtypes[ $key ] = $subtype['label'];
 				}
 			}
@@ -1158,6 +1154,10 @@ class Table extends \WP_List_Table {
 	 * @inheritdoc
 	 */
 	protected function get_views() {
+		if ( 'trash' === $this->email_type->type ) {
+			return array();
+		}
+
 		$statuses = get_post_statuses();
 		unset( $statuses['private'] );
 

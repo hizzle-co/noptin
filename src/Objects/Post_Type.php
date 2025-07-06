@@ -24,6 +24,7 @@ abstract class Post_Type extends Collection {
 	public $title_field       = 'title';
 	public $description_field = 'excerpt';
 	public $image_field       = 'featured_image';
+	public $image_attributes  = array( 'size' => 'large' );
 	public $url_field         = 'url';
 	public $meta_field        = 'date';
 
@@ -70,13 +71,19 @@ abstract class Post_Type extends Collection {
 				)
 			);
 
-			$blocks .= $this->featured_image_block();
+			$blocks .= $this->featured_image_block( $this->image_attributes );
 		}
 
 		if ( ! empty( $this->description_field ) ) {
+			$word_count = apply_filters(
+				"noptin_{$this->type}_email_description_word_count",
+				'excerpt' === $this->description_field ? 20 : null,
+				$this->description_field
+			);
+
 			$content_normal .= sprintf(
 				'<p>%s</p>',
-				$this->field_to_merge_tag( $this->description_field, array( 'words' => 20 ) )
+				$this->field_to_merge_tag( $this->description_field, array( 'words' => $word_count ) )
 			);
 
 			$block_name = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->description_field ) );
@@ -84,7 +91,7 @@ abstract class Post_Type extends Collection {
 				'<!-- wp:%1$s {"anchor":"%2$s"} --><p class="wp-block-%2$s noptin-block__margin-wrapper %2$s">%3$s</p><!-- /wp:%1$s -->',
 				$block_name,
 				str_replace( '/', '-', $block_name ),
-				$this->field_to_merge_tag( $this->description_field, array( 'words' => 20 ) )
+				$this->field_to_merge_tag( $this->description_field, array( 'words' => $word_count ) )
 			);
 		}
 

@@ -343,7 +343,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		$task->set_status( 'pending' );
 		$task->set_args( wp_json_encode( $trigger_args ) );
 		$task->set_args_hash( $args_hash );
-		$task->set_date_scheduled( time() + $delay );
+		$task->set_date_scheduled( time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ) ); // If no delay, set to expire 1 minute ago so it runs immediately.
 		$task->set_subject( $email );
 		$task->set_primary_id( $rule->get_id() );
 
@@ -785,5 +785,20 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public static function hide_tasks_menu() {
 		remove_submenu_page( 'noptin', 'noptin-tasks' );
+	}
+
+	/**
+	 * Is process running
+	 *
+	 * Check whether the current process is already running
+	 * in a background process.
+	 */
+	public function is_process_running() {
+		if ( ! wp_doing_ajax() && get_transient( $this->cron_hook . '_process_lock' ) ) {
+			// Process already running.
+			return true;
+		}
+
+		return false;
 	}
 }

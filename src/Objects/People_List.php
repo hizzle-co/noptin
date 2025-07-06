@@ -223,6 +223,33 @@ class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
 	}
 
 	/**
+	 * Returns the sender settings.
+	 *
+	 * @return array
+	 */
+	public function add_sender_settings( $senders ) {
+
+		if ( noptin_has_alk() && ! isset( $senders[ $this->sender ] ) ) {
+			$collection = $this->get_collection();
+
+			if ( $collection ) {
+				$senders[ $this->sender ] = array(
+					'label'        => $collection->label,
+					'description'  => sprintf(
+						'Send an email to %s',
+						$collection->label
+					),
+					'image'        => $collection->icon,
+					'is_installed' => true,
+					'is_local'     => true,
+				);
+			}
+		}
+
+		return parent::add_sender_settings( $senders );
+	}
+
+	/**
 	 * Get the sender settings.
 	 *
 	 * @return array

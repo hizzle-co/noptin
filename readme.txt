@@ -10,7 +10,7 @@ License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
 
-The fastest GDPR-compliant automation and newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new post notifications. ★★★★★
+A fast, GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribers and send them newsletters or new post notifications. ★★★★★ 
 
 == Description ==
 
