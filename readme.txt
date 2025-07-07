@@ -139,6 +139,8 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 = 4.0.2 =
 * Allow resending a newsletter only to recipients who were not sent the newsletter before.
+* Filter newsletter campaigns by Status and Subtype.
+* Duplicate subscription forms in one click.
 
 = 4.0.1 =
 * Fix: Update packages to ensure the sending limits setting is visible on all instances.
