@@ -582,7 +582,7 @@ class Table extends \WP_List_Table {
 				);
 
 				$sender = $item->get_sender();
-				if ( $item->is_mass_mail() && ! apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $item ) ) {
+				if ( ! $item->is_mass_mail() || ! apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $item ) ) {
 					unset( $action['options'] );
 				}
 

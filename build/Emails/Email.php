@@ -617,15 +617,13 @@ class Email {
 		// Send to each recipient.
 		$result = true;
 		foreach ( $recipients as $email => $track ) {
-			if ( $this->can_send_to( $email ) ) {
-				$result = $this->send_to(
-					array(
-						'email' => $email,
-						'track' => $track,
-					),
-					false
-				);
-			}
+			$result = $this->send_to(
+				array(
+					'email' => $email,
+					'track' => $track,
+				),
+				false
+			);
 		}
 
 		return $result;
