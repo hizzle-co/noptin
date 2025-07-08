@@ -134,8 +134,12 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			update_post_meta( (int) $args['post_meta']['id'], $args['post_meta']['key'], array( (int) $args['post_meta']['id'], (int) $rule->get_action_setting( 'automated_email_id' ) ) );
 		}
 
+		$campaign_id = $rule->get_action_setting( 'automated_email_id' );
+		update_post_meta( $campaign_id, '_resent_on', gmdate( 'Y-m-d H:i:s e', time() ) );
+		delete_post_meta( $campaign_id, '_resend_to' );
+
 		$result = noptin_send_email_campaign(
-			$rule->get_action_setting( 'automated_email_id' ),
+			$campaign_id,
 			$smart_tags
 		);
 
