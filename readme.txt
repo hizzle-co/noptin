@@ -4,8 +4,8 @@ Tags: newsletter, newsletter form, newsletter subscribers, newsletter widget, wo
 Requires at least: 6.6
 Tested up to: 6.8
 Requires PHP: 7.4
-Version: 4.0.2
-Stable tag: 4.0.2
+Version: 4.0.3
+Stable tag: 4.0.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -136,6 +136,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.0.3 =
+* Do not show resending option for newsletters that are not mass emails.
 
 = 4.0.2 =
 * Allow resending a newsletter only to recipients who were not sent the newsletter before.
