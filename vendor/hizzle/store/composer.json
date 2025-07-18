@@ -1,6 +1,6 @@
 {
     "name": "hizzle/store",
-    "version": "0.2.7",
+    "version": "0.2.8",
     "type": "library",
     "description": "A standardized way of creating data stores for your projects",
     "keywords": ["wordpress","hizzle","store"],
