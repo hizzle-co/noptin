@@ -192,7 +192,6 @@ function get_noptin_optin_forms( array $args = array() ) {
 	$forms             = get_posts( $args );
 
 	return array_map( 'noptin_get_optin_form', $forms );
-
 }
 
 /**
@@ -202,11 +201,11 @@ function get_noptin_optin_forms( array $args = array() ) {
  * class members directly.
  *
  * @param int|array $form_id_or_configuration An id of a saved form or an array of arguments with which to generate a form on the fly.
- * @param bool $echo Whether to display the form or return its HTML.
+ * @param bool $display Whether to display the form or return its HTML.
  * @return string
  * @since 1.6.2
  */
-function show_noptin_form( $form_id_or_configuration = array(), $echo = true ) {
+function show_noptin_form( $form_id_or_configuration = array(), $display = true ) {
 	// If a form id was passed, convert it into arguments.
 	if ( is_numeric( $form_id_or_configuration ) ) {
 		$form_id_or_configuration = array( 'form' => (int) $form_id_or_configuration );
@@ -218,7 +217,7 @@ function show_noptin_form( $form_id_or_configuration = array(), $echo = true ) {
 	}
 
 	// Generate the form markup.
-	if ( ! $echo ) {
+	if ( ! $display ) {
 		return \Hizzle\Noptin\Forms\Renderer::shortcode( $form_id_or_configuration );
 	}
 
@@ -240,7 +239,6 @@ function increment_noptin_form_views( $form_id, $by = 1 ) {
 	$by      = intval( $by );
 	$count   = (int) get_post_meta( $form_id, '_noptin_form_views', true );
 	update_post_meta( $form_id, '_noptin_form_views', $count + $by );
-
 }
 
 /**
@@ -412,19 +410,18 @@ function get_default_noptin_form_messages() {
 			),
 		)
 	);
-
 }
 
 /**
  * Returns a form message.
  *
  * @param string $key Message key.
- * @param string $default The fallback message to use.
+ * @param string $fallback The fallback message to use.
  * @see get_default_noptin_form_messages()
  * @return array
  * @since 1.6.2
  */
-function get_noptin_form_message( $key, $default = '' ) {
+function get_noptin_form_message( $key, $fallback = '' ) {
 
 	// Retrieve from options.
 	$message = get_noptin_option( $key . '_message' );
@@ -440,7 +437,7 @@ function get_noptin_form_message( $key, $default = '' ) {
 		return $messages[ $key ]['default'];
 	}
 
-	return $default;
+	return $fallback;
 }
 
 /**
@@ -458,5 +455,28 @@ function translate_noptin_form_id( $form_id ) {
 	}
 
 	return apply_filters( 'translate_noptin_form_id', $form_id );
+}
 
+/**
+ * Returns the default privacy text for forms.
+ *
+ * @return string
+ * @since 1.6.2
+ */
+function get_default_noptin_form_privacy_text() {
+	$privacy_policy_url = get_privacy_policy_url();
+
+	if ( empty( $privacy_policy_url ) ) {
+		$privacy_policy_url = 'https://noptin.com/privacy-policy/';
+	}
+
+	return sprintf(
+		// translators: %1$s and %2$s are opening and closing link tags to the privacy policy, respectively.
+		__( 'By subscribing, you agree to our %1$sprivacy policy%2$s and terms of service.', 'newsletter-optin-box' ),
+		sprintf(
+			'<a class="privacy-policy-link" href="%s" rel="privacy-policy">',
+			esc_url( $privacy_policy_url )
+		),
+		'</a>'
+	);
 }
