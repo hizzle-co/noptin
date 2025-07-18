@@ -167,7 +167,9 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 
 		// ... or if we're importing subscribers.
 		if ( 'import' === $noptin_subscribers_batch_action && 'noptin_subscribers_import_item' !== $rule->get_trigger_id() ) {
-			throw new \Exception( 'Cannot send email campaign while importing subscribers' );
+			if ( ! apply_filters( 'noptin_can_send_email_campaign_while_importing_subscribers', false, $rule ) ) {
+				throw new \Exception( 'Cannot send email campaign while importing subscribers' );
+			}
 		}
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
