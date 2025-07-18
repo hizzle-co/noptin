@@ -104,7 +104,7 @@
 
 		// Note design.
 		'hideNote'              => false,
-		'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+		'note'                  => get_default_noptin_form_privacy_text(),
 		'noteColor'             => '#607D8B',
 		'hideOnNoteClick'       => false,
 		'noteTypography'        => array(

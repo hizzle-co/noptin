@@ -1,6 +1,12 @@
-<?php defined( 'ABSPATH' ) || exit; ?>
 <?php
 
+	// Exit if accessed directly.
+	defined( 'ABSPATH' ) || exit;
+
+	// Fetch the privacy text.
+	$noptin_privacy_text = get_default_noptin_form_privacy_text();
+
+	// Return the array of available templates.
 	return array(
 
 		'PRO20200311'            => array(
@@ -48,7 +54,7 @@
 				'descriptionColor'      => '#010101',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#010101',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -114,7 +120,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '32',
@@ -183,7 +189,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -256,7 +262,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -319,7 +325,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -425,7 +431,7 @@
 				'descriptionColor'      => '#f2f2f2',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -500,7 +506,7 @@
 				'descriptionColor'      => '#fafafa',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#fafafa',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -582,7 +588,7 @@
 				'descriptionColor'      => '#fafafa',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#fafafa',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -668,7 +674,7 @@
 				'descriptionColor'      => '#313131',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#313131',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -736,7 +742,7 @@
 				'descriptionColor'      => '#dff0fe',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#ffffff',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -801,7 +807,7 @@
 				'descriptionColor'      => '#ffffff',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#fafafa',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -995,7 +1001,7 @@
 				'descriptionColor'      => '#ffffff',
 				'hideNote'              => true,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#9E9E9E',
 				'titleTypography'       => array(
 					'font_size'   => '46',
@@ -1056,7 +1062,7 @@
 				'descriptionColor'  => '',
 				'hideNote'          => false,
 				'hideOnNoteClick'   => false,
-				'note'              => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'              => $noptin_privacy_text,
 				'noteColor'         => '',
 				'CSS'               => '.noptin-optin-form-wrapper .noptin-form-footer{ padding: 0px; }',
 			),
@@ -1100,7 +1106,7 @@
 				'descriptionColor'      => '#666666',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#607D8B',
 				'titleTypography'       => array(
 					'font_size'   => '20',
@@ -1191,7 +1197,7 @@
 				'descriptionColor'      => '#576673',
 				'hideNote'              => false,
 				'hideOnNoteClick'       => false,
-				'note'                  => __( 'By subscribing, you agree with our <a href="">privacy policy</a> and our terms of service.', 'newsletter-optin-box' ),
+				'note'                  => $noptin_privacy_text,
 				'noteColor'             => '#576673',
 				'titleTypography'       => array(
 					'font_size'   => '40',
