@@ -78,6 +78,8 @@ class REST_Controller extends \WP_REST_Controller {
 			return;
 		}
 
+		$collection_params = $this->get_collection_params();
+
 		// METHODS to CREATE new records, READ the entire collection, or DELETE the entire collection.
 		register_rest_route(
 			$this->namespace,
@@ -89,7 +91,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
-					'args'                => $this->get_collection_params(),
+					'args'                => $collection_params,
 				),
 
 				// Create a new record.
@@ -107,7 +109,16 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'bulk_update_items' ),
 					'permission_callback' => array( $this, 'create_item_permissions_check' ),
 					'args'                => array_merge(
-						$this->get_collection_params(),
+						array_diff_key(
+							$collection_params,
+							array(
+								'paged'    => true,
+								'per_page' => true,
+								'offset'   => true,
+								'order'    => true,
+								'orderby'  => true,
+							)
+						),
 						array(
 							'bulk_update' => array(
 								'type'        => array( 'object' ),
@@ -340,7 +351,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'callback'            => array( $this, 'aggregate_items' ),
 					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 					'args'                => array_merge(
-						$this->get_collection_params(),
+						$collection_params,
 						array(
 							'aggregate'    => array(
 								'type'        => array( 'object' ),
