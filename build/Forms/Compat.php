@@ -54,9 +54,7 @@ class Compat {
 			self::get_form_texts( $form_id ),
 			self::get_form_fields( $form_id ),
 			self::get_page_targeting( $form_id ),
-			self::get_integration_settings( $form_id ),
-			//self::get_popup_settings( $form_id ),
-			self::get_sliding_settings( $form_id ),
+			self::get_integration_settings( $form_id )
 		);
 
 		return $new_params;
@@ -208,7 +206,7 @@ class Compat {
 		}
 
 		// Inject.
-		if ( 'after' === $settings['inject'] ?? '' ) {
+		if ( 'after' === ( $settings['inject'] ?? '' ) ) {
 			$prepared['inject'] = $settings['inject'];
 		}
 
@@ -248,76 +246,6 @@ class Compat {
 					$prepared[ $key ] = $value;
 				}
 			}
-		}
-
-		return $prepared;
-	}
-
-	/**
-	 * Popups.
-	 */
-	public static function get_popup_settings( $form_id ) {
-		$settings = get_post_meta( $form_id, 'form_settings', true );
-
-		if ( ! is_array( $settings ) || empty( $settings['popup']['enable'] ?? '' ) ) {
-			return array();
-		}
-
-		$prepared = array(
-			'optinType' => 'popup',
-		);
-
-		if ( ! empty( $settings['popup']['trigger'] ) ) {
-			$prepared['triggerPopup'] = $settings['popup']['trigger'];
-		}
-
-		if ( ! empty( $settings['popup']['on_scroll'] ) ) {
-			$prepared['scrollDepthPercentage'] = $settings['popup']['on_scroll'];
-		}
-
-		if ( ! empty( $settings['popup']['after_click'] ) ) {
-			$prepared['cssClassOfClick'] = $settings['popup']['after_click'];
-		}
-
-		if ( ! empty( $settings['popup']['after_delay'] ) ) {
-			$prepared['timeDelayDuration'] = $settings['popup']['after_delay'];
-		}
-
-		return $prepared;
-	}
-
-	/**
-	 * Sliding settings.
-	 */
-	public static function get_sliding_settings( $form_id ) {
-		$settings = get_post_meta( $form_id, 'form_settings', true );
-
-		if ( ! is_array( $settings ) || empty( $settings['sliding']['enable'] ?? '' ) ) {
-			return array();
-		}
-
-		$prepared = array(
-			'optinType' => 'slide_in',
-		);
-
-		if ( ! empty( $settings['sliding']['direction'] ) ) {
-			$prepared['slideDirection'] = $settings['sliding']['direction'];
-		}
-
-		if ( ! empty( $settings['popup']['trigger'] ) ) {
-			$prepared['triggerPopup'] = $settings['popup']['trigger'];
-		}
-
-		if ( ! empty( $settings['popup']['on_scroll'] ) ) {
-			$prepared['scrollDepthPercentage'] = $settings['popup']['on_scroll'];
-		}
-
-		if ( ! empty( $settings['popup']['after_click'] ) ) {
-			$prepared['cssClassOfClick'] = $settings['popup']['after_click'];
-		}
-
-		if ( ! empty( $settings['popup']['after_delay'] ) ) {
-			$prepared['timeDelayDuration'] = $settings['popup']['after_delay'];
 		}
 
 		return $prepared;

@@ -342,7 +342,7 @@ class Bounce_Handler {
 		}
 
 		// Handle complaints.
-		if ( ! empty( $complaint ) && 'not-spam' !== $complaint['complaintSubType'] ?? '' ) {
+		if ( ! empty( $complaint ) && 'not-spam' !== ( $complaint['complaintSubType'] ?? '' ) ) {
 			foreach ( $complaint['complainedRecipients'] as $recipient ) {
 				if ( ! empty( $recipient['emailAddress'] ) ) {
 					self::handle_bounced_action( 'complaint', $recipient['emailAddress'], $campaign_id );

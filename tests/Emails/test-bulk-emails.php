@@ -207,7 +207,7 @@ class Test_Main extends \WP_UnitTestCase {
 		$last_error = get_post_meta($this->campaign->id, '_bulk_email_last_error', true);
 		$this->assertEquals(
 			'Test error message',
-			is_array($last_error) ? $last_error['message'] ?? '' : ''
+			is_array($last_error) ? ( $last_error['message'] ?? '' ) : ''
 		);
 
 		// Test that paused meta was set
