@@ -428,10 +428,11 @@ $editor_settings = array(
 
 		// Fields Design.
 		'fields'      => array(
-			'el'       => 'panel',
-			'title'    => __( 'Form Fields', 'newsletter-optin-box' ),
-			'id'       => 'fieldDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Form Fields', 'newsletter-optin-box' ),
+			'id'        => 'fieldDesign',
+			'listen_to' => '.noptin-form-field-wrapper:not(.noptin-form-field-submit)',
+			'children'  => array(
 
 				'fields'          => array(
 					'el'               => 'repeater',
@@ -490,9 +491,9 @@ $editor_settings = array(
 				),
 
 				'showLabels'      => array(
-					'type'  => 'switch',
-					'el'    => 'input',
-					'label' => __( 'Show field labels outside the fields', 'newsletter-optin-box' ),
+					'type'       => 'switch',
+					'el'         => 'input',
+					'label'      => __( 'Show field labels outside the fields', 'newsletter-optin-box' ),
 					'conditions' => array(
 						array(
 							'key'   => 'hideFields',
@@ -545,10 +546,11 @@ $editor_settings = array(
 
 		// Image Design.
 		'image'       => array(
-			'el'       => 'panel',
-			'title'    => __( 'Image', 'newsletter-optin-box' ),
-			'id'       => 'imageDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Image', 'newsletter-optin-box' ),
+			'id'        => 'imageDesign',
+			'listen_to' => '.noptin-form-header-image',
+			'children'  => array(
 
 				'noptinFormBgImg' => array(
 					'type'        => 'image',
@@ -612,10 +614,11 @@ $editor_settings = array(
 
 		// Button Design.
 		'button'      => array(
-			'el'       => 'panel',
-			'title'    => __( 'Button', 'newsletter-optin-box' ),
-			'id'       => 'buttonDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Button', 'newsletter-optin-box' ),
+			'id'        => 'buttonDesign',
+			'listen_to' => '.noptin-form-field-submit',
+			'children'  => array(
 				'noptinButtonLabel' => array(
 					'type'  => 'text',
 					'el'    => 'input',
@@ -642,10 +645,11 @@ $editor_settings = array(
 
 		// Prefix Design.
 		'prefix'      => array(
-			'el'       => 'panel',
-			'title'    => __( 'Prefix', 'newsletter-optin-box' ),
-			'id'       => 'prefixDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Prefix', 'newsletter-optin-box' ),
+			'id'        => 'prefixDesign',
+			'listen_to' => '.noptin-form-prefix',
+			'children'  => array(
 
 				'hidePrefix'       => array(
 					'type'  => 'checkbox',
@@ -691,10 +695,11 @@ $editor_settings = array(
 
 		// Title Design.
 		'title'       => array(
-			'el'       => 'panel',
-			'title'    => __( 'Heading', 'newsletter-optin-box' ),
-			'id'       => 'titleDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Heading', 'newsletter-optin-box' ),
+			'id'        => 'titleDesign',
+			'listen_to' => '.noptin-form-heading',
+			'children'  => array(
 
 				'hideTitle'       => array(
 					'type'  => 'checkbox',
@@ -740,10 +745,11 @@ $editor_settings = array(
 
 		// Description Design.
 		'description' => array(
-			'el'       => 'panel',
-			'title'    => __( 'Sub-heading', 'newsletter-optin-box' ),
-			'id'       => 'descriptionDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Sub-heading', 'newsletter-optin-box' ),
+			'id'        => 'descriptionDesign',
+			'listen_to' => '.noptin-form-description',
+			'children'  => array(
 
 				'hideDescription'       => array(
 					'type'  => 'checkbox',
@@ -789,10 +795,11 @@ $editor_settings = array(
 
 		// Note Design.
 		'note'        => array(
-			'el'       => 'panel',
-			'title'    => __( 'Note', 'newsletter-optin-box' ),
-			'id'       => 'noteDesign',
-			'children' => array(
+			'el'        => 'panel',
+			'title'     => __( 'Note', 'newsletter-optin-box' ),
+			'id'        => 'noteDesign',
+			'listen_to' => '.noptin-form-note',
+			'children'  => array(
 
 				'hideNote'       => array(
 					'type'  => 'checkbox',
@@ -970,10 +977,10 @@ foreach ( array_keys( noptin_get_post_types() ) as $noptin_post_type ) {
 		)
 	);
 
-	foreach ( $post_type_taxonomies as $taxonomy ) {
+	foreach ( $post_type_taxonomies as $post_type_taxonomy ) {
 		$editor_settings['settings']['targeting']['children'][ 'showTaxonomy_' . $taxonomy->name ] = array(
 			'el'          => 'input',
-			'label'       => $taxonomy->label,
+			'label'       => $post_type_taxonomy->label,
 			'conditions'  => array(
 				array(
 					'key'   => 'showEverywhere',
@@ -992,7 +999,7 @@ foreach ( array_keys( noptin_get_post_types() ) as $noptin_post_type ) {
 			'description' => sprintf(
 				/* translators: %s is the taxonomy label */
 				__( 'Enter a comma-separated list of %s ids, slugs, or names to show this form on', 'newsletter-optin-box' ),
-				strtolower( isset( $taxonomy->labels->singular_name ) ? $taxonomy->labels->singular_name : $taxonomy->label )
+				strtolower( isset( $post_type_taxonomy->labels->singular_name ) ? $post_type_taxonomy->labels->singular_name : $post_type_taxonomy->label )
 			),
 			'tooltip'     => __( 'Prefix the id with a minus sign to exclude it from the list', 'newsletter-optin-box' ),
 		);
