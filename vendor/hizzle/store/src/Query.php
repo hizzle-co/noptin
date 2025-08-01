@@ -305,32 +305,36 @@ class Query {
 		$this->query_fields = array();
 
 		// Prepare aggregate fields.
-		foreach ( $aggregate_fields as $field => $function ) {
+		foreach ( $aggregate_fields as $field => $aggregate ) {
+
+			if ( ! is_array( $aggregate ) ) {
+				$aggregate = wp_parse_list( $aggregate );
+			}
 
 			// Handle CASE expressions
-			if ( is_array( $function ) && isset( $function['case'] ) ) {
-				$case_field = $this->prefix_field( esc_sql( sanitize_key( $function['case']['field'] ) ) );
+			if ( is_array( $aggregate ) && isset( $aggregate['case'] ) ) {
+				$case_field = $this->prefix_field( esc_sql( sanitize_key( $aggregate['case']['field'] ) ) );
 				if ( empty( $case_field ) ) {
 					throw new Store_Exception( 'query_invalid_field', 'Invalid case field.' );
 				}
 
 				$case_sql = "CASE $case_field";
-				foreach ( $function['case']['when'] as $when => $then ) {
-					$when     = esc_sql( $when );
-					$then_sql = $this->prepare_case_then( $then );
+				foreach ( $aggregate['case']['when'] as $when => $then ) {
+					$when      = esc_sql( $when );
+					$then_sql  = $this->prepare_case_then( $then );
 					$case_sql .= " WHEN '$when' THEN $then_sql";
 				}
 
-				if ( isset( $function['case']['else'] ) ) {
-					$else_sql = $this->prepare_case_then( $function['case']['else'] );
+				if ( isset( $aggregate['case']['else'] ) ) {
+					$else_sql  = $this->prepare_case_then( $aggregate['case']['else'] );
 					$case_sql .= " ELSE $else_sql";
 				}
 
-				$case_sql .= " END";
+				$case_sql .= ' END';
 
 				// Handle optional aggregate function wrapper
-				if ( isset( $function['function'] ) ) {
-					$agg_function = strtoupper( $function['function'] );
+				if ( isset( $aggregate['function'] ) ) {
+					$agg_function = strtoupper( $aggregate['function'] );
 					if ( ! in_array( $agg_function, array( 'AVG', 'COUNT', 'MAX', 'MIN', 'SUM' ), true ) ) {
 						throw new Store_Exception( 'query_invalid_function', 'Invalid aggregate function.' );
 					}
@@ -338,8 +342,8 @@ class Query {
 				}
 
 				// Handle optional math operations
-				if ( isset( $function['math'] ) ) {
-					$math_op = $this->prepare_math_expression( $function['math'] );
+				if ( isset( $aggregate['math'] ) ) {
+					$math_op  = $this->prepare_math_expression( $aggregate['math'] );
 					$case_sql = "($case_sql $math_op)";
 				}
 
@@ -355,7 +359,20 @@ class Query {
 				throw new Store_Exception( 'query_invalid_field', 'Invalid aggregate field.' );
 			}
 
-			foreach ( wp_parse_list( $function ) as $function ) {
+			foreach ( array_filter( $aggregate ) as $function ) {
+
+				if ( is_array( $function ) ) {
+					if ( ! isset( $function['function'] ) ) {
+						throw new Store_Exception( 'query_invalid_function', 'Invalid aggregate function configuration.' );
+					}
+
+					$as          = isset( $function['as'] ) ? esc_sql( sanitize_key( $function['as'] ) ) : strtolower( $function['function'] ) . '_' . $field;
+					$query_field = isset( $function['expression'] ) ? $this->prepare_math_expression( $function['expression'], $field ) : $table_field;
+					$function    = $function['function'];
+				} else {
+					$as          = strtolower( $function ) . '_' . $field;
+					$query_field = $table_field;
+				}
 
 				// Ensure the function is supported.
 				$function_upper = strtoupper( $function );
@@ -363,8 +380,7 @@ class Query {
 					throw new Store_Exception( 'query_invalid_function', 'Invalid aggregate function.' );
 				}
 
-				$function             = strtolower( $function );
-				$this->query_fields[] = "$function_upper($table_field) AS {$function}_{$field}";
+				$this->query_fields[] = "$function_upper($query_field) AS $as";
 			}
 		}
 
@@ -479,37 +495,87 @@ class Query {
 			$expression = str_replace( '{field}', $field, $expression );
 		}
 
-		// Split the expression into parts.
-		$parts = preg_split( '/([+\-*\/])/', $expression, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY );
+		// Handle parentheses by processing inner expressions first
+		while ( preg_match( '/\(([^()]+)\)/', $expression, $matches ) ) {
+			$inner_result = $this->process_simple_expression( $matches[1] );
+			$expression   = str_replace( $matches[0], $inner_result, $expression );
+		}
 
-		// Process each part.
+		// Process the remaining expression
+		return $this->process_simple_expression( $expression );
+	}
+
+	/**
+	 * Processes a simple math expression without parentheses
+	 *
+	 * @param string $expression The simple math expression
+	 * @return string
+	 */
+	protected function process_simple_expression( $expression ) {
+		// Enhanced regex to handle operators, negative numbers, decimals, and functions
+		$pattern = '/([+\-*\/])|(\w+\s*\()|(\))|(-?\d*\.?\d+)|([a-zA-Z_][a-zA-Z0-9_]*)/';
+
+		preg_match_all( $pattern, $expression, $matches, PREG_OFFSET_CAPTURE );
+
 		$processed_parts = array();
-		foreach ( $parts as $part ) {
-			$part = trim( $part );
+		$i               = 0;
+		$total           = count( $matches[0] );
 
-			// If it's an operator, add it directly
-			if ( in_array( $part, array( '+', '-', '*', '/' ), true ) ) {
-				$processed_parts[] = $part;
+		while ( $i < $total ) {
+			$match = $matches[0][ $i ][0];
+			$match = trim( $match );
+			++$i;
+
+			if ( empty( $match ) ) {
 				continue;
 			}
 
-			// Numbers.
-			if ( is_numeric( $part ) ) {
-				$processed_parts[] = esc_sql( (float) $part );
+			// Operators
+			if ( preg_match( '/^[+\-*\/]$/', $match ) ) {
+				$processed_parts[] = $match;
 				continue;
 			}
 
-			// If it's a field reference, prefix it
-			$prefixed_field = $this->prefix_field( esc_sql( sanitize_key( $part ) ) );
+			// SQL Functions (e.g., ABS, ROUND, etc.)
+			if ( preg_match( '/^(\w+)\s*\($/', $match ) ) {
+				$function = trim( str_replace( '(', '', $match ) );
 
-			if ( empty( $prefixed_field ) ) {
-				throw new Store_Exception( 'query_invalid_field', 'Invalid field in math expression.' );
+				// Validate allowed functions
+				$allowed_functions = array( 'ABS', 'ROUND', 'CEIL', 'FLOOR', 'SQRT', 'POW' );
+				if ( ! in_array( strtoupper( $function ), $allowed_functions, true ) ) {
+					throw new Store_Exception( 'query_invalid_function', 'Invalid function in math expression.' );
+				}
+
+				$processed_parts[] = strtoupper( $function ) . '(';
+				continue;
 			}
 
-			if ( ! empty( $prefixed_field ) ) {
+			// Closing parenthesis
+			if ( ')' === $match ) {
+				$processed_parts[] = ')';
+				continue;
+			}
+
+			// Numbers (including negative and decimals)
+			if ( is_numeric( $match ) ) {
+				$processed_parts[] = esc_sql( (float) $match );
+				continue;
+			}
+
+			// Field references
+			if ( preg_match( '/^[a-zA-Z_][a-zA-Z0-9_]*$/', $match ) ) {
+				$prefixed_field = $this->prefix_field( esc_sql( sanitize_key( $match ) ) );
+
+				if ( empty( $prefixed_field ) ) {
+					throw new Store_Exception( 'query_invalid_field', 'Invalid field in math expression: ' . $match );
+				}
+
 				$processed_parts[] = $prefixed_field;
 				continue;
 			}
+
+			// If we get here, it's an unrecognized token
+			throw new Store_Exception( 'query_invalid_expression', 'Invalid token in math expression: ' . $match );
 		}
 
 		return implode( ' ', $processed_parts );
