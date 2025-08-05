@@ -1629,7 +1629,8 @@ function noptin_is_email_unsubscribed( $email ) {
 	$user = get_user_by( 'email', $email );
 
 	// If the user is unsubscribed, abort.
-	if ( $user && 'unsubscribed' === get_user_meta( $user->ID, 'noptin_unsubscribed', true ) ) {
+	$to_check = array( 'unsubscribed', 'yes', 'true', '1', 'checked', 'on' );
+	if ( $user && in_array( get_user_meta( $user->ID, 'noptin_unsubscribed', true ), $to_check, true ) ) {
 		return true;
 	}
 
@@ -1641,7 +1642,7 @@ function noptin_is_email_unsubscribed( $email ) {
 		return true;
 	}
 
-	return false;
+	return apply_filters( 'noptin_is_email_unsubscribed', false, $email );
 }
 
 /**
