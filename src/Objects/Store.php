@@ -121,8 +121,8 @@ class Store {
 
 		$prepared = array();
 
-		foreach ( $fields as $key => $field ) {
-			$key       = $prefix ? $prefix . '.' . $key : $key;
+		foreach ( $fields as $raw_key => $field ) {
+			$key       = $prefix ? $prefix . '.' . $raw_key : $raw_key;
 			$smart_tag = self::convert_field_to_smart_tag( $field, $group, $callback );
 
 			// Standardize examples.
@@ -133,6 +133,14 @@ class Store {
 			// Add collection.
 			if ( ! empty( $object_type ) ) {
 				$smart_tag['object_type'] = $object_type;
+
+				// Fix for example when user types edd_customer.id instead of customer.id.
+				$smart_tag_prefix = self::get_collection_config( $object_type, 'smart_tags_prefix' );
+
+				if ( ! empty( $smart_tag_prefix ) && $smart_tag_prefix !== $object_type && count( explode( '.', $key ) ) > 1 ) {
+					$smart_tag['deprecated']   = noptin_parse_list( $smart_tag['deprecated'] ?? array() );
+					$smart_tag['deprecated'][] = $object_type . '.' . $raw_key;
+				}
 			}
 
 			$prepared[ $key ] = $smart_tag;
