@@ -370,7 +370,7 @@ class Main {
 		$result = \Noptin_COM::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/integrations.json' ) );
 		if ( is_array( $result ) ) {
 			$result = json_decode( wp_json_encode( $result ), true );
-			update_option( 'noptin_integrations', $result );
+			update_option( 'noptin_integrations', $result, false );
 		}
 	}
 
