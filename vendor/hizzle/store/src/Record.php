@@ -252,10 +252,8 @@ class Record {
 		}
 
 		try {
-
 			$this->get_collection()->delete( $this, $force_delete );
 			return true;
-
 		} catch ( Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
@@ -510,7 +508,6 @@ class Record {
 
 			// If this is an enum or boolean, record the change.
 			if ( $object->is_boolean() || $object->is_tokens || ! empty( $object->enum ) ) {
-
 				if ( ! $this->exists() || $value !== $this->data[ $prop ] ) {
 					$this->enum_transition[ $prop ] = array(
 						'from' => $this->data[ $prop ],
@@ -602,7 +599,6 @@ class Record {
 		}
 
 		if ( ! is_array( $string_or_array ) ) {
-
 			if ( $strict ) {
 				$string_or_array = preg_split( '/,+/', $string_or_array, -1, PREG_SPLIT_NO_EMPTY );
 			} else {
