@@ -2,23 +2,23 @@
     "packages": [
         {
             "name": "hizzle/store",
-            "version": "0.2.8",
-            "version_normalized": "0.2.8.0",
+            "version": "0.2.11",
+            "version_normalized": "0.2.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/datastore.git",
-                "reference": "f71e95c45bd733ac422d18932a06e333631b0bfe"
+                "reference": "a6e17c589443de791e9bf9eb9c2536c7401f09c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/f71e95c45bd733ac422d18932a06e333631b0bfe",
-                "reference": "f71e95c45bd733ac422d18932a06e333631b0bfe",
+                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/a6e17c589443de791e9bf9eb9c2536c7401f09c2",
+                "reference": "a6e17c589443de791e9bf9eb9c2536c7401f09c2",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2025-07-18T09:01:48+00:00",
+            "time": "2025-08-20T05:32:06+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,7 +47,7 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/datastore/issues",
-                "source": "https://github.com/hizzle-co/datastore/tree/0.2.8"
+                "source": "https://github.com/hizzle-co/datastore/tree/0.2.11"
             },
             "install-path": "../hizzle/store"
         },
@@ -173,8 +173,8 @@
         },
         {
             "name": "symfony/polyfill-php80",
-            "version": "v1.32.0",
-            "version_normalized": "1.32.0.0",
+            "version": "v1.33.0",
+            "version_normalized": "1.33.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php80.git",
@@ -236,7 +236,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.32.0"
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.33.0"
             },
             "funding": [
                 {
@@ -245,6 +245,10 @@
                 },
                 {
                     "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
                     "type": "github"
                 },
                 {
