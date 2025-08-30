@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @param array $args Query arguments.
  * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
- * @return int|array|\Hizzle\Noptin\DB\Subscriber[]|\Hizzle\Store\Query|WP_Error
+ * @return int|array|\Hizzle\Noptin\Subscribers\Subscriber[]|\Hizzle\Store\Query|WP_Error
  */
 function noptin_get_subscribers( $args = array(), $return = 'results' ) {
 	return noptin()->db()->query( 'subscribers', $args, $return );
@@ -25,13 +25,13 @@ function noptin_get_subscribers( $args = array(), $return = 'results' ) {
 /**
  * Fetch a subscriber by subscriber ID.
  *
- * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
- * @return \Hizzle\Noptin\DB\Subscriber Subscriber object.
+ * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @return \Hizzle\Noptin\Subscribers\Subscriber Subscriber object.
  */
 function noptin_get_subscriber( $subscriber = 0 ) {
 
 	// If subscriber is already a subscriber object, return it.
-	if ( $subscriber instanceof \Hizzle\Noptin\DB\Subscriber ) {
+	if ( $subscriber instanceof \Hizzle\Noptin\Subscribers\Subscriber ) {
 		$subscriber = $subscriber->get_id();
 	}
 
@@ -462,7 +462,7 @@ add_action( 'noptin_checkbox_integration_process_submission', 'add_noptin_subscr
 /**
  * Updates a Noptin subscriber
  *
- * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
  * @param array $to_update The subscriber fields to update.
  * @access  public
  * @since   1.2.3
@@ -617,7 +617,7 @@ function resubscribe_noptin_subscriber( $subscriber ) {
 /**
  * Sync user when subscription status changes.
  *
- * @param \Hizzle\Noptin\DB\Subscriber $subscriber Subscriber object.
+ * @param \Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber object.
  */
 function sync_user_on_noptin_subscription_status_change( $subscriber ) {
 	$user = get_user_by( 'email', $subscriber->get_email() );
@@ -662,7 +662,7 @@ function get_noptin_subscriber_id_by_email( $email ) {
  * Deletes a subscriber
  *
  * @access  public
- * @param int|string|\Hizzle\Noptin\DB\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
  * @since   1.1.0
  */
 function delete_noptin_subscriber( $subscriber_id ) {

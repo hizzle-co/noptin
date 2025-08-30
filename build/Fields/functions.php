@@ -144,17 +144,17 @@ function get_noptin_option_supported_fields() {
  * @since 1.5.5
  * @see Noptin_Custom_Field_Type::output
  * @param array $custom_field
- * @param false|\Hizzle\Noptin\DB\Subscriber $subscriber
+ * @param false|\Hizzle\Noptin\Subscribers\Subscriber $subscriber
  */
 function display_noptin_custom_field_input( $custom_field, $subscriber = false ) {
-	$custom_field['name']  = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
+	$custom_field['name'] = empty( $custom_field['wrap_name'] ) ? $custom_field['merge_tag'] : 'noptin_fields[' . $custom_field['merge_tag'] . ']';
 
 	if ( ! isset( $custom_field['value'] ) ) {
 		$custom_field['value'] = '';
 	}
 
 	if ( empty( $custom_field['id'] ) ) {
-		$custom_field['id']    = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) . '_' ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
+		$custom_field['id'] = empty( $custom_field['show_id'] ) ? uniqid( sanitize_html_class( $custom_field['merge_tag'] ) . '_' ) : 'noptin_field_' . sanitize_html_class( $custom_field['merge_tag'] );
 	}
 
 	// phpcs:disable WordPress.Security.NonceVerification.Missing

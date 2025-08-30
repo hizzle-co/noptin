@@ -38,7 +38,7 @@ abstract class Noptin_Email_Type {
 	public $unsubscribe_url = '';
 
 	/**
-	 * @var \Hizzle\Noptin\DB\Subscriber
+	 * @var \Hizzle\Noptin\Subscribers\Subscriber
 	 */
 	public $subscriber;
 

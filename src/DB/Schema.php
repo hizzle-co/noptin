@@ -203,7 +203,7 @@ class Schema {
 
 				// Subscribers.
 				'subscribers' => array(
-					'object'         => '\Hizzle\Noptin\DB\Subscriber',
+					'object'         => '\Hizzle\Noptin\Subscribers\Subscriber',
 					'singular_name'  => 'subscriber',
 					'use_meta_table' => true,
 					'labels'         => array(
@@ -295,6 +295,63 @@ class Schema {
 								'type'              => 'TEXT',
 								'description'       => __( 'Subscriber activity', 'newsletter-optin-box' ),
 								'sanitize_callback' => 'wp_kses_post_deep',
+							),
+
+							'total_emails_sent' => array(
+								'type'        => 'BIGINT',
+								'length'      => 20,
+								'nullable'    => false,
+								'readonly'    => true,
+								'default'     => 0,
+								'description' => __( 'Total number of emails sent to this subscriber.', 'newsletter-optin-box' ),
+							),
+
+							'total_emails_opened' => array(
+								'type'        => 'BIGINT',
+								'length'      => 20,
+								'nullable'    => false,
+								'readonly'    => true,
+								'default'     => 0,
+								'description' => __( 'Total number of emails opened by this subscriber.', 'newsletter-optin-box' ),
+							),
+
+							'total_links_clicked' => array(
+								'type'        => 'BIGINT',
+								'length'      => 20,
+								'nullable'    => false,
+								'readonly'    => true,
+								'default'     => 0,
+								'description' => __( 'Total number of links clicked by this subscriber.', 'newsletter-optin-box' ),
+							),
+
+							'last_email_sent_date' => array(
+								'type'        => 'DATETIME',
+								'description' => __( 'Date when subscriber was last sent an email.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+								'readonly'    => true,
+							),
+
+							'last_email_opened_date' => array(
+								'type'        => 'DATETIME',
+								'description' => __( 'Date when subscriber last opened an email.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+								'readonly'    => true,
+							),
+
+							'last_email_clicked_date' => array(
+								'type'        => 'DATETIME',
+								'description' => __( 'Date when subscriber last clicked a link in an email.', 'newsletter-optin-box' ),
+								'nullable'    => true,
+								'readonly'    => true,
+							),
+
+							'email_engagement_score' => array(
+								'type'        => 'DECIMAL',
+								'length'      => '3,2',
+								'nullable'    => false,
+								'readonly'    => true,
+								'default'     => 0.00,
+								'description' => __( 'Engagement score (0.00 to 1.00).', 'newsletter-optin-box' ),
 							),
 
 							'sent_campaigns'           => array(

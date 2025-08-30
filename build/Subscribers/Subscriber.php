@@ -1,17 +1,13 @@
 <?php
 
-namespace Hizzle\Noptin\DB;
+namespace Hizzle\Noptin\Subscribers;
+
+defined( 'ABSPATH' ) || exit;
 
 /**
  * Container for a single subscriber.
  *
  * @version 1.0.0
- */
-
-defined( 'ABSPATH' ) || exit;
-
-/**
- * Subscriber.
  */
 class Subscriber extends \Hizzle\Store\Record {
 
@@ -932,5 +928,102 @@ class Subscriber extends \Hizzle\Store\Record {
 		return array(
 			'message' => 'Subscriber unblocked.',
 		);
+	}
+
+	/**
+	 * Calculate engagement score for the subscriber.
+	 *
+	 * @return float Engagement score between 0.00 and 1.00
+	 */
+	private function calculate_engagement_score() {
+		$total_emails_sent   = (int) $this->get( 'total_emails_sent' );
+		$total_emails_opened = (int) $this->get( 'total_emails_opened' );
+		$total_links_clicked = (int) $this->get( 'total_links_clicked' );
+
+		// Handle edge case where no emails have been sent.
+		if ( $total_emails_sent <= 0 ) {
+			return 0.00;
+		}
+
+		// Calculate basic engagement rates.
+		$open_rate  = $total_emails_opened / $total_emails_sent;
+		$click_rate = $total_links_clicked / $total_emails_sent;
+
+		// Base engagement score (weighted: opens 40%, clicks 60%)
+		$base_score = ( $open_rate * 0.4 ) + ( $click_rate * 0.6 );
+
+		// Calculate recency multiplier
+		$recency_multiplier = $this->calculate_recency_multiplier();
+
+		// Final score with recency factor.
+		// 80% base engagement + 20% recency factor.
+		$engagement_score = ( $base_score * 0.8 ) + ( $recency_multiplier * 0.2 );
+
+		// Ensure score is between 0.00 and 1.00
+		$engagement_score = max( 0.00, min( 1.00, $engagement_score ) );
+
+		// Round to 2 decimal places to match DECIMAL(3,2)
+		return round( $engagement_score, 2 );
+	}
+
+	/**
+	 * Calculate recency multiplier based on last engagement dates
+	 *
+	 * @return float Multiplier between 0.0 and 1.0
+	 */
+	private function calculate_recency_multiplier() {
+
+		// Calculate recency multiplier based on last engagement dates.
+		/** @var \Hizzle\Store\Date_Time $last_sent_date */
+		$last_sent_date = $this->get( 'last_email_sent_date' );
+
+		// If last sent date is not set, use current date.
+		if ( empty( $last_sent_date ) ) {
+			$last_sent_date = new \DateTime();
+		}
+
+		// Prepare the most recent engagement date.
+		/** @var \Hizzle\Store\Date_Time $most_recent */
+		$most_recent  = $this->get( 'last_email_opened_date' );
+		$last_clicked = $this->get( 'last_email_clicked_date' );
+
+		if ( $last_clicked ) {
+			/** @var \Hizzle\Store\Date_Time $last_clicked */
+			if ( ! $most_recent || $last_clicked > $most_recent ) {
+				$most_recent = $last_clicked;
+			}
+		}
+
+		// If no engagement dates, return low multiplier
+		if ( ! $most_recent ) {
+			return 0.1;
+		}
+
+		// Calculate days since last engagement
+		$days_diff = $last_sent_date->diff( $most_recent, true )->days;
+
+		// Return multiplier based on recency
+		// Very recent (within a week)
+		if ( $days_diff <= 7 ) {
+			return 1.0;
+		}
+
+		// Recent (within a month)
+		if ( $days_diff <= 30 ) {
+			return 0.9;
+		}
+
+		// Moderate (within 3 months)
+		if ( $days_diff <= 90 ) {
+			return 0.7;
+		}
+
+		// Old (within 6 months)
+		if ( $days_diff <= 180 ) {
+			return 0.5;
+		}
+
+		// Very old (over 6 months)
+		return 0.2;
 	}
 }

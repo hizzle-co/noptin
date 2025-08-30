@@ -312,7 +312,7 @@ $editor_settings = array(
 
 				'onlyShowOn'          => array(
 					'el'          => 'input',
-					'label'       => 'Only show on:',
+					'label'       => __( 'Only show on:', 'newsletter-optin-box' ),
 					'placeholder' => implode(
 						',',
 						array(
@@ -978,7 +978,7 @@ foreach ( array_keys( noptin_get_post_types() ) as $noptin_post_type ) {
 	);
 
 	foreach ( $post_type_taxonomies as $post_type_taxonomy ) {
-		$editor_settings['settings']['targeting']['children'][ 'showTaxonomy_' . $taxonomy->name ] = array(
+		$editor_settings['settings']['targeting']['children'][ 'showTaxonomy_' . $post_type_taxonomy->name ] = array(
 			'el'          => 'input',
 			'label'       => $post_type_taxonomy->label,
 			'conditions'  => array(
@@ -1009,13 +1009,11 @@ foreach ( array_keys( noptin_get_post_types() ) as $noptin_post_type ) {
 // Upsell interations.
 if ( noptin_upsell_integrations() ) {
 	foreach ( \Noptin_COM::get_connections() as $connection ) {
-		$key  = sanitize_key( str_replace( '-', '_', $connection->slug ) );
-		$name = esc_html( $connection->name );
-		$href = esc_url( noptin_get_upsell_url( $connection->connect_url, $key, 'subscription-forms' ) );
+		$key = sanitize_key( str_replace( '-', '_', $connection->slug ) );
 
 		$editor_settings['integrations'][ $key ] = array(
 			'el'       => 'panel',
-			'title'    => $name,
+			'title'    => esc_html( $connection->name ),
 			'id'       => $key,
 			'children' => array(
 				"{$key}text" => array(
@@ -1023,8 +1021,12 @@ if ( noptin_upsell_integrations() ) {
 					'content' => sprintf(
 						// translators: %1$s is the name of the integration, %2$s is the link to the integration's website.
 						esc_html__( 'Install the %1$s to add new subscribers to %2$s.', 'newsletter-optin-box' ),
-						'<a target="_blank" href="' . $href . '"> ' . $name . ' addon</a>',
-						$name
+						sprintf(
+							'<a target="_blank" href="%1$s"> %2$s addon</a>',
+							esc_url( noptin_get_upsell_url( $connection->connect_url, $key, 'subscription-forms' ) ),
+							esc_html( $connection->name )
+						),
+						esc_html( $connection->name )
 					),
 					'style'   => 'color:#F44336;',
 					'raw'     => true,

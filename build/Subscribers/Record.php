@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 class Record extends \Hizzle\Noptin\Objects\Person {
 
 	/**
-	 * @var \Hizzle\Noptin\DB\Subscriber The external object.
+	 * @var \Hizzle\Noptin\Subscribers\Subscriber The external object.
 	 */
 	public $external;
 

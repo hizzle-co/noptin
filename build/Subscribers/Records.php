@@ -360,7 +360,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	 * Fired when a subscriber state changes.
 	 *
-	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber.
+	 * @param \Hizzle\Noptin\Subscribers\Subscriber $subscriber The subscriber.
 	 * @param string|mixed The previous value.
 	 */
 	public function subscriber_state_changed( $subscriber, $from = null ) {
@@ -369,7 +369,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			$subscriber = noptin_get_subscriber( $subscriber );
 		}
 
-		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -424,13 +424,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	 * Fired when a subscriber field changes.
 	 *
-	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber.
+	 * @param \Hizzle\Noptin\Subscribers\Subscriber $subscriber The subscriber.
 	 * @param string|mixed $from The previous value.
 	 * @param string|mixed $to The new value.
 	 */
 	public function on_field_change( $subscriber, $from, $to ) {
 
-		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -451,12 +451,12 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	 * Fired when a subscriber is added to a field.
 	 *
-	 * @param \Hizzle\Noptin\DB\Subscriber $subscriber The subscriber.
+	 * @param \Hizzle\Noptin\Subscribers\Subscriber $subscriber The subscriber.
 	 * @param string|mixed $value The new value.
 	 */
 	public function on_field_add( $subscriber, $value ) {
 
-		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -476,13 +476,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	* Fired when a subscriber opens an email campaign.
 	*
-	* @param \Hizzle\Noptin\DB\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
+	* @param \Hizzle\Noptin\Subscribers\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
 	* @param $campaign_id The campaign that was opened.
 	*/
 	public function on_open( $subscriber, $campaign_id ) {
 
 		$subscriber = noptin_get_subscriber( $subscriber );
-		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -501,14 +501,14 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	/**
 	* Fired when a subscriber clicks on a link in an email campaign.
 	*
-	* @param \Hizzle\Noptin\DB\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
+	* @param \Hizzle\Noptin\Subscribers\Subscriber|int|string $subscriber Subscriber ID, email, or subscriber object.
 	* @param $campaign_id The campaign that was opened.
 	* @param $url The url that was clicked.
 	*/
 	public function on_click( $subscriber, $campaign_id, $url ) {
 
 		$subscriber = noptin_get_subscriber( $subscriber );
-		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\DB\Subscriber' ) ) {
+		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -790,7 +790,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 * Retrieves a test object args.
 	 *
 	 * @since 3.0.0
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @throws \Exception
 	 * @return array
 	 */

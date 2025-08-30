@@ -570,7 +570,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		unset( $args['smart_tags'] );
 
 		// In case the subject is a subscriber, we need to store the email address.
-		if ( $args['subject'] instanceof \Hizzle\Noptin\DB\Subscriber ) {
+		if ( $args['subject'] instanceof \Hizzle\Noptin\Subscribers\Subscriber ) {
 			$args['noptin_subject_subscriber'] = $args['subject']->get_id();
 			unset( $args['subject'] );
 		} elseif ( $args['subject'] instanceof WP_User ) { // In case the subject is a user, we need to store the user id.
