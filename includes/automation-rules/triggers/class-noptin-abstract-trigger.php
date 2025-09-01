@@ -267,12 +267,12 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	/**
 	 * Prepare smart tags.
 	 *
-	 * @param \Hizzle\Noptin\DB\Subscriber|WP_User|WC_Customer $subject
+	 * @param \Hizzle\Noptin\Subscribers\Subscriber|WP_User|WC_Customer $subject
 	 * @since 1.9.0
 	 * @return array
 	 */
 	public function prepare_known_smart_tags( $subject ) {
-		if ( $subject instanceof \Hizzle\Noptin\DB\Subscriber ) {
+		if ( $subject instanceof \Hizzle\Noptin\Subscribers\Subscriber ) {
 			return $subject->get_data();
 		}
 
