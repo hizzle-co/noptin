@@ -838,6 +838,23 @@ function next_scheduled_noptin_background_action( $hook, ...$args ) {
 }
 
 /**
+ * Creates a new background task.
+ *
+ * @param array $args Task arguments.
+ *    - hook: Required. The hook to trigger, e.g, 'noptin_run_automation_rule'
+ *    - status: The task status. Leave empty or set to 'pending' so that the task can run.
+ *    - args: An array of arguments to pass when running the task.
+ *    - subject: The task subject.
+ *    - primary_id: The primary ID.
+ *    - secondary_id: The secondary ID.
+ *    - lookup_key: An optional lookup key.
+ *    - date_scheduled: The date scheduled.
+ */
+function create_noptin_background_task( $args ) {
+	return \Hizzle\Noptin\Tasks\Main::create( $args );
+}
+
+/**
  * Enqueue an action to run as soon as possible in the background.
  *
  * This is a wrapper for `do_action()`.
@@ -862,7 +879,12 @@ function next_scheduled_noptin_background_action( $hook, ...$args ) {
  * @param mixed  ...$arg Optional. Additional arguments to pass to callbacks when the hook triggers.
  */
 function do_noptin_background_action( $hook, ...$args ) {
-	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args );
+	return create_noptin_background_task(
+		array(
+			'hook' => $hook,
+			'args' => $args,
+		)
+	);
 }
 
 /**
@@ -894,7 +916,13 @@ function do_noptin_background_action( $hook, ...$args ) {
  * @param mixed  ...$arg    Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
  */
 function schedule_noptin_background_action( $timestamp, $hook, ...$args ) {
-	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args, $timestamp - time() );
+	return create_noptin_background_task(
+		array(
+			'hook'           => $hook,
+			'args'           => $args,
+			'date_scheduled' => $timestamp,
+		)
+	);
 }
 
 /**
@@ -926,7 +954,14 @@ function schedule_noptin_background_action( $timestamp, $hook, ...$args ) {
  * @param mixed  ...$args   Optional. Additional arguments to pass to callbacks when the hook triggers. Default none.
  */
 function schedule_noptin_recurring_background_action( $interval, $timestamp, $hook, ...$args ) {
-	return \Hizzle\Noptin\Tasks\Main::schedule_task( $hook, $args, $timestamp - time(), $interval );
+	return create_noptin_background_task(
+		array(
+			'interval'       => $interval,
+			'hook'           => $hook,
+			'args'           => $args,
+			'date_scheduled' => $timestamp,
+		)
+	);
 }
 
 /**
