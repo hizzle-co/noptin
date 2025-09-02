@@ -258,6 +258,71 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	}
 
 	/**
+	 * Creates a new task.
+	 *
+	 * @param array $args Task arguments.
+	 *    - hook: Required. The hook to trigger, e.g, 'noptin_run_automation_rule'
+	 *    - status: The task status. Leave empty or set to 'pending' so that the task can run.
+	 *    - args: An array of arguments to pass when running the task.
+	 *    - subject: The task subject.
+	 *    - primary_id: The primary ID.
+	 *    - secondary_id: The secondary ID.
+	 *    - lookup_key: An optional lookup key.
+	 *    - date_scheduled: The date scheduled.
+	 * @return Task|WP_Error
+	 */
+	public static function create( $args = array() ) {
+
+		$defaults = array(
+			'date_scheduled' => time(),
+			'args_hash'      => md5( maybe_serialize( $args ) ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		// Ensure the same task is not scheduled twice in the same request.
+		if ( in_array( $args['args_hash'], self::$scheduled_tasks, true ) ) {
+			return new \WP_Error( 'noptin_task_already_scheduled', 'Task already scheduled.' );
+		}
+
+		// Validate required fields.
+		if ( empty( $args['hook'] ) ) {
+			return new \WP_Error( 'missing_hook', 'Hook is required.' );
+		}
+
+		// If the database is not initialized, schedule the task on init.
+		if ( ! did_action( 'noptin_db_init' ) ) {
+			add_action(
+				'noptin_db_init',
+				function () use ( $args ) {
+					\Hizzle\Noptin\Tasks\Main::create( $args );
+				}
+			);
+			return null;
+		}
+
+		// Get a new task instance.
+		$task = self::get( 0 );
+
+		if ( is_wp_error( $task ) ) {
+			return $task;
+		}
+
+		// Set task properties.
+		$task->set_props( $args );
+
+		$result = $task->save();
+
+		if ( is_wp_error( $result ) ) {
+			noptin_error_log( 'Error scheduling task: ' . $result->get_error_message() );
+		}
+
+		self::$scheduled_tasks[] = $args['args_hash'];
+
+		return $task;
+	}
+
+	/**
 	 * Schedules a task to run in the background.
 	 *
 	 * @param string $hook
@@ -268,42 +333,15 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public static function schedule_task( $hook, $args = array(), $delay = 0, $interval = 0 ) {
 
-		$runs_on      = empty( $delay ) ? time() : time() + $delay;
-		$args_hash    = md5( maybe_serialize( $args ) );
-		$unique_check = $hook . '|' . $args_hash . '|' . $delay . '|' . $interval;
-
-		// Ensure the same task is not scheduled twice in the same request.
-		if ( in_array( $unique_check, self::$scheduled_tasks, true ) ) {
-			return;
-		}
-
-		$task = self::get( 0 );
-
-		if ( is_wp_error( $task ) ) {
-			return $task;
-		}
-
-		// Set the props.
-		/** @var Task $task */
-		$task->set_hook( $hook );
-		$task->set_status( 'pending' );
-		$task->set_args( wp_json_encode( $args ) );
-		$task->set_args_hash( $args_hash );
-		$task->set_date_scheduled( $runs_on );
-
-		if ( ! empty( $interval ) ) {
-			$task->update_meta( 'interval', $interval );
-		}
-
-		$result = $task->save();
-
-		if ( is_wp_error( $result ) ) {
-			noptin_error_log( 'Error scheduling task: ' . $result->get_error_message() );
-		}
-
-		self::$scheduled_tasks[] = $unique_check;
-
-		return $task;
+		return self::create(
+			array(
+				'hook'           => $hook,
+				'args'           => $args,
+				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
+				'interval'       => $interval,
+				'status'         => 'pending',
+			)
+		);
 	}
 
 	/**
@@ -319,49 +357,29 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	public static function run_automation_rule( $subject, $rule, $args, $trigger ) {
 
 		// Are we delaying the action?
-		$delay        = $rule->get_delay();
-		$delay        = ! is_numeric( $delay ) ? 0 : (int) $delay;
-		$trigger_args = $trigger->serialize_trigger_args( $args );
-		$email        = $trigger->get_subject_email( $subject, $rule, $args );
-		$args_hash    = md5( maybe_serialize( $trigger_args ) );
-		$unique_check = 'noptin_run_automation_rule|' . $args_hash . '|' . $delay . '|' . $rule->get_id() . '|' . $email;
+		$delay = $rule->get_delay();
+		$delay = ! is_numeric( $delay ) ? 0 : (int) $delay;
 
-		// Ensure the same task is not scheduled twice in the same request.
-		if ( in_array( $unique_check, self::$scheduled_tasks, true ) ) {
-			return new \WP_Error( 'noptin_task_already_scheduled', 'Task already scheduled.' );
-		}
+		// Create the task.
+		$task = self::create(
+			array(
+				'hook'           => 'noptin_run_automation_rule',
+				'args'           => $trigger->serialize_trigger_args( $args ),
+				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
+				'subject'        => $trigger->get_subject_email( $subject, $rule, $args ),
+				'status'         => 'pending',
+				'primary_id'     => $rule->get_id(),
+				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
+				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
+			)
+		);
 
-		$task = self::get( 0 );
-
-		if ( is_wp_error( $task ) ) {
-			return $task;
-		}
-
-		// Set the props.
-		/** @var Task $task */
-		$task->set_hook( 'noptin_run_automation_rule' );
-		$task->set_status( 'pending' );
-		$task->set_args( wp_json_encode( $trigger_args ) );
-		$task->set_args_hash( $args_hash );
-		$task->set_date_scheduled( time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ) ); // If no delay, set to expire 1 minute ago so it runs immediately.
-		$task->set_subject( $email );
-		$task->set_primary_id( $rule->get_id() );
-
-		if ( isset( $args['automation_rule_secondary_id'] ) ) {
-			$task->set_secondary_id( $args['automation_rule_secondary_id'] );
-		}
-
-		$task->set_lookup_key( $args['automation_rule_lookup_key'] ?? $trigger->get_id() );
-		$task->save();
-
-		self::$scheduled_tasks[] = $unique_check;
-
-		if ( 'failed' === $task->get_status() ) {
+		if ( $task instanceof Task && 'failed' === $task->get_status() ) {
 			$log = $task->get_last_log();
 			return new \WP_Error( 'noptin_task_failed', empty( $log ) ? 'Task failed to run.' : $log );
 		}
 
-		return true;
+		return is_wp_error( $task ) ? $task : true;
 	}
 
 	/**
@@ -604,6 +622,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 							'nullable'    => false,
 							'description' => __( 'Status', 'newsletter-optin-box' ),
 							'enum'        => __CLASS__ . '::get_statuses',
+							'default'     => 'pending',
 						),
 
 						'lookup_key'     => array(
@@ -679,7 +698,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			array( 'args_hash', 'date_modified' )
 		);
 
-		$params['badges']  = array( 'status' );
+		$params['badges'] = array( 'status' );
 
 		foreach ( $params['schema'] as $key => $field ) {
 			if ( 'hook' === $field['name'] ) {

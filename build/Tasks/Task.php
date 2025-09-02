@@ -147,6 +147,10 @@ class Task extends \Hizzle\Store\Record {
 	 * @param string $value args.
 	 */
 	public function set_args( $value ) {
+		if ( is_array( $value ) ) {
+			$value = wp_json_encode( $value );
+		}
+
 		$this->set_prop( 'args', $value );
 	}
 
@@ -157,14 +161,14 @@ class Task extends \Hizzle\Store\Record {
 	 * @param mixed $default The default value.
 	 * @return mixed
 	 */
-	public function get_arg( $key, $default = null ) {
+	public function get_arg( $key, $default_value = null ) {
 		$args = json_decode( $this->get_args(), true );
 
 		if ( ! is_array( $args ) ) {
-			return $default;
+			return $default_value;
 		}
 
-		return array_key_exists( $key, $args ) ? $args[ $key ] : $default;
+		return array_key_exists( $key, $args ) ? $args[ $key ] : $default_value;
 	}
 
 	/**
@@ -261,13 +265,31 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Sets the task's interval.
+	 *
+	 * @param int $value The interval in seconds.
+	 */
+	public function set_interval( $value ) {
+		$this->update_meta( 'interval', empty( $value ) ? null : (int) $value );
+	}
+
+	/**
+	 * Get the task's interval.
+	 *
+	 * @return int|null
+	 */
+	public function get_interval() {
+		return $this->get_meta( 'interval' );
+	}
+
+	/**
 	 * Checks if the task has expired.
 	 *
 	 * @return bool
 	 */
 	public function has_expired() {
 		$expiration = $this->get_date_scheduled();
-		return empty( $expiration ) || $expiration->getTimestamp() <= time();
+		return ! $expiration instanceof \Hizzle\Store\Date_Time || $expiration->getTimestamp() <= time();
 	}
 
 	/**
@@ -300,6 +322,11 @@ class Task extends \Hizzle\Store\Record {
 	 */
 	public function get_last_log() {
 		$logs = $this->get_logs();
+
+		if ( empty( $logs ) ) {
+			return '';
+		}
+
 		$last = end( $logs );
 		return $last['message'] ?? '';
 	}
@@ -341,6 +368,7 @@ class Task extends \Hizzle\Store\Record {
 	 */
 	protected function run() {
 		global $noptin_current_task_user;
+
 		$old_user = $noptin_current_task_user;
 
 		$noptin_current_task_user = $this->get_meta( 'current_task_user' );
@@ -353,7 +381,7 @@ class Task extends \Hizzle\Store\Record {
 
 		// Ensure there are callbacks attached to the hook.
 		if ( ! has_action( $hook ) ) {
-			throw new \Exception( sprintf( 'Invalid task: no callbacks attached to hook "%s"', $hook ) );
+			throw new \Exception( sprintf( 'Invalid task: no callbacks attached to hook "%s"', esc_html( $hook ) ) );
 		}
 
 		$args = json_decode( $this->get_args(), true );
@@ -389,11 +417,12 @@ class Task extends \Hizzle\Store\Record {
 		$task->save();
 
 		// Is this a recurring task?
-		if ( in_array( $this->get_status(), array( 'complete', 'pending' ), true ) && $task->get_meta( 'interval' ) ) {
+		$interval = $task->get_interval();
+		if ( in_array( $task->get_status(), array( 'complete', 'failed' ), true ) && $interval ) {
 			$new_task = $task->clone();
 			$new_task->set_date_created( time() );
 			$new_task->set_date_modified( time() );
-			$new_task->set_date_scheduled( time() + (int) $task->get_meta( 'interval' ) );
+			$new_task->set_date_scheduled( time() + (int) $interval );
 			$new_task->add_log( 'Task rescheduled from #' . $task->get_id() );
 			$new_task->set_status( 'pending' );
 			$result = $new_task->save();
@@ -435,7 +464,6 @@ class Task extends \Hizzle\Store\Record {
 	 * @inheritDoc
 	 */
 	public function save() {
-		static $attached_hooks = false;
 
 		if ( ! $this->exists() && is_null( $this->get_meta( 'current_task_user' ) ) ) {
 			$this->update_meta( 'current_task_user', get_current_user_id() );
@@ -450,9 +478,8 @@ class Task extends \Hizzle\Store\Record {
 			// so that poorly coded plugins will have a chance to save post meta before the task runs.
 			if ( ( ! $is_publish && $this->get_subject() ) || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
 				$this->process();
-			} else if ( ! $attached_hooks ) {
+			} elseif ( ! has_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ) ) ) {
 				add_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ), -1000 );
-				$attached_hooks = true;
 			}
 		}
 

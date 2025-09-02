@@ -176,7 +176,7 @@ class Sender {
 		}
 
 		$name     = sanitize_text_field( self::get_from_name() );
-    	$reply_to = sanitize_email( self::get_reply_to() );
+		$reply_to = sanitize_email( self::get_reply_to() );
 		$content  = self::get_content_type( 'text/plain' );
 
 		if ( ! empty( $reply_to ) && ! empty( $name ) ) {
