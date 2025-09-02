@@ -40,9 +40,20 @@ class Noptin_Install {
 		// Upgrading from version 1.
 		if ( 1 === $upgrade_from ) {
 			return $this->upgrade_from_1();
-		} elseif ( 5 !== $upgrade_from ) {
+		} elseif ( $upgrade_from < 5 ) {
 			return $this->upgrade_from_4();
+		} elseif ( 6 === $upgrade_from ) {
+			return $this->upgrade_from_6();
 		}
+	}
+
+	/**
+	 * Checks if has subscribers table.
+	 */
+	private function has_subscribers_table() {
+		global $wpdb;
+
+		return !! $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" );
 	}
 
 	/**
@@ -52,7 +63,7 @@ class Noptin_Install {
 		global $wpdb;
 
 		// Abort if the table does not exist.
-		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" ) ) {
+		if ( ! $this->has_subscribers_table() ) {
 			return;
 		}
 
@@ -77,7 +88,7 @@ class Noptin_Install {
 		global $wpdb;
 
 		// Abort if the table does not exist.
-		if ( ! $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}noptin_subscribers'" ) ) {
+		if ( ! $this->has_subscribers_table() ) {
 			return;
 		}
 
@@ -106,6 +117,30 @@ class Noptin_Install {
 
 		// Flush cache.
 		wp_cache_flush();
+
+		// Upgrade from version 6 to 7.
+		$this->upgrade_from_6();
+	}
+
+	/**
+	 * Upgrades the db from version 6 to 7.
+	 */
+	private function upgrade_from_6() {
+		global $wpdb;
+
+		// Abort if the table does not exist.
+		if ( ! $this->has_subscribers_table() ) {
+			return;
+		}
+
+		// Loop through all ids.
+		$subscriber_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}noptin_subscribers" );
+
+		if ( is_array( $subscriber_ids ) ) {
+			foreach ( $subscriber_ids as $subscriber_id ) {
+				schedule_noptin_background_action( time() + MINUTE_IN_SECONDS, 'noptin_recalculate_subscriber_engagement_rate', $subscriber_id );
+			}
+		}
 	}
 
 	/**

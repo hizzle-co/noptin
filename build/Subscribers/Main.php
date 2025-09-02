@@ -26,6 +26,7 @@ class Main {
 		add_filter( 'hizzle_rest_noptin_subscribers_record_tabs', __CLASS__ . '::add_collection_subscriber_tabs' );
 		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init' );
 		add_action( 'noptin_subscribers_before_prepare_query', __CLASS__ . '::hide_blocked_subscribers' );
+		add_action( 'noptin_recalculate_subscriber_engagement_rate', __CLASS__ . '::recalculate_subscriber_engagement_rate' );
 
 		// Subscribers menu.
 		if ( is_admin() ) {
@@ -206,5 +207,75 @@ class Main {
 
 		$excluded[] = 'blocked';
 		$query->set( 'status_not', $excluded );
+	}
+
+	/**
+	 * Recalculates the subscriber engagement rate.
+	 *
+	 * @param int $subscriber_id The subscriber ID.
+	 */
+	public static function recalculate_subscriber_engagement_rate( $subscriber_id ) {
+		global $wpdb;
+
+		// Get the subscriber.
+		$subscriber = noptin_get_subscriber( $subscriber_id );
+
+		if ( ! $subscriber || ! $subscriber->get_email() ) {
+			return;
+		}
+
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT 
+        			activity,
+        			COUNT(*) as total,
+        			MAX(date_created) as last_date
+				FROM {$wpdb->prefix}noptin_email_logs
+    			WHERE email = %s AND activity IN ('send', 'open', 'click')
+    			GROUP BY activity
+				",
+				$subscriber->get_email()
+			),
+			ARRAY_A
+		);
+
+		// Initialize metrics
+		$metrics = array(
+			'send'  => array(
+				'count' => 0,
+				'last'  => null,
+			),
+			'open'  => array(
+				'count' => 0,
+				'last'  => null,
+			),
+			'click' => array(
+				'count' => 0,
+				'last'  => null,
+			),
+		);
+
+		// Map results
+		foreach ( $results as $row ) {
+			$metrics[ $row['activity'] ]['count'] = intval( $row['total'] );
+
+			// Dates are stored in UTC time, but without a timezone.
+			// Fix that.
+			if ( ! empty( $row['last_date'] ) ) {
+				$metrics[ $row['activity'] ]['last'] = new \Hizzle\Store\Date_Time( $row['last_date'], new \DateTimeZone( 'UTC' ) );
+			}
+		}
+
+		// Set metrics
+		$subscriber->set( 'total_emails_sent', $metrics['send']['count'] );
+		$subscriber->set( 'last_email_sent_date', $metrics['send']['last'] );
+		$subscriber->set( 'total_emails_opened', $metrics['open']['count'] );
+		$subscriber->set( 'last_email_opened_date', $metrics['open']['last'] );
+		$subscriber->set( 'total_links_clicked', $metrics['click']['count'] );
+		$subscriber->set( 'last_email_clicked_date', $metrics['click']['last'] );
+		$subscriber->set( 'email_engagement_score', $subscriber->calculate_engagement_score() );
+
+		// Save
+		$subscriber->save();
 	}
 }

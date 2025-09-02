@@ -935,7 +935,7 @@ class Subscriber extends \Hizzle\Store\Record {
 	 *
 	 * @return float Engagement score between 0.00 and 1.00
 	 */
-	private function calculate_engagement_score() {
+	public function calculate_engagement_score() {
 		$total_emails_sent   = (int) $this->get( 'total_emails_sent' );
 		$total_emails_opened = (int) $this->get( 'total_emails_opened' );
 		$total_links_clicked = (int) $this->get( 'total_links_clicked' );
