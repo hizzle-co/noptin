@@ -133,12 +133,19 @@ class Noptin_Install {
 			return;
 		}
 
-		// Loop through all ids.
-		$subscriber_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}noptin_subscribers" );
+		// Loop through all subscribers.
+		$subscribers = $wpdb->get_results( "SELECT id, email FROM {$wpdb->prefix}noptin_subscribers" );
 
-		if ( is_array( $subscriber_ids ) ) {
-			foreach ( $subscriber_ids as $subscriber_id ) {
-				schedule_noptin_background_action( time() + MINUTE_IN_SECONDS, 'noptin_recalculate_subscriber_engagement_rate', $subscriber_id );
+		if ( is_array( $subscribers ) ) {
+			foreach ( $subscribers as $subscriber ) {
+				create_noptin_background_task(
+					array(
+						'hook'           => 'noptin_recalculate_subscriber_engagement_rate',
+						'args'           => array( $subscriber->id ),
+						'date_scheduled' => time() + MINUTE_IN_SECONDS,
+						'lookup_key'     => $subscriber->email,
+					)
+				);
 			}
 		}
 	}
