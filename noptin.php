@@ -54,7 +54,7 @@ class Noptin {
 	 * @var         int Plugin db version
 	 * @since       1.0.0
 	 */
-	public $db_version = 6;
+	public $db_version = 7;
 
 	/**
 	 * Stores the main Noptin instance.
