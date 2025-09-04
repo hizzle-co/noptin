@@ -931,6 +931,30 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the formatted email engagement score.
+	 *
+	 * @return string
+	 */
+	public function get_formatted_email_engagement_score() {
+		$email_engagement_score = (float) $this->get( 'email_engagement_score' );
+		$bg_color               = '#454545';
+
+		if ( $email_engagement_score >= 0.5 ) {
+			$bg_color = '#28a745'; // Green
+		} elseif ( $email_engagement_score >= 0.25 ) {
+			$bg_color = '#ffc107'; // Yellow
+		} elseif ( $email_engagement_score > 0 ) {
+			$bg_color = '#dc3545'; // Red
+		}
+
+		return sprintf(
+			'<span class="hizzlewp-badge" style="color: #fff; background-color: %s;">%s</span>',
+			$bg_color,
+			$email_engagement_score
+		);
+	}
+
+	/**
 	 * Calculate engagement score for the subscriber.
 	 *
 	 * @return float Engagement score between 0.00 and 1.00

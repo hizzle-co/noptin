@@ -3,7 +3,7 @@
         'name' => 'hizzle-co/noptin',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '7ae7c68f044bcb1b8ca718faac46a67bdcf545c3',
+        'reference' => '82a23b7c67fbcfa9f1914ee6b223eda286fb6406',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'hizzle-co/noptin' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '7ae7c68f044bcb1b8ca718faac46a67bdcf545c3',
+            'reference' => '82a23b7c67fbcfa9f1914ee6b223eda286fb6406',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
