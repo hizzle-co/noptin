@@ -384,6 +384,9 @@ class Subscriber extends \Hizzle\Store\Record {
 		}
 
 		$this->set_sent_campaigns( $sent_campaigns );
+		$this->set( 'total_emails_sent', ( (int) $this->get( 'total_emails_sent' ) ) + 1 );
+		$this->set( 'last_email_sent_date', time() );
+		$this->set( 'email_engagement_score', $this->calculate_engagement_score() );
 		$this->save();
 	}
 
@@ -395,6 +398,11 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function record_opened_campaign( $campaign_id ) {
 		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
+
+		$this->set( 'total_emails_opened', ( (int) $this->get( 'total_emails_opened' ) ) + 1 );
+		$this->set( 'last_email_opened_date', time() );
+		$this->set( 'email_engagement_score', $this->calculate_engagement_score() );
+		$this->save();
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
 
@@ -428,6 +436,11 @@ class Subscriber extends \Hizzle\Store\Record {
 	public function record_clicked_link( $campaign_id, $url ) {
 		$campaign_id    = (string) $campaign_id;
 		$sent_campaigns = $this->get_sent_campaigns();
+
+		$this->set( 'total_links_clicked', ( (int) $this->get( 'total_links_clicked' ) ) + 1 );
+		$this->set( 'last_email_clicked_date', time() );
+		$this->set( 'email_engagement_score', $this->calculate_engagement_score() );
+		$this->save();
 
 		if ( isset( $sent_campaigns[ $campaign_id ] ) ) {
 
