@@ -302,7 +302,7 @@ class Noptin {
 		Noptin_Scripts::init();
 
 		// Users.
-		add_action( 'after_setup_theme', '\Hizzle\Noptin\Objects\Users::add_default' );
+		add_action( 'noptin_init', '\Hizzle\Noptin\Objects\Users::add_default', 1 );
 
 		// Init the plugin after WP inits
 		add_action( 'init', array( $this, 'init' ), 5 );
