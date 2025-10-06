@@ -569,7 +569,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		if ( ! empty( $manual_recipients ) ) {
 			$args['include'] = $manual_recipients;
 		} elseif ( noptin_has_alk() ) {
-
 			if ( is_array( $options ) ) {
 
 				// Backward compatibility.
@@ -647,7 +646,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			);
 
 			if ( $multiple || $filter['is_multiple'] ) {
-
 				$fields[ $key ]['placeholder'] = __( 'Optional. Leave blank to send to all', 'newsletter-optin-box' );
 				$fields[ $key ]['multiple']    = 'true';
 
