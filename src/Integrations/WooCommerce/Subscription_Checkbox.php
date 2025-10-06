@@ -63,7 +63,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 			if ( (bool) get_noptin_option( $this->get_autotick_checkbox_option_name() ) ) {
 				add_filter(
 					'woocommerce_get_default_value_for_noptin/optin',
-					function ( $value ) {
+					function () {
 						return '1';
 					}
 				);
@@ -80,10 +80,29 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 					10,
 					4
 				);
+
+				// Astra theme addons compatibility.
+				add_filter( 'noptin_integration_checkbox_label_attributes', array( $this, 'add_checkbox_label_attributes' ), 10, 2 );
 			}
 		}
 
 		add_action( 'woocommerce_checkout_create_order', array( $this, 'save_woocommerce_checkout_checkbox_value' ) );
+	}
+
+	/**
+	 * Astra theme addons compatibility.
+	 *
+	 * @param array $attrs The HTML attributes.
+	 * @param \Hizzle\Noptin\Integrations\Checkbox_Integration $integration The integration instance.
+	 */
+	public function add_checkbox_label_attributes( $attrs, $integration ) {
+		if ( $integration instanceof self ) {
+			trim(
+				'woocommerce-form__label-for-checkbox checkbox ' . ( $attrs['class'] ?? '' )
+			);
+		}
+
+		return $attrs;
 	}
 
 	/**
@@ -263,7 +282,6 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 			'ip_address'        => $order->get_customer_ip_address(),
 			'language'          => apply_filters( 'noptin_woocommerce_order_locale', get_locale(), $order->get_id() ),
 			'user_id'           => $order->get_user_id(),
-			'ip_address'        => $order->get_customer_ip_address(),
 			'phone'             => $order->get_billing_phone(),
 			'company'           => $order->get_billing_company(),
 			'address_1'         => $order->get_billing_address_1(),
