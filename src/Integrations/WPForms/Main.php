@@ -105,7 +105,6 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 		// Loop through all fields.
 		foreach ( $fields as $wpforms_field ) {
-
 			if ( in_array( $wpforms_field['type'], $form_fields_disallow, true ) ) {
 				continue;
 			}
@@ -222,87 +221,85 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		<div class="wpforms-panel-content-section wpforms-panel-content-section-noptin">
 			<div class="wpforms-panel-content-section-title">Noptin</div>
 
-				<?php
+			<?php
 
-					wpforms_panel_field(
-						'checkbox',
-						'settings',
-						'enable_noptin',
-						$instance->form_data,
-						__( 'Enable Noptin Subscriptions', 'newsletter-optin-box' )
-					);
+				wpforms_panel_field(
+					'toggle',
+					'settings',
+					'enable_noptin',
+					$instance->form_data,
+					__( 'Enable Noptin Subscriptions', 'newsletter-optin-box' )
+				);
 
-					do_action( 'noptin_wp_forms_before_map_fields_section', $instance );
-				?>
+				do_action( 'noptin_wp_forms_before_map_fields_section', $instance );
+			?>
 
-				<div class="wpforms-map-noptin-fields wpforms-builder-settings-block">
-					<div class="wpforms-builder-settings-block-header">
-						<span><?php esc_html_e( 'Map Fields', 'newsletter-optin-box' ); ?> <a href="https://noptin.com/guide/integrations/wpforms" target="_blank"><?php esc_html_e( 'Learn More!', 'newsletter-optin-box' ); ?></a></span>
-					</div>
-					<div class="wpforms-builder-settings-block-content">
-						<?php
-
-							wpforms_panel_field(
-								'select',
-								'settings',
-								'noptin_field_gdpr',
-								$instance->form_data,
-								__( 'GDPR checkbox (Optional)', 'newsletter-optin-box' ),
-								array(
-									'field_map'   => array( 'checkbox', 'gdpr-checkbox' ),
-									'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
-									'tooltip'     => __( 'If mapped, only users who consent will join your newsletter.', 'newsletter-optin-box' ),
-								)
-							);
-
-						foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
-
-							wpforms_panel_field(
-								'select',
-								'settings',
-								'noptin_field_' . $key,
-								$instance->form_data,
-								empty( $field['label'] ) ? $field['description'] : $field['label'],
-								array(
-									'field_map'   => array(
-										'address',
-										'checkbox',
-										'date-time',
-										'email',
-										'file-upload',
-										'gdpr-checkbox',
-										'hidden',
-										'likert_scale',
-										'name',
-										'net_promoter_score',
-										'number',
-										'number-slider',
-										'payment-checkbox',
-										'payment-multiple',
-										'payment-select',
-										'payment-single',
-										'payment-total',
-										'phone',
-										'radio',
-										'rating',
-										'richtext',
-										'select',
-										'signature',
-										'text',
-										'textarea',
-										'url',
-									),
-									'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
-									'tooltip'     => ! empty( $field['label'] ) && $field['description'] !== $field['label'] ? $field['description'] : '',
-								)
-							);
-						}
-						?>
-					</div>
+			<div class="wpforms-map-noptin-fields wpforms-builder-settings-block">
+				<div class="wpforms-builder-settings-block-header">
+					<span><?php esc_html_e( 'Map Fields', 'newsletter-optin-box' ); ?> <a href="https://noptin.com/guide/integrations/wpforms" target="_blank"><?php esc_html_e( 'Learn More!', 'newsletter-optin-box' ); ?></a></span>
 				</div>
+				<div class="wpforms-builder-settings-block-content">
+					<?php
 
-				<?php do_action( 'noptin_wp_forms_after_map_fields_section', $instance ); ?>
+						wpforms_panel_field(
+							'select',
+							'settings',
+							'noptin_field_gdpr',
+							$instance->form_data,
+							__( 'GDPR checkbox (Optional)', 'newsletter-optin-box' ),
+							array(
+								'field_map'   => array( 'checkbox', 'gdpr-checkbox' ),
+								'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
+								'tooltip'     => __( 'If mapped, only users who consent will join your newsletter.', 'newsletter-optin-box' ),
+							)
+						);
+
+					foreach ( get_editable_noptin_subscriber_fields() as $key => $field ) {
+						wpforms_panel_field(
+							'select',
+							'settings',
+							'noptin_field_' . $key,
+							$instance->form_data,
+							empty( $field['label'] ) ? $field['description'] : $field['label'],
+							array(
+								'field_map'   => array(
+									'address',
+									'checkbox',
+									'date-time',
+									'email',
+									'file-upload',
+									'gdpr-checkbox',
+									'hidden',
+									'likert_scale',
+									'name',
+									'net_promoter_score',
+									'number',
+									'number-slider',
+									'payment-checkbox',
+									'payment-multiple',
+									'payment-select',
+									'payment-single',
+									'payment-total',
+									'phone',
+									'radio',
+									'rating',
+									'richtext',
+									'select',
+									'signature',
+									'text',
+									'textarea',
+									'url',
+								),
+								'placeholder' => __( '-- Map Field --', 'newsletter-optin-box' ),
+								'tooltip'     => ! empty( $field['label'] ) && $field['description'] !== $field['label'] ? $field['description'] : '',
+							)
+						);
+					}
+					?>
+				</div>
 			</div>
+
+			<?php do_action( 'noptin_wp_forms_after_map_fields_section', $instance ); ?>
 		</div>
 
 		<?php
