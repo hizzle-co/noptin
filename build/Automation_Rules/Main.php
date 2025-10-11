@@ -22,10 +22,15 @@ class Main {
 	 */
 	public static function init() {
 
+		// Admin.
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}
 
+		// Anniversary helper.
+		Anniversary_Helper::init();
+
+		// Hooks.
 		add_action( 'noptin_run_automation_rule', array( __CLASS__, 'handle_automation_rule_task' ), 10, 2 );
 		add_action( 'noptin_run_delayed_automation_rule', array( __CLASS__, 'run_delayed_automation_rule' ), 10, 2 );
 	}
