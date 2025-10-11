@@ -464,8 +464,9 @@ class Subscriber extends \Hizzle\Store\Record {
 			$this->save();
 
 			// Fire action.
+			do_action( 'log_noptin_subscriber_campaign_click', $this->get_id(), $campaign_id, $url );
+
 			if ( 1 === count( $sent_campaigns[ $campaign_id ]['clicks'][ $url ] ) ) {
-				do_action( 'log_noptin_subscriber_campaign_click', $this->get_id(), $campaign_id, $url );
 				increment_noptin_campaign_stat( $campaign_id, '_noptin_clicks' );
 			}
 		}
