@@ -149,7 +149,9 @@ abstract class Collection {
 
 			// Only auto-provide the current user if the subject is not a WordPress user.
 			if ( ! in_array( $args['subject'], Users::$user_types, true ) || 'post_author' === $args['subject'] ) {
-				$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
+				if ( ! \Hizzle\Noptin\Automation_Rules\Anniversary_Helper::has_trigger( $key ) ) {
+					$args['provides'] = array_merge( $args['provides'], array( 'current_user' ) );
+				}
 			}
 
 			$args['provides'] = $this->filter( $args['provides'], 'provided_collections' );

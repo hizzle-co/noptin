@@ -43,6 +43,16 @@ class Anniversary_Helper {
 	}
 
 	/**
+	 * Checks if a trigger is registered.
+	 *
+	 * @param string $trigger Trigger name.
+	 * @return bool
+	 */
+	public static function has_trigger( $trigger ) {
+		return in_array( $trigger, self::$triggers, true );
+	}
+
+	/**
 	 * Performs daily maintenance.
 	 */
 	public static function daily_maintenance() {
@@ -80,7 +90,7 @@ class Anniversary_Helper {
 
 		// Abort if the rule is not found.
 		if ( is_wp_error( $rule ) || ! $rule->exists() || ! $rule->get_status() ) {
-			return;
+			throw new \Exception( 'Invalid rule ID: ' . esc_html( $rule_id ) );
 		}
 
 		if ( 'noptin_anniversary' !== $rule->get_trigger_id() ) {

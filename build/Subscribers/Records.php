@@ -339,23 +339,25 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					'subject'        => 'subscriber',
 					'extra_settings' => array(
 						'field'       => array(
-							'el'          => 'select',
-							'label'       => __( 'Date Field', 'newsletter-optin-box' ),
-							'description' => __( 'Choose a date field to monitor for each subscriber.', 'newsletter-optin-box' ),
-							'placeholder' => __( 'Select a date field', 'newsletter-optin-box' ),
-							'options'     => wp_list_pluck( $date_fields, 'description' ),
-							'required'    => true,
+							'el'               => 'select',
+							'label'            => __( 'Date Field', 'newsletter-optin-box' ),
+							'description'      => __( 'Choose a date field to monitor for each subscriber.', 'newsletter-optin-box' ),
+							'placeholder'      => __( 'Select a date field', 'newsletter-optin-box' ),
+							'options'          => wp_list_pluck( $date_fields, 'description' ),
+							'required'         => true,
+							'disableMergeTags' => true,
 						),
 						'timing'      => array(
-							'el'       => 'select',
-							'label'    => __( 'Timing', 'newsletter-optin-box' ),
-							'options'  => array(
+							'el'               => 'select',
+							'label'            => __( 'Timing', 'newsletter-optin-box' ),
+							'options'          => array(
 								'on'     => __( 'On the exact date', 'newsletter-optin-box' ),
 								'before' => __( 'Before the date', 'newsletter-optin-box' ),
 								'after'  => __( 'After the date', 'newsletter-optin-box' ),
 							),
-							'default'  => 'on',
-							'required' => true,
+							'default'          => 'on',
+							'required'         => true,
+							'disableMergeTags' => true,
 						),
 						'days_before' => array(
 							'el'               => 'input',
@@ -371,10 +373,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							),
 							'conditions'       => array(
 								array(
-									'value' => 'timing',
-									'key'   => 'before',
+									'key'   => 'timing',
+									'value' => 'before',
 								),
 							),
+							'disableMergeTags' => true,
 						),
 						'days_after'  => array(
 							'el'               => 'input',
@@ -390,10 +393,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							),
 							'conditions'       => array(
 								array(
-									'value' => 'timing',
-									'key'   => 'after',
+									'key'   => 'timing',
+									'value' => 'after',
 								),
 							),
+							'disableMergeTags' => true,
 						),
 					),
 					'icon'           => array(
@@ -646,7 +650,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		$subscribers = noptin_get_subscribers(
 			array(
 				$field . '_query' => array(
-					'year'  => gmdate( 'Y', $time ),
 					'month' => gmdate( 'm', $time ),
 					'day'   => gmdate( 'd', $time ),
 				),
