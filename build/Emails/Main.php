@@ -62,9 +62,6 @@ class Main {
 		// Templates.
 		Templates::init();
 
-		// Revenue.
-		Revenue::init();
-
 		// Activity logs.
 		Logs\Main::init();
 

@@ -907,12 +907,15 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			return;
 		}
 
-		if ( function_exists( 'noptin_attribute_revenue_by_email_address' ) ) {
-			noptin_attribute_revenue_by_email_address( $order->get_billing_email() );
-
-			if ( self::is_complete() ) {
-				noptin_record_ecommerce_purchase( $order->get_total(), $order->get_billing_email() );
-			}
+		if ( self::is_complete() ) {
+			noptin_record_ecommerce_purchase(
+				array(
+					'order_id'        => $order->get_id(),
+					'total'           => $order->get_total(),
+					'email'           => $order->get_billing_email(),
+					'formatted_total' => $order->get_formatted_order_total(),
+				)
+			);
 		}
 
 		// Check that the current action is a valid trigger.

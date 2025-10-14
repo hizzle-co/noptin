@@ -180,6 +180,31 @@ class Subscriber extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Gets the subscriber's formatted conversion page.
+	 *
+	 * @return string
+	 */
+	public function get_formatted_conversion_page( $context = 'view' ) {
+		$url = $this->get_conversion_page( $context );
+
+		if ( empty( $url ) ) {
+			return '';
+		}
+
+		$text = str_replace( array( home_url(), 'https://', 'http://' ), '', $url );
+		if ( strlen( $text ) > 15 ) {
+			$text = substr( $text, 0, 15 ) . '...';
+		}
+
+		return sprintf(
+			'<a href="%s" title="%s" target="_blank">%s</a>',
+			esc_url( $url ),
+			esc_attr( $url ),
+			esc_html( $text )
+		);
+	}
+
+	/**
 	 * Gets the subscriber conversion page.
 	 *
 	 * @return string

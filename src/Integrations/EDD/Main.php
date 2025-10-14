@@ -37,6 +37,11 @@ class Main {
 
 		add_action( 'init', array( $this, 'register_custom_objects' ), 5 );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
+		add_filter( 'noptin_format_price_callback', __CLASS__ . '::price_format_cb' );
+	}
+
+	public static function price_format_cb() {
+		return 'edd_format_amount';
 	}
 
 	/**

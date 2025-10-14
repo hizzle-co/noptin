@@ -45,9 +45,10 @@ class Main {
 	 * @param int $campaign_id The campaign ID.
 	 * @param string $email The email address.
 	 * @param string $extra Additional information.
+	 * @param array $meta Additional metadata.
 	 * @return int|\WP_Error
 	 */
-	public static function create( $activity, $campaign_id, $email, $extra = null ) {
+	public static function create( $activity, $campaign_id, $email, $extra = null, $meta = array() ) {
 
 		if ( ! is_string( $email ) || ! is_email( $email ) ) {
 			return;
@@ -55,18 +56,22 @@ class Main {
 
 		$log = self::get( 0 );
 		$log->set( 'activity', $activity );
-		$log->set( 'campaign_id', $campaign_id );
 		$log->set( 'email', $email );
+		$log->set( 'campaign_id', (int) $campaign_id );
+		$log->set_metadata( $meta );
 
 		if ( $extra ) {
 			$log->set( 'activity_info', $extra );
 		}
 
-		// Maybe log for the parent campaign.
-		$parent = get_post_parent( $campaign_id );
+		if ( ! empty( $campaign_id ) ) {
 
-		if ( $parent ) {
-			$log->set( 'parent_id', $parent->ID );
+			// Maybe log for the parent campaign.
+			$parent = get_post_parent( $campaign_id );
+
+			if ( $parent ) {
+				$log->set( 'parent_id', $parent->ID );
+			}
 		}
 
 		return $log->save();
@@ -108,7 +113,6 @@ class Main {
 						'campaign_id'    => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
-							'nullable'    => false,
 							'description' => 'The campaign ID.',
 						),
 

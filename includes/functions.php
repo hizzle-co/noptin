@@ -2395,3 +2395,20 @@ function noptin_error_log( $log, $title = '', $file = '', $line = '', $exit = fa
 		exit;
 	}
 }
+
+/**
+ * Formats an amount.
+ *
+ * @since 3.5.0
+ * @return array
+ */
+function noptin_format_amount( $amount ) {
+	$callback  = apply_filters( 'noptin_format_price_callback', null );
+
+	if ( $callback && is_callable( $callback ) ) {
+		return call_user_func( $callback, $amount );
+	}
+
+	return number_format_i18n( $amount, 2 );
+}
+

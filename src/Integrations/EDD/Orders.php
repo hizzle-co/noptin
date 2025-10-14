@@ -360,12 +360,15 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 			return;
 		}
 
-		if ( function_exists( 'noptin_attribute_revenue_by_email_address' ) ) {
-			noptin_attribute_revenue_by_email_address( $order->email );
-
-			if ( 'complete' === $new_status ) {
-				noptin_record_ecommerce_purchase( $order->total, $order->email );
-			}
+		if ( 'complete' === $new_status ) {
+			noptin_record_ecommerce_purchase(
+				array(
+					'order_id'        => $order->id,
+					'total'           => $order->total,
+					'email'           => $order->email,
+					'formatted_total' => edd_format_amount( $order->total, true, $order->currency ),
+				)
+			);
 		}
 
 		$this->trigger(

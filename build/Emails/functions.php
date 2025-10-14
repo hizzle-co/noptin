@@ -647,52 +647,117 @@ function noptin_supports_ecommerce_tracking() {
 }
 
 /**
- * Returns the last email id that referred the current user.
- *
- * @since 3.2.0
- * @return int
- */
-function noptin_get_referring_email_id() {
-	return \Hizzle\Noptin\Emails\Revenue::get_referring_email_id();
-}
-
-/**
- * Attributes a referring email id to the provided email address.
- *
- * @since 3.2.0
- * @param int $campaign_id
- */
-function noptin_attribute_revenue_by_email_address( $email_address ) {
-	\Hizzle\Noptin\Emails\Revenue::save_by_email_address( $email_address );
-}
-
-/**
  * Records an ecommerce purchase.
  *
  * @since 3.0.0
- * @param float $amount
+ * @param array $args {
+ *     The purchase arguments.
+ *
+ *     @type float       $total           The purchase amount.
+ *     @type string|null $email           The purchaser’s email address.
+ *     @type string      $formatted_total The formatted amount.
+ *     @type int         $order_id        The order ID.
+ * }
+ * @return void
  */
-function noptin_record_ecommerce_purchase( $amount, $email_address = null ) {
-	// Abort if empty.
-	if ( empty( $amount ) ) {
+function noptin_record_ecommerce_purchase( $args ) {
+	// Skip if ecommerce tracking is disabled...
+	if ( ! get_noptin_option( 'enable_ecommerce_tracking', true ) || ! is_array( $args ) ) {
+		return;
+	}
+
+	// ... or the order id has already been recorded.
+	if ( noptin_order_id_recorded( $args['order_id'] ?? 0 ) ) {
+		return;
+	}
+
+	// Prepare the amount.
+	if ( ! is_numeric( $args['total'] ?? null ) || empty( $args['total'] ) ) {
+		return;
+	}
+
+	$amount = floatval( $args['total'] );
+
+	// Prepare the email address.
+	if ( ! is_string( $args['email'] ?? null ) || ! is_email( $args['email'] ) ) {
+		return;
+	}
+
+	$email_address = sanitize_email( $args['email'] );
+
+	// Fetch the related campaign id ( one clicked either last 30 days or since last purchase ).
+	$date_since = \Hizzle\Noptin\Emails\Logs\Main::query(
+		array(
+			'activity'           => 'purchase',
+			'email'              => $email_address,
+			'date_created_after' => '-30 days',
+			'orderby'            => 'date_created',
+			'order'              => 'DESC',
+			'number'             => 1,
+			'fields'             => 'date_created',
+		)
+	);
+	$date_since = current( $date_since );
+
+	$campaigns = \Hizzle\Noptin\Emails\Logs\Main::query(
+		array(
+			'activity'           => 'click',
+			'email'              => $email_address,
+			'date_created_after' => ! empty( $date_since ) ? "{$date_since} UTC" : '-30 days',
+			'orderby'            => 'date_created',
+			'order'              => 'DESC',
+			'number'             => 1,
+			'fields'             => 'campaign_id',
+		)
+	);
+
+	$campaign_id = current( $campaigns );
+
+	// Log the purchase.
+	\Hizzle\Noptin\Emails\Logs\Main::create(
+		'purchase',
+		$campaign_id,
+		$email_address,
+		$args['order_id'] ?? 0,
+		array(
+			'formatted_activity_info' => is_string( $args['formatted_total'] ?? null ) ? $args['formatted_total'] : noptin_format_amount( $amount ),
+		)
+	);
+
+	// Increase campaign stats.
+	if ( empty( $campaign_id ) ) {
 		return;
 	}
 
 	$lifetime_revenue = (float) get_option( 'noptin_emails_lifetime_revenue', 0 );
 	update_option( 'noptin_emails_lifetime_revenue', $lifetime_revenue + $amount, false );
 
-	if ( noptin_has_alk() ) {
+	increment_noptin_campaign_stat( $campaign_id, '_revenue', $amount );
+}
 
-		// Backward compatibility.
-		if ( is_numeric( $email_address ) ) {
-			$campaign_id   = $email_address;
-			$email_address = null;
-		} else {
-			$campaign_id = null;
-		}
-
-		\Hizzle\Noptin\Emails\Revenue::attribute_sale( $amount, $campaign_id, $email_address );
+/**
+ * Check if a given order id has already been recorded.
+ *
+ * @since 3.0.0
+ * @param string $order_id The prefixed order id, e.g, $integration::1234.
+ * @param string $activity The activity type. Either purchase or refund.
+ * @return bool True if the order id has already been recorded.
+ */
+function noptin_order_id_recorded( $order_id, $activity = 'purchase' ) {
+	if ( empty( $order_id ) || ! noptin_has_alk() ) {
+		return true;
 	}
+
+	// Fetch the related log id.
+	$count = \Hizzle\Noptin\Emails\Logs\Main::query(
+		array(
+			'activity'      => $activity,
+			'activity_info' => $order_id,
+		),
+		'count'
+	);
+
+	return $count > 0;
 }
 
 /**
