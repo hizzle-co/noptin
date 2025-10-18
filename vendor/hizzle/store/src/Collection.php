@@ -133,6 +133,23 @@ class Collection {
 	public $settings = array();
 
 	/**
+	 * Join configurations for related collections.
+	 *
+	 * Example:
+	 * array(
+	 *     'payments' => array(
+	 *         'collection' => 'store_namespace_payments',
+	 *         'on' => 'customer_id',
+	 *         'foreign_key' => 'id',
+	 *         'type' => 'LEFT' // Optional, defaults to 'INNER'
+	 *     )
+	 * )
+	 *
+	 * @var array
+	 */
+	public $joins = array();
+
+	/**
 	 * A list of class instances
 	 *
 	 * @var Collection[]
@@ -670,6 +687,18 @@ class Collection {
 			'enum'              => array_merge( $all_fields['main'], $all_fields['post'], array( 'id', 'include' ) ),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
+
+		// Add join parameter if joins are configured.
+		if ( ! empty( $this->joins ) ) {
+			$query_schema['join'] = array(
+				'description'       => __( 'Join aliases to include in the query. If not specified, no joins will be included.', 'hizzle-store' ),
+				'type'              => array( 'string', 'array' ),
+				'items'             => array(
+					'type' => 'string',
+				),
+				'validate_callback' => 'rest_validate_request_arg',
+			);
+		}
 
 		$this->query_schema = apply_filters( $this->hook_prefix( 'query_schema' ), $query_schema, $this );
 		return $this->query_schema;

@@ -102,7 +102,6 @@ class List_Table extends \WP_List_Table {
 		$action = $this->current_action();
 
 		if ( 'delete' === $action ) {
-
 			$deleted = 0;
 			foreach ( $_REQUEST['id'] as $id ) {
 				try {
