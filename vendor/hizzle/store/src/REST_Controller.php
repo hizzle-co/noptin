@@ -238,7 +238,6 @@ class REST_Controller extends \WP_REST_Controller {
 
 		// Allow operations by other unique keys.
 		if ( ! empty( $collection->keys['unique'] ) ) {
-
 			$keys = implode( '|', $collection->keys['unique'] );
 
 			// METHODS to READ, UPDATE and DELETE a single record.
@@ -365,6 +364,10 @@ class REST_Controller extends \WP_REST_Controller {
 							'extra_fields' => array(
 								'type'        => array( 'string', 'array' ),
 								'description' => __( 'Optional. Extra fields to include in the response.', 'hizzle-store' ),
+							),
+							'join'         => array(
+								'type'        => array( 'string', 'array' ),
+								'description' => __( 'Optional. Join aliases to include in the query.', 'hizzle-store' ),
 							),
 						)
 					),
@@ -608,38 +611,15 @@ class REST_Controller extends \WP_REST_Controller {
 
 		$max_pages = $total > 0 && $per_page > 1 ? ceil( $total / $per_page ) : 1;
 
-		if ( ! $request->get_param( '__next_as_array' ) ) {
-			$response = rest_ensure_response(
-				apply_filters(
-					$this->prefix_hook( 'get_items' ),
-					array(
-						'items'   => $items,
-						'summary' => (object) array(
-							'total' => array(
-								'label' => $query->get_total() === 1 ?
-									$collection->get_label( 'singular_name', $collection->get_singular_name() )
-									: $collection->get_label( 'name', $collection->get_name() ),
-								'value' => $query->get_total(),
-							),
-						),
-						'total'   => $total,
-					),
-					$query,
-					$request,
-					$this
-				)
-			);
-		} else {
-			$response = rest_ensure_response(
-				apply_filters(
-					$this->prefix_hook( 'get_collection_items' ),
-					$items,
-					$query,
-					$request,
-					$this
-				)
-			);
-		}
+		$response = rest_ensure_response(
+			apply_filters(
+				$this->prefix_hook( 'get_collection_items' ),
+				$items,
+				$query,
+				$request,
+				$this
+			)
+		);
 
 		// Add headers.
 		$response->header( 'X-WP-Total', $total );
@@ -1017,11 +997,9 @@ class REST_Controller extends \WP_REST_Controller {
 
 				// Special handling for metadata.
 				if ( 'metadata' === $arg ) {
-
 					$metadata = is_array( $request[ $arg ] ) ? $request[ $arg ] : array();
 
 					foreach ( $metadata as $key => $value ) {
-
 						if ( '' === $value ) {
 							$record->remove_meta( $key );
 						} else {
@@ -1072,7 +1050,6 @@ class REST_Controller extends \WP_REST_Controller {
 
 				// Normalize values when exporting.
 				if ( ! empty( $request['__fields'] ) ) {
-
 					if ( is_bool( $value ) ) {
 						$value = (int) $value;
 					}
@@ -1253,7 +1230,6 @@ class REST_Controller extends \WP_REST_Controller {
 
 		// Process the batches.
 		foreach ( $items as $action => $action_items ) {
-
 			if ( ! isset( $responses[ $action ] ) ) {
 				$responses[ $action ] = array();
 			}
@@ -1516,7 +1492,6 @@ class REST_Controller extends \WP_REST_Controller {
 			$hidden  = array( 'id' );
 
 			foreach ( $collection->get_props() as $prop ) {
-
 				if ( $prop->is_dynamic ) {
 					$hidden[] = $prop->name;
 				}
