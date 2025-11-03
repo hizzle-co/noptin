@@ -767,12 +767,12 @@ msgstr "Ungültige E-Mail-IDs"
 msgid "The IDs of the emails to reorder."
 msgstr "Die IDs der neu zu bestellenden E-Mails."
 
-#: build/Emails/Main.php:431
+#: build/Emails/Main.php:428
 #: build/Extensions/Menu.php:161
 msgid "Sequences / Courses"
 msgstr "Sequenzen / Kurse"
 
-#: build/Emails/Main.php:430
+#: build/Emails/Main.php:427
 msgid "Sequence / Course"
 msgstr "Sequenz / Kurs"
 
@@ -789,6 +789,7 @@ msgstr "Nachbestellen"
 msgid "No subject"
 msgstr "Kein Betreff"
 
+#: build/Subscribers/Actions.php:33
 #: build/Subscribers/Records.php:872
 msgid "Resubscribe"
 msgstr "Abonnement reaktivieren"
@@ -797,15 +798,15 @@ msgstr "Abonnement reaktivieren"
 msgid "Manage your preferences"
 msgstr "Verwalten Sie Ihre Einstellungen"
 
-#: includes/class-noptin-page.php:322
+#: includes/class-noptin-page.php:326
 msgid "Re-subscription"
 msgstr "Neuanmeldung"
 
-#: includes/class-noptin-page.php:301
+#: includes/class-noptin-page.php:305
 msgid "Unsubscription"
 msgstr "Abmeldung"
 
-#: includes/class-noptin-page.php:280
+#: includes/class-noptin-page.php:284
 msgid "Subscription Confirmation"
 msgstr "Anmeldungsbestätigung"
 
@@ -917,8 +918,8 @@ msgid "Restore"
 msgstr "Wiederherstellen"
 
 #: build/Emails/Admin/Table.php:278
-#: build/Emails/Main.php:458
-#: build/Emails/Main.php:459
+#: build/Emails/Main.php:455
+#: build/Emails/Main.php:456
 msgid "Trash"
 msgstr "Papierkorb"
 
@@ -2437,7 +2438,7 @@ msgid "Visual"
 msgstr "Visuell"
 
 #. Translators: %s is the current date.
-#: build/Emails/Main.php:402
+#: build/Emails/Main.php:399
 msgid "Newsletter - %s"
 msgstr "Newsletter - %s"
 
@@ -2565,73 +2566,73 @@ msgstr "Ungültige E-Mail-Adresse"
 msgid "Unique identifier for the post."
 msgstr "Eindeutige Kennung für den Beitrag."
 
-#: build/Emails/Main.php:417
+#: build/Emails/Main.php:414
 msgid "Click the button below to set-up your first automated email"
 msgstr "Klicken Sie auf die Schaltfläche unten, um Ihre erste automatische E-Mail einzurichten"
 
-#: build/Emails/Main.php:416
+#: build/Emails/Main.php:413
 msgid "New Automated Email"
 msgstr "Neue automatisierte E-Mail"
 
-#: build/Emails/Main.php:414
+#: build/Emails/Main.php:411
 msgid "Automated Email"
 msgstr "Automatisierte E-Mail"
 
-#: build/Emails/Main.php:398
+#: build/Emails/Main.php:395
 msgid "Click the button below to send your first newsletter campaign"
 msgstr "Klicken Sie auf die Schaltfläche unten, um Ihre erste Newsletter-Kampagne zu versenden"
 
-#: build/Emails/Main.php:287
+#: build/Emails/Main.php:284
 msgid "Email campaign updated."
 msgstr "E-Mail-Kampagne aktualisiert."
 
-#: build/Emails/Main.php:286
+#: build/Emails/Main.php:283
 msgid "Email campaign scheduled."
 msgstr "E-Mail-Kampagne geplant."
 
-#: build/Emails/Main.php:285
+#: build/Emails/Main.php:282
 msgid "Email campaign trashed."
 msgstr "E-Mail-Kampagne vernichtet."
 
-#: build/Emails/Main.php:284
+#: build/Emails/Main.php:281
 msgid "Email campaign reverted to draft."
 msgstr "E-Mail-Kampagne wurde zum Entwurf zurückgesetzt."
 
-#: build/Emails/Main.php:283
+#: build/Emails/Main.php:280
 msgid "Email campaign published."
 msgstr "E-Mail-Kampagne veröffentlicht."
 
-#: build/Emails/Main.php:282
+#: build/Emails/Main.php:279
 msgid "Email campaigns list"
 msgstr "Liste der E-Mail-Kampagnen"
 
-#: build/Emails/Main.php:281
+#: build/Emails/Main.php:278
 msgid "Filter campaigns list"
 msgstr "Liste der Kampagnen filtern"
 
-#: build/Emails/Main.php:280
+#: build/Emails/Main.php:277
 msgid "Uploaded to this campaign"
 msgstr "Zu dieser Kampagne hochgeladen"
 
-#: build/Emails/Main.php:279
+#: build/Emails/Main.php:276
 msgid "Insert into campaign"
 msgstr "In die Kampagne einfügen"
 
 #: build/Emails/Admin/views/campaigns.php:175
-#: build/Emails/Main.php:278
+#: build/Emails/Main.php:275
 msgid "Search Campaigns"
 msgstr "Kampagnen suchen"
 
-#: build/Emails/Main.php:277
+#: build/Emails/Main.php:274
 msgid "View Campaigns"
 msgstr "Kampagnen anzeigen"
 
-#: build/Emails/Main.php:272
-#: build/Emails/Main.php:273
+#: build/Emails/Main.php:269
+#: build/Emails/Main.php:270
 msgid "Add New Campaign"
 msgstr "Neue Kampagne hinzufügen"
 
-#: build/Emails/Main.php:271
+#: build/Emails/Main.php:268
 #: build/Emails/Records.php:33
 msgid "Email Campaign"
 msgstr "E-Mail-Kampagne"
@@ -2800,36 +2801,36 @@ msgstr "Standardwert"
 msgid "Enter one option per line. You can use pipes to separate values and labels."
 msgstr "Geben Sie eine Option pro Zeile ein. Sie können Pipes verwenden, um Werte und Bezeichnungen zu trennen."
 
-#: build/Subscribers/Subscriber.php:846
+#: build/Subscribers/Subscriber.php:871
 msgid "Email Confirmation URL"
 msgstr "E-Mail-Bestätigungs-URL"
 
-#: build/Subscribers/Subscriber.php:827
+#: build/Subscribers/Subscriber.php:852
 msgid "Resubscribe URL"
 msgstr "URL zum Abbestellen"
 
-#: build/Subscribers/Subscriber.php:819
+#: build/Subscribers/Subscriber.php:844
 msgid "Unsubscribe URL"
 msgstr "Abmelde URL"
 
-#: build/Subscribers/Subscriber.php:799
+#: build/Subscribers/Subscriber.php:824
 msgid "View User Profile"
 msgstr "User Profil anzeigen"
 
-#: build/Subscribers/Subscriber.php:757
+#: build/Subscribers/Subscriber.php:782
 msgid "Emails Sent"
 msgstr "Verschickte E-Mails"
 
-#: build/Subscribers/Subscriber.php:710
+#: build/Subscribers/Subscriber.php:735
 msgid "This email address is already subscribed."
 msgstr "Diese E-Mail-Adresse ist bereits angemeldet."
 
 #. translators: %s: email address
-#: build/Subscribers/Subscriber.php:699
+#: build/Subscribers/Subscriber.php:724
 msgid "Invalid email address: %s"
 msgstr "Ungültige E-Mail Adresse: %s"
 
-#: build/Subscribers/Subscriber.php:692
+#: build/Subscribers/Subscriber.php:717
 msgid "Invalid email address."
 msgstr "Ungültige E-Mail-Adresse."
 
@@ -3082,7 +3083,7 @@ msgstr "Aktionseinstellungen JSON"
 msgid "The action ID."
 msgstr "Die Aktions-ID."
 
-#: build/Emails/Logs/Main.php:98
+#: build/Emails/Logs/Main.php:103
 #: build/Tasks/Main.php:586
 #: src/DB/Schema.php:70
 #: src/DB/Schema.php:173
@@ -3094,11 +3095,11 @@ msgid "Product type"
 msgstr "Produkt Typ"
 
 #. translators: %s: Trigger description.
-#: build/Emails/Main.php:188
+#: build/Emails/Main.php:185
 msgid "Noptin will send this email %s"
 msgstr "Noptin wird diese E-Mail senden %s"
 
-#: build/Emails/Main.php:167
+#: build/Emails/Main.php:164
 msgid "Optional. Send this email only if certain conditions are met."
 msgstr "Optional. Senden Sie diese E-Mail nur, wenn bestimmte Bedingungen erfüllt sind."
 
@@ -3207,7 +3208,7 @@ msgstr "Senden Sie Ihren Abonnenten, Benutzern oder Kunden automatisch alle X Ta
 msgid "Periodic"
 msgstr "Zeitraum"
 
-#: build/Subscribers/Subscriber.php:838
+#: build/Subscribers/Subscriber.php:863
 msgid "Send Confirmation Email"
 msgstr "E-Mail-Bestätigung senden"
 
@@ -3590,12 +3591,12 @@ msgid "If that doesn't work, copy and paste the following link into your browser
 msgstr "Wenn das nicht funktioniert, kopieren Sie den folgenden Link und fügen ihn in Ihren Browser ein:"
 
 #. translators: %s is the campaign name.
-#: build/Subscribers/Subscriber.php:413
+#: build/Subscribers/Subscriber.php:438
 msgid "Opened email campaign %s"
 msgstr "Geöffnete E-Mail-Kampagne %s"
 
 #. translators: %2 is the campaign name, #1 is the link.
-#: build/Subscribers/Subscriber.php:451
+#: build/Subscribers/Subscriber.php:476
 msgid "Clicked on %1$s from campaign %2$s"
 msgstr "Auf %1$s aus der Kampagne %2$s geklickt"
 
@@ -3857,7 +3858,7 @@ msgstr "ist"
 
 #: build/Automation_Rules/Automation_Rule.php:540
 #: build/Automation_Rules/Automation_Rule.php:544
-#: build/Emails/Main.php:164
+#: build/Emails/Main.php:161
 #: build/Emails/assets/js/blocks.js:8
 #: build/Emails/assets/js/email-editor.js:15
 msgid "Conditional Logic"
@@ -3867,7 +3868,7 @@ msgstr "Bedingte Logik"
 msgid "Your website does not support that action."
 msgstr "Ihre Website unterstützt diese Aktion nicht."
 
-#: build/Emails/Main.php:155
+#: build/Emails/Main.php:152
 msgid "Your website does not support that trigger."
 msgstr "Ihre Website unterstützt diesen Auslöser nicht."
 
@@ -4764,7 +4765,7 @@ msgstr "Standard-Formular"
 msgid "Form:"
 msgstr "Formular:"
 
-#: build/Emails/Main.php:395
+#: build/Emails/Main.php:392
 #: build/Forms/Widgets/Form.php:122
 msgid "Newsletter"
 msgstr "Newsletter"
@@ -5711,12 +5712,12 @@ msgid "Date"
 msgstr "Datum"
 
 #: build/Emails/Admin/Table.php:986
-#: build/Subscribers/Subscriber.php:765
+#: build/Subscribers/Subscriber.php:790
 msgid "Clicked"
 msgstr "Geklickt"
 
 #: build/Emails/Admin/Table.php:985
-#: build/Subscribers/Subscriber.php:761
+#: build/Subscribers/Subscriber.php:786
 #: src/DB/Main.php:567
 msgid "Opened"
 msgstr "Geöffnet"
@@ -5770,7 +5771,7 @@ msgstr "Sind Sie sicher, dass Sie diese Kampagne löschen möchten?"
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: build/Emails/Main.php:442
+#: build/Emails/Main.php:439
 #: build/Emails/assets/js/email-editor.js:15
 msgid "Template"
 msgstr "Template"
@@ -5798,20 +5799,20 @@ msgstr "Sie müssen einen Betreff für Ihre E-Mail angeben."
 msgid "Please provide a valid email address"
 msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
 
-#: build/Emails/Main.php:274
+#: build/Emails/Main.php:271
 msgid "Edit Campaign"
 msgstr "Kampagne bearbeiten"
 
-#: build/Emails/Main.php:275
-#: build/Emails/Main.php:397
+#: build/Emails/Main.php:272
+#: build/Emails/Main.php:394
 msgid "New Campaign"
 msgstr "Neue Kampagne"
 
-#: build/Emails/Main.php:415
+#: build/Emails/Main.php:412
 msgid "Automated Emails"
 msgstr "Automatisierte E-Mails"
 
-#: build/Emails/Main.php:396
+#: build/Emails/Main.php:393
 msgid "Newsletters"
 msgstr "Newsletter"
 
@@ -5872,7 +5873,7 @@ msgid "Form Name"
 msgstr "Formularname"
 
 #: build/Emails/Admin/Table.php:264
-#: build/Emails/Main.php:276
+#: build/Emails/Main.php:273
 #: build/Forms/Admin/List_Table.php:71
 #: build/Dashboard/assets/js/dashboard.js:4
 #: build/Forms/assets/js/form-editor.js:14
@@ -5881,80 +5882,80 @@ msgstr "Vorschau"
 
 #: build/Emails/Admin/Main.php:311
 #: build/Emails/Admin/Main.php:312
-#: build/Emails/Main.php:270
-#: build/Emails/Main.php:289
+#: build/Emails/Main.php:267
+#: build/Emails/Main.php:286
 #: build/Emails/Records.php:32
 #: build/Dashboard/assets/js/dashboard.js:1
 msgid "Email Campaigns"
 msgstr "E-Mail-Kampagnen"
 
-#: includes/class-noptin-page.php:376
+#: includes/class-noptin-page.php:380
 msgid "You have successfully subscribed to this newsletter."
 msgstr "Sie haben sich erfolgreich für diesen Newsletter angemeldet."
 
-#: includes/class-noptin-page.php:364
+#: includes/class-noptin-page.php:368
 msgid "You have been resubscribed to our newsletter."
 msgstr "Sie haben sich erneut für unseren Newsletter angemeldet."
 
-#: includes/class-noptin-page.php:363
+#: includes/class-noptin-page.php:367
 msgid "Thank You, Again!"
 msgstr "Nochmals vielen Dank!"
 
-#: includes/class-noptin-page.php:352
+#: includes/class-noptin-page.php:356
 msgid "You have been unsubscribed from this mailing list and won't receive any emails from us."
 msgstr "Sie wurden von dieser Mailingliste abgemeldet und werden keine E-Mails mehr von uns erhalten."
 
-#: includes/class-noptin-page.php:351
-#: includes/class-noptin-page.php:375
+#: includes/class-noptin-page.php:355
+#: includes/class-noptin-page.php:379
 msgid "Thank You"
 msgstr "Vielen Dank"
 
-#: includes/class-noptin-page.php:294
+#: includes/class-noptin-page.php:298
 msgid "Where should we redirect subscribers after they confirm their emails?"
 msgstr "Wohin sollen wir die Abonnenten weiterleiten, nachdem sie ihre E-Mails bestätigt haben?"
 
-#: includes/class-noptin-page.php:292
+#: includes/class-noptin-page.php:296
 msgid "Confirmation Redirect"
 msgstr "Bestätigung der Umleitung"
 
-#: includes/class-noptin-page.php:288
+#: includes/class-noptin-page.php:292
 msgid "The message to show to subscribers after they confirm their email address. Only used if you do not provide a redirect url below."
 msgstr "Die Nachricht, die den Abonnenten angezeigt wird, nachdem sie ihre E-Mail-Adresse bestätigt haben. Wird nur verwendet, wenn Sie unten keine Weiterleitungsurl angeben."
 
-#: includes/class-noptin-page.php:285
+#: includes/class-noptin-page.php:289
 #: src/Integrations/PMPro/Membership_Levels.php:56
 msgid "Confirmation Message"
 msgstr "Bestätigungsnachricht"
 
-#: includes/class-noptin-page.php:336
+#: includes/class-noptin-page.php:340
 msgid "Where should we redirect subscribers after they resubscribe?"
 msgstr "Wohin sollen wir Abonnenten weiterleiten, nachdem sie sich erneut angemeldet haben?"
 
-#: includes/class-noptin-page.php:334
+#: includes/class-noptin-page.php:338
 msgid "Re-subscription Redirect"
 msgstr "Neuanmeldung Umleitung"
 
-#: includes/class-noptin-page.php:330
+#: includes/class-noptin-page.php:334
 msgid "The message to show to subscribers after they resubscribe. Only used if you do not provide a redirect url below."
 msgstr "Die Nachricht, die den Abonnenten nach der erneuten Anmeldung angezeigt wird. Wird nur verwendet, wenn Sie unten keine Weiterleitungsurl angeben."
 
-#: includes/class-noptin-page.php:327
+#: includes/class-noptin-page.php:331
 msgid "Re-subscription Message"
 msgstr "Nachricht zur Neuanmeldung"
 
-#: includes/class-noptin-page.php:315
+#: includes/class-noptin-page.php:319
 msgid "Where should we redirect subscribers after they unsubscribe?"
 msgstr "Wohin sollen wir Abonnenten weiterleiten, nachdem sie sich abgemeldet haben?"
 
-#: includes/class-noptin-page.php:313
+#: includes/class-noptin-page.php:317
 msgid "Unsubscription Redirect"
 msgstr "Abmeldungsumleitung"
 
-#: includes/class-noptin-page.php:309
+#: includes/class-noptin-page.php:313
 msgid "The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below."
 msgstr "Die Nachricht, die den Abonnenten angezeigt wird, nachdem sie sich abgemeldet haben. Wird nur verwendet, wenn Sie unten keine Weiterleitungsurl angeben."
 
-#: includes/class-noptin-page.php:306
+#: includes/class-noptin-page.php:310
 msgid "Unsubscription Message"
 msgstr "Abmeldungsnachricht"
 
@@ -6118,6 +6119,7 @@ msgid "Edit"
 msgstr "Bearbeiten"
 
 #: build/Forms/Renderer.php:177
+#: build/Subscribers/Actions.php:26
 #: build/Subscribers/Records.php:871
 #: includes/emails/class-generator.php:156
 msgid "Unsubscribe"
@@ -6125,7 +6127,7 @@ msgstr "Abmelden"
 
 #: build/Emails/Records.php:113
 #: build/Emails/Records.php:114
-#: build/Subscribers/Subscriber.php:810
+#: build/Subscribers/Subscriber.php:835
 msgid "Send Email"
 msgstr "E-Mail senden"
 
@@ -6259,7 +6261,7 @@ msgstr "Kontinent"
 msgid "Unsubscribed"
 msgstr "Abgemeldet"
 
-#: build/Subscribers/Subscriber.php:858
+#: build/Subscribers/Subscriber.php:883
 msgid "Conversion Page"
 msgstr "Konvertierung Seite"
 
@@ -6762,6 +6764,7 @@ msgstr "https://github.com/picocodes"
 
 #. Author of the plugin
 #: C:\app\laragon\www\noptin\wp-content\plugins\noptin\noptin.php
+#: templates/actions-page-confirm.php:9
 #: templates/actions-page.php:9
 msgid "Noptin Newsletter"
 msgstr "Noptin Newsletter"
@@ -6781,23 +6784,23 @@ msgstr "https://noptin.com"
 msgid "Noptin - WordPress Newsletter Plugin"
 msgstr "Noptin - WordPress Newsletter Plugin"
 
-#: build/Emails/Main.php:433
+#: build/Emails/Main.php:430
 msgid "Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc."
 msgstr ""
 
-#: build/Emails/Main.php:443
+#: build/Emails/Main.php:440
 msgid "Templates"
 msgstr ""
 
-#: build/Emails/Main.php:444
+#: build/Emails/Main.php:441
 msgid "New Email Template"
 msgstr ""
 
-#: build/Emails/Main.php:445
+#: build/Emails/Main.php:442
 msgid "Click the button below to set-up your first email template"
 msgstr ""
 
-#: build/Emails/Main.php:446
+#: build/Emails/Main.php:443
 msgid "Create your own reusable email templates."
 msgstr ""
 
@@ -6807,14 +6810,6 @@ msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:536
 msgid "Hide email field if the email address is already known"
-msgstr ""
-
-#: includes/class-noptin-page.php:190
-msgid "Please click the button below if you are not automatically redirected"
-msgstr ""
-
-#: includes/class-noptin-page.php:192
-msgid "Continue"
 msgstr ""
 
 #: build/Emails/Types/Recurring.php:352
@@ -6936,7 +6931,7 @@ msgid "Last sent:"
 msgstr ""
 
 #: build/Settings/Menu.php:330
-#: build/Subscribers/Subscriber.php:788
+#: build/Subscribers/Subscriber.php:813
 msgid "Manage Preferences URL"
 msgstr ""
 
@@ -6992,11 +6987,11 @@ msgstr ""
 msgid "Blocked"
 msgstr ""
 
-#: build/Subscribers/Subscriber.php:870
+#: build/Subscribers/Subscriber.php:895
 msgid "Block Subscriber"
 msgstr ""
 
-#: build/Subscribers/Subscriber.php:879
+#: build/Subscribers/Subscriber.php:904
 msgid "Unblock Subscriber"
 msgstr ""
 
@@ -7229,4 +7224,12 @@ msgstr ""
 
 #: src/Objects/Users.php:237
 msgid "Enter a comma separated list of user ids who should not receive this email"
+msgstr ""
+
+#: includes/class-noptin-page.php:43
+msgid "Please click the button below to confirm this action."
+msgstr ""
+
+#: templates/actions-page-confirm.php:111
+msgid "Confirm"
 msgstr ""
