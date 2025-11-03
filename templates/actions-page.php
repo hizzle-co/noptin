@@ -7,42 +7,42 @@
         <link rel="profile" href="http://gmpg.org/xfn/11">
         <meta name="robots" content="noindex, nofollow" />
         <title><?php esc_html_e( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
+        <?php $colors = noptin_get_color_scheme(); ?>
         <style>
-            .noptin-actions-page {
-                background: #f5f5f5;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                overflow: auto;
-            }
-
-            .noptin-actions-page-inner {
-                width: 90%;
-                max-width: 500px;
-                background: #fff;
-                padding: 20px;
-                border: 2px solid #616161;
-                border-radius: 4px;
-                font-size: 16px;
-                margin-top: 20px;
-                margin-bottom: 20px;
+            * {
+			    margin: 0;
+				padding: 0;
+				box-sizing: border-box;
                 word-wrap: break-word;
-            }
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+				background: linear-gradient(135deg, <?php echo esc_attr( $colors['gradient_start'] ); ?> 0%, <?php echo esc_attr( $colors['gradient_end'] ); ?> 100%);
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 20px;
+			}
+
+            .container {
+				background: white;
+				border-radius: 12px;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+				padding: 40px;
+				max-width: 500px;
+				width: 100%;
+			}
 
             h1 {
                 display: block;
                 font-size: 2em;
-                margin-block-start: 0.67em;
+                margin-block-start: 0;
                 margin-block-end: 0.67em;
                 margin-inline-start: 0px;
                 margin-inline-end: 0px;
                 font-weight: bold;
-            }
-
-            .noptin-actions-page-inner * {
-                word-wrap: break-word;
             }
 
             .noptin-text {
@@ -118,12 +118,47 @@
                 margin-top: .25rem
             }
 
+            button, .button {
+				background: <?php echo esc_attr( $colors['primary'] ); ?>;
+				color: white;
+				border: none;
+				border-radius: 8px;
+				padding: 14px 32px;
+				font-size: 16px;
+				font-weight: 600;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				width: 100%;
+				max-width: 200px;
+			}
+
+            button:hover, .button:hover {
+				background: <?php echo esc_attr( $colors['primary_dark'] ); ?>;
+				transform: translateY(-2px);
+				box-shadow: 0 4px 12px <?php echo esc_attr( $colors['shadow_rgba'] ); ?>;
+			}
+
+            button:active, .button:hover {
+				transform: translateY(0);
+			}
+
+            @media (max-width: 480px) {
+				.container {
+					padding: 30px 20px;
+				}
+				h1 {
+					font-size: 20px;
+				}
+				p {
+					font-size: 14px;
+				}
+			}
         </style>
     </head>
 
-    <body class='noptin-actions-page'>
-        <div class="noptin-actions-page-inner">
-            <?php echo do_shortcode( '[noptin_action_page]' ); ?>
-        </div>
-    </body>
+    <body>
+		<div class="container">
+		    <?php echo do_shortcode( '[noptin_action_page]' ); ?>
+		</div>
+	</body>
 </html>

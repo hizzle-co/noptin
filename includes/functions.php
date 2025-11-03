@@ -2412,3 +2412,91 @@ function noptin_format_amount( $amount ) {
 	return number_format_i18n( $amount, 2 );
 }
 
+/**
+ * Adjusts the brightness of a hex color.
+ *
+ * @since 3.5.0
+ * @param string $hex The hex color code (with or without #).
+ * @param int $percent Positive to lighten, negative to darken (-100 to 100).
+ * @return string The adjusted hex color.
+ */
+function noptin_adjust_color_brightness( $hex, $percent ) {
+	// Remove # if present.
+	$hex = ltrim( $hex, '#' );
+
+	// Convert to RGB.
+	if ( 3 === strlen( $hex ) ) {
+		$r = hexdec( substr( $hex, 0, 1 ) . substr( $hex, 0, 1 ) );
+		$g = hexdec( substr( $hex, 1, 1 ) . substr( $hex, 1, 1 ) );
+		$b = hexdec( substr( $hex, 2, 1 ) . substr( $hex, 2, 1 ) );
+	} else {
+		$r = hexdec( substr( $hex, 0, 2 ) );
+		$g = hexdec( substr( $hex, 2, 2 ) );
+		$b = hexdec( substr( $hex, 4, 2 ) );
+	}
+
+	// Adjust brightness.
+	$r = (int) max( 0, min( 255, $r + ( $r * $percent / 100 ) ) );
+	$g = (int) max( 0, min( 255, $g + ( $g * $percent / 100 ) ) );
+	$b = (int) max( 0, min( 255, $b + ( $b * $percent / 100 ) ) );
+
+	// Convert back to hex.
+	return '#' . str_pad( dechex( $r ), 2, '0', STR_PAD_LEFT ) .
+		str_pad( dechex( $g ), 2, '0', STR_PAD_LEFT ) .
+		str_pad( dechex( $b ), 2, '0', STR_PAD_LEFT );
+}
+
+/**
+ * Converts a hex color to RGBA.
+ *
+ * @since 3.5.0
+ * @param string $hex The hex color code (with or without #).
+ * @param float $alpha The opacity (0 to 1).
+ * @return string The RGBA color string.
+ */
+function noptin_hex_to_rgba( $hex, $alpha = 1 ) {
+	// Remove # if present.
+	$hex = ltrim( $hex, '#' );
+
+	// Convert to RGB.
+	if ( 3 === strlen( $hex ) ) {
+		$r = hexdec( substr( $hex, 0, 1 ) . substr( $hex, 0, 1 ) );
+		$g = hexdec( substr( $hex, 1, 1 ) . substr( $hex, 1, 1 ) );
+		$b = hexdec( substr( $hex, 2, 1 ) . substr( $hex, 2, 1 ) );
+	} else {
+		$r = hexdec( substr( $hex, 0, 2 ) );
+		$g = hexdec( substr( $hex, 2, 2 ) );
+		$b = hexdec( substr( $hex, 4, 2 ) );
+	}
+
+	return "rgba($r, $g, $b, $alpha)";
+}
+
+/**
+ * Returns the Noptin color scheme based on the brand color.
+ *
+ * @since 3.5.0
+ * @return array Array of colors for use in templates.
+ */
+function noptin_get_color_scheme() {
+	// Get the brand color from options, default to Dodger Blue.
+	$color = get_noptin_option( 'brand_color', '#1a82e2' );
+
+	// Ensure it's a valid hex color.
+	if ( ! preg_match( '/^#[a-fA-F0-9]{6}$/', $color ) && ! preg_match( '/^#[a-fA-F0-9]{3}$/', $color ) ) {
+		$color = '#1a82e2';
+	}
+
+	// Calculate related colors.
+	$colors = array(
+		'primary'            => $color,
+		'primary_dark'       => noptin_adjust_color_brightness( $color, -15 ),
+		'primary_light'      => noptin_adjust_color_brightness( $color, 10 ),
+		'gradient_start'     => $color,
+		'gradient_end'       => noptin_adjust_color_brightness( $color, -15 ),
+		'shadow_rgba'        => noptin_hex_to_rgba( $color, 0.4 ),
+	);
+
+	return apply_filters( 'noptin_color_scheme', $colors );
+}
+

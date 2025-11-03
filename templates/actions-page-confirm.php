@@ -7,6 +7,7 @@
         <link rel="profile" href="http://gmpg.org/xfn/11">
         <meta name="robots" content="noindex, nofollow" />
         <title><?php echo esc_html( $action_label ); ?> - <?php esc_html_e( 'Noptin Newsletter', 'newsletter-optin-box' ); ?></title>
+        <?php $colors = noptin_get_color_scheme(); ?>
         <style>
             * {
 			    margin: 0;
@@ -16,7 +17,7 @@
 
 			body {
 				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				background: linear-gradient(135deg, <?php echo esc_attr( $colors['gradient_start'] ); ?> 0%, <?php echo esc_attr( $colors['gradient_end'] ); ?> 100%);
 				min-height: 100vh;
 				display: flex;
 				align-items: center;
@@ -37,7 +38,7 @@
 			.icon {
 				width: 64px;
 				height: 64px;
-				background: #667eea;
+				background: <?php echo esc_attr( $colors['primary'] ); ?>;
 				border-radius: 50%;
 				display: flex;
 				align-items: center;
@@ -62,7 +63,7 @@
 			}
 
             button {
-				background: #667eea;
+				background: <?php echo esc_attr( $colors['primary'] ); ?>;
 				color: white;
 				border: none;
 				border-radius: 8px;
@@ -76,9 +77,9 @@
 			}
 
             button:hover {
-				background: #5568d3;
+				background: <?php echo esc_attr( $colors['primary_dark'] ); ?>;
 				transform: translateY(-2px);
-				box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+				box-shadow: 0 4px 12px <?php echo esc_attr( $colors['shadow_rgba'] ); ?>;
 			}
 
             button:active {
@@ -110,6 +111,6 @@
 						<?php esc_html_e( 'Confirm', 'newsletter-optin-box' ); ?>
 					</button>
 				</form>
-			</div>
-		</body>
+		</div>
+	</body>
 </html>
