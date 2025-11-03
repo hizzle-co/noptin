@@ -845,10 +845,16 @@ class Record {
 	public function display_prop( $key ) {
 
 		// Check if we have a special display method for this property.
+		// This is deprecated, use get_formatted_{prop} instead.
 		$method = 'the_' . $key;
 
 		if ( method_exists( $this, $method ) ) {
 			return $this->$method();
+		}
+
+		// Check if we have a special formatted getter for this property.
+		if ( is_callable( array( $this, "get_formatted_{$key}" ) ) ) {
+			return $this->{"get_formatted_{$key}"}();
 		}
 
 		// Retrieve the raw value.
