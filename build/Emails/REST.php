@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class REST extends \WP_REST_Posts_Controller {
 
-    /**
+	/**
 	 * Registers the routes for posts.
 	 *
 	 * @since 4.7.0

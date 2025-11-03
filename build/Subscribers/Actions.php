@@ -21,9 +21,17 @@ class Actions {
 
 		// User unsubscribe.
 		add_action( 'noptin_actions_handle_unsubscribe', array( __CLASS__, 'unsubscribe_user' ) );
+		noptin()->actions_page->add_confirmable_action(
+			'unsubscribe',
+			__( 'Unsubscribe', 'newsletter-optin-box' )
+		);
 
 		// User resubscribe.
 		add_action( 'noptin_actions_handle_resubscribe', array( __CLASS__, 'resubscribe_user' ) );
+		noptin()->actions_page->add_confirmable_action(
+			'resubscribe',
+			__( 'Resubscribe', 'newsletter-optin-box' )
+		);
 
 		// User confirm.
 		add_action( 'noptin_actions_handle_confirm', array( __CLASS__, 'handle_confirm' ) );

@@ -11,6 +11,11 @@ defined( 'ABSPATH' ) || exit;
 class Noptin_Page {
 
 	/**
+	 * Confirm actions.
+	 */
+	private $confirmable_actions = array();
+
+	/**
 	 * Class Constructor.
 	 */
 	public function __construct() {
@@ -23,6 +28,20 @@ class Noptin_Page {
 
 		// Pages settings.
 		add_filter( 'noptin_get_settings', array( $this, 'add_options' ), 100 );
+	}
+
+	/**
+	 * Adds a confirmable action.
+	 *
+	 * @param string $action
+	 * @param string $label
+	 * @param string $description
+	 */
+	public function add_confirmable_action( $action, $label, $description = null ) {
+		$this->confirmable_actions[ $action ] = array(
+			'label'       => $label,
+			'description' => $description ?? __( 'Please click the button below to confirm this action.', 'newsletter-optin-box' ),
+		);
 	}
 
 	/**
@@ -172,33 +191,18 @@ class Noptin_Page {
 		return noptin_parse_email_content_tags( $content );
 	}
 
-	public function maybe_autosubmit_form() {
-		if ( ! empty( $_GET['noptin-autosubmit'] ) ) {
-			return;
+	public function maybe_autosubmit_form( $action, $action_info ) {
+		if ( empty( $_GET['noptin-autosubmit'] ) ) {
+			get_noptin_template(
+				'actions-page-confirm.php',
+				array(
+					'action_name'        => $action,
+					'action_label'       => $action_info['label'],
+					'action_description' => $action_info['description'],
+				)
+			);
+			exit;
 		}
-
-		$url = add_query_arg( 'noptin-autosubmit', '1' );
-		?>
-		<!DOCTYPE html>
-		<html>
-			<head>
-				<title>Confirm Action</title>
-			</head>
-			<body>
-				<form id="noptin-autosubmit-form" method="post" action="<?php echo esc_url( $url ); ?>">
-					<input type="hidden" name="noptin-autosubmit" value="1">
-					<p><?php esc_html_e( 'Please click the button below if you are not automatically redirected', 'newsletter-optin-box' ); ?></p>
-					<button type="submit">
-						<?php esc_html_e( 'Continue', 'newsletter-optin-box' ); ?>
-					</button>
-				</form>
-				<script>
-					document.getElementById('noptin-autosubmit-form').submit();
-				</script>
-			</body>
-		</html>
-		<?php
-		exit;
 	}
 
 	public function listen() {
@@ -227,8 +231,8 @@ class Noptin_Page {
 		do_action( 'noptin_pre_load_actions_page', $this->get_request_recipient(), $action, $this );
 
 		// Prevent accidental actions.
-		if ( apply_filters( "noptin_auto_submit_actions_page_for_$action", true ) ) {
-			$this->maybe_autosubmit_form();
+		if ( isset( $this->confirmable_actions[ $action ] ) ) {
+			$this->maybe_autosubmit_form( $action, $this->confirmable_actions[ $action ] );
 		}
 
 		/*
