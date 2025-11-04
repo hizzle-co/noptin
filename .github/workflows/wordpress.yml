@@ -10,7 +10,7 @@ jobs:
     - name: Configure Git safe directory
       run: git config --global --add safe.directory /github/workspace
     - name: Checkout code
-      uses: actions/checkout@master
+      uses: actions/checkout@v5
     - name: Install SVN
       run: sudo apt-get install subversion -y
     - name: WordPress Plugin Deploy
