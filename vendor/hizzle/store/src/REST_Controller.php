@@ -1494,7 +1494,7 @@ class REST_Controller extends \WP_REST_Controller {
 		try {
 			$schema  = array();
 			$default = 'id';
-			$hidden  = array( 'id' );
+			$hidden  = $collection->hidden;
 
 			foreach ( $collection->get_props() as $prop ) {
 				if ( $prop->is_dynamic ) {
@@ -1563,7 +1563,7 @@ class REST_Controller extends \WP_REST_Controller {
 					'hizzle_rest_' . $this->get_normalized_rest_base() . '_collection_js_params',
 					array(
 						'schema'        => array_values( $schema ),
-						'ignore'        => array(),
+						'ignore'        => $collection->ignore,
 						'hidden'        => $hidden,
 						'routes'        => $this->get_admin_app_routes(),
 						'labels'        => (object) $collection->labels,

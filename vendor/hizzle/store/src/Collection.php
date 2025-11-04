@@ -83,6 +83,20 @@ class Collection {
 	protected $props = array();
 
 	/**
+	 * A list of hidden props.
+	 *
+	 * @var string[]
+	 */
+	public $hidden = array( 'id' );
+
+	/**
+	 * A list of props to ignore.
+	 *
+	 * @var string[]
+	 */
+	public $ignore = array();
+
+	/**
 	 * Known fields.
 	 *
 	 * @since 1.0.0
@@ -955,7 +969,7 @@ class Collection {
 			);
 
 			if ( empty( $result ) && ! empty( $wpdb->last_error ) ) {
-				noptin_error_log( 'Error creating record: ' . $wpdb->last_error );
+				error_log( 'Error creating record: ' . $wpdb->last_error );
 			}
 
 			return $result ? $wpdb->insert_id : 0;
