@@ -480,7 +480,7 @@ class Query {
 				}
 
 				// We cannot use the $field variable directly since it may contain dots which are not allowed in SQL aliases.
-				$field = esc_sql( 'cast_' . str_replace( '.', '_', $field ) );
+				$field = esc_sql( str_replace( '.', '_', $field ) );
 
 				// Handle casting and timezone conversion
 				if ( $cast ) {
@@ -502,13 +502,13 @@ class Query {
 							break;
 						default:
 							// If an unsupported cast is provided, just use the field as is
-							$field = $cast;
+							$field = esc_sql( $cast );
 							break;
 					}
 				}
 
-				$this->query_groupby .= ', ' . $field;
-				$this->query_fields[] = $table_field . ' AS ' . $field;
+				$this->query_groupby .= ', `' . $field . '`';
+				$this->query_fields[] = $table_field . ' AS `' . $field . '`';
 			}
 
 			$this->query_groupby = 'GROUP BY ' . ltrim( $this->query_groupby, ',' );
