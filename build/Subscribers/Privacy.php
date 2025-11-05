@@ -140,6 +140,9 @@ class Privacy {
 	public static function erase_subscriber_data( $email_address ) {
 		$subscriber = noptin_get_subscriber( $email_address );
 
+		// Delete email logs.
+		noptin()->db()->delete_where( array( 'email' => $email_address ), 'email_logs' );
+
 		if ( ! $subscriber->exists() ) {
 			return array(
 				'items_removed'  => false,
