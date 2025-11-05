@@ -16,11 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * @var Migrate The migrator.
-	 */
-	public $migrate;
-
-	/**
 	 * The installer.
 	 *
 	 * @var Installer
@@ -104,9 +99,6 @@ class Main {
 	public function load() {
 
 		do_action( 'noptin_db_before_init', $this );
-
-		// Migrator.
-		$this->migrate = new Migrate();
 
 		// The installer.
 		$this->installer = new Installer();
