@@ -21,11 +21,6 @@ class Main {
 	public $migrate;
 
 	/**
-	 * @var Schema The database schema.
-	 */
-	public $schema;
-
-	/**
 	 * The installer.
 	 *
 	 * @var Installer
@@ -113,14 +108,11 @@ class Main {
 		// Migrator.
 		$this->migrate = new Migrate();
 
-		// Schema.
-		$this->schema = new Schema();
-
 		// The installer.
 		$this->installer = new Installer();
 
 		// Init the data store.
-		$this->store = \Hizzle\Store\Store::init( 'noptin', $this->schema->get_schema() );
+		$this->store = \Hizzle\Store\Store::init( 'noptin', apply_filters( 'noptin_db_schema', array() ) );
 
 		// Init the webhooks manager.
 		$this->webhooks = new \Hizzle\Store\Webhooks( $this->store );

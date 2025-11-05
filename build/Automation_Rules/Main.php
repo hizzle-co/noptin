@@ -27,6 +27,9 @@ class Main {
 			Admin\Main::init();
 		}
 
+		// Schema.
+		Schema::init();
+
 		// Anniversary helper.
 		Anniversary_Helper::init();
 

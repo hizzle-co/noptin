@@ -1,157 +1,20 @@
 <?php
 
-namespace Hizzle\Noptin\DB;
-
-/**
- * Contains the main DB schema class.
- *
- * @since   1.0.0
- */
+namespace Hizzle\Noptin\Subscribers;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
- * The main DB schema class.
+ * The subscribers' DB schema class.
  */
 class Schema {
-
-	/**
-	 * @var string The database schema.
-	 */
-	protected $schema;
 
 	/**
 	 * Loads the class.
 	 *
 	 */
-	public function __construct() {
-		add_filter( 'noptin_db_schema', array( $this, 'add_automation_rules_table' ) );
-		add_filter( 'noptin_db_schema', array( $this, 'add_subscribers_table' ) );
-	}
-
-	/**
-	 * Retrieves the database schema.
-	 *
-	 * @return array
-	 */
-	public function get_schema() {
-
-		if ( ! empty( $this->schema ) ) {
-			return $this->schema;
-		}
-
-		$this->schema = apply_filters( 'noptin_db_schema', array() );
-		return $this->schema;
-	}
-
-	/**
-	 * Adds the automation rules table to the schema.
-	 *
-	 * @param array $schema The database schema.
-	 * @return array
-	 */
-	public function add_automation_rules_table( $schema ) {
-
-		return array_merge(
-			$schema,
-			array(
-
-				// Automation rules.
-				'automation_rules' => array(
-					'object'        => '\Hizzle\Noptin\Automation_Rules\Automation_Rule',
-					'singular_name' => 'automation_rule',
-					'props'         => array(
-
-						'id'               => array(
-							'type'        => 'BIGINT',
-							'length'      => 20,
-							'nullable'    => false,
-							'extra'       => 'AUTO_INCREMENT',
-							'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
-						),
-
-						'action_id'        => array(
-							'type'        => 'VARCHAR',
-							'length'      => 200,
-							'description' => __( 'The action ID.', 'newsletter-optin-box' ),
-							'nullable'    => false,
-						),
-
-						'action_settings'  => array(
-							'type'              => 'TEXT',
-							'description'       => __( 'Action settings JSON', 'newsletter-optin-box' ),
-							'extra_rest_schema' => array(
-								'type' => array( 'object', 'array', 'null', 'string' ),
-							),
-						),
-
-						'trigger_id'       => array(
-							'type'        => 'VARCHAR',
-							'length'      => 200,
-							'description' => __( 'The trigger ID.', 'newsletter-optin-box' ),
-							'nullable'    => false,
-						),
-
-						'trigger_settings' => array(
-							'type'              => 'TEXT',
-							'description'       => __( 'Trigger settings JSON', 'newsletter-optin-box' ),
-							'extra_rest_schema' => array(
-								'type' => array( 'object', 'array', 'null', 'string' ),
-							),
-						),
-
-						'status'           => array(
-							'type'        => 'TINYINT',
-							'length'      => 1,
-							'nullable'    => false,
-							'default'     => 1, // 1 === active, 0 === inactive.
-							'description' => __( 'The rule status', 'newsletter-optin-box' ),
-						),
-
-						'times_run'        => array(
-							'type'        => 'BIGINT',
-							'length'      => 20,
-							'nullable'    => false,
-							'default'     => 0,
-							'readonly'    => true,
-							'description' => __( 'The number of times this rule has run.', 'newsletter-optin-box' ),
-						),
-
-						'delay'            => array(
-							'type'        => 'BIGINT',
-							'length'      => 20,
-							'default'     => 0,
-							'description' => __( 'The number of seconds to wait before firing the action.', 'newsletter-optin-box' ),
-						),
-
-						'created_at'       => array(
-							'type'        => 'DATETIME',
-							'nullable'    => false,
-							'readonly'    => true,
-							'description' => __( 'The date this rule was created.', 'newsletter-optin-box' ),
-						),
-
-						'updated_at'       => array(
-							'type'        => 'DATETIME',
-							'nullable'    => false,
-							'readonly'    => true,
-							'description' => __( 'The date this rule was last modified.', 'newsletter-optin-box' ),
-						),
-
-						'metadata'         => array(
-							'type'        => 'TEXT',
-							'description' => __( 'A key value array of additional metadata about this rule', 'newsletter-optin-box' ),
-						),
-					),
-
-					'keys'          => array(
-						'primary'    => array( 'id' ),
-						'action_id'  => array( 'action_id' ),
-						'trigger_id' => array( 'trigger_id' ),
-					),
-				),
-			)
-		);
+	public static function init() {
+		add_filter( 'noptin_db_schema', array( __CLASS__, 'add_to_schema' ) );
 	}
 
 	/**
@@ -160,12 +23,12 @@ class Schema {
 	 * @param array $schema The database schema.
 	 * @return array
 	 */
-	public function add_subscribers_table( $schema ) {
+	public static function add_to_schema( $schema ) {
 
 		// Basic props.
 		$props = array(
 
-			'id'         => array(
+			'id'    => array(
 				'type'        => 'BIGINT',
 				'length'      => 20,
 				'nullable'    => false,
@@ -173,14 +36,14 @@ class Schema {
 				'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
 			),
 
-			'name'       => array(
+			'name'  => array(
 				'type'        => 'VARCHAR',
 				'length'      => 200,
 				'description' => __( "The subscriber's name.", 'newsletter-optin-box' ),
 				'is_dynamic'  => true,
 			),
 
-			'email'      => array(
+			'email' => array(
 				'type'        => 'VARCHAR',
 				'length'      => 255,
 				'description' => __( "The subscriber's email address.", 'newsletter-optin-box' ),
@@ -297,7 +160,7 @@ class Schema {
 								'sanitize_callback' => 'wp_kses_post_deep',
 							),
 
-							'total_emails_sent' => array(
+							'total_emails_sent'        => array(
 								'type'        => 'BIGINT',
 								'length'      => 20,
 								'nullable'    => false,
@@ -306,7 +169,7 @@ class Schema {
 								'description' => __( 'Total number of emails sent to this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'total_emails_opened' => array(
+							'total_emails_opened'      => array(
 								'type'        => 'BIGINT',
 								'length'      => 20,
 								'nullable'    => false,
@@ -315,7 +178,7 @@ class Schema {
 								'description' => __( 'Total number of emails opened by this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'total_links_clicked' => array(
+							'total_links_clicked'      => array(
 								'type'        => 'BIGINT',
 								'length'      => 20,
 								'nullable'    => false,
@@ -324,28 +187,28 @@ class Schema {
 								'description' => __( 'Total number of links clicked by this subscriber.', 'newsletter-optin-box' ),
 							),
 
-							'last_email_sent_date' => array(
+							'last_email_sent_date'     => array(
 								'type'        => 'DATETIME',
 								'description' => __( 'Date when subscriber was last sent an email.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 								'readonly'    => true,
 							),
 
-							'last_email_opened_date' => array(
+							'last_email_opened_date'   => array(
 								'type'        => 'DATETIME',
 								'description' => __( 'Date when subscriber last opened an email.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 								'readonly'    => true,
 							),
 
-							'last_email_clicked_date' => array(
+							'last_email_clicked_date'  => array(
 								'type'        => 'DATETIME',
 								'description' => __( 'Date when subscriber last clicked a link in an email.', 'newsletter-optin-box' ),
 								'nullable'    => true,
 								'readonly'    => true,
 							),
 
-							'email_engagement_score' => array(
+							'email_engagement_score'   => array(
 								'type'        => 'DECIMAL',
 								'length'      => '3,2',
 								'nullable'    => false,
@@ -387,7 +250,7 @@ class Schema {
 								'readonly'    => true,
 							),
 
-							'manage_preferences_url' => array(
+							'manage_preferences_url'   => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's manage preferences URL.", 'newsletter-optin-box' ),
 								'is_dynamic'  => true,
@@ -418,7 +281,7 @@ class Schema {
 						)
 					),
 
-					'keys'          => array(
+					'keys'           => array(
 						'primary' => array( 'id' ),
 						'unique'  => array( 'confirm_key', 'email' ),
 					),

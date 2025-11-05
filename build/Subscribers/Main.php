@@ -34,6 +34,9 @@ class Main {
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		}
 
+		// Initialize the schema.
+		Schema::init();
+
 		// Initialize the privacy class.
 		Privacy::init();
 
