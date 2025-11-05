@@ -37,5 +37,4 @@ class Email extends Text {
 	public function sanitize_value( $value ) {
 		return '' === $value ? '' : sanitize_email( $value );
 	}
-
 }

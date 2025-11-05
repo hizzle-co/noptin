@@ -83,7 +83,6 @@ class Dropdown extends Base {
 			<?php endforeach; ?>
 		</select>
 		<?php
-
 	}
 
 	/**
@@ -109,7 +108,6 @@ class Dropdown extends Base {
 				</label>
 			<?php endforeach; ?>
 		<?php
-
 	}
 
 	/**
@@ -159,7 +157,7 @@ class Dropdown extends Base {
 				$schema[ $column ]['length'] = $max_length + 1;
 			}
 
-			$schema[ $column ]['enum']   = $available_options;
+			$schema[ $column ]['enum'] = $available_options;
 		}
 
 		return $schema;

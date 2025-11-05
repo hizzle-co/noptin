@@ -41,6 +41,5 @@ class Radio extends Dropdown {
 				</label>
 			<?php endforeach; ?>
 		<?php
-
 	}
 }

@@ -40,7 +40,5 @@ class Textarea extends Base {
 				<?php endif; ?>
 			><?php echo isset( $args['value'] ) ? esc_textarea( $args['value'] ) : ''; ?></textarea>
 		<?php
-
 	}
-
 }

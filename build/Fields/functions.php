@@ -79,6 +79,11 @@ function get_noptin_custom_field_types() {
 				'label'      => __( 'Date', 'newsletter-optin-box' ),
 				'class'      => '\\Hizzle\\Noptin\\Fields\\Types\\Date',
 			),
+			'date_time'      => array(
+				'predefined' => false,
+				'label'      => __( 'Date & Time', 'newsletter-optin-box' ),
+				'class'      => '\\Hizzle\\Noptin\\Fields\\Types\\Date_Time',
+			),
 			'checkbox'       => array(
 				'predefined' => false,
 				'label'      => __( 'Checkbox', 'newsletter-optin-box' ),

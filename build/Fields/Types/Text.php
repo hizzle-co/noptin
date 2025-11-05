@@ -37,8 +37,8 @@ class Text extends Base {
 		$has_no_placeholder = empty( $args['placeholder'] ) || $placeholder === $args['label'];
 
 		$attrs = array(
-			'name' => $args['name'],
-			'id'   => $args['id'],
+			'name'  => $args['name'],
+			'id'    => $args['id'],
 			'type'  => $this->get_input_type(),
 			'value' => $args['value'],
 			'class' => array(
@@ -62,10 +62,9 @@ class Text extends Base {
 		?>
 
 			<label class="noptin-label" for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo empty( $args['react'] ) ? wp_kses_post( $args['label'] ) : '{{field.type.label}}'; ?></label>
-			<input <?php noptin_attr( 'custom_field_' . $attrs['type'], $attrs, $args ) ?>/>
+			<input <?php noptin_attr( 'custom_field_' . $attrs['type'], $attrs, $args ); ?>/>
 
 		<?php
-
 	}
 
 	/**
