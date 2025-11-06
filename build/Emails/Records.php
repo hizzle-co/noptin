@@ -130,8 +130,24 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
 	 */
 	public static function run_send_email_action( $rule, $args, $smart_tags ) {
+		// Avoid resending the email when a post is re-published.
 		if ( ! empty( $args['post_meta'] ) ) {
-			update_post_meta( (int) $args['post_meta']['id'], $args['post_meta']['key'], array( (int) $args['post_meta']['id'], (int) $rule->get_action_setting( 'automated_email_id' ) ) );
+			$meta_key = $args['post_meta']['key'];
+			$post_id  = (int) $args['post_meta']['id'];
+			$email_id = (int) $rule->get_action_setting( 'automated_email_id' );
+			$existing = get_post_meta( $post_id, $meta_key );
+			$found    = false;
+
+			foreach ( $existing as $cache ) {
+				if ( is_array( $cache ) && ( $cache[0] ?? 0 ) === $post_id && ( $cache[1] ?? 0 ) === $email_id ) {
+					$found = true;
+					break;
+				}
+			}
+
+			if ( ! $found ) {
+				add_post_meta( $post_id, $meta_key, array( $post_id, $email_id ) );
+			}
 		}
 
 		$result = noptin_send_email_campaign(
@@ -187,13 +203,16 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			throw new \Exception( 'Email campaign does not belong to the automation rule:- ' . esc_html( $campaign->get( 'name' ) ) );
 		}
 
+		// Avoid resending the email when a post is re-published.
 		if ( ! empty( $args['post_meta'] ) ) {
-			$sent_notification = get_post_meta( $args['post_meta']['id'], $args['post_meta']['key'], true );
-			if ( ! is_array( $sent_notification ) || (int) $args['post_meta']['id'] !== (int) $sent_notification[0] ) {
-				return true;
-			}
+			$post_id  = (int) $args['post_meta']['id'];
+			$existing = get_post_meta( $post_id, $args['post_meta']['key'] );
 
-			throw new \Exception( 'Email campaign has already been sent:- ' . esc_html( $campaign->get( 'name' ) ) );
+			foreach ( $existing as $cache ) {
+				if ( is_array( $cache ) && ( $cache[0] ?? 0 ) === $post_id && ( $cache[1] ?? 0 ) === $campaign->id ) {
+					throw new \Exception( 'Email campaign has already been sent:- ' . esc_html( $campaign->get( 'name' ) ) );
+				}
+			}
 		}
 
 		return true;

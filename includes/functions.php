@@ -1808,6 +1808,36 @@ function noptin_get_conditional_logic_comparisons() {
 }
 
 /**
+ * Checks if a string has another string.
+ *
+ * @param array $first_string
+ * @param array $second_string
+ */
+function noptin_array_string_has( $haystack, $needle ) {
+	$needle   = noptin_parse_list( $needle, true );
+	$haystack = noptin_parse_list( $haystack, true );
+
+	return ! empty( array_intersect( $needle, $haystack ) );
+}
+
+/**
+ * Checks if a string matches.
+ *
+ * @param array $first_string
+ * @param array $second_string
+ */
+function noptin_array_string_match( $haystack, $needle ) {
+	if ( empty( $haystack ) ) {
+		return $haystack === $needle;
+	}
+
+	$needle   = noptin_parse_list( $needle, true );
+	$haystack = noptin_parse_list( $haystack, true );
+
+	return ! empty( array_diff( $needle, $haystack ) );
+}
+
+/**
  * Checks if a given condition is valid.
  *
  * @param string $current_value The current value.
@@ -1824,16 +1854,16 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 
 	switch ( $comparison ) {
 		case 'is':
-			return $current_value === $condition_value;
+			return $current_value === $condition_value || noptin_array_string_match( $current_value, $condition_value );
 
 		case 'is_not':
-			return $current_value !== $condition_value;
+			return $current_value !== $condition_value || ! noptin_array_string_match( $current_value, $condition_value );
 
 		case 'contains':
-			return false !== strpos( $current_value, $condition_value );
+			return false !== strpos( $current_value, $condition_value ) || noptin_array_string_has( $current_value, $condition_value );
 
 		case 'does_not_contain':
-			return false === strpos( $current_value, $condition_value );
+			return false === strpos( $current_value, $condition_value ) || ! noptin_array_string_has( $current_value, $condition_value );
 
 		case 'begins_with':
 			return 0 === strpos( $current_value, $condition_value );
