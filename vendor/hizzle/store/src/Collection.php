@@ -824,6 +824,8 @@ class Collection {
 
 		foreach ( $data as $key => $value ) {
 
+			$type = strtolower( $this->props[ $key ]->type ?? '' );
+
 			// Handle boolean values.
 			if ( is_bool( $value ) ) {
 				$value = (int) $value;
@@ -835,6 +837,13 @@ class Collection {
 					$value = $value->utc( 'Y-m-d' );
 				} else {
 					$value = $value->utc();
+				}
+			} elseif ( is_string( $value ) && $value && ( 'date' === $type || 'datetime' === $type ) ) {
+				$datetime = new Date_Time( $value, new \DateTimeZone( 'UTC' ) );
+				if ( 'date' === $type ) {
+					$value = $datetime->utc( 'Y-m-d' );
+				} else {
+					$value = $datetime->utc();
 				}
 			}
 
@@ -1120,9 +1129,9 @@ class Collection {
 		// Format the raw data.
 		foreach ( $this->props as $prop ) {
 
-			// Dates are stored in UTC time, but without a timezone.
+			// Date and times are stored in UTC time, but without a timezone.
 			// Fix that.
-			if ( $prop->is_date() && ! empty( $data[ $prop->name ] ) ) {
+			if ( $prop->is_date_time() && ! empty( $data[ $prop->name ] ) ) {
 				$data[ $prop->name ] = new Date_Time( $data[ $prop->name ], new \DateTimeZone( 'UTC' ) );
 			}
 		}

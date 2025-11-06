@@ -508,6 +508,15 @@ class Prop {
 	}
 
 	/**
+	 * Checks if the property value is a date time.
+	 *
+	 * @return bool
+	 */
+	public function is_date_time() {
+		return in_array( strtolower( $this->type ), array( 'datetime', 'timestamp' ), true );
+	}
+
+	/**
 	 * Retrieves the data type.
 	 *
 	 * @return string
