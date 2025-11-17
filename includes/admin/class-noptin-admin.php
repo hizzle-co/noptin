@@ -156,6 +156,13 @@ class Noptin_Admin {
 			exit;
 		}
 
+		// Black Friday notice dismissal.
+		if ( isset( $_GET['noptin_black_friday_dismissed'] ) && isset( $_GET['noptin-black-friday-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['noptin-black-friday-nonce'] ) ), 'noptin-black-friday-nag' ) ) {
+			update_option( 'noptin_black_friday_dismissed', (int) $_GET['noptin_black_friday_dismissed'] );
+			wp_safe_redirect( remove_query_arg( array( 'noptin_black_friday_dismissed', 'noptin-black-friday-nonce' ) ) );
+			exit;
+		}
+
 		// Redirect to welcome page.
 		if ( ! get_option( '_noptin_has_welcomed', false ) && ! wp_doing_ajax() ) {
 
@@ -288,7 +295,33 @@ class Noptin_Admin {
 
 			// If user has been using Noptin for a while, show them a notice to rate the plugin.
 			$review_nag = get_option( 'noptin_review_nag', time() + WEEK_IN_SECONDS );
-			if ( ! empty( $review_nag ) && (int) $review_nag < time() ) {
+
+			// Black Friday promotion dismissed.
+			$black_friday_dismissed = get_option( 'noptin_black_friday_dismissed', 0 );
+
+			// Show notice.
+			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() && ! noptin_has_alk() ) {
+				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_black_friday_dismissed', time() + MONTH_IN_SECONDS ), 'noptin-black-friday-nag', 'noptin-black-friday-nonce' );
+				$this->print_notice(
+					'info',
+					sprintf(
+						'<p><strong>%s</strong></p><p>%s</p><p>%s&nbsp;&nbsp;%s</p>',
+						'Black Friday Sale!',
+						'Upgrade to <strong>Noptin Premium</strong> and save up to 40% on all plans. Limited time offer!',
+						sprintf(
+							'<a href="%s" target="_blank" class="button button-primary">%s</a>',
+							noptin_get_upsell_url( 'pricing/', 'black-friday', 'black-friday-notice' ),
+							__( 'Get the Deal', 'newsletter-optin-box' )
+						),
+						sprintf(
+							'<a href="%s" class="button button-link">%s</a>',
+							$dismiss_url,
+							__( 'Dismiss', 'newsletter-optin-box' )
+						)
+					),
+					$dismiss_url
+				);
+			} elseif ( ! empty( $review_nag ) && (int) $review_nag < time() ) {
 				$this->print_notice(
 					'info',
 					sprintf(

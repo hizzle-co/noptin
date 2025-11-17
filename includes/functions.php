@@ -2336,7 +2336,7 @@ function noptin_get_smallest_acceptable_image_size( $minimum_width = 150 ) {
 
 		if ( $width >= $minimum_width && $width < $smallest_width ) {
 			$smallest_width = $width;
-			$smallest_size = $size;
+			$smallest_size  = $size;
 		}
 	}
 
@@ -2519,14 +2519,39 @@ function noptin_get_color_scheme() {
 
 	// Calculate related colors.
 	$colors = array(
-		'primary'            => $color,
-		'primary_dark'       => noptin_adjust_color_brightness( $color, -15 ),
-		'primary_light'      => noptin_adjust_color_brightness( $color, 10 ),
-		'gradient_start'     => $color,
-		'gradient_end'       => noptin_adjust_color_brightness( $color, -15 ),
-		'shadow_rgba'        => noptin_hex_to_rgba( $color, 0.4 ),
+		'primary'        => $color,
+		'primary_dark'   => noptin_adjust_color_brightness( $color, -15 ),
+		'primary_light'  => noptin_adjust_color_brightness( $color, 10 ),
+		'gradient_start' => $color,
+		'gradient_end'   => noptin_adjust_color_brightness( $color, -15 ),
+		'shadow_rgba'    => noptin_hex_to_rgba( $color, 0.4 ),
 	);
 
 	return apply_filters( 'noptin_color_scheme', $colors );
 }
 
+/**
+ * Checks if we should show black friday sale notice.
+ *
+ * @return bool
+ */
+function noptin_should_show_black_friday_sale_notice() {
+	$tz   = wp_timezone();
+	$now  = new DateTime( 'now', $tz );
+	$year = $now->format( 'Y' );
+
+	$thanksgiving = new DateTime( "$year-11 fourth thursday", $tz );
+
+	// Black Friday: day after Thanksgiving (start at 00:01).
+	$start = (clone $thanksgiving)->modify( '+1 day' )->setTime( 0, 1 );
+
+	// Cyber Monday: the Monday after Thanksgiving.
+	$end = (clone $thanksgiving)
+		->modify( 'next monday' )
+		->setTime( 23, 59 );
+
+	// Check if the current date is within the range.
+	$is_within_period = ($now >= $start && $now <= $end);
+
+	return apply_filters( 'noptin_show_black_friday_sale_notice', $is_within_period );
+}
