@@ -310,7 +310,7 @@ class Noptin_Admin {
 						'Upgrade to <strong>Noptin Premium</strong> and save up to 40% on all plans. Limited time offer!',
 						sprintf(
 							'<a href="%s" target="_blank" class="button button-primary">%s</a>',
-							noptin_get_upsell_url( 'pricing/', 'black-friday', 'black-friday-notice' ),
+							noptin_get_upsell_url( 'black-friday-sale/', 'black-friday', 'black-friday-notice' ),
 							__( 'Get the Deal', 'newsletter-optin-box' )
 						),
 						sprintf(
