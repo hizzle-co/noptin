@@ -53,23 +53,23 @@
         },
         {
             "name": "hizzle/wp",
-            "version": "1.4.1",
-            "version_normalized": "1.4.1.0",
+            "version": "1.4.2",
+            "version_normalized": "1.4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/hizzle.git",
-                "reference": "021123e5f0ba401dd4a3d846641fbd00ade3eea2"
+                "reference": "abce621548a3edd821f5f4917718e60563af24df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/021123e5f0ba401dd4a3d846641fbd00ade3eea2",
-                "reference": "021123e5f0ba401dd4a3d846641fbd00ade3eea2",
+                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/abce621548a3edd821f5f4917718e60563af24df",
+                "reference": "abce621548a3edd821f5f4917718e60563af24df",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2025-11-17T11:49:44+00:00",
+            "time": "2025-11-17T15:07:36+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -98,7 +98,7 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/hizzle/issues",
-                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.1"
+                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.2"
             },
             "install-path": "../hizzle/wp"
         },
