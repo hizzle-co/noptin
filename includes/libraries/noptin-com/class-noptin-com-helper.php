@@ -27,8 +27,46 @@ class Noptin_COM_Helper {
 
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
+		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_routes' ) );
 
 		do_action( 'noptin_com_helper_loaded' );
+	}
+
+	/**
+	 * Register REST API routes.
+	 */
+	public static function register_rest_routes() {
+		register_rest_route(
+			'noptin/v1',
+			'/license/activate',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'rest_activate_license' ),
+				'permission_callback' => function () {
+					return current_user_can( get_noptin_capability() );
+				},
+				'args'                => array(
+					'license_key' => array(
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+						'description'       => __( 'The license key to activate.', 'newsletter-optin-box' ),
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			'noptin/v1',
+			'/license/deactivate',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( __CLASS__, 'handle_license_deactivation' ),
+				'permission_callback' => function () {
+					return current_user_can( get_noptin_capability() );
+				},
+			)
+		);
 	}
 
 	/**
@@ -104,18 +142,57 @@ class Noptin_COM_Helper {
 		Noptin_COM_Updater::flush_updates_cache();
 
 		noptin()->admin->show_success( __( 'Your license key has been activated successfully. You will now receive updates and support for this website.', 'newsletter-optin-box' ) );
+		return $result;
+	}
+
+	/**
+	 * REST API callback to activate a license key.
+	 *
+	 * @param WP_REST_Request $request The REST request object.
+	 * @return WP_REST_Response|WP_Error The response or error.
+	 */
+	public static function rest_activate_license( $request ) {
+		$result = self::handle_license_save( $request->get_param( 'license_key' ) );
+
+		// Abort if there was an error.
+		if ( empty( $result ) ) {
+			if ( ! empty( self::$activation_error ) ) {
+				return new WP_Error(
+					'activation_failed',
+					self::$activation_error,
+					array( 'status' => 400 )
+				);
+			}
+
+			return new WP_Error(
+				'activation_failed',
+				'There was an error activating your license key.',
+				array( 'status' => 400 )
+			);
+		}
+
+		return rest_ensure_response(
+			array(
+				'success' => true,
+				'message' => __( 'Your license key has been activated successfully. You will now receive updates and support for this website.', 'newsletter-optin-box' ),
+				'data'    => $result,
+			)
+		);
 	}
 
 	/**
 	 * Handle license deactivation.
 	 *
 	 */
-	private static function handle_license_deactivation() {
+	public static function handle_license_deactivation() {
 
 		$license_key = Noptin_COM::get_active_license_key();
 
 		if ( empty( $license_key ) ) {
-			return;
+			return array(
+				'success' => true,
+				'message' => __( 'License key deactivated successfully. You will no longer receive product updates and support for this site.', 'newsletter-optin-box' ),
+			);
 		}
 
 		// Delete cached details.
@@ -139,13 +216,15 @@ class Noptin_COM_Helper {
 
 		// Abort if there was an error.
 		if ( is_wp_error( $result ) ) {
-			return noptin()->admin->show_error(
+			noptin()->admin->show_error(
 				sprintf(
 					/* translators: %s: Error message. */
 					__( 'There was an error deactivating your license key: %s', 'newsletter-optin-box' ),
 					$result->get_error_message()
 				)
 			);
+
+			return $result;
 		}
 
 		// Save the license key.
@@ -154,6 +233,10 @@ class Noptin_COM_Helper {
 		Noptin_COM_Updater::flush_updates_cache();
 
 		noptin()->admin->show_success( __( 'License key deactivated successfully. You will no longer receive product updates and support for this site.', 'newsletter-optin-box' ) );
+		return array(
+			'success' => true,
+			'message' => __( 'License key deactivated successfully. You will no longer receive product updates and support for this site.', 'newsletter-optin-box' ),
+		);
 	}
 
 	/**
@@ -183,7 +266,6 @@ class Noptin_COM_Helper {
 				wp_kses_post( $notice )
 			);
 		}
-
 	}
 
 	/**
@@ -243,7 +325,6 @@ class Noptin_COM_Helper {
 				wp_kses_post( wpautop( $notice ) )
 			);
 		}
-
 	}
 
 	/**
@@ -262,7 +343,7 @@ class Noptin_COM_Helper {
 			}
 
 			if ( version_compare( $updates[ $data['slug'] ]['version'], $data['Version'], '>' ) ) {
-				$available++;
+				++$available;
 			}
 		}
 
@@ -276,7 +357,6 @@ class Noptin_COM_Helper {
 			admin_url( 'admin.php?page=noptin-addons' ),
 			$available
 		);
-
 	}
 
 	/**
