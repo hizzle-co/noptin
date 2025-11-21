@@ -173,7 +173,7 @@ class Noptin_Admin {
 				update_option( '_noptin_has_welcomed', '1' );
 
 				// Redirect to the welcome page.
-				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-settings' ), admin_url( 'admin.php' ) ) );
+				wp_safe_redirect( add_query_arg( array( 'page' => 'noptin-setup-wizard' ), admin_url( 'admin.php' ) ) );
 				exit;
 			}
 		}
