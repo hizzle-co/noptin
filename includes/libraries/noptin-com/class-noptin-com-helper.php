@@ -40,7 +40,7 @@ class Noptin_COM_Helper {
 			'noptin/v1',
 			'/license/activate',
 			array(
-				'methods'             => 'POST',
+				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'rest_activate_license' ),
 				'permission_callback' => function () {
 					return current_user_can( get_noptin_capability() );
@@ -60,7 +60,7 @@ class Noptin_COM_Helper {
 			'noptin/v1',
 			'/license/deactivate',
 			array(
-				'methods'             => 'POST',
+				'methods'             => \WP_REST_Server::DELETABLE,
 				'callback'            => array( __CLASS__, 'handle_license_deactivation' ),
 				'permission_callback' => function () {
 					return current_user_can( get_noptin_capability() );

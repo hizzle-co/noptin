@@ -35,6 +35,7 @@ class Main {
 	 */
 	public static function register_setting() {
 
+		// Register settings.
 		register_setting(
 			'options',
 			'noptin_options',
@@ -56,6 +57,19 @@ class Main {
 					),
 				),
 				'sanitize_callback' => array( __CLASS__, 'sanitize_settings' ),
+			)
+		);
+
+		// Retrieve available settings for a given section and sub-section.
+		register_rest_route(
+			'noptin/v1',
+			'/settings/(?P<section_slug>[a-zA-Z0-9-_]+)/(?P<sub_section_slug>[a-zA-Z0-9-_]+)?',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( __CLASS__, 'get_settings_section' ),
+				'permission_callback' => function () {
+					return current_user_can( get_noptin_capability() );
+				},
 			)
 		);
 	}
@@ -94,5 +108,26 @@ class Main {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Get settings section by slug.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response
+	 */
+	public static function get_settings_section( $request ) {
+		if ( empty( $request['section_slug'] ) || empty( $request['sub_section_slug'] ) ) {
+			return new \WP_Error( 'missing_section_slug', 'Provide both section and subsection slugs.', array( 'status' => 400 ) );
+		}
+
+		$settings = \Hizzle\Noptin\Settings\Menu::prepare_settings();
+		$prepared = $settings[ $request['section_slug'] ]['sub_sections'][ $request['sub_section_slug'] ]['settings'] ?? null;
+
+		if ( empty( $prepared ) ) {
+			return new \WP_Error( 'invalid_section_slug', 'Invalid section or subsection slug.', array( 'status' => 404 ) );
+		}
+
+		return rest_ensure_response( $prepared );
 	}
 }
