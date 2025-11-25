@@ -180,7 +180,7 @@ abstract class Collection {
 				$args['mail_config']              = $mail_config;
 			}
 
-			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this );
+			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this, $key );
 
 			$rules->add_trigger(
 				new Trigger( $key, $args, $this )
