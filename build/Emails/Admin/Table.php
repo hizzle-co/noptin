@@ -44,6 +44,11 @@ class Table extends \WP_List_Table {
 	public $query;
 
 	/**
+	 * @var array $email_senders email senders.
+	 */
+	public $email_senders = array();
+
+	/**
 	 * Constructor function.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Type $email_type email type.
@@ -72,6 +77,13 @@ class Table extends \WP_List_Table {
 
 		$this->process_bulk_action();
 		$this->prepare_query();
+
+		if ( $this->has_items() && $this->email_type->supports_recipients ) {
+			$this->email_senders = wp_list_filter(
+				get_noptin_email_senders( true ),
+				array( 'is_installed' => true )
+			);
+		}
 	}
 
 	/**
@@ -415,14 +427,20 @@ class Table extends \WP_List_Table {
 					);
 				}
 			} elseif ( ! empty( $sender ) ) {
-				$senders = get_noptin_email_senders();
-
-				if ( isset( $senders[ $sender ] ) ) {
+				if ( isset( $this->email_senders[ $sender ] ) ) {
 					$title .= sprintf(
 						'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 						esc_html__( 'Recipients', 'newsletter-optin-box' ),
-						esc_html( $senders[ $sender ] )
+						esc_html( $this->email_senders[ $sender ]['label'] )
 					);
+
+					foreach ( $this->get_email_sender_settings( $sender, $item ) as $filter_label => $filter_value ) {
+						$title .= sprintf(
+							'<div style="margin-left: 15px;"><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+							esc_html( $filter_label ),
+							esc_html( $filter_value )
+						);
+					}
 				} else {
 					$title .= sprintf(
 						'<p class="description" style="color: red;">%s</p>',
@@ -504,6 +522,57 @@ class Table extends \WP_List_Table {
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Adds sender filters to the label
+	 *
+	 * @param string $sender sender.
+	 * @param Email  $email email.
+	 */
+	private function get_email_sender_settings( $sender, $email ) {
+		if ( empty( $this->email_senders[ $sender ]['settings']['key'] ) ) {
+			return array();
+		}
+
+		$options = $email->get( $this->email_senders[ $sender ]['settings']['key'] );
+		$fields  = $this->email_senders[ $sender ]['settings']['fields'] ?? array();
+
+		if ( empty( $options ) || ! is_array( $options ) ) {
+			return array();
+		}
+
+		$filters = array();
+
+		foreach ( $options as $key => $value ) {
+			if ( ! is_numeric( $value ) && empty( $value ) ) {
+				continue;
+			}
+
+			if ( is_object( $value ) ) {
+				continue;
+			}
+
+			if ( is_bool( $value ) ) {
+				$value = $value ? 'Yes' : 'No';
+			}
+
+			$value = (array) $value;
+
+			if ( is_array( $fields[ $key ]['options'] ) ) {
+				$option_labels = array();
+				foreach ( $value as $_value ) {
+					$option_labels[] = $fields[ $key ]['options'][ $_value ] ?? $_value;
+				}
+				$value = $option_labels;
+			}
+
+			$value = array_map( 'maybe_serialize', $value );
+
+			$filters[ $fields[ $key ]['label'] ?? ucfirst( str_replace( '_', ' ', $key ) ) ] = implode( ', ', $value );
+		}
+
+		return $filters;
 	}
 
 	/**

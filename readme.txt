@@ -137,6 +137,9 @@ Yeah. Your newsletter subscription forms will take your theme's default styling.
 
 == Changelog ==
 
+= 4.0.13 =
+* Add: Show filters for sender settings on the email list table
+
 = 4.0.11 =
 * Change: Speed up the newsletter form editor.
 
