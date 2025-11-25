@@ -122,10 +122,9 @@ class Table extends \WP_List_Table {
 		if ( 'trash' === $this->email_type->type ) {
 			$query_args['post_status'] = 'trash';
 			$query_args['meta_query']  = array();
-		}
 
-		// Filter by status (additional status filtering beyond post_status)
-		else if ( ! empty( $_GET['email_status_filter'] ) ) {
+			// Filter by status (additional status filtering beyond post_status)
+		} elseif ( ! empty( $_GET['email_status_filter'] ) ) {
 			$status_filter = sanitize_text_field( rawurldecode( $_GET['email_status_filter'] ) );  // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
 			$query_args['post_status'] = 'publish';
@@ -380,6 +379,20 @@ class Table extends \WP_List_Table {
 				'<p class="description" style="color: red;">%s</p>',
 				esc_html__( 'No subject', 'newsletter-optin-box' )
 			);
+		}
+
+		// Parent newsletter.
+		if ( 'newsletter' === $this->email_type->type && $item->parent_id ) {
+			$parent = new Email( $item->parent_id );
+
+			if ( $parent->exists() ) {
+				$title .= sprintf(
+					'<div><span class="noptin-strong">%s</span>: <a href="%s">%s</a></div>',
+					esc_html__( 'Source', 'newsletter-optin-box' ),
+					esc_url( $parent->get_edit_url() ),
+					esc_html( $parent->name )
+				);
+			}
 		}
 
 		// Recipients.
@@ -1097,7 +1110,7 @@ class Table extends \WP_List_Table {
 
 		?>
 			<div id="noptin-email-campaigns__editor--add-new__in-table">
-				<?php parent::no_items(); ?>
+			<?php parent::no_items(); ?>
 				<!-- spinner -->
 				<span class="spinner" style="visibility: visible; float: none;"></span>
 				<!-- /spinner -->
