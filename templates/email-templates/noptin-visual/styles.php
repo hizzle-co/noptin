@@ -238,20 +238,20 @@
 		max-width: 100%;
 	}
 
-	.wp-block-noptin-group {
-		margin-bottom: 20px;
+	.wp-block-noptin-group:first-child {
+		margin-top: 20px;
 	}
 
-	.noptin-block-group__inner {
-		overflow: hidden;
+	.wp-block-noptin-group:last-child {
+		margin-bottom: 20px;
 	}
 
 	.wp-block-noptin-group > table {
 		overflow: hidden;
 	}
 
-	.wp-block-noptin-group:first-child {
-		margin-top: 20px;
+	.noptin-block-group__inner {
+		overflow: hidden;
 	}
 
 	.noptin-record {

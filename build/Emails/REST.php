@@ -193,6 +193,8 @@ class REST extends \WP_REST_Posts_Controller {
 
 		$ids = array_map( 'intval', $ids );
 
+		do_action( 'noptin_before_reorder_emails', $ids );
+
 		// Update the menu order.
 		foreach ( $ids as $index => $id ) {
 
@@ -206,6 +208,8 @@ class REST extends \WP_REST_Posts_Controller {
 				);
 			}
 		}
+
+		do_action( 'noptin_after_reorder_emails', $ids );
 
 		return rest_ensure_response( true );
 	}

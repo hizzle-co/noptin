@@ -570,7 +570,11 @@ function noptin_email_wrap_blocks( $blocks, $footer_text = '', $heading_text = '
 		$blocks      = '<!-- wp:heading { "anchor":"heading-text","placeholder":"' . $placeholder . '"--> <h2 class="wp-block-heading heading-text">' . $heading_text . '</h2> <!-- /wp:heading -->' . $blocks;
 	}
 
-	return '<!-- wp:noptin/group {"anchor":"main-content-wrapper","style":{"noptin":{"align":"center","color":{"background":"#ffffff"}}}} --> <div class="wp-block-noptin-group main-content-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate;background-color:#ffffff"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="background-color:#ffffff">' . $blocks . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group --> <!-- wp:noptin/group {"anchor":"main-footer-wrapper","style":{"noptin":{"align":"center","color":{"background":""}}}} --> <div class="wp-block-noptin-group main-footer-wrapper"><table width="600px" align="center" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;border-collapse:separate"><tbody><tr><td class="noptin-block-group__inner" align="center"><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td>' . $footer . '</td></tr></tbody></table></td></tr></tbody></table></div> <!-- /wp:noptin/group -->';
+	return sprintf(
+		'%s %s',
+		noptin_email_wrap_group_block( $blocks ),
+		noptin_email_wrap_group_block( $footer, '' )
+	);
 }
 
 /**
@@ -581,6 +585,37 @@ function noptin_email_wrap_paragraph_block( $content = '' ) {
 		'<!-- wp:paragraph --> <p class="wp-block-paragraph">%s</p> <!-- /wp:paragraph -->' . "\n",
 		$content
 	);
+}
+
+/**
+ * Wraps a group block.
+ */
+function noptin_email_wrap_group_block( $content = '', $background_color = '#ffffff' ) {
+	ob_start();
+	?>
+<!-- wp:noptin/group {"style":{"noptin":{"align":"center","color":{"background":"<?php echo esc_attr( $background_color ); ?>"}},"spacing":{"padding":{"top":"20px","right":"20px","bottom":"20px","left":"20px"}}}} -->
+<div class="wp-block-noptin-group">
+    <!--[if true]>
+    
+		<table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;">
+			<tbody>
+				<tr>
+					<td class="noptin-block-group__inner" align="center">
+	
+    <![endif]-->
+  <!--[if !true]><!--><div class="noptin-block-group__inner" style="width:100%;max-width:600px;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0"><!--<![endif]--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px<?php echo empty( $background_color ) ? '' : ';background-color:' . esc_attr( $background_color ); ?>">{{CONTENT}}</td></tr></tbody></table><!--[if !true]><!--></div><!--<![endif]-->
+    <!--[if true]>
+    
+					</td>
+				</tr>
+			</tbody>
+		</table>
+    <![endif]-->
+  </div>
+<!-- /wp:noptin/group -->
+	<?php
+
+	return str_replace( '{{CONTENT}}', $content, ob_get_clean() );
 }
 
 /**
