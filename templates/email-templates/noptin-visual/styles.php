@@ -141,10 +141,23 @@
 	}
 
 	.wp-block-noptin-table table,
-	.wp-block-noptin-table td {
+	.wp-block-noptin-table td,
+	.wp-block-noptin-advanced-table > table,
+	.wp-block-noptin-table-content-row > td {
 		border-collapse: collapse;
 	}
 
+	.wp-block-noptin-advanced-table {
+		max-width: 100%;
+		overflow: auto;
+		box-sizing: border-box;
+	}
+	.wp-block-noptin-advanced-table > table {
+		width: 100%;
+	}
+	.wp-block-noptin-table-cell {
+		padding: 8px;
+	}
 	table {
 		border-collapse: separate;
 	}
