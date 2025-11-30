@@ -43,6 +43,9 @@ abstract class People extends Collection {
 			}
 		}
 
+		$this->title_field = 'email';
+		$this->image_field = 'avatar_url';
+
 		add_action( 'noptin_init_current_email_recipient', array( $this, 'maybe_set_current_noptin_email' ), 5 );
 		parent::__construct();
 	}

@@ -151,13 +151,16 @@
 		max-width: 100%;
 		overflow: auto;
 		box-sizing: border-box;
+		text-align: <?php echo is_rtl() ? 'right' : 'left'; ?>;
 	}
 	.wp-block-noptin-advanced-table > table {
 		width: 100%;
 	}
+
 	.wp-block-noptin-table-cell {
-		padding: 8px;
+		border-bottom: 1px solid #ddd;
 	}
+
 	table {
 		border-collapse: separate;
 	}
@@ -169,16 +172,16 @@
 		margin-bottom: 16px;
 	}
 
-	p:first-child, 
-	h1:first-child,
-	h2:first-child,
-	h3:first-child,
-	h4:first-child, 
-	h5:first-child, 
-	h6:first-child,
-	.noptin-columns:first-child,
-	.noptin-image-block__wrapper:first-child .noptin-block__margin-wrapper {
-		margin-top: 10px;
+	p:last-child, 
+	h1:last-child,
+	h2:last-child,
+	h3:last-child,
+	h4:last-child, 
+	h5:last-child, 
+	h6:last-child,
+	.noptin-columns:last-child,
+	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+		margin-bottom: 0px;
 	}
 
 	.noptin-columns {
@@ -320,16 +323,6 @@
 		p {
 			word-break: break-word;
 		}
-	}
-
-	.wp-block-noptin-table-cell {
-		min-width: 100px;
-		padding: 0.5em;
-		border-bottom: 1px solid #ddd;
-	}
-
-	.wp-block-noptin-table-cell > * {
-		margin: 0;
 	}
 
 	.wp-block-noptin-coupon-code {
