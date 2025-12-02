@@ -986,6 +986,7 @@ class Noptin_Email_Generator {
 			'p:last-child',
 			'.noptin-columns:last-child',
 			'.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper',
+			'.noptin-button-block__wrapper:last-child .noptin-block__margin-wrapper',
 		);
 
 		// For some reason, we decided to wrap headings in <a> instead of the other way round.
@@ -993,7 +994,7 @@ class Noptin_Email_Generator {
 		for ( $i = 1; $i <= 6; $i++ ) {
 			$selectors[ 'h' . $i . ':last-child:not(a > h' . $i . ':last-child)' ] = array(
 				'include' => 'h' . $i . ':last-child',
-				'exclude' => 'a:last-child > h' . $i . ':last-child',
+				'exclude' => 'a > h' . $i . ':last-child',
 			);
 		}
 

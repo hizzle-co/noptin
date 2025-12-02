@@ -169,6 +169,13 @@
 		border-collapse: separate;
 	}
 
+	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper{
+		margin-top: 0px;
+		margin-left: 10px;
+		margin-right: 10px;
+		margin-bottom: 16px;
+	}
+
 	h1:last-child:not(a > h1:last-child),
 	a:last-child > h1:last-child,
 	h2:last-child:not(a > h2:last-child),
@@ -186,13 +193,6 @@
 	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper,
 	.is__last_block__ {
 		margin-bottom: 0px;
-	}
-
-	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper{
-		margin-top: 0px;
-		margin-left: 10px;
-		margin-right: 10px;
-		margin-bottom: 16px;
 	}
 
 	.noptin-records__wrapper,
