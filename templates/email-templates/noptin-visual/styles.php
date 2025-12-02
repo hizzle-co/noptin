@@ -183,7 +183,8 @@
 	a:last-child > h6:last-child,
 	p:last-child,
 	.noptin-columns:last-child,
-	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper,
+	.is__last_block__ {
 		margin-bottom: 0px;
 	}
 
