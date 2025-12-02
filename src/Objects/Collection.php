@@ -288,6 +288,11 @@ abstract class Collection {
 
 		if ( ! empty( $this->title_field ) ) {
 			$template['heading'] = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->title_field ) );
+
+			// Use the heading block if no URL field is set.
+			if ( empty( $this->url_field ) ) {
+				$template['heading'] = $this->field_to_merge_tag( $this->title_field );
+			}
 		}
 
 		if ( ! empty( $this->description_field ) ) {
@@ -440,7 +445,31 @@ abstract class Collection {
 			$fields['avatar_url'] = array(
 				'label' => __( 'Avatar URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Avatar', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the avatar image.', 'newsletter-optin-box' ),
+					'icon'        => 'camera',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'alt' => $this->field_to_merge_tag( 'email' ),
+					),
+					'element'     => 'image',
+				),
 			);
+
+			if ( isset( $fields['email'] ) && empty( $fields['email']['block'] ) ) {
+				$fields['email']['block'] = array(
+					'title'       => __( 'Email', 'newsletter-optin-box' ),
+					'description' => __( 'Displays the email address.', 'newsletter-optin-box' ),
+					'icon'        => 'email',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'element'     => 'text',
+				);
+			}
 		}
 
 		return $this->filter( $fields, 'fields' );

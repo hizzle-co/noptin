@@ -115,7 +115,7 @@ class Listener {
 		}
 
 		// Spam checks.
-		if ( ! isset( $this->submitted['noptin_timestamp'] ) || ! isset( $this->submitted['noptin_submitted'] ) || ( (int) $this->submitted['noptin_timestamp'] + 3 ) > (int) $this->submitted['noptin_submitted'] ) {
+		if ( ! isset( $this->submitted['noptin_timestamp'] ) || ! isset( $this->submitted['noptin_submitted'] ) || ( (int) $this->submitted['noptin_timestamp'] + 1 ) > (int) $this->submitted['noptin_submitted'] ) {
 			return $this->error->add( 'error', get_noptin_form_message( 'error' ) );
 		}
 
@@ -143,9 +143,7 @@ class Listener {
 		// Validate other required fields.
 		$missing_fields = array();
 		foreach ( $this->get_fields_for_request() as $custom_field ) {
-
 			if ( ! empty( $custom_field['required'] ) ) {
-
 				$value = $this->get_field_value( $custom_field['merge_tag'] );
 
 				if ( '' === $value || array() === $value ) {
@@ -206,7 +204,6 @@ class Listener {
 
 		// Trigger success/error hooks and maybe redirect to a different page.
 		$this->respond();
-
 	}
 
 	/**
@@ -261,7 +258,6 @@ class Listener {
 
 		// Process form fields.
 		foreach ( $this->get_fields_for_request() as $custom_field ) {
-
 			$value = $this->get_field_value( $custom_field['merge_tag'] );
 
 			// Checkboxes should always be 0 or 1.
@@ -270,14 +266,12 @@ class Listener {
 			}
 
 			$subscriber[ $custom_field['merge_tag'] ] = $value;
-
 		}
 
 		// Does the subscriber exist already?
 		$subscriber_obj = noptin_get_subscriber( (int) get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) ) );
 		if ( $subscriber_obj->exists() ) {
-
-			$subscriber_id = $subscriber_obj->get_id();
+			$subscriber_id       = $subscriber_obj->get_id();
 			$this->subscriber_id = $subscriber_id;
 
 			// Maybe abort...
@@ -441,7 +435,6 @@ class Listener {
 			 * @param Listener $listener
 			 */
 			do_action( 'noptin_form_success', $this );
-
 		} else {
 
 			/**
@@ -475,7 +468,6 @@ class Listener {
 				 * @param Listener $listener
 				 */
 				do_action( "noptin_form_error_$error", $this );
-
 			}
 		}
 
@@ -605,7 +597,6 @@ class Listener {
 
 		// Check if form was submitted.
 		if ( is_null( $this->processed_form ) ) {
-
 			if ( ! $force_response ) {
 				return '<div class="noptin-form-notice noptin-response" role="alert"></div>';
 			}
@@ -639,7 +630,6 @@ class Listener {
 
 		// Were there any errors?
 		if ( $this->error->has_errors() ) {
-
 			foreach ( $this->error->errors as $code => $message ) {
 
 				// Prepare error message.
@@ -656,10 +646,8 @@ class Listener {
 					sanitize_html_class( $code ),
 					esc_html( $this->get_cached( $code, $message ) )
 				);
-
 			}
 		} else {
-
 			$key = 'subscribed' === $this->last_event ? 'success' : $this->last_event;
 
 			// Prepare success message.
@@ -677,7 +665,6 @@ class Listener {
 				sanitize_html_class( $this->last_event ),
 				wp_kses_post( $this->get_cached( $key, $message ) )
 			);
-
 		}
 
 		/**
@@ -696,7 +683,6 @@ class Listener {
 			'<div class="noptin-response noptin-form-notice">%s</div>',
 			wp_kses_post( $html )
 		);
-
 	}
 
 	/**
@@ -711,7 +697,6 @@ class Listener {
 
 		// Check if we have an error.
 		if ( $this->error->has_errors() ) {
-
 			$errors = array();
 			foreach ( $this->error->get_error_codes() as $code ) {
 				if ( ! empty( $this->error->error_data[ $code ]['selector'] ) ) {
@@ -732,20 +717,16 @@ class Listener {
 		$redirect_url = $this->get_redirect_url();
 
 		if ( ! empty( $redirect_url ) ) {
-
 			$response = array(
 				'action'       => 'redirect',
 				'redirect_url' => esc_url_raw( $redirect_url ),
 				'msg'          => $html_response,
 			);
-
 		} else {
-
 			$response = array(
 				'action' => 'msg',
 				'msg'    => $html_response,
 			);
-
 		}
 
 		return array(
