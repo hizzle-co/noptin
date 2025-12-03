@@ -169,7 +169,7 @@
 		border-collapse: separate;
 	}
 
-	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper{
+	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper, .wp-block-noptin-badge {
 		margin-top: 0px;
 		margin-left: 10px;
 		margin-right: 10px;
@@ -190,6 +190,7 @@
 	a:last-child > h6:last-child,
 	p:last-child,
 	.noptin-columns:last-child,
+	.wp-block-noptin-badge:last-child,
 	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
 	}
@@ -286,10 +287,6 @@
 
 	.noptin-block-group__inner {
 		overflow: hidden;
-	}
-
-	.noptin-column__inner {
-		padding: 20px;
 	}
 
 	.noptin-record {
