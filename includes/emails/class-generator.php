@@ -950,9 +950,6 @@ class Noptin_Email_Generator {
 
 		try {
 
-			// Mark last blocks.
-			//$content = $this->mark_last_blocks( $content );
-
 			// create inliner instance
 			$inliner = new \Hizzle\Noptin\Emails\CssToInlineStyles\CssToInlineStyles();
 
@@ -965,120 +962,6 @@ class Noptin_Email_Generator {
 			log_noptin_message( $e->getMessage() );
 			return $content;
 		}
-	}
-
-	/**
-	 * Marks the last blocks in a column for proper styling.
-	 *
-	 * Our inliner library does not support :last-child selector, so we manually add
-	 */
-	private function mark_last_blocks( $content ) {
-		$converter = new Symfony\Component\CssSelector\CssSelectorConverter();
-
-		// Last blocks selectors.
-		$selectors = array(
-			'a:last-child > h1:last-child',
-			'a:last-child > h2:last-child',
-			'a:last-child > h3:last-child',
-			'a:last-child > h4:last-child',
-			'a:last-child > h5:last-child',
-			'a:last-child > h6:last-child',
-			'p:last-child',
-			'.noptin-columns:last-child',
-			'.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper',
-			'.noptin-button-block__wrapper:last-child .noptin-block__margin-wrapper',
-		);
-
-		// For some reason, we decided to wrap headings in <a> instead of the other way round.
-		// This selects last headings that are not wrapped in <a>.
-		for ( $i = 1; $i <= 6; $i++ ) {
-			$selectors[ 'h' . $i . ':last-child:not(a > h' . $i . ':last-child)' ] = array(
-				'include' => 'h' . $i . ':last-child',
-				'exclude' => 'a > h' . $i . ':last-child',
-			);
-		}
-
-		// Load the HTML
-		$dom = new DOMDocument();
-		libxml_use_internal_errors( true );
-		$dom->loadHTML( mb_convert_encoding( $content, 'HTML-ENTITIES', 'UTF-8' ) );
-		libxml_clear_errors();
-		$xpath = new DOMXPath( $dom );
-
-		// This array collects all final nodes that should get the class.
-		$last_nodes = array();
-
-		foreach ( $selectors as $selector ) {
-
-			// Case 1: selector needs include/exclude logic
-			if ( is_array( $selector ) ) {
-				try {
-					$includeXPath = $converter->toXPath( $selector['include'] );
-					$excludeXPath = $converter->toXPath( $selector['exclude'] );
-
-					$includeNodes = iterator_to_array( $xpath->query( $includeXPath ) );
-					$excludeNodes = iterator_to_array( $xpath->query( $excludeXPath ) );
-
-					// Remove excluded nodes
-					$diff = array_udiff(
-						$includeNodes,
-						$excludeNodes,
-						function ( $a, $b ) {
-							return $a === $b ? 0 : -1;
-						}
-                    );
-
-					foreach ( $diff as $node ) {
-						$last_nodes[ spl_object_id( $node ) ] = $node;
-					}
-				} catch ( Exception $e ) {
-					// Gracefully continue if any selector fails.
-				}
-				// Case 2: valid selector
-			} else {
-				try {
-					$xpathExpr = $converter->toXPath( $selector );
-					$nodes     = $xpath->query( $xpathExpr );
-
-					foreach ( $nodes as $node ) {
-						$last_nodes[ spl_object_id( $node ) ] = $node;
-					}
-				} catch ( Exception $e ) {
-					// Ignore invalid selector errors
-				}
-			}
-		}
-
-		foreach ( $last_nodes as $node ) {
-			/** @var \DOMElement $node */
-			$existing = $node->getAttribute( 'class' );
-			$node->setAttribute( 'class', trim( $existing . ' is__last_block__' ) );
-		}
-
-		// Mark other blocks.
-		$selectors = array(
-			'.wp-block-noptin-group:first-child' => 'is__first_group_block__',
-			'.wp-block-noptin-group:last-child'  => 'is__last_group_block__',
-		);
-
-		foreach ( $selectors as $selector => $class ) {
-			try {
-				$xpathExpr = $converter->toXPath( $selector );
-				$nodes     = $xpath->query( $xpathExpr );
-
-				foreach ( $xpath->query( $xpathExpr ) as $node ) {
-					/** @var \DOMElement $node */
-					$existing = $node->getAttribute( 'class' );
-					$node->setAttribute( 'class', trim( $existing . ' ' . $class ) );
-				}
-			} catch ( Exception $e ) {
-				// Ignore invalid selector errors
-			}
-		}
-
-		$result = $dom->saveHTML();
-
-		return $result ? $result : $content;
 	}
 
 	/**

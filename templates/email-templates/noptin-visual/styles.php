@@ -221,13 +221,10 @@
 		margin-top: 0;
 	}
 
-	.noptin-column__inner > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper,
-	.noptin-column__inner > .noptin-image-block__wrapper.is__last_block__ .noptin-block__margin-wrapper {
+	.noptin-column__inner > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0;
 	}
-.noptin-block-group__inner {
-	margin: 0;
-}
+
 	.noptin-column__inner img {
 		width: 100%;
 	}
