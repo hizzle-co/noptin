@@ -205,18 +205,6 @@
 		margin-bottom: 16px;
 	}
 
-	p:first-child, 
-	h1:first-child,
-	h2:first-child,
-	h3:first-child,
-	h4:first-child, 
-	h5:first-child, 
-	h6:first-child,
-	.noptin-columns:first-child,
-	.noptin-image-block__wrapper:first-child .noptin-block__margin-wrapper {
-		margin-top: 10px;
-	}
-
 	.noptin-records__wrapper,
 	.noptin-columns,
 	.wp-block-noptin-separator {
@@ -298,6 +286,10 @@
 
 	.noptin-block-group__inner {
 		overflow: hidden;
+	}
+
+	.noptin-column__inner {
+		padding: 20px;
 	}
 
 	.noptin-record {
