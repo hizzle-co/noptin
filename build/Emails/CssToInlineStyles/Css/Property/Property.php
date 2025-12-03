@@ -1,11 +1,11 @@
 <?php
 
-namespace TijsVerkoyen\CssToInlineStyles\Css\Property;
+namespace Hizzle\Noptin\Emails\CssToInlineStyles\Css\Property;
 
 use Symfony\Component\CssSelector\Node\Specificity;
 
-final class Property
-{
+final class Property {
+
     /**
      * @var string
      */
@@ -27,10 +27,9 @@ final class Property
      * @param string           $value
      * @param Specificity|null $specificity
      */
-    public function __construct($name, $value, ?Specificity $specificity = null)
-    {
-        $this->name = $name;
-        $this->value = $value;
+    public function __construct( $name, $value, ?Specificity $specificity = null ) {
+        $this->name                = $name;
+        $this->value               = $value;
         $this->originalSpecificity = $specificity;
     }
 
@@ -39,8 +38,7 @@ final class Property
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -49,8 +47,7 @@ final class Property
      *
      * @return string
      */
-    public function getValue()
-    {
+    public function getValue() {
         return $this->value;
     }
 
@@ -59,8 +56,7 @@ final class Property
      *
      * @return Specificity|null
      */
-    public function getOriginalSpecificity()
-    {
+    public function getOriginalSpecificity() {
         return $this->originalSpecificity;
     }
 
@@ -69,9 +65,8 @@ final class Property
      *
      * @return bool
      */
-    public function isImportant()
-    {
-        return (stripos($this->value, '!important') !== false);
+    public function isImportant() {
+        return (stripos( $this->value, '!important' ) !== false);
     }
 
     /**
@@ -79,8 +74,7 @@ final class Property
      *
      * @return string
      */
-    public function toString()
-    {
+    public function toString() {
         return sprintf(
             '%1$s: %2$s;',
             $this->name,

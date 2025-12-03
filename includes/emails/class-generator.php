@@ -951,10 +951,10 @@ class Noptin_Email_Generator {
 		try {
 
 			// Mark last blocks.
-			$content = $this->mark_last_blocks( $content );
+			//$content = $this->mark_last_blocks( $content );
 
 			// create inliner instance
-			$inliner = new \TijsVerkoyen\CssToInlineStyles\CssToInlineStyles();
+			$inliner = new \Hizzle\Noptin\Emails\CssToInlineStyles\CssToInlineStyles();
 
 			// Inline styles.
 			return $inliner->convert( $content, $styles );
@@ -1053,6 +1053,27 @@ class Noptin_Email_Generator {
 			/** @var \DOMElement $node */
 			$existing = $node->getAttribute( 'class' );
 			$node->setAttribute( 'class', trim( $existing . ' is__last_block__' ) );
+		}
+
+		// Mark other blocks.
+		$selectors = array(
+			'.wp-block-noptin-group:first-child' => 'is__first_group_block__',
+			'.wp-block-noptin-group:last-child'  => 'is__last_group_block__',
+		);
+
+		foreach ( $selectors as $selector => $class ) {
+			try {
+				$xpathExpr = $converter->toXPath( $selector );
+				$nodes     = $xpath->query( $xpathExpr );
+
+				foreach ( $xpath->query( $xpathExpr ) as $node ) {
+					/** @var \DOMElement $node */
+					$existing = $node->getAttribute( 'class' );
+					$node->setAttribute( 'class', trim( $existing . ' ' . $class ) );
+				}
+			} catch ( Exception $e ) {
+				// Ignore invalid selector errors
+			}
 		}
 
 		$result = $dom->saveHTML();

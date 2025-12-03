@@ -176,23 +176,33 @@
 		margin-bottom: 16px;
 	}
 
-	h1:last-child:not(a > h1:last-child),
+	h1:last-child,
 	a:last-child > h1:last-child,
-	h2:last-child:not(a > h2:last-child),
+	h2:last-child,
 	a:last-child > h2:last-child,
-	h3:last-child:not(a > h3:last-child),
+	h3:last-child,
 	a:last-child > h3:last-child,
-	h4:last-child:not(a > h4:last-child),
+	h4:last-child,
 	a:last-child > h4:last-child,
-	h5:last-child:not(a > h5:last-child),
+	h5:last-child,
 	a:last-child > h5:last-child,
-	h6:last-child:not(a > h6:last-child),
+	h6:last-child,
 	a:last-child > h6:last-child,
 	p:last-child,
 	.noptin-columns:last-child,
-	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper,
-	.is__last_block__ {
+	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
+	}
+
+	/** Backward compatibility */
+	/** Overide the above for headings inside of links */
+	a:not(:last-child) h1:only-child,
+	a:not(:last-child) h2:only-child,
+	a:not(:last-child) h3:only-child,
+	a:not(:last-child) h4:only-child,
+	a:not(:last-child) h5:only-child,
+	a:not(:last-child) h6:only-child {
+		margin-bottom: 16px;
 	}
 
 	.noptin-records__wrapper,
@@ -211,10 +221,13 @@
 		margin-top: 0;
 	}
 
-	.noptin-column__inner > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+	.noptin-column__inner > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper,
+	.noptin-column__inner > .noptin-image-block__wrapper.is__last_block__ .noptin-block__margin-wrapper {
 		margin-bottom: 0;
 	}
-
+.noptin-block-group__inner {
+	margin: 0;
+}
 	.noptin-column__inner img {
 		width: 100%;
 	}

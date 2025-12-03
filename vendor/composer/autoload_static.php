@@ -14,10 +14,6 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
     );
 
     public static $prefixLengthsPsr4 = array (
-        'T' => 
-        array (
-            'TijsVerkoyen\\CssToInlineStyles\\' => 31,
-        ),
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
@@ -31,10 +27,6 @@ class ComposerStaticInitd4095a2753c173a59c96834ab522bdaa
     );
 
     public static $prefixDirsPsr4 = array (
-        'TijsVerkoyen\\CssToInlineStyles\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/tijsverkoyen/css-to-inline-styles/src',
-        ),
         'Symfony\\Polyfill\\Php80\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
