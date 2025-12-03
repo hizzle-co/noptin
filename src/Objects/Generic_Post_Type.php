@@ -83,6 +83,17 @@ class Generic_Post_Type extends Post_Type {
 			$this->generate_date_filters(),
 			$this->generate_taxonomy_filters( $this->type, $this->taxonomies() ),
 			array(
+				'include'       => array(
+					'label'       => $this->label,
+					'el'          => 'input',
+					'type'        => 'text',
+					'description' => sprintf(
+						// translators: %s: Object type label.
+						__( 'Comma-separated list of %s IDs to show.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'placeholder' => 'For example, 1,3,4,-5',
+				),
 				'lang'          => array(
 					'label'                => __( 'Language', 'newsletter-optin-box' ),
 					'el'                   => 'select',
