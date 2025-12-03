@@ -926,9 +926,8 @@ class Noptin_Email_Generator {
 	 */
 	public function inline_styles( $content ) {
 
-		// Check if this is PHP 5.6 and above.
-		// TODO: Switch to PHP 7 and upgrade emogrifier.
-		if ( version_compare( phpversion(), '5.6', '<' ) || empty( $content ) ) {
+		// Abort if no content.
+		if ( empty( $content ) ) {
 			return $content;
 		}
 
@@ -941,7 +940,7 @@ class Noptin_Email_Generator {
 		}
 
 		// Maybe abort early.
-		if ( ! class_exists( 'DOMDocument' ) || ! class_exists( '\TijsVerkoyen\CssToInlineStyles\CssToInlineStyles' ) ) {
+		if ( ! class_exists( 'DOMDocument' ) ) {
 			return $content;
 		}
 
