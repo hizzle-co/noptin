@@ -106,10 +106,10 @@
 	.noptin-button-link__wrapper {
 		background-color: <?php echo esc_attr( $settings['button_background'] ); ?>;
 		color: <?php echo esc_attr( $settings['button_color'] ); ?>;
-		padding-top: 10px;
-		padding-right: 25px;
-		padding-bottom: 10px;
-		padding-left: 25px;
+		padding-top: 16px;
+		padding-right: 40px;
+		padding-bottom: 16px;
+		padding-left: 40px;
 	}
 
 	table.noptin-button-block__wrapper {
