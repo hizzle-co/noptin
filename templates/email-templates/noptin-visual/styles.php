@@ -176,33 +176,33 @@
 		margin-bottom: 16px;
 	}
 
-	h1:last-child,
-	a:last-child > h1:last-child,
-	h2:last-child,
-	a:last-child > h2:last-child,
-	h3:last-child,
-	a:last-child > h3:last-child,
-	h4:last-child,
-	a:last-child > h4:last-child,
-	h5:last-child,
-	a:last-child > h5:last-child,
-	h6:last-child,
-	a:last-child > h6:last-child,
-	p:last-child,
-	.noptin-columns:last-child,
-	.wp-block-noptin-badge:last-child,
-	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+	.wp-block-noptin-table-cell > h1:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h1:last-child,
+	.wp-block-noptin-table-cell > h2:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h2:last-child,
+	.wp-block-noptin-table-cell > h3:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h3:last-child,
+	.wp-block-noptin-table-cell > h4:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h4:last-child,
+	.wp-block-noptin-table-cell > h5:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h5:last-child,
+	.wp-block-noptin-table-cell > h6:last-child,
+	.wp-block-noptin-table-cell > a:last-child > h6:last-child,
+	.wp-block-noptin-table-cell > p:last-child,
+	.wp-block-noptin-table-cell > .noptin-columns:last-child,
+	.wp-block-noptin-table-cell > .wp-block-noptin-badge:last-child,
+	.wp-block-noptin-table-cell > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
 	}
 
 	/** Backward compatibility */
 	/** Overide the above for headings inside of links */
-	a:not(:last-child) h1:only-child,
-	a:not(:last-child) h2:only-child,
-	a:not(:last-child) h3:only-child,
-	a:not(:last-child) h4:only-child,
-	a:not(:last-child) h5:only-child,
-	a:not(:last-child) h6:only-child {
+	.wp-block-noptin-table-cell > a:not(:last-child) h1:only-child,
+	.wp-block-noptin-table-cell > a:not(:last-child) h2:only-child,
+	.wp-block-noptin-table-cell > a:not(:last-child) h3:only-child,
+	.wp-block-noptin-table-cell > a:not(:last-child) h4:only-child,
+	.wp-block-noptin-table-cell > a:not(:last-child) h5:only-child,
+	.wp-block-noptin-table-cell > a:not(:last-child) h6:only-child {
 		margin-bottom: 16px;
 	}
 
