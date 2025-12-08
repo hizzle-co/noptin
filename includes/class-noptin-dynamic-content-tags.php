@@ -267,6 +267,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 			}
 		}
 
+		// Convert booleans.
+		if ( is_bool( $replacement ) ) {
+			$replacement = $replacement ? 'yes' : 'no';
+		}
+
 		if ( is_array( $replacement ) ) {
 			$is_all_scalar = array_reduce(
 				$replacement,
@@ -279,18 +284,23 @@ abstract class Noptin_Dynamic_Content_Tags {
 			if ( ! wp_is_numeric_array( $replacement ) || ! $is_all_scalar ) {
 				$replacement = wp_json_encode( $replacement );
 			} else {
+				if ( is_array( $config['options'] ?? '' ) && 'label' === ( $attributes['return'] ?? '' ) ) {
+					$new_replacement = array();
+					foreach ( $replacement as $value ) {
+						$new_replacement[] = $config['options'][ $value ] ?? $value;
+					}
+					$replacement = $new_replacement;
+				}
+
 				$replacement = implode( ', ', $replacement );
 			}
+		} elseif ( ( is_string( $replacement ) || is_numeric( $replacement )) && is_array( $config['options'] ?? '' ) && 'label' === ( $attributes['return'] ?? '' ) ) {
+			$replacement = $config['options'][ $replacement ] ?? $replacement;
 		}
 
 		// Convert dates.
 		if ( is_a( $replacement, 'DateTime' ) ) {
 			$replacement = $replacement->format( get_option( 'date_format' ) );
-		}
-
-		// Convert booleans.
-		if ( is_bool( $replacement ) ) {
-			$replacement = $replacement ? 'yes' : 'no';
 		}
 
 		// Nulls.

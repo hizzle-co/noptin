@@ -35,7 +35,11 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		add_action( 'gform_entry_post_save', array( $this, 'process_form' ), 10, 2 );
 
 		// Custom feed.
-		add_action( 'gform_loaded', array( $this, 'register_feed' ) );
+		if ( did_action( 'gform_loaded' ) ) {
+			$this->register_feed();
+		} else {
+			add_action( 'gform_loaded', array( $this, 'register_feed' ) );
+		}
 	}
 
 	/**
@@ -198,6 +202,9 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 	public function register_feed() {
 		if ( function_exists( 'add_noptin_subscriber' ) ) {
 			\GFAddOn::register( '\\Hizzle\\Noptin\\Integrations\\Gravity_Forms\\Feed' );
+
+			// Fix, manually init the feed incase Gravity Forms has already done that.
+			Feed::get_instance();
 		}
 	}
 }

@@ -285,6 +285,20 @@
 		overflow: hidden;
 	}
 
+	.noptin-block-group__inner > table > tbody > tr > td {
+		padding-top: 50px;
+		padding-right: 30px;
+		padding-bottom: 50px;
+		padding-left: 30px;
+	}
+
+	.noptin-block-group__inner > table > tbody > tr > td .noptin-block-group__inner > table > tbody > tr > td {
+		padding-top: 10px;
+		padding-right: 10px;
+		padding-bottom: 10px;
+		padding-left: 10px;
+	}
+
 	.noptin-block-group__inner {
 		overflow: hidden;
 	}

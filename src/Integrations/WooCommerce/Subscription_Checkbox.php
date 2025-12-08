@@ -152,11 +152,12 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 		try {
 			woocommerce_register_additional_checkout_field(
 				array(
-					'id'            => 'noptin/optin',
-					'location'      => $location,
-					'type'          => 'checkbox',
-					'label'         => $this->get_label_text(),
-					'optionalLabel' => $this->get_label_text(),
+					'id'                         => 'noptin/optin',
+					'location'                   => $location,
+					'type'                       => 'checkbox',
+					'label'                      => $this->get_label_text(),
+					'optionalLabel'              => $this->get_label_text(),
+					'show_in_order_confirmation' => true,
 				)
 			);
 		} catch ( \Exception $e ) {
