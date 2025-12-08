@@ -625,6 +625,11 @@ function noptin_email_wrap_group_block( $content = '', $background_color = '#fff
  */
 function noptin_prepare_email_recipients( $unprepared ) {
 
+	// Some people errorneously use semicolons instead of commas.
+	if ( is_string( $unprepared ) ) {
+		$unprepared = str_replace( ';', ',', $unprepared );
+	}
+
 	$recipients = array();
 
 	foreach ( noptin_parse_list( $unprepared, true ) as $recipient ) {

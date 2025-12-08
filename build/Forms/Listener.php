@@ -73,7 +73,7 @@ class Listener {
 		$this->error = new \WP_Error();
 
 		// Prepare submitted data.
-		$submitted  = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
+		$submitted = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing
 
 		$this->submitted = $submitted;
 
@@ -576,6 +576,11 @@ class Listener {
 					$this->cached['acceptance'] = $this->cached['gdprCheckbox'] ? $this->cached['gdprConsentText'] : '';
 				}
 			}
+
+			$this->cached = array_merge(
+				apply_filters( 'noptin_default_form_settings', array(), $source ),
+				$this->cached
+			);
 		}
 
 		// Are we retrieving the entire cache?

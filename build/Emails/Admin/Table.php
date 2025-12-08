@@ -611,6 +611,10 @@ class Table extends \WP_List_Table {
 				}
 			}
 
+			if ( 'email_template' === $item->type && $item->get( 'template_featured' ) ) {
+				$app['label'] = 'Featured';
+			}
+
 			$app['statsUrl'] = $item->get_activity_url();
 		}
 		?>

@@ -72,7 +72,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		$this->tags['current_path'] = array(
 			'description' => __( 'The path of the page.', 'newsletter-optin-box' ),
-			'replacement' => esc_html( $_SERVER['REQUEST_URI'] ),
+			'replacement' => esc_html( $_SERVER['REQUEST_URI'] ?? '' ),
 		);
 
 		$this->tags['date'] = array(
@@ -417,48 +417,48 @@ abstract class Noptin_Dynamic_Content_Tags {
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function replace_in_body( $string ) {
-		return $this->replace( $string, '' );
+	public function replace_in_body( $content ) {
+		return $this->replace( $content, '' );
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $content
 	 *
 	 * @return string|mixed
 	 */
-	public function replace_in_content( $string ) {
-		return $this->replace( $string, 'wp_kses_post' );
+	public function replace_in_content( $content ) {
+		return $this->replace( $content, 'wp_kses_post' );
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function replace_in_html( $string ) {
-		return $this->replace( $string, 'esc_html' );
+	public function replace_in_html( $content ) {
+		return $this->replace( $content, 'esc_html' );
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function replace_in_attributes( $string ) {
-		return $this->replace( $string, 'esc_attr' );
+	public function replace_in_attributes( $content ) {
+		return $this->replace( $content, 'esc_attr' );
 	}
 
 	/**
-	 * @param string $string
+	 * @param string $content
 	 *
 	 * @return string
 	 */
-	public function replace_in_url( $string ) {
-		return $this->replace( $string, 'urlencode' );
+	public function replace_in_url( $content ) {
+		return $this->replace( $content, 'urlencode' );
 	}
 
 	/**
@@ -475,8 +475,8 @@ abstract class Noptin_Dynamic_Content_Tags {
 	 *
 	 * @return string
 	 */
-	public function replace_in_email( $string ) {
-		return $this->replace( $string, 'sanitize_email' );
+	public function replace_in_email( $content ) {
+		return $this->replace( $content, 'sanitize_email' );
 	}
 
 	/**
@@ -495,7 +495,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 
 		if ( isset( $_COOKIE[ $name ] ) ) {
-			return esc_html( stripslashes( $_COOKIE[ $name ] ) );
+			return esc_html( wp_unslash( $_COOKIE[ $name ] ) );
 		}
 
 		return esc_html( $default );
