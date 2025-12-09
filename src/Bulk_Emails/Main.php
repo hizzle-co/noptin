@@ -267,6 +267,12 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			$email = $this->current_campaign;
 			$sends = get_post_meta( $email->id, '_noptin_sends', true );
 			if ( empty( $sends ) && ! empty( $email->parent_id ) && 'newsletter' === $email->type && $email->is_mass_mail() ) {
+				noptin_error_log(
+					sprintf(
+						'Deleting email "%s" as it had no sends.',
+						esc_html( $email->name )
+					)
+				);
 				$email->delete();
 			}
 
