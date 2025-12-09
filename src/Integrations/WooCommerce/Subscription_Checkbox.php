@@ -157,7 +157,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 					'type'                       => 'checkbox',
 					'label'                      => $this->get_label_text(),
 					'optionalLabel'              => $this->get_label_text(),
-					'show_in_order_confirmation' => true,
+					'show_in_order_confirmation' => false,
 				)
 			);
 		} catch ( \Exception $e ) {
