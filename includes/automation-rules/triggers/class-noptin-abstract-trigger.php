@@ -48,10 +48,10 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 		}
 
 		if ( 'allow' === $conditional_logic['action'] ) {
-			return sprintf( $action->run_if(), $conditional_logic['rules'] );
+			return sprintf( '<p>' . $action->run_if() . '</p>', $conditional_logic['rules'] );
 		}
 
-		return sprintf( $action->skip_if(), $conditional_logic['rules'] );
+		return sprintf( '<p>' . $action->skip_if() . '</p>', $conditional_logic['rules'] );
 	}
 
 	/**
