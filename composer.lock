@@ -56,16 +56,16 @@
         },
         {
             "name": "hizzle/wp",
-            "version": "1.4.2",
+            "version": "1.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/hizzle.git",
-                "reference": "abce621548a3edd821f5f4917718e60563af24df"
+                "reference": "a7997c117b93b181d6e1699d847caab0025b72b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/abce621548a3edd821f5f4917718e60563af24df",
-                "reference": "abce621548a3edd821f5f4917718e60563af24df",
+                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/a7997c117b93b181d6e1699d847caab0025b72b6",
+                "reference": "a7997c117b93b181d6e1699d847caab0025b72b6",
                 "shasum": ""
             },
             "require": {
@@ -98,9 +98,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/hizzle/issues",
-                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.2"
+                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.3"
             },
-            "time": "2025-11-17T15:07:36+00:00"
+            "time": "2025-12-09T04:29:06+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -256,10 +256,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {},
-    "platform-dev": {},
+    "platform": [],
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

@@ -161,7 +161,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 			$trigger_about = $trigger->get_rule_table_description( $rule );
 
 			if ( ! empty( $trigger_about ) ) {
-				$about .= '<div>' . $trigger_about . '</div>';
+				$about .= $trigger_about;
 			}
 		}
 

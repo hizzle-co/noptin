@@ -141,7 +141,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 		foreach ( $meta as $key => $value ) {
 			if ( '' !== $value && false !== $value ) {
 				$prepared[] = sprintf(
-					'<span class="noptin-rule-meta noptin-rule-meta__%s"><span class="noptin-rule-meta-key">%s</span>: <span class="noptin-rule-meta-value">%s</span></span>',
+					'<div class="noptin-rule-meta noptin-rule-meta__%s"><span class="noptin-rule-meta-key noptin-strong">%s</span>: <span class="noptin-rule-meta-value">%s</span></div>',
 					esc_attr( sanitize_html_class( preg_replace( '/[\s]+/', '-', strtolower( $key ) ) ) ),
 					esc_html( $key ),
 					esc_html( $value )

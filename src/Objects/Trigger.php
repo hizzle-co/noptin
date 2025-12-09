@@ -325,7 +325,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			}
 		}
 
-		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
+		return parent::get_rule_table_description( $rule ) . $this->rule_trigger_meta( $meta, $rule );
 	}
 
 	/**

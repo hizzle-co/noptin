@@ -97,7 +97,7 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 			esc_html__( 'Form', 'newsletter-optin-box' ) => $forms[ $settings['trigger_form'] ]['name'],
 		);
 
-		return $this->rule_trigger_meta( $meta, $rule ) . parent::get_rule_table_description( $rule );
+		return parent::get_rule_table_description( $rule ) . $this->rule_trigger_meta( $meta, $rule );
 	}
 
 	/**
