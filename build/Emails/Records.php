@@ -42,6 +42,8 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		parent::__construct();
 		add_filter( 'noptin_automation_rules_email_conditional_logic_skip_tags', array( __CLASS__, 'conditional_logic_skip_tags' ), 10, 2 );
 		add_action( 'noptin_automation_rules_email_prepare_skipped_rules', array( __CLASS__, 'prepare_skipped_rules' ), 10, 2 );
+		add_action( 'updated_postmeta', array( $this, 'check_newsletter_sent' ), 10, 4 );
+		add_action( 'added_post_meta', array( $this, 'check_newsletter_sent' ), 10, 4 );
 	}
 
 	/**
@@ -53,6 +55,10 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		return array(
 			'id'                  => array(
 				'label' => __( 'ID', 'newsletter-optin-box' ),
+				'type'  => 'number',
+			),
+			'parent_id'           => array(
+				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
 				'type'  => 'number',
 			),
 			'name'                => array(
@@ -67,14 +73,69 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			'preview_url'         => array(
 				'label' => __( 'Preview URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Preview URL', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object link destination. */
+						__( 'Displays a button link to %s', 'newsletter-optin-box' ),
+						strtolower( __( 'Preview URL', 'newsletter-optin-box' ) )
+					),
+					'icon'        => 'visibility',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => __( 'Preview', 'newsletter-optin-box' ),
+						'url'  => $this->field_to_merge_tag( 'preview_url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'edit_url'            => array(
 				'label' => __( 'Edit URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Edit URL', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object link destination. */
+						__( 'Displays a button link to %s', 'newsletter-optin-box' ),
+						strtolower( __( 'Edit URL', 'newsletter-optin-box' ) )
+					),
+					'icon'        => 'edit',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => __( 'Edit', 'newsletter-optin-box' ),
+						'url'  => $this->field_to_merge_tag( 'edit_url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'view_in_browser_url' => array(
 				'label' => __( 'View in browser', 'newsletter-optin-box' ),
 				'type'  => 'string',
+			),
+			'activity_url'        => array(
+				'label' => __( 'Activity URL', 'newsletter-optin-box' ),
+				'type'  => 'string',
+				'block' => array(
+					'title'       => __( 'Activity URL', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object link destination. */
+						__( 'Displays a button link to %s', 'newsletter-optin-box' ),
+						strtolower( __( 'Activity URL', 'newsletter-optin-box' ) )
+					),
+					'icon'        => 'chart-line',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'defaults'    => array(
+						'text' => __( 'View Stats', 'newsletter-optin-box' ),
+						'url'  => $this->field_to_merge_tag( 'activity_url' ),
+					),
+					'element'     => 'button',
+				),
 			),
 			'send_count'          => array(
 				'label' => __( 'Sends', 'newsletter-optin-box' ),
@@ -100,6 +161,61 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 	}
 
 	/**
+	 * Returns a list of available triggers.
+	 *
+	 * @return array $triggers The triggers.
+	 */
+	public function get_triggers() {
+
+		return array_merge(
+			parent::get_triggers(),
+			// Newsletter sent.
+			array(
+				'noptin_newsletter_sent' => array(
+					'label'       => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Newsletter Sent', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description' => __( 'When a newsletter is sent', 'newsletter-optin-box' ),
+					'subject'     => 'post_author',
+				),
+			)
+		);
+	}
+
+	/**
+	 * Checks newsletter sent to trigger automation rules.
+	 *
+	 * @param int    $meta_id    The meta ID.
+	 * @param int    $post_id    The post ID.
+	 * @param string $meta_key   The meta key.
+	 * @param mixed  $meta_value The meta value.
+	 */
+	public function check_newsletter_sent( $meta_id, $post_id, $meta_key, $meta_value ) {
+		if ( 'completed' !== $meta_key || empty( $meta_value ) ) {
+			return;
+		}
+
+		$email = noptin_get_email_campaign_object( $post_id );
+
+		if ( $email->exists() && 'newsletter' === $email->type ) {
+			$author = $email->author ? get_userdata( $email->author ) : null;
+
+			$this->trigger(
+				'noptin_newsletter_sent',
+				array(
+					'email'      => $author ? $author->user_email : '',
+					'object_id'  => $email->id,
+					'subject_id' => $email->author,
+				)
+			);
+
+			do_action( 'noptin_newsletter_sent', $post_id, $meta_value );
+		}
+	}
+
+	/**
 	 * Returns a list of available (actions).
 	 *
 	 * @return array $actions The actions.
@@ -108,7 +224,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		return array_merge(
 			parent::get_actions(),
 			array(
-				'email' => array(
+				'email'           => array(
 					'id'            => 'email',
 					'label'         => __( 'Send Email', 'newsletter-optin-box' ),
 					'description'   => __( 'Send Email', 'newsletter-optin-box' ),
@@ -119,6 +235,28 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 					// translators: %s is a list of conditions.
 					'skip_if'       => __( 'Does not send if %s', 'newsletter-optin-box' ),
 					'callback_args' => array( 'rule', 'args', 'smart_tags' ),
+				),
+				'delete_campaign' => array(
+					'id'             => 'delete_campaign',
+					'label'          => sprintf(
+						/* translators: %s: Object type label. */
+						__( '%s > Delete', 'newsletter-optin-box' ),
+						$this->singular_label
+					),
+					'description'    => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Delete an %s', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'callback'       => __CLASS__ . '::delete_record_action',
+					'can_run'        => __CLASS__ . '::can_delete_record_action',
+					'extra_settings' => array(
+						'campaign' => array(
+							'label'    => __( 'Campaign ID', 'newsletter-optin-box' ),
+							'type'     => 'string',
+							'required' => true,
+						),
+					),
 				),
 			)
 		);
@@ -215,6 +353,39 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			}
 		}
 
+		return true;
+	}
+
+	/**
+	 * Deletes a record.
+	 *
+	 * @param array $settings The action settings.
+	 */
+	public static function delete_record_action( $settings ) {
+		if ( ! empty( $settings['campaign'] ) ) {
+			$campaign = noptin_get_email_campaign_object( $settings['campaign'] );
+
+			if ( $campaign->exists() ) {
+				$campaign->delete();
+			}
+		}
+	}
+
+	/**
+	 * Checks if we can delete a record.
+	 *
+	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule — The automation rule.
+	 */
+	public static function can_delete_record_action( $subject, $rule, $args ) {
+		$campaign = $rule->get_action_setting( 'campaign' );
+		if ( empty( $campaign ) || ! is_numeric( $campaign ) ) {
+			throw new \Exception( 'No campaign ID specified for deletion' );
+		}
+
+		$campaign = noptin_get_email_campaign_object( $campaign );
+		if ( ! $campaign->exists() ) {
+			throw new \Exception( 'Campaign does not exist for deletion:- ID #' . esc_html( $campaign ) );
+		}
 		return true;
 	}
 

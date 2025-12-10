@@ -559,7 +559,7 @@ class Table extends \WP_List_Table {
 
 			$value = (array) $value;
 
-			if ( is_array( $fields[ $key ]['options'] ) ) {
+			if ( is_array( $fields[ $key ]['options'] ?? '' ) ) {
 				$option_labels = array();
 				foreach ( $value as $_value ) {
 					$option_labels[] = $fields[ $key ]['options'][ $_value ] ?? $_value;
