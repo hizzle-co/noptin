@@ -6,7 +6,7 @@
  * @since   1.0.0
  */
 
-namespace Hizzle\Noptin\Bulk_Emails;
+namespace Hizzle\Noptin\Emails\Bulk;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -28,7 +28,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	private $current_campaign;
 
 	/**
-	 * @var Email_Sender[] $senders
+	 * @var Sender[] $senders
 	 */
 	public $senders = array();
 
@@ -155,8 +155,9 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	/**
 	 * Sends pending emails.
 	 */
-	public function send_pending() {
-		wp_remote_get( $this->get_query_url(), $this->get_ajax_args() );
+	public static function send_pending() {
+		$instance = self::instance();
+		wp_remote_get( $instance->get_query_url(), $instance->get_ajax_args() );
 	}
 
 	/**
@@ -330,7 +331,8 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 					// Translators: %s The error message.
 					__( 'Error sending email: %s', 'newsletter-optin-box' ),
 					esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() )
-				)
+				),
+				10 * MINUTE_IN_SECONDS
 			);
 		}
 	}
@@ -342,9 +344,9 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public function handle_unexpected_shutdown( $error = null ) {
 		// Get the last error if none provided
-        if ( $error === null ) {
-            $error = error_get_last();
-        }
+		if ( is_null( $error ) ) {
+			$error = error_get_last();
+		}
 
 		if ( ! empty( $this->current_campaign ) && ! empty( $error ) && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
 			noptin_pause_email_campaign(

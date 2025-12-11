@@ -56,6 +56,9 @@ class Main {
 		// Add shortcode to display past newsletters.
 		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
 
+		// Bulk emails.
+		Bulk\Main::instance();
+
 		// Email preview.
 		Preview::init();
 
@@ -399,7 +402,7 @@ class Main {
 						__( 'Newsletter - %s', 'newsletter-optin-box' ),
 						date_i18n( get_option( 'date_format' ) )
 					),
-				)
+				),
 			)
 		);
 

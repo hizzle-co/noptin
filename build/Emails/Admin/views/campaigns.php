@@ -9,7 +9,7 @@
 	 */
 
 	// Send pending emails.
-	noptin()->bulk_emails()->send_pending();
+	\Hizzle\Noptin\Emails\Bulk\Main::send_pending();
 
 	// Prepare the email type.
 	$email_type  = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );

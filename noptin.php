@@ -245,7 +245,6 @@ class Noptin {
 		require_once $plugin_path . 'includes/subscriber.php';
 		require_once $plugin_path . 'includes/emails/class-manager.php';
 		require_once $plugin_path . 'includes/libraries/noptin-com/class-noptin-com.php';
-
 	}
 
 	/**
@@ -290,9 +289,6 @@ class Noptin {
 
 		// DB.
 		$this->db();
-
-		// Bulk email sender.
-		$this->bulk_emails();
 
 		if ( empty( $this->white_label ) ) {
 			$this->white_label = new Noptin_White_Label();
@@ -449,10 +445,12 @@ class Noptin {
 	/**
 	 * Bulk email sender.
 	 *
-	 * @return \Hizzle\Noptin\Bulk_Emails\Main
+	 * @deprecated 4.1.0 Use \Hizzle\Noptin\Emails\Bulk\Main::instance() instead.
+	 * @return \Hizzle\Noptin\Emails\Bulk\Main
 	 */
 	public function bulk_emails() {
-		return \Hizzle\Noptin\Bulk_Emails\Main::instance();
+		_deprecated_function( __METHOD__, '4.1.0', '\Hizzle\Noptin\Emails\Bulk\Main::instance()' );
+		return \Hizzle\Noptin\Emails\Bulk\Main::instance();
 	}
 
 	/**

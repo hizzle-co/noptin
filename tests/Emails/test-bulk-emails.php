@@ -57,7 +57,7 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->bulk_emails = noptin()->bulk_emails();
+		$this->bulk_emails = \Hizzle\Noptin\Emails\Bulk\Main::instance();
 
 		// Create mock sender
 		$this->mock_sender = new class {
