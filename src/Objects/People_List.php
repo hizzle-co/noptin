@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Controller for emailing a collection of people.
  */
-class People_List extends \Hizzle\Noptin\Bulk_Emails\Email_Sender {
+class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 
 	/**
 	 * @var string collection type.

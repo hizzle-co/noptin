@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * The main email sender class.
+ * @deprecated
  */
 abstract class Email_Sender extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	/**
