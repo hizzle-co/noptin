@@ -169,11 +169,15 @@
 		border-collapse: separate;
 	}
 
-	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper, .wp-block-noptin-badge {
+	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper, .wp-block-noptin-badge table {
 		margin-top: 0px;
 		margin-left: 10px;
 		margin-right: 10px;
 		margin-bottom: 16px;
+	}
+
+	.wp-block-noptin-badge {
+		letter-spacing: 1px;
 	}
 
 	.wp-block-noptin-table-cell > h1:last-child,
@@ -190,7 +194,7 @@
 	.wp-block-noptin-table-cell > a:last-child > h6:last-child,
 	.wp-block-noptin-table-cell > p:last-child,
 	.wp-block-noptin-table-cell > .noptin-columns:last-child,
-	.wp-block-noptin-table-cell > .wp-block-noptin-badge:last-child,
+	.wp-block-noptin-table-cell > .wp-block-noptin-badge:last-child table,
 	.wp-block-noptin-table-cell > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
 	}
