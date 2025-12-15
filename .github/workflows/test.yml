@@ -20,7 +20,7 @@ jobs:
         wordpress-version: ['6.4', 'latest']
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup PHP ${{ matrix.php-version }}
         uses: shivammathur/setup-php@v2
