@@ -2,7 +2,7 @@
 
 namespace Hizzle\Noptin\Tests\Bulk_Emails;
 
-use Hizzle\Noptin\Bulk_Emails\Main;
+use Hizzle\Noptin\Emails\Bulk\Main;
 use Hizzle\Noptin\Emails\Email;
 
 /**
@@ -57,7 +57,7 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->bulk_emails = \Hizzle\Noptin\Emails\Bulk\Main::instance();
+		$this->bulk_emails = Main::instance();
 
 		// Create mock sender
 		$this->mock_sender = new class {
