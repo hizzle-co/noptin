@@ -34,6 +34,8 @@ abstract class People extends Collection {
 	 * Class constructor.
 	 */
 	public function __construct() {
+		do_action( 'noptin_init_people_collection_object', $this );
+
 		if ( ! empty( $this->email_sender ) ) {
 			add_filter( 'noptin_' . $this->email_sender . '_email_sender_collection_object', array( $this, 'get_instance' ) );
 			add_action( 'noptin_init_current_email_recipient', array( $this, 'prepare_email_test_sender_data' ) );

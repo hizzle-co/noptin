@@ -255,7 +255,6 @@ class Users extends People {
 
 		// Fetch custom fields.
 		foreach ( noptin_get_user_custom_fields() as $key => $field ) {
-
 			if ( empty( $field['options'] ) ) {
 				$fields[ "custom_fields.$key" ] = array(
 					'label'       => $field['label'],
@@ -322,7 +321,6 @@ class Users extends People {
 		$custom_fields = $options['custom_fields'] ?? array();
 
 		foreach ( $custom_fields as $key => $value ) {
-
 			$value = trim( $value );
 
 			// Skip empty fields.

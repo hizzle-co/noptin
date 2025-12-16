@@ -32,7 +32,7 @@ class Menu {
 	 *
 	 */
 	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 15 );
+		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		// Hide the menu item.
 		add_action( 'admin_head', array( __CLASS__, 'hide_menu_item' ) );
