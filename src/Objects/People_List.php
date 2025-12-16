@@ -184,7 +184,7 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		// Remove current contact from the list.
 		if ( is_array( $contacts ) ) {
 			if ( ! in_array( $contact_id, $contacts, true ) ) {
-				return new \WP_Error( 'noptin_cannot_email_contact', 'Contact does not exist in the list.' );
+				return new \WP_Error( 'noptin_cannot_email_contact', $collection->singular_label . ' does not exist in the list.' );
 			}
 
 			$contacts = array_diff( $contacts, array( $contact_id ) );
@@ -196,21 +196,21 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		$person = $collection->get( $contact_id );
 
 		if ( ! $person || ! $person->exists() ) {
-			return new \WP_Error( 'noptin_cannot_email_contact', 'Contact does not exist.' );
+			return new \WP_Error( 'noptin_cannot_email_contact', $collection->singular_label . ' does not exist.' );
 		}
 
 		$email = $person->get_email();
 
 		// Bail if the contact is not found or is unsubscribed...
 		if ( empty( $email ) || noptin_is_email_unsubscribed( $email ) ) {
-			return new \WP_Error( 'noptin_cannot_email_contact', 'Contact is unsubscribed.' );
+			return new \WP_Error( 'noptin_cannot_email_contact', $collection->singular_label . ' is unsubscribed.' );
 		}
 
 		// ... or does not qualify for the campaign.
 		$options = empty( $this->options_key ) ? array() : $campaign->get( $this->options_key );
 		$options = is_array( $options ) ? $options : array();
 		if ( ! $this->can_email_contact( $campaign, $person, $options ) ) {
-			return new \WP_Error( 'noptin_cannot_email_contact', 'Contact does not qualify for the campaign.' );
+			return new \WP_Error( 'noptin_cannot_email_contact', $collection->singular_label . ' does not qualify for the campaign.' );
 		}
 
 		// Generate and send the actual email.
