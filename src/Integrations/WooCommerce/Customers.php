@@ -29,6 +29,7 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 			'fill' => '#674399',
 		);
 
+		do_action( 'noptin_woocommerce_customer_before_init', $this );
 		parent::__construct();
 
 		add_action( 'woocommerce_payment_complete', array( $this, 'payment_complete' ), 100 );

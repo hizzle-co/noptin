@@ -33,12 +33,12 @@ class Main {
 	 * @since 2.2.0
 	 */
 	public function __construct() {
-		add_action( 'noptin_register_post_type_objects', array( $this, 'register_custom_objects' ) );
+		add_action( 'noptin_init', __CLASS__ . '::register_objects' );
+		add_action( 'noptin_register_post_type_objects', array( __CLASS__, 'register_custom_post_types' ) );
 		add_filter( 'noptin_automation_rule_migrate_triggers', array( $this, 'migrate_triggers' ) );
 		add_filter( 'noptin_supports_ecommerce_tracking', '__return_true' );
 		add_filter( 'noptin_format_price_callback', __CLASS__ . '::price_format_cb' );
 		$this->email_template = new Template();
-		$this->migrate        = new Migrate();
 
 		// Backwards compatiblity, check if the class exists before instantiating.
 		if ( class_exists( '\Hizzle\Noptin\Integrations\Checkbox_Integration' ) ) {
@@ -55,11 +55,19 @@ class Main {
 	 *
 	 * @since 3.0.0
 	 */
-	public function register_custom_objects() {
+	public static function register_objects() {
 		\Hizzle\Noptin\Objects\Store::add( new Customers() );
-		\Hizzle\Noptin\Objects\Store::add( new Products() );
 		\Hizzle\Noptin\Objects\Store::add( new Order_Items() );
 		\Hizzle\Noptin\Objects\Store::add( new Orders() );
+	}
+
+	/**
+	 * Registers custom post types
+	 *
+	 * @since 3.0.0
+	 */
+	public static function register_custom_post_types() {
+		\Hizzle\Noptin\Objects\Store::add( new Products() );
 	}
 
 	/**
