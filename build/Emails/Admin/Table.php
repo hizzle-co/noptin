@@ -90,8 +90,6 @@ class Table extends \WP_List_Table {
 	 *  Prepares the display query
 	 */
 	public function prepare_query() {
-		global $noptin_campaigns_query;
-
 		if ( $this->email_type->upsell ) {
 			return;
 		}
@@ -196,8 +194,7 @@ class Table extends \WP_List_Table {
 			$query_args['author'] = get_current_user_id();
 		}
 
-		$noptin_campaigns_query = new \WP_Query( $query_args );
-		$this->query            = $noptin_campaigns_query;
+		$this->query = new \WP_Query( $query_args );
 	}
 
 	/**

@@ -472,11 +472,10 @@ class Task extends \Hizzle\Store\Record {
 		$result = parent::save();
 
 		if ( $this->exists() && $this->get_status() === 'pending' && $this->has_expired() ) {
-			$is_publish = $this->get_lookup_key() && strpos( $this->get_lookup_key(), '_published' );
+			$is_deleted = $this->get_lookup_key() && strpos( $this->get_lookup_key(), 'delete' );
 
-			// If publishing a post, run the task in the background.
-			// so that poorly coded plugins will have a chance to save post meta before the task runs.
-			if ( ( ! $is_publish && $this->get_subject() ) || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
+			// Run delete actions right away to make use of the deleted data.
+			if ( ( ! $is_deleted && $this->get_subject() ) || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
 				$this->process();
 			} elseif ( ! has_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ) ) ) {
 				add_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ), -1000 );

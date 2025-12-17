@@ -179,7 +179,7 @@ class Generic_Post_Type extends Post_Type {
 		$filters = $this->prepare_date_query_filter( $filters );
 
 		if ( ! empty( $filters['lang'] ) ) {
-			$code = noptin_convert_language_locale_to_slug( $filters['lang'] );
+			$code            = noptin_convert_language_locale_to_slug( $filters['lang'] );
 			$filters['lang'] = empty( $code ) ? substr( $filters['lang'], 0, 2 ) : $code;
 
 			if ( ! empty( $filters['lang'] ) ) {
@@ -188,9 +188,12 @@ class Generic_Post_Type extends Post_Type {
 		}
 
 		$filters = apply_filters( 'noptin_post_type_get_all_filters', $filters, $this->type );
-		$filters = array_filter( $filters, function( $value ) {
-			return $value !== '' && $value !== null;
-		} );
+		$filters = array_filter(
+            $filters,
+            function ( $value ) {
+				return '' !== $value && ! is_null( $value );
+            }
+        );
 
 		do_action( 'noptin_post_type_get_all_before_query', $filters, $this->type );
 		$posts = get_posts( $filters );
@@ -387,7 +390,7 @@ class Generic_Post_Type extends Post_Type {
 					),
 					'element'     => 'image',
 					'settings'    => array(
-						'size' => array(
+						'size'     => array(
 							'label'       => __( 'Resolution', 'newsletter-optin-box' ),
 							'el'          => 'image_size_select',
 							'description' => __( 'Select the image size to display.', 'newsletter-optin-box' ),
@@ -731,11 +734,9 @@ class Generic_Post_Type extends Post_Type {
 		if ( ! is_wp_error( $post ) ) {
 			if ( ! empty( $post_info['tax_input'] ) ) {
 				foreach ( $post_info['tax_input'] as $taxonomy => $tags ) {
-
 					$taxonomy_obj = get_taxonomy( $taxonomy );
 
 					if ( $taxonomy_obj ) {
-
 						if ( empty( $tags ) && ! empty( $tax_object->default_term ) ) {
 							$default_term_id = get_option( 'default_term_' . $taxonomy );
 							if ( ! empty( $default_term_id ) ) {

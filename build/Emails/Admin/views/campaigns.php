@@ -8,6 +8,9 @@
 	 * @var array $query_args
 	 */
 
+	// Run pending tasks.
+	do_action( 'noptin_tasks_run_pending' );
+
 	// Send pending emails.
 	\Hizzle\Noptin\Emails\Bulk\Main::send_pending();
 
@@ -174,7 +177,7 @@ if ( $parent ) {
 		<form id="noptin-email-campaigns-table" method="get">
 			<?php $table->search_box( __( 'Search Campaigns', 'newsletter-optin-box' ), 'post' ); ?>
 			<?php foreach ( $query_args as $key => $value ) : ?>
-				<?php if ( ! in_array( $key, array( 's', '_wpnonce', '_wp_http_referer', 'action', 'action2' ) ) ) : ?>
+				<?php if ( is_scalar( $value ) && ! in_array( $key, array( 's', '_wpnonce', '_wp_http_referer', 'action', 'action2' ), true ) ) : ?>
 					<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"/>
 				<?php endif; ?>
 			<?php endforeach; ?>
