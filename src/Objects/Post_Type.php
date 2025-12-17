@@ -365,7 +365,8 @@ abstract class Post_Type extends Collection {
 
 		// Are we publishing a post?
 		if ( 'publish' === $new_status ) {
-			$this->maybe_trigger( $post->post_author, $post_id, $this->type . '_published' );
+			// Trigger after 10 seconds to allow other processes to complete.
+			schedule_noptin_background_action( time() + 10, 'noptin_force_trigger_new_post_notification', $post_id );
 		}
 
 		// Are we unpublishing a post?
