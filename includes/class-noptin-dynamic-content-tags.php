@@ -662,8 +662,8 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public function check_conditional_logic( $conditional_logic, $skip_tags = array(), $log = true ) {
 
 		// Retrieve the conditional logic.
-		$action  = $conditional_logic['action']; // allow or prevent.
-		$type    = $conditional_logic['type']; // all or any.
+		$action  = $conditional_logic['action'] ?? 'allow'; // allow or prevent.
+		$type    = $conditional_logic['type'] ?? 'all'; // all or any.
 		$skipped = array();
 
 		// Loop through each rule.

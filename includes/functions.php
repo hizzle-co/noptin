@@ -1703,7 +1703,7 @@ function noptin_newslines_to_array( $text ) {
 
 		// Value and label can be separated by a pipe.
 		if ( strpos( $option, '|' ) !== false ) {
-			list( $value, $label )     = explode( '|', $option );
+			list( $value, $label )     = explode( '|', $option, 2 );
 			$options[ trim( $value ) ] = wp_strip_all_tags( trim( $label ) );
 			continue;
 		}
@@ -1827,14 +1827,19 @@ function noptin_array_string_has( $haystack, $needle ) {
  * @param array $second_string
  */
 function noptin_array_string_match( $haystack, $needle ) {
-	if ( empty( $haystack ) ) {
+	if ( empty( $haystack ) || empty( $needle ) ) {
 		return $haystack === $needle;
 	}
 
 	$needle   = noptin_parse_list( $needle, true );
 	$haystack = noptin_parse_list( $haystack, true );
 
-	return ! empty( array_diff( $needle, $haystack ) );
+	if ( count( $haystack ) !== count( $needle ) ) {
+		return false;
+	}
+
+	return empty( array_diff( $haystack, $needle ) )
+		&& empty( array_diff( $needle, $haystack ) );
 }
 
 /**
@@ -1860,6 +1865,10 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 			return $current_value !== $condition_value || ! noptin_array_string_match( $current_value, $condition_value );
 
 		case 'contains':
+			if ( '' === $condition_value ) {
+				return false;
+			}
+
 			return false !== strpos( $current_value, $condition_value ) || noptin_array_string_has( $current_value, $condition_value );
 
 		case 'does_not_contain':
