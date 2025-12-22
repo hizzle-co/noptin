@@ -2564,3 +2564,53 @@ function noptin_should_show_black_friday_sale_notice() {
 
 	return apply_filters( 'noptin_show_black_friday_sale_notice', $is_within_period );
 }
+
+/**
+ * Attempts to raise the PHP timeout for time intensive processes.
+ *
+ * Only allows raising the existing limit and prevents lowering it.
+ *
+ * @param int $limit The time limit in seconds.
+ */
+function noptin_raise_time_limit( $limit = 0 ) {
+	$limit              = (int) $limit;
+	$max_execution_time = (int) ini_get( 'max_execution_time' );
+
+	/*
+	 * If the max execution time is already unlimited (zero), or if it exceeds or is equal to the proposed
+	 * limit, there is no reason for us to make further changes (we never want to lower it).
+	 */
+	if ( 0 === $max_execution_time || ( $max_execution_time >= $limit && 0 !== $limit ) ) {
+		return;
+	}
+
+	if ( function_exists( 'set_time_limit' ) && false === strpos( ini_get( 'disable_functions' ), 'set_time_limit' ) && ! ini_get( 'safe_mode' ) ) { // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.safe_modeDeprecatedRemoved
+		@set_time_limit( $limit ); // @codingStandardsIgnoreLine
+	}
+}
+
+/**
+ * Checks if memory is exceeded (more than 90% used)
+ *
+ * @return bool
+ */
+function noptin_memory_exceeded() {
+
+	if ( function_exists( 'ini_get' ) ) {
+		$memory_limit = ini_get( 'memory_limit' );
+	} else {
+		// Sensible default.
+		$memory_limit = '128M';
+	}
+
+	if ( ! $memory_limit || -1 === intval( $memory_limit ) ) {
+		// Unlimited, set to 32GB.
+		$memory_limit = '32G';
+	}
+
+	$memory_limit    = wp_convert_hr_to_bytes( $memory_limit ) * 0.90;
+	$current_memory  = memory_get_usage( true );
+	$memory_exceeded = $current_memory >= $memory_limit;
+
+	return apply_filters( 'noptin_memory_exceeded', $current_memory >= $memory_limit );
+}
