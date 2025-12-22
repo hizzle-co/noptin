@@ -443,17 +443,6 @@ class Noptin {
 	}
 
 	/**
-	 * Bulk email sender.
-	 *
-	 * @deprecated 4.1.0 Use \Hizzle\Noptin\Emails\Bulk\Main::instance() instead.
-	 * @return \Hizzle\Noptin\Emails\Bulk\Main
-	 */
-	public function bulk_emails() {
-		_deprecated_function( __METHOD__, '4.1.0', '\Hizzle\Noptin\Emails\Bulk\Main::instance()' );
-		return \Hizzle\Noptin\Emails\Bulk\Main::instance();
-	}
-
-	/**
 	 * Load Localisation files.
 	 *
 	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
