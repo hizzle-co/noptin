@@ -13,76 +13,55 @@ defined( 'ABSPATH' ) || exit;
 /**
  * The main bulk email sender class.
  */
-class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
+class Main {
 
 	/**
-	 * The cron hook.
+	 * The task hook.
 	 */
-	public $cron_hook = 'noptin_send_bulk_emails';
+	const TASK_HOOK             = 'noptin_send_bulk_emails';
+	const TASK_INTERVAL         = 300; // Send every 5 minutes.
+	const HEALTH_CHECK_HOOK     = 'noptin_send_bulk_emails_health_check';
+	const HEALTH_CHECK_INTERVAL = 600; // 10 minutes
 
 	/**
-	 * The current campaign ID being processed.
-	 *
-	 * @var \Hizzle\Noptin\Emails\Email
+	 * Locking constants
 	 */
-	private $current_campaign;
+	const LOCK_KEY    = 'noptin_send_bulk_emails_process_lock';
+	const LOCK_TTL    = 60; // seconds
+	const MAX_RUNTIME = 20; // seconds
 
 	/**
 	 * @var Sender[] $senders
 	 */
-	public $senders = array();
+	public static $senders = array();
 
 	/**
 	 * @var int[]|string[] $next_recipients
 	 */
-	private $next_recipients = array();
-
-	/**
-	 * Stores the main bulk email instance.
-	 *
-	 * @access private
-	 * @var    Main $instance The main bulk email instance.
-	 * @since  1.0.0
-	 */
-	private static $instance = null;
-
-	/**
-	 * Get active instance
-	 *
-	 * @access public
-	 * @since  1.0.0
-	 * @return Main The main bulk email instance.
-	 */
-	public static function instance() {
-
-		if ( empty( self::$instance ) ) {
-			self::$instance = new self();
-		}
-
-		return self::$instance;
-	}
+	private static $next_recipients = array();
 
 	/**
 	 * Loads the class.
 	 *
 	 */
-	private function __construct() {
-		parent::__construct();
-
+	public static function init() {
 		// Init the email senders.
-		add_action( 'noptin_init', array( $this, 'init_email_senders' ), 100 );
+		add_action( 'noptin_init', array( __CLASS__, 'init_email_senders' ), 100 );
 
 		// Send newsletter emails.
-		add_action( 'noptin_newsletter_campaign_published', array( $this, 'send_newsletter_campaign' ) );
-		add_action( 'noptin_resume_email_campaign', array( $this, 'send_newsletter_campaign' ), 1000 );
+		add_action( 'noptin_newsletter_campaign_published', array( __CLASS__, 'send_newsletter_campaign' ) );
+		add_action( 'noptin_resume_email_campaign', array( __CLASS__, 'send_newsletter_campaign' ), 1000 );
 
-		add_action( 'shutdown', array( $this, 'handle_unexpected_shutdown' ) );
+		add_action( self::HEALTH_CHECK_HOOK, array( __CLASS__, 'send_pending' ) );
+		add_action( self::TASK_HOOK, array( __CLASS__, 'run' ) );
+		add_action( 'wp_ajax_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
+		add_action( 'wp_ajax_nopriv_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
 	}
 
 	/**
 	 * Inits the email senders.
 	 */
-	public function init_email_senders() {
+	public static function init_email_senders() {
 		$senders = apply_filters(
 			'noptin_bulk_email_senders',
 			array()
@@ -93,7 +72,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 				$class = new $class();
 			}
 
-			$this->senders[ $sender ] = $class;
+			self::$senders[ $sender ] = $class;
 		}
 	}
 
@@ -102,7 +81,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign The new campaign object.
 	 */
-	public function send_newsletter_campaign( $campaign ) {
+	public static function send_newsletter_campaign( $campaign ) {
 
 		$campaign = \Hizzle\Noptin\Emails\Email::from( $campaign );
 
@@ -117,8 +96,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		// Log the campaign.
 		log_noptin_message(
 			sprintf(
-				// Translators: %s is the campaign title.
-				__( 'Sending the campaign: "%s"', 'newsletter-optin-box' ),
+				'Sending the campaign: "%s"',
 				esc_html( $campaign->name )
 			)
 		);
@@ -128,50 +106,116 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			$campaign->send();
 
 			// Update status.
-			update_post_meta( $campaign->id, 'completed', 1 );
-
-			return;
+			return self::done_sending( $campaign );
 		}
 
 		// Send the campaign.
-		$sender = $campaign->get_sender();
-
-		if ( $this->has_sender( $sender ) ) {
-			$this->send_pending();
-		} else {
+		if ( self::has_sender( $campaign->get_sender() ) ) {
+			update_post_meta( $campaign->id, '_noptin_status', 'sending' );
+			update_post_meta( $campaign->id, '_noptin_last_activity', time() );
+			self::send_pending();
+		} elseif ( has_action( 'noptin_send_email_via_' . $campaign->get_sender() ) ) {
+			log_noptin_message(
+				sprintf(
+					'Forwarding the campaign to custom sender handler: %s',
+					esc_html( $campaign->get_sender() )
+				)
+			);
 			do_action( 'noptin_send_email_via_' . $campaign->get_sender(), $campaign, null );
+		} else {
+			noptin_pause_email_campaign(
+				$campaign->id,
+				sprintf( 'Unsupported sender: %s', esc_html( $campaign->get_sender() ) )
+			);
 		}
 	}
 
 	/**
 	 * Checks if we have a given email sender.
-	 *
-	 * @return bool
 	 */
-	public function has_sender( $sender ) {
-		return isset( $this->senders[ $sender ] );
+	public static function has_sender( $sender ) {
+		return self::$senders[ $sender ] ?? false;
 	}
 
 	/**
 	 * Sends pending emails.
 	 */
 	public static function send_pending() {
-		$instance = self::instance();
-		wp_remote_get( $instance->get_query_url(), $instance->get_ajax_args() );
+		// Create scheduled tasks if needed...
+		// ... then trigger the sending task via AJAX as a backup.
+		if ( self::check_scheduled_tasks() ) {
+			wp_remote_get(
+				add_query_arg(
+					array(
+						'action'      => self::TASK_HOOK,
+						'_ajax_nonce' => wp_create_nonce( self::TASK_HOOK ),
+					),
+					admin_url( 'admin-ajax.php' )
+				),
+				array(
+					'timeout'   => 0.01,
+					'blocking'  => false,
+					'sslverify' => false,
+					'cookies'   => $_COOKIE,
+				)
+			);
+		}
 	}
 
 	/**
-	 * Sets the current campaign.
+	 * Health check.
 	 *
+	 * @return bool false if no pending campaign exists, true otherwise.
 	 */
-	private function set_current_campaign() {
+	public static function check_scheduled_tasks() {
+
+		// Check the next campaign.
+		$next_campaign = self::prepare_pending_campaign();
+
+		// No need to have a scheduled task if no campaigns.
+		if ( ! $next_campaign ) {
+			self::clear_scheduled_tasks();
+			return false;
+		}
+
+		// Create the tasks.
+		foreach ( array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ) as $hook ) {
+			$task = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( $hook );
+
+			// If we don't have a scheduled task, schedule one now.
+			if ( ! $task ) {
+				$interval = ( self::TASK_HOOK === $hook ) ? self::TASK_INTERVAL : self::HEALTH_CHECK_INTERVAL;
+				schedule_noptin_recurring_background_action(
+					$interval,
+					time() + $interval,
+					$hook
+				);
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Clear scheduled tasks.
+	 */
+	public static function clear_scheduled_tasks() {
+		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::TASK_HOOK );
+		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::HEALTH_CHECK_HOOK );
+	}
+
+	/**
+	 * Checks if we have a pending campaign.
+	 */
+	public static function prepare_pending_campaign( $exclude = array() ) {
 		$campaigns = get_posts(
 			array(
 				'post_type'      => 'noptin-campaign',
 				'post_status'    => 'publish',
 				'posts_per_page' => 5,
-				'order'          => 'ASC',
+				'order'          => 'ASC', // Oldest first.
 				'fields'         => 'ids',
+				'exclude'        => $exclude,
 				'meta_query'     => array(
 					array(
 						'key'   => 'campaign_type',
@@ -201,43 +245,204 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 				continue;
 			}
 
+			// Check if the sender is supported.
+			if ( ! self::has_sender( $campaign->get_sender() ) ) {
+				noptin_pause_email_campaign(
+					$campaign->id,
+					sprintf(
+						'The email sender "%s" is not supported.',
+						esc_html( $campaign->get_sender() )
+					)
+				);
+				continue;
+			}
+
 			if ( true === $can_send ) {
-				$this->current_campaign = $campaign;
-				break;
+				return $campaign;
 			}
 		}
 
-		if ( empty( $this->current_campaign ) && count( $campaigns ) === 5 ) {
-			$this->schedule_remaining_tasks();
+		if ( count( $campaigns ) === 5 ) {
+			return self::prepare_pending_campaign( array_merge( $exclude, $campaigns ) );
 		}
+
+		return false;
 	}
 
 	/**
-	 * Fired before running the queue.
-	 *
+	 * Checks if we have a pending campaign.
+	 * @return \Hizzle\Noptin\Emails\Email|false
 	 */
-	public function before_run() {
+	public static function has_pending_campaign() {
+		$offset      = 0;
+		$batch_size  = 5;
+		$found_valid = false;
 
-		// Parent before run.
-		parent::before_run();
+		// We loop through a maximum of 30 campaigns to prevent timeouts.
+		while ( $offset < 30 ) {
+			$campaign_ids = get_posts(
+				array(
+					'post_type'      => 'noptin-campaign',
+					'post_status'    => 'publish',
+					'posts_per_page' => 5,
+					'offset'         => $offset,
+					'order'          => 'ASC', // Oldest first.
+					'fields'         => 'ids',
+					'meta_query'     => array(
+						array(
+							'key'   => 'campaign_type',
+							'value' => 'newsletter',
+						),
+						array(
+							'key'     => 'completed',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => 'paused',
+							'compare' => 'NOT EXISTS',
+						),
+					),
+				)
+			);
 
-		// Fetch the next campaign.
-		if ( empty( $this->current_campaign ) ) {
-			$this->set_current_campaign();
+			// If no more campaigns are found in the database, exit.
+			if ( empty( $campaign_ids ) ) {
+				break;
+			}
+
+			foreach ( $campaign_ids as $id ) {
+				$campaign = noptin_get_email_campaign_object( $id );
+
+				if ( ! $campaign ) {
+					continue;
+				}
+
+				$can_send = $campaign->can_send( true );
+
+				// Handle WP_Error (e.g., campaign expired or configuration error).
+				if ( is_wp_error( $can_send ) ) {
+					noptin_pause_email_campaign(
+						$campaign->id,
+						$can_send->get_error_message()
+					);
+					continue;
+				}
+
+				// Check if the sender is supported by the system.
+				if ( ! self::has_sender( $campaign->get_sender() ) ) {
+					noptin_pause_email_campaign(
+						$campaign->id,
+						sprintf(
+							'The email sender "%s" is not supported.',
+							esc_html( $campaign->get_sender() )
+						)
+					);
+					continue;
+				}
+
+				// If it passes all checks, return the campaign object.
+				if ( true === $can_send ) {
+					return $campaign;
+				}
+			}
+
+			// Increment offset to fetch the next batch.
+			$offset += $batch_size;
 		}
 
-		$this->next_recipients = array();
+		return false;
+	}
+
+	/**
+	 * Runs a rescheduled batch process.
+	 *
+	 */
+	public static function maybe_handle_via_ajax() {
+
+		// Don't lock up other requests while processing.
+		session_write_close();
+
+		check_ajax_referer( self::TASK_HOOK );
+		self::run();
+
+		wp_die();
+	}
+
+	/**
+	 * Runs the queue.
+	 *
+	 * Pass each queue item to the task handler, while remaining
+	 * within server memory and time limit constraints.
+	 */
+	public static function run() {
+		// If already running, bail.
+		if ( self::acquire_lock() ) {
+			return;
+		}
+
+		try {
+
+			// Raise the memory limit.
+			wp_raise_memory_limit();
+
+			// Raise the time limit.
+			noptin_raise_time_limit( self::MAX_RUNTIME + 10 );
+
+			// Fetch the next campaign.
+			$campaign = self::prepare_pending_campaign();
+
+			if ( ! $campaign ) {
+				return;
+			}
+
+			// Reset next recipients.
+			self::$next_recipients = array();
+
+			$start_time = time();
+			$processed  = 0;
+
+			// Run the queue.
+			do {
+
+				// Send the campaign to the next recipient.
+				// Abort if the campaign is invalid or no recipient.
+				if ( ! self::send_campaign( self::get_next_recipient( $campaign ), $campaign ) ) {
+					break;
+				}
+
+				// Increment the processed tasks counter.
+				++$processed;
+
+			} while ( time() - $start_time < self::MAX_RUNTIME && ! noptin_memory_exceeded() );
+		} catch ( \Throwable $t ) {
+
+			// Log the error.
+			if ( isset( $campaign ) && ! empty( $campaign ) ) {
+				noptin_pause_email_campaign(
+					$campaign->id,
+					esc_html( $t->getMessage() ),
+					10 * MINUTE_IN_SECONDS
+				);
+			}
+		} finally {
+			// Release the lock.
+			self::release_lock();
+
+			// Trigger sending of pending emails.
+			self::send_pending();
+		}
 	}
 
 	/**
 	 * Returns the next recipient.
 	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The campaign object.
 	 * @return int|string
 	 */
-	protected function get_next_task() {
+	protected static function get_next_recipient( $campaign ) {
 
 		// Abort if no sendable campaign...
-		if ( empty( $this->current_campaign ) || ! $this->current_campaign->can_send() || ! isset( $this->senders[ $this->current_campaign->get_sender() ] ) ) {
+		if ( empty( $campaign ) || ! $campaign->can_send() ) {
 			return false;
 		}
 
@@ -246,114 +451,143 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 			return false;
 		}
 
+		// Abort if no sender.
+		$sender = self::has_sender( $campaign->get_sender() );
+
+		if ( empty( $sender ) ) {
+			return false;
+		}
+
 		// Fetch from cache.
-		if ( ! empty( $this->next_recipients ) ) {
-			return array_shift( $this->next_recipients );
+		if ( ! empty( self::$next_recipients ) ) {
+			return array_shift( self::$next_recipients );
 		}
 
 		// Retrieves the next recipients.
-		$sender                = $this->senders[ $this->current_campaign->get_sender() ];
-		$this->next_recipients = $sender->get_recipients( $this->current_campaign );
+		self::$next_recipients = $sender->get_recipients( $campaign );
 
 		// If we have no recipient, mark the campaign as completed.
-		if ( empty( $this->next_recipients ) ) {
-
-			// Update status.
-			update_post_meta( $this->current_campaign->id, 'completed', 1 );
+		if ( empty( self::$next_recipients ) || ! is_array( self::$next_recipients ) ) {
 
 			// Clean up.
-			$sender->done_sending( $this->current_campaign );
-
-			// If this was a mass newsletter with a parent and no sends, delete it.
-			$email = $this->current_campaign;
-			$sends = get_post_meta( $email->id, '_noptin_sends', true );
-			if ( empty( $sends ) && ! empty( $email->parent_id ) && 'newsletter' === $email->type && $email->is_mass_mail() ) {
-				noptin_error_log(
-					sprintf(
-						'Deleting email "%s" as it had no sends.',
-						esc_html( $email->name )
-					)
-				);
-				$email->delete();
-			}
+			self::done_sending( $campaign );
 
 			return false;
 		}
 
-		// Sleep for a second.
-		sleep( 1 );
-
-		return array_shift( $this->next_recipients );
+		return array_shift( self::$next_recipients );
 	}
 
 	/**
 	 * Sends the current campaign to the given recipient.
 	 *
 	 * @param int|string $recipient The task to process.
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The campaign object.
 	 */
-	protected function process_task( $recipient ) {
+	private static function send_campaign( $recipient, $campaign ) {
 
-		// Abort if no sendable campaign...
-		if ( empty( $this->current_campaign ) || ! $this->current_campaign->can_send() ) {
-			return false;
-		}
+		// Update last activity.
+		update_post_meta( $campaign->id, '_noptin_last_activity', time() );
 
-		// Ensure the sender is supported.
-		if ( ! $this->has_sender( $this->current_campaign->get_sender() ) ) {
+		if ( empty( $recipient ) ) {
 			return false;
 		}
 
 		// Prepare vars.
-		$sender = $this->current_campaign->get_sender();
+		$sender = self::has_sender( $campaign->get_sender() );
+
+		if ( empty( $sender ) ) {
+			return false;
+		}
 
 		// Send the email.
 		try {
-			$result = $this->senders[ $sender ]->send( $this->current_campaign, $recipient );
+			$result = $sender->send( $campaign, $recipient );
 		} catch ( \Throwable $t ) {
 
 			// Log the error.
 			noptin_pause_email_campaign(
+				$campaign->id,
 				sprintf(
-					// Translators: %s The error message.
-					__( 'Error sending email: %s', 'newsletter-optin-box' ),
+					'Error sending email: %s',
 					esc_html( $t->getMessage() )
 				)
 			);
 
-			return;
+			return false;
 		}
 
 		// Pause the campaign if there was an error.
 		if ( false === $result ) {
 			noptin_pause_email_campaign(
-				$this->current_campaign->id,
+				$campaign->id,
 				sprintf(
-					// Translators: %s The error message.
-					__( 'Error sending email: %s', 'newsletter-optin-box' ),
+					'Error sending email: %s',
 					esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() )
 				),
 				10 * MINUTE_IN_SECONDS
 			);
 		}
+
+		return $result;
 	}
 
 	/**
-	 * Check if the host's max execution time is (likely) to be exceeded if we send any more emails.
+	 * Completes a campaign.
 	 *
-	 * @return bool
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The campaign object.
 	 */
-	public function handle_unexpected_shutdown( $error = null ) {
-		// Get the last error if none provided
-		if ( is_null( $error ) ) {
-			$error = error_get_last();
+	private static function done_sending( $campaign ) {
+		// Update status.
+		update_post_meta( $campaign->id, 'completed', 1 );
+
+		// Clean up.
+		$sender = self::has_sender( $campaign->get_sender() );
+		if ( empty( $sender ) || ! $campaign->is_mass_mail() ) {
+			return;
 		}
 
-		if ( ! empty( $this->current_campaign ) && ! empty( $error ) && in_array( $error['type'], array( E_ERROR, E_PARSE, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR ), true ) ) {
-			noptin_pause_email_campaign(
-				$this->current_campaign->id,
-				$error['message']
+		$sender->done_sending( $campaign );
+
+		// If this was a mass newsletter with a parent and no sends, delete it.
+		$sends = get_post_meta( $campaign->id, '_noptin_sends', true );
+		if ( empty( $sends ) && ! empty( $campaign->parent_id ) && 'newsletter' === $campaign->type && $campaign->is_mass_mail() ) {
+			noptin_error_log(
+				sprintf(
+					'Deleting email "%s" as it had no sends.',
+					esc_html( $campaign->name )
+				)
 			);
-			$this->unlock_process();
+			$campaign->delete();
 		}
+	}
+
+	/* ----------------------------------------
+	 * Locking
+	 * ------------------------------------- */
+
+	/**
+	 * Lock process
+	 *
+	 * Lock the process so that multiple instances can't run simultaneously.
+	 */
+	public static function acquire_lock() {
+		$lock = get_option( self::LOCK_KEY );
+
+		// Delete stale lock.
+		if ( $lock && ( time() - $lock ) >= self::LOCK_TTL ) {
+			self::release_lock();
+		}
+
+		return add_option( self::LOCK_KEY, time(), '', 'no' );
+	}
+
+	/**
+	 * Unlock process
+	 *
+	 * Unlock the process so that other instances can spawn.
+	 */
+	public static function release_lock() {
+		delete_option( self::LOCK_KEY );
 	}
 }

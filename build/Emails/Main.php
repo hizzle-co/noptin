@@ -57,7 +57,7 @@ class Main {
 		add_shortcode( 'past_noptin_newsletters', array( __CLASS__, 'past_newsletters' ) );
 
 		// Bulk emails.
-		Bulk\Main::instance();
+		Bulk\Main::init();
 
 		// Email preview.
 		Preview::init();
