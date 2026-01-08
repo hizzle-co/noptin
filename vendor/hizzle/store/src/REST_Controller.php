@@ -614,7 +614,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$total    = (int) $query->get_total();
 		$paged    = (int) $query->query_vars['page'];
 
-		$max_pages = $total > 0 && $per_page > 1 ? ceil( $total / $per_page ) : 1;
+		$max_pages = $total > 0 && $per_page > 0 ? ceil( $total / $per_page ) : 1;
 
 		$response = rest_ensure_response(
 			apply_filters(

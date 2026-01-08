@@ -178,6 +178,11 @@ class Main {
 			return false;
 		}
 
+		// Backwards compat. Remove old wp event.
+		if ( ! wp_next_scheduled( self::TASK_HOOK ) ) {
+			wp_clear_scheduled_hook( self::TASK_HOOK );
+		}
+
 		// Create the tasks.
 		foreach ( array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ) as $hook ) {
 			$task = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( $hook );

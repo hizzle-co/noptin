@@ -625,7 +625,7 @@ class Collection {
 			'type'              => 'integer',
 			'default'           => 25,
 			'minimum'           => -1,
-			'maximum'           => 100,
+			'maximum'           => 1000,
 			'sanitize_callback' => __CLASS__ . '::intval',
 			'validate_callback' => 'rest_validate_request_arg',
 		);

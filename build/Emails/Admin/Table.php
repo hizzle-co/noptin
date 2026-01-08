@@ -508,6 +508,33 @@ class Table extends \WP_List_Table {
 					)
 				);
 			}
+
+			// Check if campaign is sending but CRON event is not scheduled.
+			if ( 'publish' === $item->status && ! get_post_meta( $item->id, 'completed', true ) && ! get_post_meta( $item->id, 'paused', true ) ) {
+				$cron_scheduled = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( \Hizzle\Noptin\Emails\Bulk\Main::TASK_HOOK );
+
+				if ( ! $cron_scheduled ) {
+					$title .= sprintf(
+						'<p class="description" style="color: red;">%s</p>',
+						'The email sending CRON event was not scheduled. Try pausing then resuming the campaign.'
+					);
+
+					// Add a link to help troubleshoot the error.
+					$title .= sprintf(
+						'<p class="noptin-strong description">%s</p>',
+						sprintf(
+							'<a href="%s" target="_blank" class="noptin-text-success">%s</a>',
+							esc_url(
+								noptin_get_guide_url(
+									$this->email_type->plural_label,
+									'sending-emails/how-to-fix-emails-not-sending/'
+								)
+							),
+							'Learn more about troubleshooting email sending'
+						)
+					);
+				}
+			}
 		}
 
 		$title = '<div class="noptin-v-stack">' . $title . '</div>';

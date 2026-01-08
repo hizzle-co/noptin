@@ -156,7 +156,7 @@ class Menu {
 							'el'               => 'input',
 							'type'             => 'number',
 							'section'          => 'emails',
-							'label'            => __( 'Maximum Emails', 'newsletter-optin-box' ),
+							'label'            => __( 'Sending rate', 'newsletter-optin-box' ),
 							'placeholder'      => __( 'Unlimited', 'newsletter-optin-box' ),
 							'customAttributes' => array(
 								'min'    => 1,
