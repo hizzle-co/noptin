@@ -55,11 +55,11 @@ class Store {
 
 		// Prepare the collections.
 		foreach ( $this->collections as $key => $collection ) {
-            if ( ! $collection instanceof Collection ) {
-                $collection['name']        = $key;
-                $this->collections[ $key ] = new Collection( $this->namespace, $collection );
-            }
-        }
+			if ( ! $collection instanceof Collection ) {
+				$collection['name']        = $key;
+				$this->collections[ $key ] = new Collection( $this->namespace, $collection );
+			}
+		}
 
 		// Register the store.
 		self::$instances[ $namespace ] = $this;
@@ -89,7 +89,7 @@ class Store {
 
 				self::$instances[ $namespace ]->collections[ $key ] = $collections[ $key ];
 			}
-        }
+		}
 
 		return self::$instances[ $namespace ];
 	}
@@ -149,11 +149,11 @@ class Store {
 	}
 
 	/**
-     * Returns the table definitions as an array.
-     *
-     * @return string[]
-     */
-    public function get_schema() {
+	 * Returns the table definitions as an array.
+	 *
+	 * @return string[]
+	 */
+	public function get_schema() {
 		$schema = array();
 
 		foreach ( $this->get_collections() as $collection ) {
@@ -163,5 +163,4 @@ class Store {
 
 		return array_filter( $schema );
 	}
-
 }
