@@ -595,23 +595,23 @@ function noptin_email_wrap_group_block( $content = '', $background_color = '#fff
 	?>
 <!-- wp:noptin/group {"style":{"noptin":{"align":"center","color":{"background":"<?php echo esc_attr( $background_color ); ?>"}},"spacing":{"padding":{"top":"20px","right":"20px","bottom":"20px","left":"20px"}}}} -->
 <div class="wp-block-noptin-group">
-    <!--[if true]>
-    
+	<!--[if true]>
+	
 		<table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="width:600px;max-width:100%;">
 			<tbody>
 				<tr>
 					<td class="noptin-block-group__inner" align="center">
 	
-    <![endif]-->
-  <!--[if !true]><!--><div class="noptin-block-group__inner" style="width:100%;max-width:600px;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0"><!--<![endif]--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px<?php echo empty( $background_color ) ? '' : ';background-color:' . esc_attr( $background_color ); ?>">{{CONTENT}}</td></tr></tbody></table><!--[if !true]><!--></div><!--<![endif]-->
-    <!--[if true]>
-    
+	<![endif]-->
+	<!--[if !true]><!--><div class="noptin-block-group__inner" style="width:100%;max-width:600px;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0"><!--<![endif]--><table border="0" cellpadding="0" cellspacing="0" width="100%"><tbody><tr><td style="padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px<?php echo empty( $background_color ) ? '' : ';background-color:' . esc_attr( $background_color ); ?>">{{CONTENT}}</td></tr></tbody></table><!--[if !true]><!--></div><!--<![endif]-->
+	<!--[if true]>
+	
 					</td>
 				</tr>
 			</tbody>
 		</table>
-    <![endif]-->
-  </div>
+	<![endif]-->
+	</div>
 <!-- /wp:noptin/group -->
 	<?php
 
@@ -901,35 +901,14 @@ function noptin_get_next_email_send_time() {
  * Checks if an email campaign was sent to a given email address.
  *
  * @param int $campaign_id
- * @param int $email_address
+ * @param string $email_address
  * @param int|string $since
  */
 function noptin_email_campaign_sent_to( $campaign_id, $email_address, $since = false ) {
-	static $cache = array();
-
-	if ( empty( $campaign_id ) || empty( $email_address ) ) {
-		return false;
-	}
-
-	// Check cache.
-	$cache_key = $campaign_id . '-' . $email_address . '-' . ( $since ? $since : 'any' );
-	if ( isset( $cache[ $cache_key ] ) ) {
-		return $cache[ $cache_key ];
-	}
-
-	$was_send = \Hizzle\Noptin\Emails\Logs\Main::query(
-		array_filter(
-			array(
-				'email'              => $email_address,
-				'campaign_id'        => $campaign_id,
-				'activity'           => 'send',
-				'number'             => 1,
-				'date_created_after' => $since,
-			)
-		),
-		'count'
+	return \Hizzle\Noptin\Emails\Logs\Main::did_activity(
+		'send',
+		$campaign_id,
+		$email_address,
+		$since
 	);
-
-	$cache[ $cache_key ] = ! empty( $was_send );
-	return $cache[ $cache_key ];
 }

@@ -592,7 +592,7 @@ function bounce_noptin_subscriber( $subscriber_id_or_email, $campaign_id = 0 ) {
  * @since  1.3.2
  */
 function noptin_subscriber_complained( $subscriber_id_or_email, $campaign_id = 0 ) {
-	update_noptin_subscriber_status( $subscriber_id_or_email, 'complained', $campaign_id, 'record_bounced_campaign' );
+	update_noptin_subscriber_status( $subscriber_id_or_email, 'complained', $campaign_id, 'record_complained_campaign' );
 }
 
 /**

@@ -217,11 +217,6 @@ class Schema {
 								'description' => __( 'Engagement score (0.00 to 1.00).', 'newsletter-optin-box' ),
 							),
 
-							'sent_campaigns'           => array(
-								'type'        => 'TEXT',
-								'description' => __( 'An array of sent campaigns', 'newsletter-optin-box' ),
-							),
-
 							'edit_url'                 => array(
 								'type'        => 'TEXT',
 								'description' => __( "The subscriber's edit URL.", 'newsletter-optin-box' ),

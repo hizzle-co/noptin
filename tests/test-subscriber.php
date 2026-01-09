@@ -290,27 +290,6 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertCount(30, $activity);
         $this->assertEquals('Activity 34', $activity[29]['content']);
     }
-    
-    public function testSubscriberCampaigns() {
-        $subscriber = noptin_get_subscriber(self::$subscriber_id);
-        $campaign_id = 123;
-
-        // Test recording sent campaign
-        $subscriber->record_sent_campaign($campaign_id);
-        $sent_campaigns = $subscriber->get_sent_campaigns();
-        $this->assertArrayHasKey($campaign_id, $sent_campaigns);
-
-        // Test recording opened campaign
-        $subscriber->record_opened_campaign($campaign_id);
-        $sent_campaigns = $subscriber->get_sent_campaigns();
-        $this->assertCount(1, $sent_campaigns[$campaign_id]['opens']);
-
-        // Test recording clicked link
-        $url = 'https://example.com';
-        $subscriber->record_clicked_link($campaign_id, $url);
-        $sent_campaigns = $subscriber->get_sent_campaigns();
-        $this->assertArrayHasKey($url, $sent_campaigns[$campaign_id]['clicks']);
-    }
 
     public function testSubscriberUrls() {
         $subscriber = noptin_get_subscriber(self::$subscriber_id);

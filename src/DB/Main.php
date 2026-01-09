@@ -163,7 +163,6 @@ class Main {
 		}
 
 		try {
-
 			$collection = $this->store->get( $collection_name );
 
 			if ( empty( $collection ) ) {
@@ -602,83 +601,92 @@ class Main {
 	 */
 	public function emails_callback( $request ) {
 
+		// Get the subscriber.
 		$subscriber = noptin_get_subscriber( $request['id'] );
-		$emails     = $subscriber->get_sent_campaigns();
 
-		if ( ! is_array( $emails ) || empty( $emails ) ) {
+		if ( ! $subscriber->exists() ) {
+			return array();
+		}
+
+		// Get the email logs.
+		$logs = \Hizzle\Noptin\Emails\Logs\Main::query(
+			array(
+				'email'    => $subscriber->get_email(),
+				'activity' => array( 'send', 'open', 'click', 'unsubscribe' ),
+			)
+        );
+
+		if ( ! is_array( $logs ) || empty( $logs ) ) {
 			return array();
 		}
 
 		$prepared = array();
 
-		foreach ( $emails as $campaign_id => $data ) {
-			$object   = noptin_get_email_campaign_object( $campaign_id );
-			$campaign = array(
-				'id'           => $campaign_id,
-				'title'        => empty( $object->name ) ? esc_html__( 'Unknown', 'newsletter-optin-box' ) : esc_html( $object->name ),
-				'url'          => $object->current_user_can_edit() ? $object->get_edit_url() : $object->get_preview_url(),
-				'time'         => array(),
-				'opens'        => array(),
-				'clicks'       => array(),
-				'unsubscribed' => empty( $data['unsubscribed'] ) ? '&mdash;' : esc_html__( 'Yes', 'newsletter-optin-box' ),
+		/** @var \Hizzle\Noptin\Emails\Logs\Log[] $logs */
+		foreach ( $logs as $log ) {
+			$campaign_id = $log->get( 'campaign_id' );
+
+			// Abort if no campaign ID.
+			if ( empty( $campaign_id ) ) {
+				continue;
+			}
+
+			// Ensure campaign entry exists.
+			if ( ! isset( $prepared[ $campaign_id ] ) ) {
+				$prepared[ $campaign_id ] = array(
+					'id'           => $campaign_id,
+					'title'        => $log->get_campaign_title(),
+					'url'          => $log->get_campaign_url(),
+					'time'         => array(),
+					'opens'        => array(),
+					'clicks'       => array(),
+					'unsubscribed' => '&mdash;',
+				);
+			}
+
+			// Prepare the date.
+			/** @var \Hizzle\Store\Date_Time $date */
+			$date = $log->get( 'date_created' );
+			$utc  = $date->utc();
+			$i18n = $date->context( 'view' );
+
+			// Use human readable time if the timestamp is less than 24 hours old.
+			if ( $date->getTimestamp() > ( time() - DAY_IN_SECONDS ) && $date->getTimestamp() < time() ) {
+				$i18n = sprintf(
+					/* translators: %s: Human-readable time difference. */
+					esc_html__( '%s ago', 'newsletter-optin-box' ),
+                    human_time_diff( $date->getTimestamp() )
+                );
+			}
+
+			$date = array(
+				'key'  => $log->get( 'activity' ),
+				'utc'  => $utc,
+				'i18n' => $i18n,
 			);
 
-			// Time and opens.
-			foreach ( array( 'time', 'opens' ) as $prop ) {
-				if ( isset( $data[ $prop ] ) ) {
-					foreach ( $data[ $prop ] as $key => $timestamp ) {
-						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
-						$utc  = $date->utc();
-						$i18n = $date->context( 'view' );
-
-						// Use human readable time if the timestamp is less than 24 hours old.
-						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
-							$i18n = sprintf(
-								/* translators: %s: Human-readable time difference. */
-								esc_html__( '%s ago', 'newsletter-optin-box' ),
-								human_time_diff( $timestamp )
-							);
-						}
-
-						$campaign[ $prop ][] = array(
-							'key'  => $key,
-							'utc'  => $utc,
-							'i18n' => $i18n,
-						);
-					}
-				}
+			switch ( $log->get( 'activity' ) ) {
+				case 'send':
+					$prepared[ $campaign_id ]['time'][] = $date;
+					break;
+				case 'open':
+					$prepared[ $campaign_id ]['opens'][] = $date;
+					break;
+				case 'click':
+					$url                                  = $log->get( 'activity_info' );
+					$prepared[ $campaign_id ]['clicks'][] = array(
+						'key'  => $url,
+						'utc'  => $utc,
+						'i18n' => $i18n,
+					);
+					break;
+				case 'unsubscribe':
+					$prepared[ $campaign_id ]['unsubscribed'] = __( 'Yes', 'newsletter-optin-box' );
+					break;
 			}
-
-			// Clicks.
-			if ( isset( $data['clicks'] ) ) {
-				foreach ( $data['clicks'] as $url => $timestamps ) {
-					foreach ( $timestamps as $timestamp ) {
-						$date = new \Hizzle\Store\Date_Time( "@{$timestamp}", new \DateTimeZone( 'UTC' ) );
-						$utc  = $date->utc();
-						$i18n = $date->context( 'view' );
-
-						// Use human readable time if the timestamp is less than 24 hours old.
-						if ( $timestamp > time() - DAY_IN_SECONDS && $timestamp < time() ) {
-							$i18n = sprintf(
-								/* translators: %s: Human-readable time difference. */
-								esc_html__( '%s ago', 'newsletter-optin-box' ),
-								human_time_diff( $timestamp )
-							);
-						}
-
-						$campaign['clicks'][] = array(
-							'key'  => $url,
-							'utc'  => $utc,
-							'i18n' => $i18n,
-						);
-					}
-				}
-			}
-
-			$prepared[] = $campaign;
 		}
 
-		return $prepared;
+		return array_values( $prepared );
 	}
 
 	/**
@@ -707,7 +715,7 @@ class Main {
 			// Use human readable time if the timestamp is less than 24 hours old.
 			if ( $time > time() - DAY_IN_SECONDS && $time < time() ) {
 				$i18n = sprintf(
-					/* translators: %s: Human-readable time difference. */
+				/* translators: %s: Human-readable time difference. */
 					__( '%s ago', 'newsletter-optin-box' ),
 					human_time_diff( $time )
 				);

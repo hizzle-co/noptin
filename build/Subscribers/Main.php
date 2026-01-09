@@ -94,18 +94,18 @@ class Main {
 	 * @since 3.0.0
 	 *
 	 * @param bool  $should_fire The should fire.
-	 * @param array $changes An array of changes.
+	 * @param array $changed_keys An array of changed keys.
 	 */
-	public static function should_fire_has_changes_hook( $should_fire, $changes ) {
+	public static function should_fire_has_changes_hook( $should_fire, $changed_keys ) {
 
 		if ( ! $should_fire ) {
 			return $should_fire;
 		}
 
-		$ignore = array( 'activity', 'sent_campaigns', 'date_modified', 'date_created', 'confirm_key' );
+		$ignore = array( 'activity', 'date_modified', 'date_created', 'confirm_key' );
 
 		// Abort if all keys in the changes are in the ignore list.
-		if ( empty( array_diff( $changes, $ignore ) ) ) {
+		if ( empty( array_diff( $changed_keys, $ignore ) ) ) {
 			return false;
 		}
 

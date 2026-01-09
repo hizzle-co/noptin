@@ -142,8 +142,9 @@ class Sender {
 					if ( empty( $result ) ) {
 						$subscriber->record_activity(
 							sprintf(
-								/* Translators: %1$s Email address, %2$s Email subject & error. */
-								__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
+								// Don't translate this string.
+								// We'll use it when handling customer support.
+								'Failed sending an email to %1$s with the subject %2$s',
 								sanitize_email( $recipient ),
 								wp_specialchars_decode( self::$args['subject'] ) . '<code>' . esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() ) . '</code>'
 							)

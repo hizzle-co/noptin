@@ -76,6 +76,7 @@ class Actions {
 		// Fetch the subscriber.
 		$subscriber = self::get_subscriber();
 		if ( ! $subscriber || ! $subscriber->exists() ) {
+			// This will create a new unsubscribed subscriber.
 			if ( ! empty( $recipient['email'] ) ) {
 				unsubscribe_noptin_subscriber( $recipient['email'], $campaign_id );
 			}
@@ -92,10 +93,6 @@ class Actions {
 		// Process campaigns.
 		if ( ! empty( $campaign_id ) ) {
 			increment_noptin_campaign_stat( $campaign_id, '_noptin_unsubscribed' );
-
-			if ( ! empty( $recipient['email'] ) ) {
-				\Hizzle\Noptin\Emails\Logs\Main::create( 'unsubscribe', $campaign_id, $recipient['email'] );
-			}
 		}
 	}
 

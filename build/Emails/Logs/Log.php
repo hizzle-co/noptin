@@ -30,7 +30,7 @@ class Log extends \Hizzle\Store\Record {
 		$post = get_post( $id );
 
 		if ( ! $post ) {
-			return '';
+			return '(Deleted)';
 		}
 
 		return $post->post_title;
