@@ -40,7 +40,19 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 		add_action( 'um_user_register', array( $this, 'subscribe_from_registration' ), $this->priority );
 		add_action( 'user_register', array( $this, 'subscribe_from_registration' ), $this->priority );
 		add_action( 'profile_update', array( $this, 'subscribe_from_registration' ), $this->priority );
-		add_action( 'bp_core_signup_user', array( $this, 'subscribe_from_registration' ), $this->priority );
+
+		// BuddyPress.
+		/**
+		 * Multisite signups are a two-stage process - the data is first added to
+		 * the 'signups' table and then converted into an actual user during the
+		 * activation process.
+		 *
+		 * To avoid all signups being subscribed until they
+		 * have responded to the activation email, a value is stored in the signup
+		 * usermeta data which is retrieved on activation and acted upon.
+		 */
+		add_filter( 'bp_signup_usermeta', array( $this, 'store_bp_usermeta' ), $this->priority, 1 );
+		add_action( 'bp_core_activated_user', array( $this, 'subscribe_from_bp_usermeta' ), $this->priority, 3 );
 	}
 
 	/**
@@ -63,7 +75,7 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 		add_action( 'uwp_template_fields', array( $this, 'uwp_output_checkbox' ), $this->priority );
 
 		// BuddyPress
-		add_action( 'bp_account_details_fields', array( $this, 'output_checkbox' ), 1000 );
+		add_action( 'bp_before_registration_submit_buttons', array( $this, 'output_checkbox' ), 1000 );
 	}
 
 	/**
@@ -90,9 +102,7 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	public function uwp_output_checkbox( $action ) {
 
 		if ( 'register' === $action && $this->can_show_checkbox() ) {
-
 			if ( function_exists( 'aui' ) && uwp_get_option( 'design_style', 'bootstrap' ) ) {
-
 				aui()->input(
 					array(
 						'type'  => 'checkbox',
@@ -107,7 +117,6 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 			}
 
 			$this->output_checkbox();
-
 		}
 	}
 
@@ -199,6 +208,48 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	}
 
 	/**
+     * Stores subscription data from BuddyPress Registration Form.
+     *
+     * @param array $usermeta The existing usermeta
+     * @return array $usermeta The modified usermeta
+     */
+    public function store_bp_usermeta( $usermeta ) {
+
+        // only add meta if triggered (checked)
+        if ( $this->triggered() ) {
+            $usermeta['noptin_subscribe'] = '1';
+        }
+
+        return $usermeta;
+    }
+
+	/**
+     * Subscribes from BuddyPress Activation.
+     *
+     * @param int $user_id The activated user ID
+     * @param string $key the activation key (not used)
+     * @param array $userdata An array containing the activated user data
+     * @return bool
+     */
+    public function subscribe_from_bp_usermeta( $user_id, $key, $userdata ) {
+
+        // sanity check
+        if ( empty( $user_id ) ) {
+            return false;
+        }
+
+        // bail if our usermeta key is not switched on
+        $meta = $userdata['meta'] ?? array();
+        if ( empty( $meta['noptin_subscribe'] ) ) {
+            return false;
+        }
+
+        $GLOBALS['bp_noptin_checkbox_was_checked'] = true;
+
+        return $this->subscribe_from_registration( $user_id );
+    }
+
+	/**
 	 * @inheritdoc
 	 */
 	public function custom_fields() {
@@ -211,5 +262,19 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 			'login'      => __( 'Login', 'newsletter-optin-box' ),
 			'bio'        => __( 'Bio', 'newsletter-optin-box' ),
 		);
+	}
+
+	/**
+	 * Checks if a checkbox was checked.
+	 *
+	 * @return bool
+	 * @since 1.2.6
+	 */
+	public function checkbox_was_checked() {
+		if ( ! empty( $GLOBALS['bp_noptin_checkbox_was_checked'] ) ) {
+			return true;
+		}
+
+		return parent::checkbox_was_checked();
 	}
 }
