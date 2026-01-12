@@ -269,13 +269,13 @@ class Trigger extends \Noptin_Abstract_Trigger {
 		$settings = $rule->get_trigger_settings();
 
 		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
-			foreach ( $this->trigger_args['extra_settings'] as $key => $args ) {
+			foreach ( $this->trigger_args['extra_settings'] as $key => $setting ) {
 				// If required but not set...
-				if ( ! empty( $args['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
+				if ( ! empty( $setting['required'] ) && ( ! isset( $settings[ $key ] ) || '' === $settings[ $key ] ) ) {
 					log_noptin_message(
                         sprintf(
                             'Error: "%s" not specified. Skipping rule.',
-                            $args['label']
+                            $setting['label']
                         )
                     );
 
