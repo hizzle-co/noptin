@@ -381,7 +381,7 @@ class Main {
 	 */
 	public static function run() {
 		// If already running, bail.
-		if ( self::acquire_lock() ) {
+		if ( ! self::acquire_lock() ) {
 			return;
 		}
 

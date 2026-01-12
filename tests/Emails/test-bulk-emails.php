@@ -111,7 +111,7 @@ class Test_Main extends \WP_UnitTestCase {
 	 * Test has_sender method.
 	 */
 	public function test_has_sender() {
-		$this->assertTrue(Main::has_sender('mock'));
+		$this->assertEquals($this->mock_sender, Main::has_sender('mock'));
 		$this->assertFalse(Main::has_sender('nonexistent'));
 		$this->assertEquals('mock', $this->campaign->get_sender());
 	}
@@ -124,6 +124,9 @@ class Test_Main extends \WP_UnitTestCase {
 		// Check that the campaign can be sent
 		$can_send = $this->campaign->can_send( true );
 		$this->assertNotWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
+
+		// Check if the sender is available
+		$this->assertEquals($this->mock_sender, Main::has_sender('mock'));
 
 		// Send the campaign
 		Main::send_newsletter_campaign($this->campaign);
