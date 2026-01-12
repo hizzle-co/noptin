@@ -192,10 +192,10 @@
 	.wp-block-noptin-table-cell > a:last-child > h5:last-child,
 	.wp-block-noptin-table-cell > h6:last-child,
 	.wp-block-noptin-table-cell > a:last-child > h6:last-child,
-	.wp-block-noptin-table-cell > p:last-child,
-	.wp-block-noptin-table-cell > .noptin-columns:last-child,
-	.wp-block-noptin-table-cell > .wp-block-noptin-badge:last-child table,
-	.wp-block-noptin-table-cell > .noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
+	p:last-child,
+	.noptin-columns:last-child,
+	.wp-block-noptin-badge:last-child table,
+	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
 	}
 
