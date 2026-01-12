@@ -128,6 +128,12 @@ class Test_Main extends \WP_UnitTestCase {
 		// Check if the sender is available
 		$this->assertEquals($this->mock_sender, Main::has_sender('mock'));
 
+		// Check if we have a pending campaing.
+		$pending_campaign = Main::prepare_pending_campaign();
+		$error            = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
+
+		$this->assertIsObject( $pending_campaign, is_array( $error ) ? $error['message'] : '' );
+
 		// Send the campaign
 		Main::send_newsletter_campaign($this->campaign);
 
