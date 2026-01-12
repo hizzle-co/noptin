@@ -131,6 +131,18 @@ class Test_Main extends \WP_UnitTestCase {
 		// Send the campaign
 		Main::send_newsletter_campaign($this->campaign);
 
+		// Verify that the sending task was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action( Main::TASK_HOOK ),
+			'Sending task should be scheduled'
+		);
+
+		// Verify that the health check task was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ),
+			'Health check task should be scheduled'
+		);
+
 		// Verify that the campaign was queued for sending
 		$this->assertNotEmpty(
 			did_filter( 'noptin_send_bulk_emails_ajax_query_args' )
