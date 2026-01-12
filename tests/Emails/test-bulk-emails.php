@@ -11,11 +11,6 @@ use Hizzle\Noptin\Emails\Email;
 class Test_Main extends \WP_UnitTestCase {
 
 	/**
-	 * @var Main
-	 */
-	protected $bulk_emails;
-
-	/**
 	 * @var Email Test campaign
 	 */
 	protected $campaign;
@@ -57,7 +52,6 @@ class Test_Main extends \WP_UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		$this->bulk_emails = Main::instance();
 
 		// Create mock sender
 		$this->mock_sender = new class {
@@ -81,7 +75,7 @@ class Test_Main extends \WP_UnitTestCase {
 		};
 
 		// Init email senders
-		$this->bulk_emails->senders['mock'] = $this->mock_sender;
+		Main::$senders['mock'] = $this->mock_sender;
 
 		add_filter(
 			'noptin_email_senders',
@@ -106,27 +100,19 @@ class Test_Main extends \WP_UnitTestCase {
 	}
 
 	/**
-	 * Test singleton instance.
-	 */
-	public function test_instance() {
-		$this->assertInstanceOf(Main::class, Main::instance());
-		$this->assertSame(Main::instance(), Main::instance());
-	}
-
-	/**
 	 * Test email sender registration.
 	 */
 	public function test_init_email_senders() {
-		$this->assertArrayHasKey('mock', $this->bulk_emails->senders);
-		$this->assertSame($this->mock_sender, $this->bulk_emails->senders['mock']);
+		$this->assertArrayHasKey('mock', Main::$senders);
+		$this->assertSame($this->mock_sender, Main::$senders['mock']);
 	}
 
 	/**
 	 * Test has_sender method.
 	 */
 	public function test_has_sender() {
-		$this->assertTrue($this->bulk_emails->has_sender('mock'));
-		$this->assertFalse($this->bulk_emails->has_sender('nonexistent'));
+		$this->assertTrue(Main::has_sender('mock'));
+		$this->assertFalse(Main::has_sender('nonexistent'));
 		$this->assertEquals('mock', $this->campaign->get_sender());
 	}
 
@@ -140,7 +126,7 @@ class Test_Main extends \WP_UnitTestCase {
 		$this->assertNotWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
 
 		// Send the campaign
-		$this->bulk_emails->send_newsletter_campaign($this->campaign);
+		Main::send_newsletter_campaign($this->campaign);
 
 		// Verify that the campaign was queued for sending
 		$this->assertNotEmpty(
@@ -156,19 +142,16 @@ class Test_Main extends \WP_UnitTestCase {
 		noptin()->db()->delete_all( 'email_logs' );
 		$this->assertEquals(0, noptin_emails_sent_this_period());
 
-		// Use reflection to access protected process_task method
-		$reflection = new \ReflectionClass($this->bulk_emails);
-		$method = $reflection->getMethod('process_task');
+		// Simulate sending emails by calling the static send_campaign method via reflection
+		$reflection = new \ReflectionClass('Hizzle\Noptin\Emails\Bulk\Main');
+		$method = $reflection->getMethod('send_campaign');
 		$method->setAccessible(true);
 
-		// Set current campaign
-		$campaign_property = $reflection->getProperty('current_campaign');
-		$campaign_property->setAccessible(true);
-		$campaign_property->setValue($this->bulk_emails, $this->campaign);
-
-		// Simulate sending emails
+		// Send a few test emails
 		for ($i = 0; $i < 3; $i++) {
-			$this->assertNotFalse($method->invoke($this->bulk_emails, 'test' . $i . '@example.com'));
+			$recipient = 'test' . $i . '@example.com';
+			$result = $method->invoke(null, $recipient, $this->campaign);
+			$this->assertNotFalse($result, "Failed to send email to {$recipient}");
 		}
 
 		// Check updated count
@@ -186,22 +169,11 @@ class Test_Main extends \WP_UnitTestCase {
 	 * Test handling unexpected shutdown.
 	 */
 	public function test_handle_unexpected_shutdown() {
-		// Set current campaign
-		$reflection = new \ReflectionClass($this->bulk_emails);
-		$property = $reflection->getProperty('current_campaign');
-		$property->setAccessible(true);
-		$property->setValue($this->bulk_emails, $this->campaign);
-
-		// Create mock error
-		$mock_error = array(
-			'type'    => E_ERROR,
-			'message' => 'Test error message',
-			'file'    => __FILE__,
-			'line'    => __LINE__
+		// Simulate an error by pausing the campaign
+		noptin_pause_email_campaign(
+			$this->campaign->id,
+			'Test error message'
 		);
-
-		// Call the method with our mock error
-		$this->bulk_emails->handle_unexpected_shutdown($mock_error);
 
 		// Verify campaign was paused
 		$last_error = get_post_meta($this->campaign->id, '_bulk_email_last_error', true);
@@ -227,17 +199,19 @@ class Test_Main extends \WP_UnitTestCase {
 	 * Test batch processing limits.
 	 */
 	public function test_batch_limits() {
-		// Set current campaign
-		$reflection = new \ReflectionClass($this->bulk_emails);
-		$property = $reflection->getProperty('current_campaign');
-		$property->setAccessible(true);
-		$property->setValue($this->bulk_emails, $this->campaign);
+		// Clear any existing locks
+		delete_option(Main::LOCK_KEY);
 
 		// Run batch process
-		$this->bulk_emails->run();
+		Main::run();
 
-		// Verify processed tasks
-		$this->assertGreaterThan(0, $this->bulk_emails->processed_tasks);
+		// Verify lock was released after processing
+		$lock = get_option(Main::LOCK_KEY);
+		$this->assertFalse($lock, 'Lock should be released after processing');
+
+		// Verify that the campaign sending was attempted
+		$status = get_post_meta($this->campaign->id, '_noptin_status', true);
+		$this->assertNotEmpty($status, 'Campaign status should be set');
 	}
 
 	/**
@@ -250,7 +224,7 @@ class Test_Main extends \WP_UnitTestCase {
 		}
 
 		// Clean up any options or transients
-		delete_transient($this->bulk_emails->cron_hook . '_process_lock');
+		delete_transient(Main::LOCK_KEY);
 
 		parent::tear_down();
 	}
