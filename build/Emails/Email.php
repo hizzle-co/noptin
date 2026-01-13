@@ -983,7 +983,7 @@ class Email {
 			return '';
 		}
 
-		// translators: %s: Placeholder for email recipients.
+		// translators: %s: The Example
 		return sprintf( __( 'For example, %s', 'newsletter-optin-box' ), $emails );
 	}
 

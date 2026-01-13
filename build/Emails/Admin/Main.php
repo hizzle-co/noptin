@@ -450,7 +450,7 @@ class Main {
 											),
 											'type'        => 'text',
 											'placeholder' => sprintf(
-												/* translators: %s: Example */
+												/* translators: %s: The Example */
 												__( 'For example, %s', 'newsletter-optin-box' ),
 												'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
 											),

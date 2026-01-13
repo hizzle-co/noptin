@@ -1967,7 +1967,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
 					// translators: %s is a number.
-					_x( '%1$s and %2$s', 'number', 'newsletter-optin-box' ),
+					_x( '%1$s and %2$s', 'number range', 'newsletter-optin-box' ),
 					floatval( $value[0] ),
 					isset( $value[1] ) ? floatval( $value[1] ) : floatval( $value[0] )
 				);
@@ -1979,7 +1979,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 				$value = noptin_parse_list( $value );
 				$value = sprintf(
 					// translators: %s is a date.
-					__( '%1$s and %2$s', 'newsletter-optin-box' ),
+					_x( '%1$s and %2$s', 'date range', 'newsletter-optin-box' ),
 					gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) ),
 					isset( $value[1] ) ? gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[1] ) ) : gmdate( 'Y-m-d', noptin_string_to_timestamp( $value[0] ) )
 				);
