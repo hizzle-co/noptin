@@ -151,7 +151,7 @@ class Test_Main extends \WP_UnitTestCase {
 
 		// Verify that the campaign was queued for sending
 		$this->assertNotEmpty(
-			did_filter( 'noptin_send_bulk_emails_ajax_query_args' )
+			get_post_meta( $this->campaign->id, '_noptin_last_activity', true )
 		);
 	}
 
@@ -231,8 +231,8 @@ class Test_Main extends \WP_UnitTestCase {
 		$this->assertFalse($lock, 'Lock should be released after processing');
 
 		// Verify that the campaign sending was attempted
-		$status = get_post_meta($this->campaign->id, '_noptin_status', true);
-		$this->assertNotEmpty($status, 'Campaign status should be set');
+		$last_activity = get_post_meta($this->campaign->id, '_noptin_last_activity', true);
+		$this->assertNotEmpty($last_activity, 'Campaign status should be set');
 	}
 
 	/**
