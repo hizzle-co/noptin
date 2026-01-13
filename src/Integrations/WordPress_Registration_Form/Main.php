@@ -41,9 +41,8 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 		add_action( 'user_register', array( $this, 'subscribe_from_registration' ), $this->priority );
 		add_action( 'profile_update', array( $this, 'subscribe_from_registration' ), $this->priority );
 
-		// BuddyPress.
 		/**
-		 * Multisite signups are a two-stage process - the data is first added to
+		 * BuddyPress signups are a two-stage process - the data is first added to
 		 * the 'signups' table and then converted into an actual user during the
 		 * activation process.
 		 *
@@ -208,46 +207,46 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	}
 
 	/**
-     * Stores subscription data from BuddyPress Registration Form.
-     *
-     * @param array $usermeta The existing usermeta
-     * @return array $usermeta The modified usermeta
-     */
-    public function store_bp_usermeta( $usermeta ) {
+	 * Stores subscription data from BuddyPress Registration Form.
+	 *
+	 * @param array $usermeta The existing usermeta
+	 * @return array $usermeta The modified usermeta
+	 */
+	public function store_bp_usermeta( $usermeta ) {
 
-        // only add meta if triggered (checked)
-        if ( $this->triggered() ) {
-            $usermeta['noptin_subscribe'] = '1';
-        }
+		// only add meta if triggered (checked)
+		if ( $this->triggered() ) {
+			$usermeta['noptin_subscribe'] = '1';
+		}
 
-        return $usermeta;
-    }
+		return $usermeta;
+	}
 
 	/**
-     * Subscribes from BuddyPress Activation.
-     *
-     * @param int $user_id The activated user ID
-     * @param string $key the activation key (not used)
-     * @param array $userdata An array containing the activated user data
-     * @return bool
-     */
-    public function subscribe_from_bp_usermeta( $user_id, $key, $userdata ) {
+	 * Subscribes from BuddyPress Activation.
+	 *
+	 * @param int $user_id The activated user ID
+	 * @param string $key the activation key (not used)
+	 * @param array $userdata An array containing the activated user data
+	 * @return bool
+	 */
+	public function subscribe_from_bp_usermeta( $user_id, $key, $userdata ) {
 
-        // sanity check
-        if ( empty( $user_id ) ) {
-            return false;
-        }
+		// sanity check
+		if ( empty( $user_id ) ) {
+			return false;
+		}
 
-        // bail if our usermeta key is not switched on
-        $meta = $userdata['meta'] ?? array();
-        if ( empty( $meta['noptin_subscribe'] ) ) {
-            return false;
-        }
+		// bail if our usermeta key is not switched on
+		$meta = $userdata['meta'] ?? array();
+		if ( empty( $meta['noptin_subscribe'] ) ) {
+			return false;
+		}
 
-        $GLOBALS['bp_noptin_checkbox_was_checked'] = true;
+		$GLOBALS['bp_noptin_checkbox_was_checked'] = true;
 
-        return $this->subscribe_from_registration( $user_id );
-    }
+		return $this->subscribe_from_registration( $user_id );
+	}
 
 	/**
 	 * @inheritdoc
