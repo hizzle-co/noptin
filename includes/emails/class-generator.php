@@ -938,6 +938,8 @@ class Noptin_Email_Generator {
 			return $content;
 		}
 
+		$content = apply_filters( 'noptin_content_pre_inline_styles', $content, $this );
+
 		// Use preg_replace to remove the CSS comments.
 		$content = preg_replace( '/\/\*.*?\*\//s', '', $content );
 

@@ -48,13 +48,8 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 		wc_get_template( 'emails/email-footer.php' );
 		remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
 
-		$html = ob_get_clean();
+		return ob_get_clean();
 
-		if ( is_callable( array( WC()->mailer()->emails['WC_Email_New_Order'] ?? '', 'style_inline' ) ) ) {
-			return WC()->mailer()->emails['WC_Email_New_Order']->style_inline( $html );
-		}
-
-		return $html;
 	}
 
 	/**
@@ -78,5 +73,21 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 	 */
 	public function render_email_styles() {
 		wc_get_template( 'emails/email-styles.php' );
+	}
+
+	/**
+	 * Applies WooCommerce email styles to Noptin templates.
+	 *
+	 * @since 1.7.0
+	 * @param string $email.
+	 * @return string
+	 */
+	public function process_content_before_inline_styles( $email ) {
+
+		if ( is_callable( array( WC()->mailer()->emails['WC_Email_New_Order'] ?? '', 'style_inline' ) ) ) {
+			return WC()->mailer()->emails['WC_Email_New_Order']->style_inline( $email );
+		}
+
+		return $email;
 	}
 }

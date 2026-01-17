@@ -31,6 +31,7 @@ abstract class Template_Integration {
 		add_filter( 'noptin_email_templates', array( $this, 'register_email_template' ) );
 		add_filter( 'noptin_email_after_apply_template', array( $this, 'maybe_process_template' ), 10, 2 );
 		add_action( 'noptin_email_styles', array( $this, 'maybe_add_email_styles' ) );
+		add_filter( 'noptin_content_pre_inline_styles', array( $this, 'maybe_process_content_before_inline_styles' ), 10, 2 );
 	}
 
 	/**
@@ -90,4 +91,35 @@ abstract class Template_Integration {
 	 * @return string
 	 */
 	protected function render_email_styles() {}
+
+	/**
+	 * Processes content before inlining styles.
+	 *
+	 * @since 3.0.0
+	 * @param string $content
+	 * @param \Noptin_Email_Generator $generator
+	 * @return string
+	 */
+	public function maybe_process_content_before_inline_styles( $content, $generator ) {
+		if ( $this->slug === $generator->template ) {
+			$new_content = $this->process_content_before_inline_styles( $content );
+
+			if ( ! empty( $new_content ) ) {
+				$content = $new_content;
+			}
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Processes content before inlining styles.
+	 *
+	 * @since 3.0.0
+	 * @param string $content
+	 * @return string
+	 */
+	protected function process_content_before_inline_styles( $content ) {
+		return $content;
+	}
 }
