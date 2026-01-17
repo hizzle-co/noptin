@@ -111,7 +111,6 @@ class Main {
 
 		// Send the campaign.
 		if ( self::has_sender( $campaign->get_sender() ) ) {
-			update_post_meta( $campaign->id, '_noptin_status', 'sending' );
 			update_post_meta( $campaign->id, '_noptin_last_activity', time() );
 			self::send_pending();
 		} elseif ( has_action( 'noptin_send_email_via_' . $campaign->get_sender() ) ) {

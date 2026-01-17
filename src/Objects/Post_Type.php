@@ -137,6 +137,7 @@ abstract class Post_Type extends Collection {
 					'mail_config' => array(
 						'object_type'  => $this->object_type,
 						'is_mass_mail' => true,
+						'featured'     => true,
 						'label'        => ucwords(
 							sprintf(
 								/* translators: %s: Object type label. */

@@ -78,6 +78,10 @@ class Trigger extends \Noptin_Abstract_Trigger {
 			$this->alias = $trigger_args['previous_name'];
 		}
 
+		if ( ! empty( $trigger_args['featured'] ) ) {
+			$this->featured = $trigger_args['featured'];
+		}
+
 		add_action( 'noptin_fire_object_trigger_' . $this->trigger_id, array( $this, 'fire_trigger' ) );
 	}
 

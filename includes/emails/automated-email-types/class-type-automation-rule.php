@@ -51,6 +51,10 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 		$this->contexts    = $trigger->contexts;
 		$this->mail_config = $trigger->mail_config;
 
+		if ( ! empty( $trigger->featured ) ) {
+			$this->mail_config['featured'] = $trigger->featured;
+		}
+
 		if ( ! empty( $trigger->alias ) ) {
 			add_filter( 'noptin_automation_email_sub_type_automation_rule_' . $trigger->alias, array( $this, 'get_type' ) );
 		}

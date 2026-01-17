@@ -146,6 +146,14 @@ class Records extends \Hizzle\Noptin\Objects\People {
 					'noptin_subscriber_saved' === $state ? __( 'created or updated', 'newsletter-optin-box' ) : strtolower( $label )
 				),
 				'subject'     => 'subscriber',
+				'featured'    => in_array(
+					$state,
+					array(
+						'noptin_subscriber_status_set_to_pending',
+						'noptin_subscriber_status_set_to_subscribed',
+					),
+					true
+				),
 			);
 
 			if ( 'noptin_subscriber_status_set_to_pending' === $state ) {
@@ -231,6 +239,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $field['label'] )
 					),
 					'subject'       => 'subscriber',
+					'featured'      => true,
 					'extra_args'    => array(
 						'new_value' => array(
 							'label'      => __( 'New value', 'newsletter-optin-box' ),
@@ -268,6 +277,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $field['label'] )
 					),
 					'subject'       => 'subscriber',
+					'featured'      => true,
 					'extra_args'    => array(
 						'field_value' => array(
 							'label'      => __( 'New value', 'newsletter-optin-box' ),
@@ -298,6 +308,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $field['label'] )
 					),
 					'subject'       => 'subscriber',
+					'featured'      => true,
 					'extra_args'    => array(
 						'field_value' => array(
 							'label'      => __( 'The removed value', 'newsletter-optin-box' ),
@@ -337,6 +348,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $this->singular_label )
 					),
 					'subject'        => 'subscriber',
+					'featured'      => true,
 					'extra_settings' => array(
 						'field'       => array(
 							'el'               => 'select',

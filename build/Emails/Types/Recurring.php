@@ -62,6 +62,7 @@ class Recurring extends \Noptin_Automated_Email_Type {
 						'category'                   => $this->category,
 						'supports_timing'            => false,
 						'contexts'                   => $this->contexts,
+						'featured'                   => true,
 						'supports_general_templates' => 'periodic' === $this->type,
 					),
 					$this->mail_config

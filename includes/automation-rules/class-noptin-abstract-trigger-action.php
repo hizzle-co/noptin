@@ -25,6 +25,11 @@ abstract class Noptin_Abstract_Trigger_Action {
 	/**
 	 * @var bool
 	 */
+	public $featured = false;
+
+	/**
+	 * @var bool
+	 */
 	public $is_action_or_trigger = 'trigger';
 
 	/**

@@ -673,39 +673,9 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return array
 	 */
 	public function get_overview() {
-		// It would be better to only group by activity,
-		// But Noptin counts multiple opens and clicks instead of only unique ones.
-		// So we have to do it this way.
-		// Then loop through the results and only count unique opens and clicks.
-		$sent_emails = \Hizzle\Noptin\Emails\Logs\Main::query(
-			array(
-				'email'     => 'testing@new.com',
-				'orderby'   => 'date_created',
-				'order'     => 'DESC',
-				'aggregate' => array(
-					'id' => 'count',
-				),
-				'groupby'   => array( 'activity', 'campaign_id' ),
-			),
-			'aggregate'
-		);
-		$total       = 0;
-		$opens       = 0;
-		$clicks      = 0;
-
-		foreach ( $sent_emails as $email ) {
-			switch ( $email->activity ) {
-				case 'open':
-					++$opens;
-					break;
-				case 'click':
-					++$clicks;
-					break;
-				case 'send':
-					++$total;
-					break;
-			}
-		}
+		$total  = (int) $this->get( 'total_emails_sent' );
+		$opens  = (int) $this->get( 'total_emails_opened' );
+		$clicks = (int) $this->get( 'total_links_clicked' );
 
 		$overview = array(
 			'stat_cards' => array(
