@@ -339,11 +339,18 @@ class Query {
 		}
 	}
 
-	private function get_mysql_timezone_offset() {
+	/**
+	 * @param array $qv The query vars.
+	 */
+	private function get_mysql_timezone_offset( $qv ) {
 		$offset = get_option( 'gmt_offset', 0 );
 
-		// Ensure offset is a float in minutes
-		$offset = floatval( $offset ) * 60;
+		if ( isset( $qv['hizzle_timezone_offset'] ) ) {
+			$offset = floatval( $qv['hizzle_timezone_offset'] );
+		} else {
+			// Ensure offset is a float in minutes
+			$offset = floatval( $offset ) * 60;
+		}
 
 		if ( 0 > $offset ) {
 			return "DATE_SUB(%s, INTERVAL $offset MINUTE)";
@@ -453,7 +460,7 @@ class Query {
 		}
 
 		// Prepare groupby fields.
-		$timezone_offset = $this->get_mysql_timezone_offset();
+		$timezone_offset = $this->get_mysql_timezone_offset( $qv );
 		if ( ! empty( $qv['groupby'] ) ) {
 			foreach ( wp_parse_list( $qv['groupby'] ) as $index => $field ) {
 				$cast = false;
