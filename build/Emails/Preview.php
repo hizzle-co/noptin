@@ -121,6 +121,8 @@ class Preview {
 			wp_die( 'Invalid campaign.' );
 		}
 
+		define( 'NOPTIN_EMAIL_PREVIEW_MODE', true );
+
 		// Prepare test content if needed.
 		$prepare_preview = self::$campaign->prepare_preview( self::$mode, self::$user );
 

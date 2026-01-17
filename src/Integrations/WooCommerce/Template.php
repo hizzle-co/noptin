@@ -48,7 +48,13 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 		wc_get_template( 'emails/email-footer.php' );
 		remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
 
-		return ob_get_clean();
+		$html = ob_get_clean();
+
+		if ( is_callable( array( WC()->mailer()->emails['WC_Email_New_Order'] ?? '', 'style_inline' ) ) ) {
+			return WC()->mailer()->emails['WC_Email_New_Order']->style_inline( $html );
+		}
+
+		return $html;
 	}
 
 	/**

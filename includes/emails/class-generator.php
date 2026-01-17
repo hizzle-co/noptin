@@ -681,12 +681,18 @@ class Noptin_Email_Generator {
 			// Fix section widths on Apple mail.
 			if ( 'table' === $element->nodeName && $element->hasAttribute( 'width' ) && $element->hasAttribute( 'style' ) ) {
 				$style = $element->getAttribute( 'style' );
-				if ( preg_match( '/width:([^;]+);/', $style, $matches ) ) {
+				if ( preg_match( '/(?:^|;|\s)width\s*:\s*([^;]+);/', $style, $matches ) ) {
 					$style = str_replace( $matches[0], '', $style );
 
 					// Remove max-width from style
-					if ( preg_match( '/max-width:([^;]+);/', $style, $max_width_matches ) ) {
+					if ( preg_match( '/(?:^|;|\s)max-width\s*:\s*([^;]+);/', $style, $max_width_matches ) ) {
 						$style = str_replace( $max_width_matches[0], '', $style );
+					}
+
+					// Ensure style ends with semicolon before appending
+					$style = rtrim( $style, '; ' );
+					if ( ! empty( $style ) ) {
+						$style .= '; ';
 					}
 
 					$style .= 'width: 100%; max-width: ' . $matches[1] . ';';
