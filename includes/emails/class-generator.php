@@ -361,6 +361,9 @@ class Noptin_Email_Generator {
 		// Inline CSS styles.
 		$content = $this->inline_styles( $content );
 
+		// Remove script tags.
+		$html = preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $html );
+
 		// Remove unused classes and ids.
 		$content = $this->clean_html( $content );
 
@@ -407,9 +410,6 @@ class Noptin_Email_Generator {
 	}
 
 	private function clean_html( $html ) {
-
-		// Remove script tags.
-		$html = preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $html );
 
 		// Check if DOMDocument is available.
 		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
@@ -695,7 +695,8 @@ class Noptin_Email_Generator {
 			}
 
 			// Check if the class is used in the CSS.
-			if ( $element->hasAttribute( 'class' ) ) {
+			$is_preview = defined( 'NOPTIN_EMAIL_PREVIEW_MODE' ) && NOPTIN_EMAIL_PREVIEW_MODE;
+			if ( $element->hasAttribute( 'class' ) && ! $is_preview ) {
 				$class = $element->getAttribute( 'class' );
 
 				// Split the class attribute.
@@ -717,7 +718,7 @@ class Noptin_Email_Generator {
 			}
 
 			// Check if the id is used in the CSS.
-			if ( $element->hasAttribute( 'id' ) ) {
+			if ( $element->hasAttribute( 'id' ) && ! $is_preview ) {
 				$id = $element->getAttribute( 'id' );
 				if ( ! isset( $ids[ $id ] ) ) {
 					// Id is not used, remove it.
@@ -1099,7 +1100,7 @@ class Noptin_Email_Generator {
 			$property = trim( strtolower( $property ) );
 			$value    = trim( $value );
 
-			if ( empty( $property ) || empty( $value ) ) {
+			if ( '' === $property || '' === $value ) {
 				continue;
 			}
 
