@@ -1057,6 +1057,15 @@ function noptin_premium_addons() {
 }
 
 /**
+ * Returns the usage mode.
+ *
+ * @return string crm | standalone | full
+ */
+function noptin_get_usage_mode() {
+	return get_noptin_option( 'usage_mode', 'full' );
+}
+
+/**
  * Checks whether or not to upsell integrations.
  *
  * @since 1.9.0
@@ -1064,7 +1073,8 @@ function noptin_premium_addons() {
  * @return bool
  */
 function noptin_upsell_integrations() {
-	return apply_filters( 'noptin_upsell_integrations', ! noptin_has_alk() );
+	$upsell = 'standalone' !== noptin_get_usage_mode();
+	return apply_filters( 'noptin_upsell_integrations', $upsell && ! noptin_has_alk() );
 }
 
 /**
