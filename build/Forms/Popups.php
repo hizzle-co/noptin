@@ -112,7 +112,6 @@ class Popups {
 			$forms = wp_cache_get( 'noptin_popup_forms', 'noptin' );
 
 			if ( false === $forms ) {
-
 				$forms = get_posts(
 					array(
 						'numberposts' => -1,
@@ -138,6 +137,11 @@ class Popups {
 				$form = new Form( $popup );
 
 				// Can it be displayed?
+				if ( ! $form->can_show() ) {
+					continue;
+				}
+
+				// Add if slide-in or popup.
 				if ( $form->is_slide_in() || $form->is_popup() ) {
 					self::$popups[] = $form;
 				}
