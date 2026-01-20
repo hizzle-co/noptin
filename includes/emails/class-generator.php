@@ -362,7 +362,7 @@ class Noptin_Email_Generator {
 		$content = $this->inline_styles( $content );
 
 		// Remove script tags.
-		$html = preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $html );
+		$content = preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $content );
 
 		// Remove unused classes and ids.
 		$content = $this->clean_html( $content );
