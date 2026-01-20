@@ -172,7 +172,8 @@ class Test_Main extends \WP_UnitTestCase {
 		for ($i = 0; $i < 3; $i++) {
 			$recipient = 'test' . $i . '@example.com';
 			$result = $method->invoke(null, $recipient, $this->campaign);
-			$this->assertNotFalse($result, "Failed to send email to {$recipient}");
+			$last_error = get_post_meta($this->campaign->id, '_bulk_email_last_error', true);
+			$this->assertNotFalse($result, "Failed to send email to {$recipient}:- " . ( is_array( $last_error ) ? ( $last_error['message'] ?? '' ) : 'Returned false' ) );
 		}
 
 		// Check updated count
