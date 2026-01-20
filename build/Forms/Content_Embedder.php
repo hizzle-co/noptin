@@ -107,7 +107,6 @@ class Content_Embedder {
 			$forms = wp_cache_get( 'noptin_forms_to_append', 'noptin' );
 
 			if ( false === $forms ) {
-
 				$forms = get_posts(
 					array(
 						'numberposts' => -1,

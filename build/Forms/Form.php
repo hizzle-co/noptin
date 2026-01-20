@@ -753,7 +753,8 @@ class Form {
 	 * Checks if we can embed this form to the current post/page.
 	 */
 	public function can_embed() {
-		return apply_filters( 'noptin_can_embed_form', 'inpost' === $this->optinType && $this->can_show(), $this );
+		$can_embed = 'inpost' === $this->optinType && in_array( $this->inject, array( 'before', 'after', 'both' ), true );
+		return apply_filters( 'noptin_can_embed_form', $can_embed && $this->can_show(), $this );
 	}
 
 	/**
