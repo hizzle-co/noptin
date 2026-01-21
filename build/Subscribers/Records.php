@@ -348,7 +348,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $this->singular_label )
 					),
 					'subject'        => 'subscriber',
-					'featured'      => true,
+					'featured'       => true,
 					'extra_settings' => array(
 						'field'       => array(
 							'el'               => 'select',
@@ -705,19 +705,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 * @param \Hizzle\Noptin\Emails\Email $email
 	 * @return int[] $subscribers The subscriber IDs.
 	 */
-	public function get_newsletter_recipients( $options, $email ) {
+	public function get_batched_newsletter_recipients( $options, $email, $batch_size, $offset ) {
 		// Prepare arguments.
 		$args = array(
-			'status'     => 'subscribed',
-			'number'     => -1,
-			'fields'     => 'id',
-			'meta_query' => array(
-				'relation' => 'AND',
-				array(
-					'key'     => '_campaign_' . $email->id,
-					'compare' => 'NOT EXISTS',
-				),
-			),
+			'status' => 'subscribed',
+			'offset' => $offset,
+			'number' => $batch_size,
+			'fields' => 'id',
 		);
 
 		$manual_recipients = $email->get_manual_recipients_ids();
@@ -1134,7 +1128,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		// Custom fields.
 		if ( ! class_exists( '\Noptin\Addons_Pack\Custom_Fields\Main' ) ) {
 			foreach ( $this->subscriber_fields() as $merge_tag => $field ) {
-
 				if ( 'confirmed' === $merge_tag ) {
 					$field['label'] = __( 'Email confirmation status', 'newsletter-optin-box' );
 				}

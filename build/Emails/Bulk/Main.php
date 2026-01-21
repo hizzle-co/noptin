@@ -178,22 +178,35 @@ class Main {
 		}
 
 		// Backwards compat. Remove old wp event.
-		if ( ! wp_next_scheduled( self::TASK_HOOK ) ) {
+		if ( wp_next_scheduled( self::TASK_HOOK ) ) {
 			wp_clear_scheduled_hook( self::TASK_HOOK );
 		}
 
 		// Create the tasks.
 		foreach ( array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ) as $hook ) {
-			$task = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( $hook );
+			/** @var \Hizzle\Noptin\Tasks\Task[] $tasks */
+			$tasks = \Hizzle\Noptin\Tasks\Main::query(
+				array(
+					'hook'   => $hook,
+					'status' => 'pending',
+				)
+			);
 
 			// If we don't have a scheduled task, schedule one now.
-			if ( ! $task ) {
+			if ( empty( $tasks ) ) {
 				$interval = ( self::TASK_HOOK === $hook ) ? self::TASK_INTERVAL : self::HEALTH_CHECK_INTERVAL;
 				schedule_noptin_recurring_background_action(
 					$interval,
 					time() + $interval,
 					$hook
 				);
+			} else {
+				// Keep the first scheduled task.
+				foreach ( $tasks as $index => $task ) {
+					if ( $index > 0 ) {
+						$task->delete();
+					}
+				}
 			}
 		}
 
@@ -396,8 +409,16 @@ class Main {
 			$campaign = self::prepare_pending_campaign();
 
 			if ( ! $campaign ) {
+				log_noptin_message( 'No pending bulk email campaigns found. Exiting.' );
 				return;
 			}
+
+			log_noptin_message(
+				sprintf(
+					'Processing bulk email campaign: "%s"',
+					esc_html( $campaign->name )
+				)
+			);
 
 			// Reset next recipients.
 			self::$next_recipients = array();
@@ -411,12 +432,14 @@ class Main {
 				// Send the campaign to the next recipient.
 				// Abort if the campaign is invalid or no recipient.
 				if ( ! self::send_campaign( self::get_next_recipient( $campaign ), $campaign ) ) {
+					log_noptin_message(
+						'Skipping further processing for this campaign. Either no more recipients or an error occurred.'
+					);
 					break;
 				}
 
 				// Increment the processed tasks counter.
 				++$processed;
-
 			} while ( time() - $start_time < self::MAX_RUNTIME && ! noptin_memory_exceeded() );
 		} catch ( \Throwable $t ) {
 

@@ -578,8 +578,6 @@ class Main {
 	 * @param int $post_id The post id.
 	 */
 	public static function on_delete_campaign( $post_id ) {
-		global $wpdb;
-
 		$email = new Email( $post_id );
 
 		// Ensure email exists.
@@ -587,16 +585,6 @@ class Main {
 
 			// Fire deleted hooks.
 			self::fire_email_action_hook( 'deleted', $email );
-
-			// Delete related stats.
-			delete_noptin_subscriber_meta_by_key( "_campaign_$post_id" );
-
-			$wpdb->delete(
-				$wpdb->usermeta,
-				array(
-					'meta_key' => "_campaign_$post_id",
-				)
-			);
 		}
 	}
 
