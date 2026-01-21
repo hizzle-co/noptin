@@ -115,11 +115,10 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		$batch      = array_unique( $collection->get_batched_newsletter_recipients( $options, $campaign, $batch_size, $offset ) );
 		$batch      = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $batch, $campaign );
 
-		// Update the offset for the next batch.
-		update_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), $offset + $batch_size );
-
 		// Cache the batch for processing.
 		if ( ! empty( $batch ) ) {
+			// Update the offset for the next batch.
+			update_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), $offset + $batch_size );
 			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $batch );
 		}
 
