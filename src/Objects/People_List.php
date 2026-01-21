@@ -78,16 +78,23 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	}
 
 	/**
+	 * Returns the campaign meta key.
+	 */
+	public function get_campaign_meta_key( $suffix = 'to_send' ) {
+		return sprintf( '%s_%s', $this->collection_type, $suffix );
+	}
+
+	/**
 	 * Fetches relevant contacts for the campaign.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function get_recipients( $campaign ) {
 
-		// Check if we have contacts.
-		$contacts = get_post_meta( $campaign->id, 'contacts_to_send', true );
+		// Check if we have cached contacts.
+		$contacts = get_post_meta( $campaign->id, $this->get_campaign_meta_key(), true );
 
-		if ( is_array( $contacts ) ) {
+		if ( is_array( $contacts ) && ! empty( $contacts ) ) {
 			return $contacts;
 		}
 
@@ -97,13 +104,26 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 			return array();
 		}
 
+		// Get the offset for batch processing.
+		$offset = (int) get_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), true );
+
 		$options = empty( $this->options_key ) ? array() : $campaign->get( $this->options_key );
 		$options = is_array( $options ) ? $options : array();
-		$unique  = array_unique( $collection->get_newsletter_recipients( $options, $campaign ) );
-		$unique  = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $unique, $campaign );
 
-		update_post_meta( $campaign->id, 'contacts_to_send', $unique );
-		return $unique;
+		// Fetch recipients in batches to avoid memory issues with large lists.
+		$batch_size = apply_filters( 'noptin_bulk_email_batch_size', 100, $campaign );
+		$batch      = array_unique( $collection->get_batched_newsletter_recipients( $options, $campaign, $batch_size, $offset ) );
+		$batch      = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $batch, $campaign );
+
+		// Update the offset for the next batch.
+		update_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), $offset + $batch_size );
+
+		// Cache the batch for processing.
+		if ( ! empty( $batch ) ) {
+			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $batch );
+		}
+
+		return $batch;
 	}
 
 	/**
@@ -113,7 +133,8 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	 *
 	 */
 	public function done_sending( $campaign ) {
-		delete_post_meta( $campaign->id, 'contacts_to_send' );
+		delete_post_meta( $campaign->id, $this->get_campaign_meta_key() );
+		delete_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ) );
 	}
 
 	/**
@@ -179,7 +200,7 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		}
 
 		// Check if we have contacts.
-		$contacts = get_post_meta( $campaign->id, 'contacts_to_send', true );
+		$contacts = get_post_meta( $campaign->id, $this->get_campaign_meta_key(), true );
 
 		// Remove current contact from the list.
 		if ( is_array( $contacts ) ) {
@@ -188,7 +209,7 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 			}
 
 			$contacts = array_diff( $contacts, array( $contact_id ) );
-			update_post_meta( $campaign->id, 'contacts_to_send', $contacts );
+			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $contacts );
 		}
 
 		// Get the contact.

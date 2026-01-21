@@ -168,6 +168,16 @@ abstract class People extends Collection {
 	}
 
 	/**
+	 * Retrieves batched email recipients.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $email
+	 */
+	public function get_batched_newsletter_recipients( $options, $campaign, $batch_size, $offset ) {
+		// If we're here, then the collection doesn't support batching.
+		return $this->get_newsletter_recipients( $options, $campaign );
+	}
+
+	/**
 	 * Adds email sender to the list of available email senders.
 	 *
 	 * @param array $senders
