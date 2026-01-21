@@ -117,7 +117,7 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		// Adjust batch size if there's a limit.
 		$batch_size = empty( $max_emails ) ? $batch_size : min( $batch_size, $max_emails );
 		$batch      = array_unique( $collection->get_batched_newsletter_recipients( $options, $campaign, $batch_size, $offset ) );
-		$batch      = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $batch, $campaign );
+		$batch      = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $batch, $campaign, $options, $batch_size, $offset );
 
 		// Cache the batch for processing.
 		if ( ! empty( $batch ) ) {
