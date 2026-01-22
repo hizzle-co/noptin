@@ -5,10 +5,17 @@
  * @package Noptin
  */
 
+namespace Hizzle\Noptin\Tests\Bulk_Emails;
+
+use Hizzle\Noptin\Emails\Bulk\Main;
+use Hizzle\Noptin\Emails\Email;
+
+require_once __DIR__ . '/base.php';
+
 /**
  * Test bulk email batching.
  */
-class Test_Bulk_Email_Batching extends WP_UnitTestCase {
+class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 
 	/**
 	 * Test batch size filtering.
@@ -201,46 +208,6 @@ class Test_Bulk_Email_Batching extends WP_UnitTestCase {
 
 		// Memory usage should be minimal (testing concept, not actual memory).
 		$this->assertLessThanOrEqual( 100, count( $batch ) );
-	}
-
-	/**
-	 * Helper: Create test campaign.
-	 */
-	private function create_test_campaign() {
-		$campaign_id = wp_insert_post(
-			array(
-				'post_type'   => 'noptin-campaign',
-				'post_status' => 'publish',
-				'post_title'  => 'Test Batch Campaign',
-			)
-		);
-
-		update_post_meta( $campaign_id, 'campaign_type', 'newsletter' );
-		update_post_meta( $campaign_id, 'email_sender', 'noptin' );
-
-		return noptin_get_email_campaign_object( $campaign_id );
-	}
-
-	/**
-	 * Helper: Create test subscribers.
-	 */
-	private function create_test_subscribers( $count ) {
-		$subscriber_ids = array();
-
-		for ( $i = 1; $i <= $count; $i++ ) {
-			$subscriber_id = add_noptin_subscriber(
-				array(
-					'email'  => "test{$i}@example.com",
-					'status' => 'subscribed',
-				)
-			);
-
-			if ( ! is_wp_error( $subscriber_id ) ) {
-				$subscriber_ids[] = $subscriber_id;
-			}
-		}
-
-		return $subscriber_ids;
 	}
 
 	/**

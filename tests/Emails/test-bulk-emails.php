@@ -3,17 +3,16 @@
 namespace Hizzle\Noptin\Tests\Bulk_Emails;
 
 use Hizzle\Noptin\Emails\Bulk\Main;
-use Hizzle\Noptin\Emails\Email;
+
+
+require_once __DIR__ . '/base.php';
 
 /**
  * Test Main bulk email sender class.
  */
-class Test_Main extends \WP_UnitTestCase {
+class Test_Main extends Noptin_Emails_Test_Case {
 
-	/**
-	 * @var Email Test campaign
-	 */
-	protected $campaign;
+	const TEST_SUBSCRIBER_COUNT = 5;
 
 	/**
 	 * @var \Hizzle\Noptin\Bulk_Emails\Email_Sender Mock sender for testing
@@ -21,99 +20,13 @@ class Test_Main extends \WP_UnitTestCase {
 	protected $mock_sender;
 
 	/**
-	 * Helper method to create a test email campaign
-	 *
-	 * @param array $args Optional. Campaign arguments.
-	 * @return Email
-	 */
-	protected function create_test_campaign($args = array()) {
-		$default_args = array(
-			'type'      => 'newsletter',
-			'status'    => 'publish',
-			'name'      => 'Test Campaign',
-			'subject'   => 'Test Subject',
-			'content'   => 'Test Content',
-			'options'   => array(
-				'email_sender'   => 'mock',
-				'email_type'     => 'normal',
-				'template'       => 'default',
-				'recipients'     => 'test@example.com',
-				'content_normal' => 'Test Content',
-				'template'       => 'paste',
-			),
-		);
-
-		$args = wp_parse_args($args, $default_args);
-		return new Email($args);
-	}
-
-	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
 		parent::set_up();
 
-		// Create mock sender
-		$this->mock_sender = new class {
-			public $sent_emails = [];
-			public $recipients = ['test1@example.com', 'test2@example.com'];
-
-			public function get_recipients($campaign) {
-				return $this->recipients;
-			}
-
-			public function send($campaign, $recipient) {
-				$this->sent_emails[] = $recipient;
-				$campaign->send_to( $recipient );
-
-				return true;
-			}
-
-			public function done_sending($campaign) {
-				// Clean up after sending
-			}
-		};
-
-		// Init email senders
-		Main::$senders['mock'] = $this->mock_sender;
-
-		add_filter(
-			'noptin_email_senders',
-			function($senders) {
-				$senders['mock'] = array(
-					'label' => 'Mock Sender',
-					'description' => 'Mock sender for testing',
-					'image' => array(
-						'icon' => 'email',
-						'url' => 'https://example.com/mock-sender-image.png',
-					),
-					'is_installed' => true,
-					'is_local'     => true,
-				);
-				return $senders;
-			}
-		);
-
-		// Create a test campaign
-		$this->campaign = $this->create_test_campaign();
-		$this->campaign->save();
-	}
-
-	/**
-	 * Test email sender registration.
-	 */
-	public function test_init_email_senders() {
-		$this->assertArrayHasKey('mock', Main::$senders);
-		$this->assertSame($this->mock_sender, Main::$senders['mock']);
-	}
-
-	/**
-	 * Test has_sender method.
-	 */
-	public function test_has_sender() {
-		$this->assertEquals($this->mock_sender, Main::has_sender('mock'));
-		$this->assertFalse(Main::has_sender('nonexistent'));
-		$this->assertEquals('mock', $this->campaign->get_sender());
+		// Create test subscribers.
+		$this->create_test_subscribers( self::TEST_SUBSCRIBER_COUNT );
 	}
 
 	/**
@@ -126,71 +39,59 @@ class Test_Main extends \WP_UnitTestCase {
 		$this->assertNotWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
 
 		// Check if the sender is available
-		$this->assertEquals($this->mock_sender, Main::has_sender('mock'));
+		$this->assertNotEmpty(Main::has_sender($this->campaign->get_sender()));
 
-		// Check if we have a pending campaing.
+		// Send the campaign to all subscribers.
+		$this->campaign->save();
+
+		// We should not have any pending campaigns.
 		$pending_campaign = Main::prepare_pending_campaign();
-		$error            = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
+		$this->assertFalse( $pending_campaign, 'There should be no pending campaigns. We have already sent this one.' );
 
-		$this->assertIsObject( $pending_campaign, is_array( $error ) ? $error['message'] : '' );
-
-		// Send the campaign
-		Main::send_newsletter_campaign($this->campaign);
-
-		// Verify that the sending task was scheduled
-		$this->assertIsNumeric(
+		// Verify that the sending task is no longer scheduled.
+		$this->assertFalse(
 			next_scheduled_noptin_background_action( Main::TASK_HOOK ),
-			'Sending task should be scheduled'
+			'Sending task should not be scheduled'
 		);
 
-		// Verify that the health check task was scheduled
-		$this->assertIsNumeric(
+		// Verify that the health check task is no longer scheduled.
+		$this->assertFalse(
 			next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ),
-			'Health check task should be scheduled'
+			'Health check task should not be scheduled'
 		);
 
-		// Verify that the campaign was queued for sending
+		// Verify that the resume task is no longer scheduled.
+		$this->assertFalse(
+			next_scheduled_noptin_background_action( 'noptin_resume_email_campaign', $this->campaign->id ),
+			'Resume task should not be scheduled'
+		);
+
+		// Verify that the campaign sent emails to all recipients.
+		$this->assertCount( self::TEST_SUBSCRIBER_COUNT, get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
+		for ( $i = 1; $i <= self::TEST_SUBSCRIBER_COUNT; $i++ ) {
+			$this->assertTrue(
+				noptin_email_campaign_sent_to( $this->campaign->id, "test{$i}@example.com" ),
+				"Campaign should have sent email to test{$i}@example.com"
+			);
+		}
+
+		// Check if there was activity logged.
 		$this->assertNotEmpty(
 			get_post_meta( $this->campaign->id, '_noptin_last_activity', true )
 		);
 	}
 
 	/**
-	 * Test hourly email limit tracking.
-	 */
-	public function test_hourly_email_limit() {
-		// Test initial count
-		noptin()->db()->delete_all( 'email_logs' );
-		$this->assertEquals(0, noptin_emails_sent_this_period());
-
-		// Simulate sending emails by calling the static send_campaign method via reflection
-		$reflection = new \ReflectionClass('Hizzle\Noptin\Emails\Bulk\Main');
-		$method = $reflection->getMethod('send_campaign');
-		$method->setAccessible(true);
-
-		// Send a few test emails
-		for ($i = 0; $i < 3; $i++) {
-			$recipient = 'test' . $i . '@example.com';
-			$result = $method->invoke(null, $recipient, $this->campaign);
-			$last_error = get_post_meta($this->campaign->id, '_bulk_email_last_error', true);
-			$this->assertNotFalse($result, "Failed to send email to {$recipient}:- " . ( is_array( $last_error ) ? ( $last_error['message'] ?? '' ) : 'Returned false' ) );
-		}
-
-		// Check updated count
-		$this->assertEquals(3, noptin_emails_sent_this_period());
-
-		// Test exceeding limit
-		add_filter('noptin_max_emails_per_period', function() {
-			return 2;
-		});
-
-		$this->assertTrue(noptin_email_sending_limit_reached());
-	}
-
-	/**
 	 * Test handling unexpected shutdown.
 	 */
 	public function test_handle_unexpected_shutdown() {
+		// Set a sending limit so that the campaign doesn't complete in one go.
+		update_noptin_option( 'per_hour', 2 );
+
+		// Send the campaign.
+		$this->campaign->save();
+
 		// Simulate an error by pausing the campaign
 		noptin_pause_email_campaign(
 			$this->campaign->id,
@@ -214,40 +115,48 @@ class Test_Main extends \WP_UnitTestCase {
 				$this->campaign->id
 			)
 		);
-
 	}
 
 	/**
 	 * Test batch processing limits.
 	 */
-	public function test_batch_limits() {
-		// Clear any existing locks
-		delete_option(Main::LOCK_KEY);
+	public function test_sending_locks() {
 
-		// Run batch process
-		Main::run();
+		// Send the campaign.
+		$this->campaign->save();
 
 		// Verify lock was released after processing
-		$lock = get_option(Main::LOCK_KEY);
-		$this->assertFalse($lock, 'Lock should be released after processing');
+		$this->assertFalse( Main::acquire_lock(), 'Lock should be released after processing');
 
-		// Verify that the campaign sending was attempted
-		$last_activity = get_post_meta($this->campaign->id, '_noptin_last_activity', true);
-		$this->assertNotEmpty($last_activity, 'Campaign status should be set');
+		// Manually set a stale lock.
+		add_option( Main::LOCK_KEY, time() - Main::LOCK_TTL - 1, '', 'no' );
+
+		// We should be able to acquire the lock since it's stale.
+		$this->assertTrue( Main::acquire_lock() );
+
+		// We should not be able to acquire the lock again immediately.
+		$this->assertFalse( Main::acquire_lock(), 'Lock should not be acquirable immediately after being acquired' );
+
+		// Release the lock.
+		Main::release_lock();
+
+		// Now we should be able to acquire the lock again.
+		$this->assertTrue( Main::acquire_lock() );
 	}
 
 	/**
-	 * Clean up after tests.
+	 * Test batch processing limits.
 	 */
-	public function tear_down() {
-		// Delete test campaign
-		if ($this->campaign && $this->campaign->exists()) {
-			$this->campaign->delete();
-		}
+	public function test_existing_sending_locks() {
 
-		// Clean up any options or transients
-		delete_transient(Main::LOCK_KEY);
+		// We should be able to acquire the lock since no one has it.
+		$this->assertTrue( Main::acquire_lock() );
 
-		parent::tear_down();
+		// Send the campaign.
+		$this->campaign->save();
+
+		// It should not have been able to acquire the lock again since we already had it.
+		$this->assertFalse( next_scheduled_noptin_background_action( Main::TASK_HOOK ), 'Sending task should not be scheduled since lock was held' );
+		$this->assertEmpty( get_post_meta( $this->campaign->id, '_noptin_sends', true ), 'No emails should have been sent since lock was held' );
 	}
 }

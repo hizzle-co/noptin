@@ -10,82 +10,21 @@ namespace Hizzle\Noptin\Tests\Bulk_Emails;
 use Hizzle\Noptin\Emails\Bulk\Main;
 use Hizzle\Noptin\Emails\Email;
 
+require_once __DIR__ . '/base.php';
+
 /**
  * Test bulk email pausing.
  */
-class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
-
-	/**
-	 * @var Email Test campaign
-	 */
-	protected $campaign;
-
-	/**
-	 * Helper method to create a test email campaign
-	 *
-	 * @param array $args Optional. Campaign arguments.
-	 * @return Email
-	 */
-	protected function create_test_campaign($args = array()) {
-		$default_args = array(
-			'type'      => 'newsletter',
-			'status'    => 'publish',
-			'name'      => 'Test Campaign',
-			'subject'   => 'Test Subject',
-			'content'   => 'Test Content',
-			'options'   => array(
-				'email_sender'   => 'noptin',
-				'email_type'     => 'normal',
-				'template'       => 'default',
-				'content_normal' => 'Test Content',
-				'template'       => 'paste',
-			),
-		);
-
-		$args = wp_parse_args($args, $default_args);
-		return new Email($args);
-	}
+class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 
 	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
+		// Create test subscribers.
+		$this->create_test_subscribers( 5 );
+
 		parent::set_up();
-
-		// Init email senders
-		if ( ! did_action( 'noptin_init' ) ) {
-			Main::init_email_senders();
-		}
-
-		// Create a test campaign.
-		$this->campaign = $this->create_test_campaign();
-
-		// Release any existing lock.
-		delete_option( Main::release_lock() );
-
-		// Create 5 subscribers.
-		$this->create_test_subscribers( 20 );
-
-		// Set sending limit.
-		update_noptin_option( 'per_hour', 1 );
-	}
-
-	/**
-	 * After a test method runs, resets any state in WordPress the test method might have changed.
-	 */
-	public function tear_down() {
-		parent::tear_down();
-
-		// Delete the test campaign.
-		if ( $this->campaign && $this->campaign->exists() ) {
-			wp_delete_post( $this->campaign->id, true );
-		}
-
-		// Delete test subscribers.
-		noptin()->db()->delete_all( 'subscribers' );
-
-		// Release any existing lock.
-		delete_option( Main::release_lock() );
 	}
 
 	/**
@@ -259,19 +198,5 @@ class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
 		// Current batch should be preserved.
 		$batch = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
 		$this->assertNotEmpty( $batch );
-	}
-
-	/**
-	 * Helper: Create test subscribers.
-	 */
-	private function create_test_subscribers( $count ) {
-		for ( $i = 1; $i <= $count; $i++ ) {
-			add_noptin_subscriber(
-				array(
-					'email'  => "pause{$i}@example.com",
-					'status' => 'subscribed',
-				)
-			);
-		}
 	}
 }

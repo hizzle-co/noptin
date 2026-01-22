@@ -10,74 +10,12 @@ namespace Hizzle\Noptin\Tests\Bulk_Emails;
 use Hizzle\Noptin\Emails\Bulk\Main;
 use Hizzle\Noptin\Emails\Email;
 
+require_once __DIR__ . '/base.php';
+
 /**
  * Test bulk email edge cases.
  */
-class Test_Bulk_Email_Edge_Cases extends \WP_UnitTestCase {
-
-	/**
-	 * @var Email Test campaign
-	 */
-	protected $campaign;
-
-	/**
-	 * Helper method to create a test email campaign
-	 *
-	 * @param array $args Optional. Campaign arguments.
-	 * @return Email
-	 */
-	protected function create_test_campaign($args = array()) {
-		$default_args = array(
-			'type'      => 'newsletter',
-			'status'    => 'publish',
-			'name'      => 'Test Campaign',
-			'subject'   => 'Test Subject',
-			'content'   => 'Test Content',
-			'options'   => array(
-				'email_sender'   => 'noptin',
-				'email_type'     => 'normal',
-				'template'       => 'default',
-				'content_normal' => 'Test Content',
-				'template'       => 'paste',
-			),
-		);
-
-		$args = wp_parse_args($args, $default_args);
-		return new Email($args);
-	}
-
-	/**
-	 * Set up test environment.
-	 */
-	public function set_up() {
-		parent::set_up();
-
-		// Init email senders
-		if ( ! did_action( 'noptin_init' ) ) {
-			Main::init_email_senders();
-		}
-
-		// Create a test campaign.
-		$this->campaign = $this->create_test_campaign();
-
-		// Delete test subscribers.
-		noptin()->db()->delete_all( 'subscribers' );
-	}
-
-	/**
-	 * After a test method runs, resets any state in WordPress the test method might have changed.
-	 */
-	public function tear_down() {
-		parent::tear_down();
-
-		// Delete the test campaign.
-		if ( $this->campaign && $this->campaign->exists() ) {
-			wp_delete_post( $this->campaign->id, true );
-		}
-
-		// Release any existing lock.
-		delete_option( Main::release_lock() );
-	}
+class Test_Bulk_Email_Edge_Cases extends Noptin_Emails_Test_Case {
 
 	/**
 	 * Test campaign with zero subscribers.
@@ -343,24 +281,5 @@ class Test_Bulk_Email_Edge_Cases extends \WP_UnitTestCase {
 		$this->assertTrue( $exceeded );
 
 		remove_filter( 'noptin_memory_exceeded', '__return_true' );
-	}
-
-	/**
-	 * Helper: Create test subscribers.
-	 */
-	private function create_test_subscribers( $count ) {
-		$ids = array();
-		for ( $i = 1; $i <= $count; $i++ ) {
-			$id = add_noptin_subscriber(
-				array(
-					'email'  => "edge{$i}@example.com",
-					'status' => 'subscribed',
-				)
-			);
-			if ( ! is_wp_error( $id ) ) {
-				$ids[] = $id;
-			}
-		}
-		return $ids;
 	}
 }
