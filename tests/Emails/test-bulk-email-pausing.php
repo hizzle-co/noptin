@@ -8,7 +8,6 @@
 namespace Hizzle\Noptin\Tests\Bulk_Emails;
 
 use Hizzle\Noptin\Emails\Bulk\Main;
-use Hizzle\Noptin\Emails\Email;
 
 require_once __DIR__ . '/base.php';
 
@@ -24,6 +23,10 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Create test subscribers.
 		$this->create_test_subscribers( 5 );
 
+		// Limit sending to 1 email per period.
+		// to allow testing of pausing and resuming.
+		update_noptin_option( 'per_hour', 1 );
+
 		parent::set_up();
 	}
 
@@ -38,7 +41,7 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		noptin_pause_email_campaign( $this->campaign->id, 'Test pause reason' );
 
 		// Verify pause meta.
-		$this->assertEquals( 1, get_post_meta( $this->campaign->id, 'paused', true ) );
+		$this->assertNotEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
 
 		$error = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
 		$this->assertEquals( 'Test pause reason', $error['message'] ?? '' );

@@ -27,8 +27,8 @@ abstract class Noptin_Emails_Test_Case extends WP_UnitTestCase {
 		// Release any existing lock.
 		Main::release_lock();
 
-		// Default sending limit to 1.
-		update_noptin_option( 'per_hour', 1 );
+		// Reset noptin options.
+		update_option( 'noptin_options', array() );
 
 		// Create a test campaign.
 		$this->campaign = $this->create_test_campaign();
@@ -83,13 +83,16 @@ abstract class Noptin_Emails_Test_Case extends WP_UnitTestCase {
 	 * Create test subscribers.
 	 */
 	protected function create_test_subscribers( $count ) {
+		$ids = array();
 		for ( $i = 1; $i <= $count; $i++ ) {
-			add_noptin_subscriber(
+			$ids[] = add_noptin_subscriber(
 				array(
 					'email'  => "test{$i}@example.com",
 					'status' => 'subscribed',
 				)
 			);
 		}
+
+		return $ids;
 	}
 }
