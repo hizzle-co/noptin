@@ -108,7 +108,7 @@ class Test_Bulk_Email_Limits extends Noptin_Emails_Test_Case {
 		$this->assertEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
 
 		// There should only be 1 remaining recipient.
-		$remaining_recipients = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$remaining_recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
 		$this->assertCount( 1, $remaining_recipients );
 	}
 }

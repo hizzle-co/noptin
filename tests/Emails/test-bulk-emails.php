@@ -67,7 +67,11 @@ class Test_Main extends Noptin_Emails_Test_Case {
 		);
 
 		// Verify that the campaign sent emails to all recipients.
-		$this->assertCount( self::TEST_SUBSCRIBER_COUNT, get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+		$this->assertIsArray( get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+		$this->assertCount(
+			self::TEST_SUBSCRIBER_COUNT,
+			(array) get_post_meta( $this->campaign->id, '_noptin_sends', true )
+		);
 
 		for ( $i = 1; $i <= self::TEST_SUBSCRIBER_COUNT; $i++ ) {
 			$this->assertTrue(
@@ -133,6 +137,9 @@ class Test_Main extends Noptin_Emails_Test_Case {
 
 		// Verify lock was released after processing
 		$this->assertTrue( Main::acquire_lock(), 'Lock should be released after processing');
+
+		// Release the lock.
+		Main::release_lock();
 
 		// Manually set a stale lock.
 		add_option( Main::LOCK_KEY, time() - Main::LOCK_TTL - 1, '', 'no' );

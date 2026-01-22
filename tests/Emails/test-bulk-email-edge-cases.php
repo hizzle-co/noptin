@@ -139,15 +139,15 @@ class Test_Bulk_Email_Edge_Cases extends Noptin_Emails_Test_Case {
 		// We should have sent email to 1 subscriber.
 		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
+		// Remove the sending limit to allow fetching next batch.
+		update_noptin_option( 'per_hour', 100 );
+
 		// Check that the current batch contains subscriber[2].
-		$batch = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$batch = Main::$senders['noptin']->get_recipients( $this->campaign );
 		$this->assertContains( $subscriber_ids[2], $batch );
 
 		// Delete a subscriber mid-campaign.
 		delete_noptin_subscriber( $subscriber_ids[2] );
-
-		// Increase sending limit to allow next send.
-		update_noptin_option( 'per_hour', 100 );
 
 		// Send pending emails.
 		Main::send_pending();

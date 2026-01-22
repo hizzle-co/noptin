@@ -109,10 +109,14 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		// Start sending the campaign.
 		$this->campaign->save();
 
-		// Should return 9 recipients (we already sent 1 before hitting the sending limit).
+		// Should return 1 recipient
+		// Noptin uses the per_hour option if it is less than the batch size.
 		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
 
-		$this->assertCount( 9, $recipients );
+		$this->assertCount( 1, $recipients );
+
+		// Remove per_hour limit.
+		update_noptin_option( 'per_hour', 0 );
 
 		// Set negative offset.
 		update_post_meta( $this->campaign->id, 'subscriber_offset', '-1' );
