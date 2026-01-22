@@ -210,6 +210,15 @@ class Table extends \WP_List_Table {
 		echo '</tr>';
 	}
 
+	private function cron_scheduled() {
+		static $cron_scheduled = null;
+
+		if ( null === $cron_scheduled ) {
+			$cron_scheduled = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( \Hizzle\Noptin\Emails\Bulk\Main::HEALTH_CHECK_HOOK );
+		}
+
+		return $cron_scheduled;
+	}
 	/**
 	 * Default columns.
 	 *
@@ -511,9 +520,7 @@ class Table extends \WP_List_Table {
 
 			// Check if campaign is sending but CRON event is not scheduled.
 			if ( 'publish' === $item->status && ! get_post_meta( $item->id, 'completed', true ) && ! get_post_meta( $item->id, 'paused', true ) ) {
-				$cron_scheduled = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( \Hizzle\Noptin\Emails\Bulk\Main::TASK_HOOK );
-
-				if ( ! $cron_scheduled ) {
+				if ( ! self::cron_scheduled() ) {
 					$title .= sprintf(
 						'<p class="description" style="color: red;">%s</p>',
 						'The email sending CRON event was not scheduled. Try pausing then resuming the campaign.'
