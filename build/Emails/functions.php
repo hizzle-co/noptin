@@ -675,6 +675,7 @@ function noptin_pause_email_campaign( $campaign_id, $reason = '', $pause_for = H
 function noptin_resume_email_campaign( $campaign_id ) {
 	delete_post_meta( $campaign_id, 'paused' );
 	delete_post_meta( $campaign_id, '_bulk_email_last_error' );
+	delete_noptin_background_action( 'noptin_resume_email_campaign', $campaign_id );
 }
 add_action( 'noptin_resume_email_campaign', 'noptin_resume_email_campaign' );
 
@@ -847,7 +848,7 @@ function noptin_get_email_sending_rolling_period() {
 /**
  * Returns the number of emails sent this period.
  *
- * @return int Zero if unlimited.
+ * @return int Number of emails sent this period.
  */
 function noptin_emails_sent_this_period() {
 	$args = array(
