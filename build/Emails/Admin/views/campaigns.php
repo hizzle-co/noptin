@@ -52,10 +52,9 @@ if ( $parent ) {
 
 		// Check if sending has been paused due to limits.
 		if ( noptin_email_sending_limit_reached() ) {
-
 			$message = sprintf(
 				'<h3>%s</h3>',
-				__( 'Email sending has been paused', 'newsletter-optin-box')
+				__( 'Email sending has been paused', 'newsletter-optin-box' )
 			);
 
 			$message .= '<p>' .
@@ -85,7 +84,7 @@ if ( $parent ) {
 		if ( $can_display_cron_notice && ( ! defined( 'DISABLE_WP_CRON' ) || ! DISABLE_WP_CRON ) ) {
 			$message = sprintf(
 				'<h3>%s</h3>',
-				__( 'WP-Cron is being used for email sending', 'newsletter-optin-box')
+				__( 'WP-Cron is being used for email sending', 'newsletter-optin-box' )
 			);
 
 			$message .= '<p>' . __( 'Your site is using WordPress\' built-in cron system to send emails. This may cause delays in email delivery if your site is cached or doesn\'t receive regular traffic.', 'newsletter-optin-box' ) . '</p>';

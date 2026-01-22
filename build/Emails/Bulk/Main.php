@@ -140,6 +140,11 @@ class Main {
 	 * Sends pending emails.
 	 */
 	public static function send_pending() {
+		// Abort if sending is paused due to limits.
+		if ( noptin_email_sending_limit_reached() ) {
+			return self::on_sending_limit_reached();
+		}
+
 		// Create scheduled tasks if needed...
 		// ... then trigger the sending task via AJAX as a backup.
 		if ( self::check_scheduled_tasks() ) {
@@ -159,6 +164,27 @@ class Main {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Fires when the sending limit is reached.
+	 */
+	public static function on_sending_limit_reached() {
+		// Log the event and clear scheduled tasks to pause sending.
+		log_noptin_message( 'Email sending limit reached. Pausing sending until limit resets.' );
+		self::clear_scheduled_tasks();
+
+		// Create a health check task to resume sending later.
+		$next_send_time = noptin_get_next_email_send_time();
+		if ( empty( $next_send_time ) || $next_send_time <= time() ) {
+			$next_send_time = time() + self::HEALTH_CHECK_INTERVAL;
+		}
+
+		schedule_noptin_recurring_background_action(
+			self::HEALTH_CHECK_INTERVAL,
+			$next_send_time,
+			self::HEALTH_CHECK_HOOK
+		);
 	}
 
 	/**
