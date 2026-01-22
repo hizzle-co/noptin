@@ -184,10 +184,15 @@ class Main {
 			$next_send_time = time() + self::HEALTH_CHECK_INTERVAL;
 		}
 
-		schedule_noptin_recurring_background_action(
-			self::HEALTH_CHECK_INTERVAL,
-			$next_send_time,
-			self::HEALTH_CHECK_HOOK
+		create_noptin_background_task(
+			array(
+				'interval'       => self::HEALTH_CHECK_INTERVAL,
+				'hook'           => self::HEALTH_CHECK_HOOK,
+				'args'           => array(),
+				// Set to a unique hash to ensure Noptin always schedules it.
+				'args_hash'      => wp_generate_password( 20, false, false ) . time(),
+				'date_scheduled' => $next_send_time,
+			)
 		);
 	}
 
@@ -225,10 +230,15 @@ class Main {
 			// If we don't have a scheduled task, schedule one now.
 			if ( empty( $tasks ) ) {
 				$interval = ( self::TASK_HOOK === $hook ) ? self::TASK_INTERVAL : self::HEALTH_CHECK_INTERVAL;
-				schedule_noptin_recurring_background_action(
-					$interval,
-					time() + $interval,
-					$hook
+				create_noptin_background_task(
+					array(
+						'interval'       => $interval,
+						'hook'           => $hook,
+						'args'           => array(),
+						// Set to a unique hash to ensure Noptin always schedules it.
+						'args_hash'      => wp_generate_password( 20, false, false ) . time(),
+						'date_scheduled' => time() + $interval,
+					)
 				);
 			} else {
 				// Keep the first scheduled task.

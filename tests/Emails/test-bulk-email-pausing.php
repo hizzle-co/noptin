@@ -16,12 +16,14 @@ require_once __DIR__ . '/base.php';
  */
 class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 
+	const TEST_SUBSCRIBER_COUNT = 5;
+
 	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {
 		// Create test subscribers.
-		$this->create_test_subscribers( 5 );
+		$this->create_test_subscribers( self::TEST_SUBSCRIBER_COUNT );
 
 		parent::set_up();
 
@@ -71,10 +73,10 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		);
 
 		// Check that no sending tasks are scheduled since we have passed the limit.
-		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+		$this->assertFalse( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
 
 		// Check that sending health task is scheduled.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
+		$this->assertIsNumeric( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
 
 		// Check that we have sent 1 email.
 		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
@@ -112,11 +114,13 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// Check that sending tasks are scheduled since we have passed the limit.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+		// Check that sending tasks are scheduled since we increased the limit.
+		$task_scheduled = next_scheduled_noptin_background_action( Main::TASK_HOOK );
+		$this->assertIsNumeric( $task_scheduled, 'TASK_HOOK should be scheduled after increasing limit' );
 
 		// Check that sending health task is scheduled.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
+		$health_scheduled = next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK );
+		$this->assertIsNumeric( $health_scheduled, 'HEALTH_CHECK_HOOK should be scheduled' );
 
 		// Check that we have sent 2 emails.
 		$this->assertEquals( 2, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
