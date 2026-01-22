@@ -15,11 +15,6 @@ class Test_Main extends Noptin_Emails_Test_Case {
 	const TEST_SUBSCRIBER_COUNT = 5;
 
 	/**
-	 * @var \Hizzle\Noptin\Bulk_Emails\Email_Sender Mock sender for testing
-	 */
-	protected $mock_sender;
-
-	/**
 	 * Set up test environment.
 	 */
 	public function set_up() {

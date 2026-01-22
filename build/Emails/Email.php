@@ -472,9 +472,8 @@ class Email {
 				return new \WP_Error(
 					'noptin_email_invalid_sender',
 					sprintf(
-						'Selected sender "%s" is not supported. Supported senders are: %s',
-						$sender,
-						implode( ', ', wp_list_pluck( $supported_senders, 'label' ) )
+						'Selected sender "%s" is not supported.',
+						$sender
 					)
 				);
 			}

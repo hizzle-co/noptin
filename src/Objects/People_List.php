@@ -105,7 +105,10 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		}
 
 		// Get the offset for batch processing.
-		$offset = (int) get_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), true );
+		$offset = max(
+			0,
+			(int) get_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), true )
+		);
 
 		$options = empty( $this->options_key ) ? array() : $campaign->get( $this->options_key );
 		$options = is_array( $options ) ? $options : array();
