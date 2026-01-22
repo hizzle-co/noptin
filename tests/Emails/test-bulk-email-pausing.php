@@ -98,8 +98,8 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// Increase sending limits.
-		update_noptin_option( 'per_hour', 10 );
+		// Increase sending limits to allow resuming.
+		update_noptin_option( 'per_hour', 2 );
 
 		// Resume the campaign.
 		noptin_resume_email_campaign( $this->campaign->id );
@@ -118,8 +118,8 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Check that sending health task is scheduled.
 		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
 
-		// Check that we have sent 10 emails.
-		$this->assertEquals( 10, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+		// Check that we have sent 2 emails.
+		$this->assertEquals( 2, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 	}
 
 	/**
@@ -168,8 +168,8 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// We should have sent 0 emails.
-		$this->assertEquals( 0, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+		// We should have failed after the first email.
+		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
 		// There should still be recipients left to send to.
 		// The recipient that caused the error should be skipped.

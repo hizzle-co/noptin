@@ -653,6 +653,11 @@ function noptin_prepare_email_recipients( $unprepared ) {
  * @since 3.0.0
  */
 function noptin_pause_email_campaign( $campaign_id, $reason = '', $pause_for = HOUR_IN_SECONDS ) {
+	// Skip if not published.
+	if ( 'publish' !== get_post_status( $campaign_id ) ) {
+		return;
+	}
+
 	update_post_meta( $campaign_id, 'paused', 1 );
 
 	if ( ! empty( $reason ) ) {
