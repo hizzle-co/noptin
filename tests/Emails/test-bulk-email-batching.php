@@ -8,7 +8,6 @@
 namespace Hizzle\Noptin\Tests\Bulk_Emails;
 
 use Hizzle\Noptin\Emails\Bulk\Main;
-use Hizzle\Noptin\Emails\Email;
 
 require_once __DIR__ . '/base.php';
 
@@ -18,209 +17,161 @@ require_once __DIR__ . '/base.php';
 class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 
 	/**
-	 * Test batch size filtering.
+	 * Set up test environment.
 	 */
-	public function test_batch_size_filter() {
-		$campaign = $this->create_test_campaign();
+	public function set_up() {
+		parent::set_up();
 
-		// Default batch size should be 100.
-		$batch_size = apply_filters( 'noptin_bulk_email_batch_size', 100, $campaign );
-		$this->assertEquals( 100, $batch_size );
+		// Create test subscribers.
+		$this->create_test_subscribers( 10 );
+	}
 
-		// Test custom batch size.
-		add_filter( 'noptin_bulk_email_batch_size', function() {
-			return 50;
-		} );
+	public function return_small_batch_size() {
+		return 2;
+	}
 
-		$batch_size = apply_filters( 'noptin_bulk_email_batch_size', 100, $campaign );
-		$this->assertEquals( 50, $batch_size );
+	public function return_large_batch_size() {
+		return 10000;
 	}
 
 	/**
-	 * Test batch offset tracking.
+	 * Test batch tracking.
 	 */
-	public function test_batch_offset_tracking() {
-		$campaign = $this->create_test_campaign();
+	public function test_batch_tracking() {
+		// Filter the batch size to a small number for testing.
+		add_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_small_batch_size' ) );
 
-		// Initial offset should be 0.
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 0, $offset );
+		// Limit sending to 3 emails per period.
+		// This way we can test multiple batches.
+		update_noptin_option( 'per_hour', 3 );
 
-		// After processing first batch, offset should be 100.
-		update_post_meta( $campaign->id, 'subscriber_offset', 100 );
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 100, $offset );
+		// Send the campaign.
+		$this->campaign->save();
 
-		// After processing second batch, offset should be 200.
-		update_post_meta( $campaign->id, 'subscriber_offset', 200 );
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 200, $offset );
+		// If we're here, we have already sent 3 emails.
+		$this->assertEquals( 3, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
+		// The offset should be 4, ( we have processed 2 batches of 2 each, total 4).
+		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
+
+		// Only one subscriber should remain in the second batch.
+		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$this->assertCount( 1, $remaining_subscribers );
+		$this->assertCount( 1, Main::$senders['noptin']->get_recipients( $this->campaign ) );
+
+		// Increase the limit to allow sending remaining emails.
+		update_noptin_option( 'per_hour', 4 );
+
+		// Send pending emails.
+		Main::send_pending();
+
+		// Only 1 more email should have been sent.
+		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
+		// The new offset should still be 4.
+		// We hit the sending limit before processing the next batch.
+		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
+
+		// No subscribers should remain in the batch.
+		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$this->assertEmpty( $remaining_subscribers );
+
+		// However, if we manually fetch recipients, it should return the next batch.
+		$this->assertCount( 2, Main::$senders['noptin']->get_recipients( $this->campaign ) );
+
+		// Increase the limit to allow sending remaining emails.
+		update_noptin_option( 'per_hour', 20 );
+
+		// Send pending emails.
+		Main::send_pending();
+
+		// All 10 emails should have been sent.
+		$this->assertEquals( 10, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
+		// The offset should be empty.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
+
+		// No subscribers should remain in the batch.
+		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$this->assertEmpty( $remaining_subscribers );
+
+		// Remove the batch size filter.
+		remove_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_small_batch_size' ) );
 	}
 
 	/**
-	 * Test batch processing with large recipient list.
+	 * Test campaign with negative offset.
 	 */
-	public function test_large_recipient_batching() {
-		// Create 500 test subscribers.
-		$subscriber_ids = $this->create_test_subscribers( 500 );
-		$campaign       = $this->create_test_campaign();
+	public function test_campaign_negative_offset() {
+		// Set sending limits.
+		update_noptin_option( 'per_hour', 1 );
 
-		// Simulate batch processing.
-		$batch_size = 100;
-		$total_sent = 0;
+		// Start sending the campaign.
+		$this->campaign->save();
 
-		for ( $offset = 0; $offset < 500; $offset += $batch_size ) {
-			$batch = array_slice( $subscriber_ids, $offset, $batch_size );
-			$total_sent += count( $batch );
+		// Should return 9 recipients (we already sent 1 before hitting the sending limit).
+		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
 
-			// Verify batch size.
-			$this->assertLessThanOrEqual( $batch_size, count( $batch ) );
-		}
+		$this->assertCount( 9, $recipients );
 
-		// Verify all subscribers were batched.
-		$this->assertEquals( 500, $total_sent );
-	}
+		// Set negative offset.
+		update_post_meta( $this->campaign->id, 'subscriber_offset', '-1' );
 
-	/**
-	 * Test empty batch handling.
-	 */
-	public function test_empty_batch_returns_empty_array() {
-		$campaign = $this->create_test_campaign();
+		// Set subscriber_to_send to an invalid value.
+		// This should force re-fetch instead of failing.
+		update_post_meta( $this->campaign->id, 'subscriber_to_send', 'not-an-array' );
 
-		// Set offset beyond available subscribers.
-		update_post_meta( $campaign->id, 'subscriber_offset', 10000 );
+		// Should return 10 recipients (we have reset the offset).
+		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
 
-		// Get recipients should return empty array.
-		$recipients = $this->get_batched_recipients( $campaign, 100, 10000 );
-		$this->assertIsArray( $recipients );
-		$this->assertEmpty( $recipients );
-	}
+		$this->assertCount( 10, $recipients );
 
-	/**
-	 * Test batch size respects email sending limits.
-	 */
-	public function test_batch_size_respects_sending_limits() {
-		$campaign = $this->create_test_campaign();
+		// Remove cached recipients to force re-fetch.
+		delete_post_meta( $this->campaign->id, 'subscriber_to_send' );
+		delete_post_meta( $this->campaign->id, 'subscriber_offset' );
 
-		// Mock email limit of 50 per period.
-		add_filter( 'noptin_max_emails_per_period', function() {
-			return 50;
-		} );
+		// Set batch size to zero (should be prevented).
+		add_filter( 'noptin_bulk_email_batch_size', '__return_zero' );
 
-		// Batch size should be adjusted to match limit.
-		$expected_batch_size = 50;
-		$batch_size          = apply_filters( 'noptin_bulk_email_batch_size', 100, $campaign );
+		// Should return 1 recipient (batch size should default to at least 1).
+		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
 
-		// In the actual implementation, batch size is adjusted in People_List::get_recipients().
-		$this->assertLessThanOrEqual( 100, $batch_size );
-	}
+		$this->assertCount( 1, $recipients );
 
-	/**
-	 * Test offset increments only on successful batch fetch.
-	 */
-	public function test_offset_increments_on_success_only() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 150 );
+		// New offset should be 1.
+		$offset = get_post_meta( $this->campaign->id, 'subscriber_offset', true );
+		$this->assertEquals( 1, $offset );
 
-		// Initial offset.
-		$initial_offset = 0;
-		update_post_meta( $campaign->id, 'subscriber_offset', $initial_offset );
+		remove_filter( 'noptin_bulk_email_batch_size', '__return_zero' );
 
-		// Fetch first batch (100 subscribers).
-		$batch = $this->get_batched_recipients( $campaign, 100, $initial_offset );
-		$this->assertCount( 100, $batch );
+		// Remove cached recipients to force re-fetch.
+		delete_post_meta( $this->campaign->id, 'subscriber_to_send' );
 
-		// Offset should increment to 100.
-		update_post_meta( $campaign->id, 'subscriber_offset', 100 );
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 100, $offset );
+		// Set offset to 11, more than available subscribers.
+		update_post_meta( $this->campaign->id, 'subscriber_offset', '11' );
 
-		// Fetch second batch (50 subscribers remaining).
-		$batch = $this->get_batched_recipients( $campaign, 100, 100 );
-		$this->assertCount( 50, $batch );
+		// Should return 0 recipients.
+		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
+		$this->assertCount( 0, $recipients );
 
-		// Offset should increment to 200.
-		update_post_meta( $campaign->id, 'subscriber_offset', 200 );
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 200, $offset );
+		// Subscriber offset should remain 11.
+		$offset = get_post_meta( $this->campaign->id, 'subscriber_offset', true );
+		$this->assertEquals( 11, $offset );
 
-		// Third batch should be empty.
-		$batch = $this->get_batched_recipients( $campaign, 100, 200 );
-		$this->assertEmpty( $batch );
-	}
+		// subscriber_to_send meta should be empty.
+		$cached = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$this->assertEmpty( $cached );
 
-	/**
-	 * Test campaign completion with batching.
-	 */
-	public function test_campaign_completion_with_batching() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 250 );
+		// Test large batch size.
+		add_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_large_batch_size' ) );
 
-		// Process all batches.
-		$batches_processed = 0;
+		// Set offset to 1.
+		delete_post_meta( $this->campaign->id, 'subscriber_offset' );
 
-		for ( $offset = 0; $offset < 300; $offset += 100 ) {
-			$batch = $this->get_batched_recipients( $campaign, 100, $offset );
+		// Should return 9 recipients (10 total - 1 offset).
+		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
+		$this->assertCount( 9, $recipients );
 
-			if ( empty( $batch ) ) {
-				break;
-			}
-
-			$batches_processed++;
-		}
-
-		// Should have processed 3 batches (100, 100, 50).
-		$this->assertEquals( 3, $batches_processed );
-	}
-
-	/**
-	 * Test metadata cleanup after campaign completion.
-	 */
-	public function test_metadata_cleanup_after_completion() {
-		$campaign = $this->create_test_campaign();
-
-		// Set batch metadata.
-		update_post_meta( $campaign->id, 'subscriber_to_send', array( 1, 2, 3 ) );
-		update_post_meta( $campaign->id, 'subscriber_offset', 100 );
-
-		// Simulate cleanup.
-		delete_post_meta( $campaign->id, 'subscriber_to_send' );
-		delete_post_meta( $campaign->id, 'subscriber_offset' );
-
-		// Verify cleanup.
-		$contacts = get_post_meta( $campaign->id, 'subscriber_to_send', true );
-		$offset   = get_post_meta( $campaign->id, 'subscriber_offset', true );
-
-		$this->assertEmpty( $contacts );
-		$this->assertEmpty( $offset );
-	}
-
-	/**
-	 * Test batch processing doesn't load full recipient list.
-	 */
-	public function test_batch_doesnt_load_full_list() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 1000 );
-
-		// First batch should only return 100, not 1000.
-		$batch = $this->get_batched_recipients( $campaign, 100, 0 );
-		$this->assertCount( 100, $batch );
-
-		// Memory usage should be minimal (testing concept, not actual memory).
-		$this->assertLessThanOrEqual( 100, count( $batch ) );
-	}
-
-	/**
-	 * Helper: Get batched recipients.
-	 */
-	private function get_batched_recipients( $campaign, $batch_size, $offset ) {
-		$args = array(
-			'status' => 'subscribed',
-			'offset' => $offset,
-			'number' => $batch_size,
-			'fields' => 'id',
-		);
-
-		return noptin_get_subscribers( $args );
+		remove_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_large_batch_size' ) );
 	}
 }

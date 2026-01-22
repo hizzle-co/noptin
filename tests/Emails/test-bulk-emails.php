@@ -34,9 +34,9 @@ class Test_Main extends Noptin_Emails_Test_Case {
 	 */
 	public function test_send_newsletter_campaign() {
 
-		// Check that the campaign can be sent
+		// Check that the campaign can not be sent since it is not saved yet.
 		$can_send = $this->campaign->can_send( true );
-		$this->assertNotWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
+		$this->assertWPError( $can_send, is_wp_error( $can_send ) ? $can_send->get_error_message() : '' );
 
 		// Check if the sender is available
 		$this->assertNotEmpty(Main::has_sender($this->campaign->get_sender()));
@@ -80,6 +80,12 @@ class Test_Main extends Noptin_Emails_Test_Case {
 		$this->assertNotEmpty(
 			get_post_meta( $this->campaign->id, '_noptin_last_activity', true )
 		);
+
+		// It should not be paused.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
+
+		// It should be marked as completed.
+		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, 'completed', true ) );
 	}
 
 	/**
@@ -126,7 +132,7 @@ class Test_Main extends Noptin_Emails_Test_Case {
 		$this->campaign->save();
 
 		// Verify lock was released after processing
-		$this->assertFalse( Main::acquire_lock(), 'Lock should be released after processing');
+		$this->assertTrue( Main::acquire_lock(), 'Lock should be released after processing');
 
 		// Manually set a stale lock.
 		add_option( Main::LOCK_KEY, time() - Main::LOCK_TTL - 1, '', 'no' );

@@ -117,7 +117,7 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 	 */
 	public function test_automatic_pause_on_error() {
 		// Filter wp_mail to simulate error.
-		add_filter( 'wp_mail', '__return_false' );
+		add_filter( 'wp_mail', '__return_false', 1000 );
 
 		// Send the campaign.
 		$this->campaign->save();
