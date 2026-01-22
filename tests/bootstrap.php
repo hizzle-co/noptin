@@ -22,6 +22,8 @@ if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 	exit( 1 );
 }
 
+define( 'NOPTIN_ENABLE_FOREGROUND_SENDING', true );
+
 // Give access to tests_add_filter() function.
 require_once "{$_tests_dir}/includes/functions.php";
 

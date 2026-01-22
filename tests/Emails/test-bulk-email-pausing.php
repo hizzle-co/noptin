@@ -5,206 +5,202 @@
  * @package Noptin
  */
 
+namespace Hizzle\Noptin\Tests\Bulk_Emails;
+
+use Hizzle\Noptin\Emails\Bulk\Main;
+use Hizzle\Noptin\Emails\Email;
+
 /**
  * Test bulk email pausing.
  */
-class Test_Bulk_Email_Pausing extends WP_UnitTestCase {
+class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
+
+	/**
+	 * @var Email Test campaign
+	 */
+	protected $campaign;
+
+	/**
+	 * Helper method to create a test email campaign
+	 *
+	 * @param array $args Optional. Campaign arguments.
+	 * @return Email
+	 */
+	protected function create_test_campaign($args = array()) {
+		$default_args = array(
+			'type'      => 'newsletter',
+			'status'    => 'publish',
+			'name'      => 'Test Campaign',
+			'subject'   => 'Test Subject',
+			'content'   => 'Test Content',
+			'options'   => array(
+				'email_sender'   => 'noptin',
+				'email_type'     => 'normal',
+				'template'       => 'default',
+				'content_normal' => 'Test Content',
+				'template'       => 'paste',
+			),
+		);
+
+		$args = wp_parse_args($args, $default_args);
+		return new Email($args);
+	}
+
+	/**
+	 * Set up test environment.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		// Init email senders
+		if ( ! did_action( 'noptin_init' ) ) {
+			Main::init_email_senders();
+		}
+
+		// Create a test campaign.
+		$this->campaign = $this->create_test_campaign();
+
+		// Release any existing lock.
+		delete_option( Main::release_lock() );
+
+		// Create 5 subscribers.
+		$this->create_test_subscribers( 20 );
+
+		// Set sending limit.
+		update_noptin_option( 'per_hour', 1 );
+	}
 
 	/**
 	 * Test campaign pause.
 	 */
-	public function test_campaign_pause() {
-		$campaign = $this->create_test_campaign();
+	public function test_campaign_resume_without_increasing_limits() {
+		// Start sending the campaign.
+		$this->campaign->save();
 
 		// Pause the campaign.
-		noptin_pause_email_campaign( $campaign->id, 'Test pause reason' );
+		noptin_pause_email_campaign( $this->campaign->id, 'Test pause reason' );
 
 		// Verify pause meta.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
+		$this->assertEquals( 1, get_post_meta( $this->campaign->id, 'paused', true ) );
 
-		$error = get_post_meta( $campaign->id, '_bulk_email_last_error', true );
-		$this->assertEquals( 'Test pause reason', $error );
+		$this->assertEquals( 'Test pause reason', get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
+
+		// Check that a task to resume the campaign is scheduled.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+
+		// Resume the campaign.
+		noptin_resume_email_campaign( $this->campaign->id );
+
+		// Verify pause meta cleared.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
+
+		$this->assertEmpty( get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
+
+		// Check that no resume task is scheduled.
+		$this->assertEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+
+		// Check that no sending tasks are scheduled since we have passed the limit.
+		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+
+		// Check that sending health task is scheduled.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
+
+		// Check that we have sent 1 email.
+		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 	}
 
 	/**
-	 * Test campaign resume.
+	 * Test campaign pause.
 	 */
-	public function test_campaign_resume() {
-		$campaign = $this->create_test_campaign();
+	public function test_campaign_resume_after_increasing_limits() {
+		// Start sending the campaign.
+		$this->campaign->save();
 
-		// Pause then resume.
-		noptin_pause_email_campaign( $campaign->id, 'Test pause' );
-		noptin_resume_email_campaign( $campaign->id );
+		// Pause the campaign.
+		noptin_pause_email_campaign( $this->campaign->id, 'Test pause reason' );
 
-		// Verify resume.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEmpty( $paused );
+		// Check that a task to resume the campaign is scheduled.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+
+		// Increase sending limits.
+		update_noptin_option( 'per_hour', 10 );
+
+		// Resume the campaign.
+		noptin_resume_email_campaign( $this->campaign->id );
+
+		// Check that no resume task is scheduled.
+		$this->assertEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+
+		// Check that sending tasks are scheduled since we have passed the limit.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+
+		// Check that sending health task is scheduled.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
+
+		// Check that we have sent 10 emails.
+		$this->assertEquals( 10, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 	}
 
 	/**
 	 * Test paused campaigns excluded from processing.
 	 */
 	public function test_paused_campaigns_excluded() {
-		$campaign1 = $this->create_test_campaign();
-		$campaign2 = $this->create_test_campaign();
+		$this->campaign->save();
 
 		// Pause campaign1.
-		noptin_pause_email_campaign( $campaign1->id, 'Paused' );
+		noptin_pause_email_campaign( $this->campaign->id, 'Paused' );
 
-		// Query for pending campaigns.
-		$campaigns = get_posts(
-			array(
-				'post_type'   => 'noptin-campaign',
-				'post_status' => 'publish',
-				'meta_query'  => array(
-					array(
-						'key'     => 'paused',
-						'compare' => 'NOT EXISTS',
-					),
-				),
-			)
-		);
-
-		$campaign_ids = wp_list_pluck( $campaigns, 'ID' );
-
-		// Campaign1 should not be in results.
-		$this->assertNotContains( $campaign1->id, $campaign_ids );
-
-		// Campaign2 should be in results.
-		$this->assertContains( $campaign2->id, $campaign_ids );
+		// We should have no sendable campaigns.
+		$this->assertEmpty( Main::prepare_pending_campaign() );
 	}
 
 	/**
 	 * Test automatic pause on error.
 	 */
 	public function test_automatic_pause_on_error() {
-		$campaign = $this->create_test_campaign();
+		// Filter wp_mail to simulate error.
+		add_filter( 'wp_mail', '__return_false' );
 
-		// Simulate error during sending.
-		$error_message = 'SMTP connection failed';
-		noptin_pause_email_campaign( $campaign->id, $error_message );
+		// Send the campaign.
+		$this->campaign->save();
 
-		// Verify pause.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
+		// Check that the campaign is paused due to error.
+		$this->assertNotEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
 
-		$saved_error = get_post_meta( $campaign->id, '_bulk_email_last_error', true );
-		$this->assertEquals( $error_message, $saved_error );
-	}
+		// We should have a logged error message.
+		$this->assertNotEmpty( get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
 
-	/**
-	 * Test temporary pause with expiry.
-	 */
-	public function test_temporary_pause_with_expiry() {
-		$campaign = $this->create_test_campaign();
+		// There should be no sending tasks scheduled.
+		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+		$this->assertEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
 
-		// Pause for 10 minutes.
-		$expiry_time = time() + ( 10 * MINUTE_IN_SECONDS );
-		noptin_pause_email_campaign( $campaign->id, 'Temporary pause', 10 * MINUTE_IN_SECONDS );
-
-		// Verify pause.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
-
-		$pause_expiry = get_post_meta( $campaign->id, 'pause_expiry', true );
-		$this->assertGreaterThanOrEqual( time(), $pause_expiry );
-		$this->assertLessThanOrEqual( $expiry_time + 5, $pause_expiry );
-	}
-
-	/**
-	 * Test expired pause auto-resume.
-	 */
-	public function test_expired_pause_auto_resume() {
-		$campaign = $this->create_test_campaign();
-
-		// Pause with past expiry.
-		update_post_meta( $campaign->id, 'paused', 1 );
-		update_post_meta( $campaign->id, 'pause_expiry', time() - 100 );
-
-		// Check if can send.
-		$pause_expiry = get_post_meta( $campaign->id, 'pause_expiry', true );
-		$should_resume = ! empty( $pause_expiry ) && $pause_expiry < time();
-
-		$this->assertTrue( $should_resume );
-	}
-
-	/**
-	 * Test pause preserves campaign state.
-	 */
-	public function test_pause_preserves_campaign_state() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 100 );
-
-		// Set some progress metadata.
-		update_post_meta( $campaign->id, 'subscriber_offset', 50 );
-		update_post_meta( $campaign->id, 'subscriber_to_send', array( 51, 52, 53 ) );
-		update_post_meta( $campaign->id, '_noptin_sends', 50 );
-
-		// Pause campaign.
-		noptin_pause_email_campaign( $campaign->id, 'Testing state preservation' );
-
-		// Verify state is preserved.
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
-		$this->assertEquals( 50, $offset );
-
-		$batch = get_post_meta( $campaign->id, 'subscriber_to_send', true );
-		$this->assertEquals( array( 51, 52, 53 ), $batch );
-
-		$sends = get_post_meta( $campaign->id, '_noptin_sends', true );
-		$this->assertEquals( 50, $sends );
+		// There shuold be a resume task scheduled.
+		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
 	}
 
 	/**
 	 * Test resume continues from last position.
 	 */
 	public function test_resume_continues_from_last_position() {
-		$campaign = $this->create_test_campaign();
+		$this->campaign->save();
 
 		// Set progress before pause.
-		update_post_meta( $campaign->id, 'subscriber_offset', 150 );
-		noptin_pause_email_campaign( $campaign->id, 'Mid-campaign pause' );
+		update_post_meta( $this->campaign->id, 'subscriber_offset', 150 );
+		noptin_pause_email_campaign( $this->campaign->id, 'Mid-campaign pause' );
 
 		// Resume.
-		noptin_resume_email_campaign( $campaign->id );
+		noptin_resume_email_campaign( $this->campaign->id );
 
 		// Verify offset is maintained.
-		$offset = get_post_meta( $campaign->id, 'subscriber_offset', true );
+		$offset = get_post_meta( $this->campaign->id, 'subscriber_offset', true );
 		$this->assertEquals( 150, $offset );
-	}
-
-	/**
-	 * Test multiple pause/resume cycles.
-	 */
-	public function test_multiple_pause_resume_cycles() {
-		$campaign = $this->create_test_campaign();
-
-		// First pause.
-		noptin_pause_email_campaign( $campaign->id, 'First pause' );
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
-
-		// First resume.
-		noptin_resume_email_campaign( $campaign->id );
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEmpty( $paused );
-
-		// Second pause.
-		noptin_pause_email_campaign( $campaign->id, 'Second pause' );
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
-
-		// Second resume.
-		noptin_resume_email_campaign( $campaign->id );
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEmpty( $paused );
 	}
 
 	/**
 	 * Test pause reason logging.
 	 */
 	public function test_pause_reason_logging() {
-		$campaign = $this->create_test_campaign();
+		$this->campaign->save();
 
 		$reasons = array(
 			'Rate limit exceeded',
@@ -213,90 +209,37 @@ class Test_Bulk_Email_Pausing extends WP_UnitTestCase {
 			'Unsupported email sender',
 		);
 
-		foreach ( $reasons as $reason ) {
-			noptin_pause_email_campaign( $campaign->id, $reason );
-			$saved_reason = get_post_meta( $campaign->id, '_bulk_email_last_error', true );
+		foreach ( $reasons as $index => $reason ) {
+			update_noptin_option( 'per_hour', 2 + $index );
+			noptin_pause_email_campaign( $this->campaign->id, $reason );
+			$saved_reason = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
 			$this->assertEquals( $reason, $saved_reason );
 
 			// Resume for next test.
-			noptin_resume_email_campaign( $campaign->id );
+			noptin_resume_email_campaign( $this->campaign->id );
 		}
-	}
-
-	/**
-	 * Test pause clears error on resume.
-	 */
-	public function test_resume_clears_error() {
-		$campaign = $this->create_test_campaign();
-
-		// Pause with error.
-		noptin_pause_email_campaign( $campaign->id, 'Error message' );
-		$error = get_post_meta( $campaign->id, '_bulk_email_last_error', true );
-		$this->assertEquals( 'Error message', $error );
-
-		// Resume should clear error.
-		noptin_resume_email_campaign( $campaign->id );
-		$error = get_post_meta( $campaign->id, '_bulk_email_last_error', true );
-
-		// Error might be cleared or kept for history - implementation dependent.
-		// This test verifies the pause flag is cleared.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEmpty( $paused );
 	}
 
 	/**
 	 * Test pause during batch processing.
 	 */
 	public function test_pause_during_batch_processing() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 250 );
+		$this->campaign->save();
 
 		// Simulate processing first batch.
-		update_post_meta( $campaign->id, 'subscriber_offset', 100 );
-		update_post_meta( $campaign->id, 'subscriber_to_send', array( 101, 102, 103 ) );
+		update_post_meta( $this->campaign->id, 'subscriber_offset', 100 );
+		update_post_meta( $this->campaign->id, 'subscriber_to_send', array( 101, 102, 103 ) );
 
 		// Pause mid-batch.
-		noptin_pause_email_campaign( $campaign->id, 'Mid-batch pause' );
+		noptin_pause_email_campaign( $this->campaign->id, 'Mid-batch pause' );
 
 		// Verify pause.
-		$paused = get_post_meta( $campaign->id, 'paused', true );
+		$paused = get_post_meta( $this->campaign->id, 'paused', true );
 		$this->assertEquals( 1, $paused );
 
 		// Current batch should be preserved.
-		$batch = get_post_meta( $campaign->id, 'subscriber_to_send', true );
+		$batch = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
 		$this->assertNotEmpty( $batch );
-	}
-
-	/**
-	 * Test scheduled tasks cleared on pause.
-	 */
-	public function test_scheduled_tasks_behavior_on_pause() {
-		$campaign = $this->create_test_campaign();
-
-		// Pause campaign - tasks should continue but skip paused campaigns.
-		noptin_pause_email_campaign( $campaign->id, 'Test' );
-
-		// Paused campaigns are excluded from prepare_pending_campaign().
-		$paused = get_post_meta( $campaign->id, 'paused', true );
-		$this->assertEquals( 1, $paused );
-	}
-
-	/**
-	 * Helper: Create test campaign.
-	 */
-	private function create_test_campaign() {
-		$campaign_id = wp_insert_post(
-			array(
-				'post_type'   => 'noptin-campaign',
-				'post_status' => 'publish',
-				'post_title'  => 'Test Pause Campaign',
-			)
-		);
-
-		update_post_meta( $campaign_id, 'campaign_type', 'newsletter' );
-		update_post_meta( $campaign_id, 'email_sender', 'noptin' );
-
-		return noptin_get_email_campaign_object( $campaign_id );
 	}
 
 	/**
