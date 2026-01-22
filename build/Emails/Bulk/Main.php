@@ -148,21 +148,25 @@ class Main {
 		// Create scheduled tasks if needed...
 		// ... then trigger the sending task via AJAX as a backup.
 		if ( self::check_scheduled_tasks() ) {
-			wp_remote_get(
-				add_query_arg(
-					array(
-						'action'      => self::TASK_HOOK,
-						'_ajax_nonce' => wp_create_nonce( self::TASK_HOOK ),
+			if ( ! defined( 'NOPTIN_ENABLE_FOREGROUND_SENDING' ) || ! NOPTIN_ENABLE_FOREGROUND_SENDING ) {
+				wp_remote_get(
+					add_query_arg(
+						array(
+							'action'      => self::TASK_HOOK,
+							'_ajax_nonce' => wp_create_nonce( self::TASK_HOOK ),
+						),
+						admin_url( 'admin-ajax.php' )
 					),
-					admin_url( 'admin-ajax.php' )
-				),
-				array(
-					'timeout'   => 0.01,
-					'blocking'  => false,
-					'sslverify' => false,
-					'cookies'   => $_COOKIE,
-				)
-			);
+					array(
+						'timeout'   => 0.01,
+						'blocking'  => false,
+						'sslverify' => false,
+						'cookies'   => $_COOKIE,
+					)
+				);
+			} else {
+				self::run();
+			}
 		}
 	}
 
