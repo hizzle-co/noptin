@@ -27,7 +27,7 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 
 		// Limit sending to 1 email per period.
 		// to allow testing of pausing and resuming.
-		update_noptin_option( 'per_hour', 1 );		
+		update_noptin_option( 'per_hour', 1 );
 	}
 
 	/**
@@ -46,8 +46,13 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		$error = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
 		$this->assertEquals( 'Test pause reason', $error['message'] ?? '' );
 
-		// Check that a task to resume the campaign is scheduled.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+		// Test that resume action was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
 
 		// Resume the campaign.
 		noptin_resume_email_campaign( $this->campaign->id );
@@ -58,7 +63,12 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		$this->assertEmpty( get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
 
 		// Check that no resume task is scheduled.
-		$this->assertEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+		$this->assertFalse(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
 
 		// Check that no sending tasks are scheduled since we have passed the limit.
 		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
@@ -80,8 +90,13 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Pause the campaign.
 		noptin_pause_email_campaign( $this->campaign->id, 'Test pause reason' );
 
-		// Check that a task to resume the campaign is scheduled.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+		// Test that resume action was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
 
 		// Increase sending limits.
 		update_noptin_option( 'per_hour', 10 );
@@ -90,7 +105,12 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		noptin_resume_email_campaign( $this->campaign->id );
 
 		// Check that no resume task is scheduled.
-		$this->assertEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+		$this->assertFalse(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
 
 		// Check that sending tasks are scheduled since we have passed the limit.
 		$this->assertNotEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
@@ -124,6 +144,9 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			return '__return_false';
 		}, 1000 );
 
+		// Reset sending limit to allow sending all emails.
+		update_noptin_option( 'per_hour', 0 );
+
 		// Send the campaign.
 		$this->campaign->save();
 
@@ -137,8 +160,21 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
 		$this->assertEmpty( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
 
-		// There shuold be a resume task scheduled.
-		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
+		// Test that resume action was scheduled
+		$this->assertIsNumeric(
+			next_scheduled_noptin_background_action(
+				'noptin_resume_email_campaign',
+				$this->campaign->id
+			)
+		);
+
+		// We should have sent 0 emails.
+		$this->assertEquals( 0, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
+		// There should still be recipients left to send to.
+		// The recipient that caused the error should be skipped.
+		$remaining_recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
+		$this->assertEquals(4, count( $remaining_recipients ) );
 	}
 
 	/**
