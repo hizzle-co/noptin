@@ -67,10 +67,9 @@ class Test_Main extends Noptin_Emails_Test_Case {
 		);
 
 		// Verify that the campaign sent emails to all recipients.
-		$this->assertIsArray( get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
-		$this->assertCount(
+		$this->assertEquals(
 			self::TEST_SUBSCRIBER_COUNT,
-			(array) get_post_meta( $this->campaign->id, '_noptin_sends', true )
+			(int) get_post_meta( $this->campaign->id, '_noptin_sends', true )
 		);
 
 		for ( $i = 1; $i <= self::TEST_SUBSCRIBER_COUNT; $i++ ) {

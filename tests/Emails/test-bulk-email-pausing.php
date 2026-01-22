@@ -23,11 +23,11 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Create test subscribers.
 		$this->create_test_subscribers( 5 );
 
+		parent::set_up();
+
 		// Limit sending to 1 email per period.
 		// to allow testing of pausing and resuming.
-		update_noptin_option( 'per_hour', 1 );
-
-		parent::set_up();
+		update_noptin_option( 'per_hour', 1 );		
 	}
 
 	/**
@@ -120,7 +120,9 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 	 */
 	public function test_automatic_pause_on_error() {
 		// Filter wp_mail to simulate error.
-		add_filter( 'wp_mail', '__return_false', 1000 );
+		add_filter( 'noptin_email_sending_function', function() {
+			return '__return_false';
+		}, 1000 );
 
 		// Send the campaign.
 		$this->campaign->save();
