@@ -5,190 +5,154 @@
  * @package Noptin
  */
 
+namespace Hizzle\Noptin\Tests\Bulk_Emails;
+
+use Hizzle\Noptin\Emails\Bulk\Main;
+use Hizzle\Noptin\Emails\Email;
+
 /**
  * Test bulk email sending limits.
  */
-class Test_Bulk_Email_Limits extends WP_UnitTestCase {
+class Test_Bulk_Email_Limits extends \WP_UnitTestCase {
+
+	/**
+	 * @var Email Test campaign
+	 */
+	protected $campaign;
+
+	/**
+	 * Helper method to create a test email campaign
+	 *
+	 * @param array $args Optional. Campaign arguments.
+	 * @return Email
+	 */
+	protected function create_test_campaign($args = array()) {
+		$default_args = array(
+			'type'      => 'newsletter',
+			'status'    => 'publish',
+			'name'      => 'Test Campaign',
+			'subject'   => 'Test Subject',
+			'content'   => 'Test Content',
+			'options'   => array(
+				'email_sender'   => 'noptin',
+				'email_type'     => 'normal',
+				'template'       => 'default',
+				'content_normal' => 'Test Content',
+				'template'       => 'paste',
+			),
+		);
+
+		$args = wp_parse_args($args, $default_args);
+		return new Email($args);
+	}
+
+	/**
+	 * Set up test environment.
+	 */
+	public function set_up() {
+		parent::set_up();
+
+		// Init email senders
+		if ( ! did_action( 'noptin_init' ) ) {
+			Main::init_email_senders();
+		}
+
+		// Create a test campaign.
+		$this->campaign = $this->create_test_campaign();
+
+		// Release any existing lock.
+		delete_option( Main::release_lock() );
+	}
+
+	/**
+	 * Check if rate limit is detected.
+	 */
+	public function test_max_emails_per_period() {
+		// Initially, no limit should be reached.
+		$this->assertEmpty( noptin_max_emails_per_period() );
+
+		// Set a limit of 3 emails per period.
+		$this->set_per_period_limit( 1 );
+
+		// Now, the limit should be 1.
+		$this->assertEquals( 1, noptin_max_emails_per_period() );
+	}
+
+	private function set_per_period_limit( $count ) {
+		update_noptin_option( 'per_hour', $count );
+	}
+
+	/**
+	 * Check the rolling period calculation.
+	 */
+	public function test_rolling_period_calculation() {
+		// Default should be 1 hour.
+		$this->assertEquals( 3600, noptin_get_email_sending_rolling_period() );
+
+		// Set to 5 minutes.
+		$this->set_rolling_period( '5minutes' );
+
+		// Should be 300 seconds.
+		$this->assertEquals( 300, noptin_get_email_sending_rolling_period() );
+	}
+
+	private function set_rolling_period( $period ) {
+		update_noptin_option( 'email_sending_rolling_period', $period );
+	}
 
 	/**
 	 * Test rate limit detection.
 	 */
 	public function test_rate_limit_detection() {
-		// Mock rate limit reached.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
+		// Set the limit to 2 emails per period.
+		$this->set_per_period_limit( 2 );
 
+		// Set the rolling period to 1 hour.
+		$this->set_rolling_period( '1hour' );
+
+		// Create 3 test subscribers.
+		$this->create_test_subscribers( 3 );
+
+		// Send the campaign.
+		$start_time = time();
+		$this->campaign->save();
+
+		// Check if limit was reached.
 		$this->assertTrue( noptin_email_sending_limit_reached() );
 
-		// Remove filter.
-		remove_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-	}
+		// Check that only 2 emails were sent.
+		$this->assertEquals( 2, noptin_emails_sent_this_period() );
+		$this->assertEquals( 2, get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
-	/**
-	 * Test sending pauses when limit reached.
-	 */
-	public function test_sending_pauses_when_limit_reached() {
-		$campaign = $this->create_test_campaign();
+		/** @var \Hizzle\Noptin\Tasks\Task[] $tasks */
+		$tasks = \Hizzle\Noptin\Tasks\Main::query(
+			array(
+				'hook'   => Main::HEALTH_CHECK_HOOK,
+				'status' => 'pending',
+			)
+		);
 
-		// Mock rate limit.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
+		// We should have one scheduled task.
+		$this->assertCount( 1, $tasks );
 
-		// Attempt to get next recipient should return false.
-		$recipient = $this->simulate_get_next_recipient( $campaign );
+		// Check that the sending health task is scheduled to the next send time.
+		$next_send_time = noptin_get_next_email_send_time();
+		$this->assertEquals( $next_send_time, $tasks[0]->get_date_scheduled()->getTimestamp() );
+		$this->assertGreaterThan( time(), $next_send_time );
+		$this->assertLessThanOrEqual( $start_time + HOUR_IN_SECONDS, $next_send_time );
 
-		// In actual implementation, this would return false when limit is reached.
-		$this->assertTrue( noptin_email_sending_limit_reached() );
+		// Check that the normal sending task is not scheduled.
+		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
 
-		remove_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-	}
+		// The campaign should not be marked as completed.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'completed', true ) );
 
-	/**
-	 * Test next send time calculation.
-	 */
-	public function test_next_send_time_calculation() {
-		// Mock next send time.
-		$future_time = time() + 3600; // 1 hour from now.
-		add_filter( 'noptin_get_next_email_send_time', function() use ( $future_time ) {
-			return $future_time;
-		} );
+		// The campaign should not be paused.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
 
-		$next_time = noptin_get_next_email_send_time();
-		$this->assertEquals( $future_time, $next_time );
-	}
-
-	/**
-	 * Test campaign doesn't complete when rate limited.
-	 */
-	public function test_campaign_not_completed_when_rate_limited() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 200 );
-
-		// Mock rate limit after 50 emails.
-		$sent_count = 0;
-		add_filter( 'noptin_email_sending_limit_reached', function() use ( &$sent_count ) {
-			return $sent_count >= 50;
-		} );
-
-		// Simulate sending.
-		for ( $i = 0; $i < 100; $i++ ) {
-			if ( noptin_email_sending_limit_reached() ) {
-				break;
-			}
-			$sent_count++;
-		}
-
-		// Should have stopped at 50.
-		$this->assertEquals( 50, $sent_count );
-
-		// Campaign should not be marked completed.
-		$completed = get_post_meta( $campaign->id, 'completed', true );
-		$this->assertEmpty( $completed );
-	}
-
-	/**
-	 * Test scheduled task timing with rate limit.
-	 */
-	public function test_scheduled_task_respects_rate_limit() {
-		// Mock rate limit and next send time.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-		$next_time = time() + 1800; // 30 minutes from now.
-		add_filter( 'noptin_get_next_email_send_time', function() use ( $next_time ) {
-			return $next_time;
-		} );
-
-		// Task should be scheduled for the next send time.
-		$scheduled_time = noptin_get_next_email_send_time();
-		$this->assertEquals( $next_time, $scheduled_time );
-		$this->assertGreaterThan( time(), $scheduled_time );
-	}
-
-	/**
-	 * Test max emails per period.
-	 */
-	public function test_max_emails_per_period() {
-		// Default should be unlimited (0).
-		$max = noptin_max_emails_per_period();
-		$this->assertEquals( 0, $max );
-
-		// Test custom limit.
-		add_filter( 'noptin_max_emails_per_period', function() {
-			return 100;
-		} );
-
-		$max = noptin_max_emails_per_period();
-		$this->assertEquals( 100, $max );
-	}
-
-	/**
-	 * Test limit resets after period.
-	 */
-	public function test_limit_resets_after_period() {
-		// Mock current sent count.
-		update_option( 'noptin_emails_sent_this_period', 50 );
-		update_option( 'noptin_email_period_start', time() - 3600 );
-
-		// Mock max emails.
-		add_filter( 'noptin_max_emails_per_period', function() {
-			return 100;
-		} );
-
-		// Should not be limited yet.
-		$sent = get_option( 'noptin_emails_sent_this_period', 0 );
-		$this->assertEquals( 50, $sent );
-
-		// After period reset, count should be 0.
-		delete_option( 'noptin_emails_sent_this_period' );
-		$sent = get_option( 'noptin_emails_sent_this_period', 0 );
-		$this->assertEquals( 0, $sent );
-	}
-
-	/**
-	 * Test AJAX loop prevention when rate limited.
-	 */
-	public function test_no_ajax_loop_when_rate_limited() {
-		$campaign = $this->create_test_campaign();
-
-		// Mock rate limit.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-
-		// send_pending() should not trigger AJAX when rate limited.
-		// This is tested by checking the early return in send_pending().
-		$this->assertTrue( noptin_email_sending_limit_reached() );
-
-		remove_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-	}
-
-	/**
-	 * Test health check schedules when limited.
-	 */
-	public function test_health_check_schedules_when_limited() {
-		$campaign = $this->create_test_campaign();
-		$this->create_test_subscribers( 100 );
-
-		// Mock rate limit.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-		$next_time = time() + 600; // 10 minutes.
-		add_filter( 'noptin_get_next_email_send_time', function() use ( $next_time ) {
-			return $next_time;
-		} );
-
-		// Health check should be scheduled for next send time.
-		$scheduled = noptin_get_next_email_send_time();
-		$this->assertEquals( $next_time, $scheduled );
-		$this->assertGreaterThan( time(), $scheduled );
-	}
-
-	/**
-	 * Test limit doesn't affect manual sending.
-	 */
-	public function test_limit_doesnt_affect_manual_sends() {
-		$campaign = $this->create_test_campaign();
-
-		// Mock rate limit.
-		add_filter( 'noptin_email_sending_limit_reached', '__return_true' );
-
-		// Manual sends (non-mass-mail) should bypass limits.
-		// This is implementation-specific behavior.
-		$this->assertTrue( noptin_email_sending_limit_reached() );
+		// There should only be 1 remaining recipient.
+		$remaining_recipients = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$this->assertCount( 1, $remaining_recipients );
 	}
 
 	/**
@@ -196,56 +160,27 @@ class Test_Bulk_Email_Limits extends WP_UnitTestCase {
 	 */
 	public function test_lock_prevents_concurrent_sends() {
 		// Simulate acquiring lock.
-		$lock_acquired = add_option( 'noptin_send_bulk_emails_process_lock', time(), '', 'no' );
-		$this->assertTrue( $lock_acquired );
+		$this->assertTrue( Main::acquire_lock() );
 
 		// Second attempt should fail.
-		$lock_acquired_again = add_option( 'noptin_send_bulk_emails_process_lock', time(), '', 'no' );
-		$this->assertFalse( $lock_acquired_again );
+		$this->assertFalse( Main::acquire_lock() );
 
-		// Clean up.
-		delete_option( 'noptin_send_bulk_emails_process_lock' );
+		// Release the lock.
+		Main::release_lock();
+
+		// Now we should be able to acquire the lock again.
+		$this->assertTrue( Main::acquire_lock() );
 	}
 
 	/**
 	 * Test stale lock cleanup.
 	 */
 	public function test_stale_lock_cleanup() {
-		// Set stale lock (older than TTL).
-		$stale_time = time() - 120; // 2 minutes ago (TTL is 60 seconds).
-		update_option( 'noptin_send_bulk_emails_process_lock', $stale_time );
+		// Manually set a lock.
+		add_option( Main::LOCK_KEY, time() - Main::LOCK_TTL - 1, '', 'no' );
 
-		$lock_time = get_option( 'noptin_send_bulk_emails_process_lock' );
-
-		// Lock is stale if (current_time - lock_time) >= TTL.
-		$is_stale = ( time() - $lock_time ) >= 60;
-		$this->assertTrue( $is_stale );
-
-		// Should be able to delete and re-acquire.
-		delete_option( 'noptin_send_bulk_emails_process_lock' );
-		$lock_acquired = add_option( 'noptin_send_bulk_emails_process_lock', time(), '', 'no' );
-		$this->assertTrue( $lock_acquired );
-
-		// Clean up.
-		delete_option( 'noptin_send_bulk_emails_process_lock' );
-	}
-
-	/**
-	 * Helper: Create test campaign.
-	 */
-	private function create_test_campaign() {
-		$campaign_id = wp_insert_post(
-			array(
-				'post_type'   => 'noptin-campaign',
-				'post_status' => 'publish',
-				'post_title'  => 'Test Limit Campaign',
-			)
-		);
-
-		update_post_meta( $campaign_id, 'campaign_type', 'newsletter' );
-		update_post_meta( $campaign_id, 'email_sender', 'noptin' );
-
-		return noptin_get_email_campaign_object( $campaign_id );
+		// We should be able to acquire the lock since it's stale.
+		$this->assertTrue( Main::acquire_lock() );
 	}
 
 	/**
@@ -260,16 +195,5 @@ class Test_Bulk_Email_Limits extends WP_UnitTestCase {
 				)
 			);
 		}
-	}
-
-	/**
-	 * Helper: Simulate get next recipient.
-	 */
-	private function simulate_get_next_recipient( $campaign ) {
-		if ( noptin_email_sending_limit_reached() ) {
-			return false;
-		}
-
-		return 123; // Mock recipient ID.
 	}
 }
