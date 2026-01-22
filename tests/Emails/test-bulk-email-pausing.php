@@ -71,6 +71,24 @@ class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
 	}
 
 	/**
+	 * After a test method runs, resets any state in WordPress the test method might have changed.
+	 */
+	public function tear_down() {
+		parent::tear_down();
+
+		// Delete the test campaign.
+		if ( $this->campaign && $this->campaign->exists() ) {
+			wp_delete_post( $this->campaign->id, true );
+		}
+
+		// Delete test subscribers.
+		noptin()->db()->delete_all( 'subscribers' );
+
+		// Release any existing lock.
+		delete_option( Main::release_lock() );
+	}
+
+	/**
 	 * Test campaign pause.
 	 */
 	public function test_campaign_resume_without_increasing_limits() {
@@ -83,7 +101,8 @@ class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
 		// Verify pause meta.
 		$this->assertEquals( 1, get_post_meta( $this->campaign->id, 'paused', true ) );
 
-		$this->assertEquals( 'Test pause reason', get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
+		$error = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
+		$this->assertEquals( 'Test pause reason', $error['message'] ?? '' );
 
 		// Check that a task to resume the campaign is scheduled.
 		$this->assertNotEmpty( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign' ) );
@@ -168,7 +187,7 @@ class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
 		$this->assertNotEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
 
 		// We should have a logged error message.
-		$this->assertNotEmpty( get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
+		$this->assertIsArray( get_post_meta( $this->campaign->id, '_bulk_email_last_error', true ) );
 
 		// There should be no sending tasks scheduled.
 		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
@@ -213,7 +232,7 @@ class Test_Bulk_Email_Pausing extends \WP_UnitTestCase {
 			update_noptin_option( 'per_hour', 2 + $index );
 			noptin_pause_email_campaign( $this->campaign->id, $reason );
 			$saved_reason = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );
-			$this->assertEquals( $reason, $saved_reason );
+			$this->assertEquals( $reason, $saved_reason['message'] ?? '' );
 
 			// Resume for next test.
 			noptin_resume_email_campaign( $this->campaign->id );

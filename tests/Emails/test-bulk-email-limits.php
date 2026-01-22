@@ -60,6 +60,21 @@ class Test_Bulk_Email_Limits extends \WP_UnitTestCase {
 		// Create a test campaign.
 		$this->campaign = $this->create_test_campaign();
 
+		// Delete test subscribers.
+		noptin()->db()->delete_all( 'subscribers' );
+	}
+
+	/**
+	 * After a test method runs, resets any state in WordPress the test method might have changed.
+	 */
+	public function tear_down() {
+		parent::tear_down();
+
+		// Delete the test campaign.
+		if ( $this->campaign && $this->campaign->exists() ) {
+			wp_delete_post( $this->campaign->id, true );
+		}
+
 		// Release any existing lock.
 		delete_option( Main::release_lock() );
 	}
@@ -139,7 +154,7 @@ class Test_Bulk_Email_Limits extends \WP_UnitTestCase {
 		$next_send_time = noptin_get_next_email_send_time();
 		$this->assertEquals( $next_send_time, $tasks[0]->get_date_scheduled()->getTimestamp() );
 		$this->assertGreaterThan( time(), $next_send_time );
-		$this->assertLessThanOrEqual( $start_time + HOUR_IN_SECONDS, $next_send_time );
+		$this->assertGreaterThanOrEqual( $start_time + HOUR_IN_SECONDS, $next_send_time );
 
 		// Check that the normal sending task is not scheduled.
 		$this->assertEmpty( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
