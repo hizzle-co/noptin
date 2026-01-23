@@ -163,7 +163,11 @@ class Test_Main extends Noptin_Emails_Test_Case {
 		$this->campaign->save();
 
 		// It should not have been able to acquire the lock again since we already had it.
-		$this->assertFalse( next_scheduled_noptin_background_action( Main::TASK_HOOK ), 'Sending task should not be scheduled since lock was held' );
 		$this->assertEmpty( get_post_meta( $this->campaign->id, '_noptin_sends', true ), 'No emails should have been sent since lock was held' );
+
+		// The sending task should, however, be scheduled again.
+		// So that it can try again later.
+		$this->assertIsNumeric( next_scheduled_noptin_background_action( Main::TASK_HOOK ), 'Sending task should be scheduled even if lock is held' );
+		$this->assertIsNumeric( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ), 'Health check task should be scheduled even if lock is held' );
 	}
 }

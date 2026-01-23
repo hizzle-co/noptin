@@ -106,6 +106,9 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Resume the campaign.
 		noptin_resume_email_campaign( $this->campaign->id );
 
+		// Check that we have sent 2 emails.
+		$this->assertEquals( 2, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
 		// Check that no resume task is scheduled.
 		$this->assertFalse(
 			next_scheduled_noptin_background_action(
@@ -122,8 +125,6 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		$health_scheduled = next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK );
 		$this->assertIsNumeric( $health_scheduled, 'HEALTH_CHECK_HOOK should be scheduled' );
 
-		// Check that we have sent 2 emails.
-		$this->assertEquals( 2, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 	}
 
 	/**

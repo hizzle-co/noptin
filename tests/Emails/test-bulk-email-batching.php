@@ -172,9 +172,9 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		// Set offset to 1.
 		delete_post_meta( $this->campaign->id, 'subscriber_offset' );
 
-		// Should return 9 recipients (10 total - 1 offset).
+		// Should return 10 recipients since we've reset the offset.
 		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
-		$this->assertCount( 9, $recipients );
+		$this->assertCount( 10, $recipients );
 
 		remove_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_large_batch_size' ) );
 	}
