@@ -89,6 +89,17 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		// Start sending the campaign.
 		$this->campaign->save();
 
+		// The sending limit should have been hit.
+		// Check that sending task is not scheduled...
+		$this->assertFalse( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
+
+		// ...but health check task is scheduled so that sending can resume later.
+		$this->assertIsNumeric( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
+
+		// The lock should have been released.
+		$this->assertTrue( Main::acquire_lock() );
+		Main::release_lock();
+
 		// Pause the campaign.
 		noptin_pause_email_campaign( $this->campaign->id, 'Test pause reason' );
 
@@ -100,16 +111,30 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// Increase sending limits to allow resuming.
+		// Increase sending limits to allow sending 1 more email.
 		update_noptin_option( 'per_hour', 2 );
 
+		// The lock should still be free.
+		$this->assertTrue( Main::acquire_lock() );
+		Main::release_lock();
+
 		// Resume the campaign.
+		// This should send 1 more email before hitting the limit again.
 		noptin_resume_email_campaign( $this->campaign->id );
 
+		// The lock should still be free.
+		$this->assertTrue( Main::acquire_lock() );
+		Main::release_lock();
+
+		// Verify pause meta cleared.
+		$this->assertEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
+
 		// Check that we have sent 2 emails.
+		$this->assertEquals( 2, (int) \Hizzle\Noptin\Emails\Logs\Main::query( array( 'activity' => 'send' ), 'count' ) );
 		$this->assertEquals( 2, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
-		// Check that no resume task is scheduled.
+		// Check that the resume task was cleared.
+		// Hitting the limit doesn't pause a campaign, it only pauses sending.
 		$this->assertFalse(
 			next_scheduled_noptin_background_action(
 				'noptin_resume_email_campaign',
@@ -117,14 +142,12 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// Check that sending tasks are scheduled since we increased the limit.
-		$task_scheduled = next_scheduled_noptin_background_action( Main::TASK_HOOK );
-		$this->assertIsNumeric( $task_scheduled, 'TASK_HOOK should be scheduled after increasing limit' );
+		// The sending limit should have been hit.
+		// Check that sending task is not scheduled...
+		$this->assertFalse( next_scheduled_noptin_background_action( Main::TASK_HOOK ) );
 
-		// Check that sending health task is scheduled.
-		$health_scheduled = next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK );
-		$this->assertIsNumeric( $health_scheduled, 'HEALTH_CHECK_HOOK should be scheduled' );
-
+		// ...but health check task is scheduled so that sending can resume later.
+		$this->assertIsNumeric( next_scheduled_noptin_background_action( Main::HEALTH_CHECK_HOOK ) );
 	}
 
 	/**
