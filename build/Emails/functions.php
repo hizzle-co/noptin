@@ -681,6 +681,8 @@ function noptin_resume_email_campaign( $campaign_id ) {
 	delete_post_meta( $campaign_id, 'paused' );
 	delete_post_meta( $campaign_id, '_bulk_email_last_error' );
 	delete_noptin_background_action( 'noptin_resume_email_campaign', $campaign_id );
+
+	do_action( 'noptin_email_campaign_resumed', $campaign_id );
 }
 add_action( 'noptin_resume_email_campaign', 'noptin_resume_email_campaign' );
 

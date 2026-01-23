@@ -237,6 +237,9 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		);
 
 		foreach ( $reasons as $index => $reason ) {
+			// Check the number of sends so far.
+			$this->assertEquals( $index + 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+
 			update_noptin_option( 'per_hour', 2 + $index );
 			noptin_pause_email_campaign( $this->campaign->id, $reason );
 			$saved_reason = get_post_meta( $this->campaign->id, '_bulk_email_last_error', true );

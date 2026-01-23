@@ -50,7 +50,7 @@ class Main {
 
 		// Send newsletter emails.
 		add_action( 'noptin_newsletter_campaign_published', array( __CLASS__, 'send_newsletter_campaign' ) );
-		add_action( 'noptin_resume_email_campaign', array( __CLASS__, 'send_newsletter_campaign' ), 1000 );
+		add_action( 'noptin_email_campaign_resumed', array( __CLASS__, 'send_newsletter_campaign' ), 1000 );
 
 		add_action( self::HEALTH_CHECK_HOOK, array( __CLASS__, 'send_pending' ) );
 		add_action( self::TASK_HOOK, array( __CLASS__, 'run' ) );
