@@ -107,7 +107,7 @@ class Main {
 		// Check cache.
 		$cache_key = $activity . '-' . ( $campaign_id ? $campaign_id : 'any' ) . '-' . ( $email_address ? $email_address : 'any' ) . '-' . ( $since ? $since : 'any' );
 		if ( isset( self::$activity_checks_cache[ $cache_key ] ) ) {
-			return self::$activity_checks_cache[ $cache_key ];
+			// return self::$activity_checks_cache[ $cache_key ];
 		}
 
 		$was_send = self::query(
