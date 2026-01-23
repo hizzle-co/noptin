@@ -65,7 +65,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		// Send pending emails.
 		Main::send_pending();
 
-		// Only 1 more email should have been sent.
+		// Only 1 more email should have been sent to complete the second batch.
 		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
 		// The new offset should still be 4.
@@ -85,15 +85,16 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		// Send pending emails.
 		Main::send_pending();
 
-		// All 10 emails should have been sent.
-		$this->assertEquals( 10, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
-
 		// The offset should be empty.
 		$this->assertEmpty( get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
 
 		// No subscribers should remain in the batch.
 		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
 		$this->assertEmpty( $remaining_subscribers );
+
+		// All emails should have been sent.
+		$total_subscribers = (int) noptin_get_subscribers( array(), 'count' );
+		$this->assertEquals( $total_subscribers, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
 		// Remove the batch size filter.
 		remove_filter( 'noptin_bulk_email_batch_size', array( $this, 'return_small_batch_size' ) );
