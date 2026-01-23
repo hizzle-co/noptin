@@ -81,6 +81,13 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	 * Returns the campaign meta key.
 	 */
 	public function get_campaign_meta_key( $suffix = 'to_send' ) {
+		// For backwards compatibility.
+		// In the future, we should prefix with collection type.
+		// in case the user wants to email multiple collections in one campaign.
+		if ( 'to_send' === $suffix ) {
+			return 'contacts_to_send';
+		}
+
 		return sprintf( '%s_%s', $this->collection_type, $suffix );
 	}
 
