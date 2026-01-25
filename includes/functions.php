@@ -1950,7 +1950,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 
 	// Loop through each rule.
 	foreach ( $conditional_logic['rules'] as $rule ) {
-		if ( empty( $rule['type'] ) ) {
+		if ( empty( $rule['type'] ) || empty( $rule['condition'] ) ) {
 			continue;
 		}
 
@@ -1970,6 +1970,17 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		// Add group to label.
 		if ( ! empty( $condition['group'] ) && __( 'General', 'newsletter-optin-box' ) !== $condition['group'] ) {
 			$label = sprintf( '<code>%s >> %s</code>', $condition['group'], $label );
+		}
+
+		// Rules that don't need a value.
+		if ( in_array( $rule['condition'], array( 'is_empty', 'is_not_empty' ), true ) ) {
+			$rules[] = sprintf(
+				'%s %s <code>%s</code>',
+				wp_kses_post( $label ),
+				sanitize_text_field( $comparisons[ $rule['condition'] ] )
+			);
+
+			continue;
 		}
 
 		if ( 'number' === $data_type ) {
