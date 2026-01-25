@@ -27,13 +27,19 @@ class Log extends \Hizzle\Store\Record {
 			return '';
 		}
 
-		$post = get_post( $id );
+		$post = \Hizzle\Noptin\Emails\Email::from( $id );
 
-		if ( ! $post ) {
+		if ( ! $post->exists() ) {
 			return '(Deleted)';
 		}
 
-		return $post->post_title;
+		$name = $post->name;
+
+		if ( empty( $name ) ) {
+			$name = $post->subject;
+		}
+
+		return $name;
 	}
 
 	/**
@@ -48,7 +54,13 @@ class Log extends \Hizzle\Store\Record {
 			return '';
 		}
 
-		return get_edit_post_link( $id );
+		$post = \Hizzle\Noptin\Emails\Email::from( $id );
+
+		if ( ! $post->exists() ) {
+			return '';
+		}
+
+		return $post->get_edit_url();
 	}
 
 	/**
