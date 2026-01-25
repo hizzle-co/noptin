@@ -212,13 +212,13 @@ class Main {
 			return false;
 		}
 
-		// Backwards compat. Remove old wp event.
-		if ( wp_next_scheduled( self::TASK_HOOK ) ) {
-			wp_clear_scheduled_hook( self::TASK_HOOK );
-		}
-
 		// Create the tasks.
 		foreach ( array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ) as $hook ) {
+			// Backwards compat. Remove old wp event.
+			if ( wp_next_scheduled( $hook ) ) {
+				wp_clear_scheduled_hook( $hook );
+			}
+
 			/** @var \Hizzle\Noptin\Tasks\Task[] $tasks */
 			$tasks = \Hizzle\Noptin\Tasks\Main::query(
 				array(
