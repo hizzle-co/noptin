@@ -466,7 +466,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	}
 
 	public static function delete_old_tasks() {
-		$lifespan = apply_filters( 'noptin_tasks_retention_period', MONTH_IN_SECONDS );
+		$lifespan = apply_filters( 'noptin_tasks_retention_period', 3 * MONTH_IN_SECONDS );
 
 		/** @var Task[] $tasks */
 		$tasks = self::query(
@@ -478,10 +478,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		);
 
 		foreach ( $tasks as $task ) {
-			// Only delete if no subject, primary id, and secondary id.
-			if ( is_null( $task->get_subject() ) && is_null( $task->get_primary_id() ) && is_null( $task->get_secondary_id() ) ) {
-				$task->delete();
-			}
+			$task->delete();
 		}
 	}
 
