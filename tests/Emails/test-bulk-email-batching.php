@@ -55,7 +55,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
 
 		// Only one subscriber should remain in the second batch.
-		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$remaining_subscribers = get_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), true );
 		$this->assertCount( 1, $remaining_subscribers );
 		$this->assertCount( 1, Main::$senders['noptin']->get_recipients( $this->campaign ) );
 
@@ -73,7 +73,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		$this->assertEquals( 4, (int) get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
 
 		// No subscribers should remain in the batch.
-		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$remaining_subscribers = get_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), true );
 		$this->assertEmpty( $remaining_subscribers );
 
 		// However, if we manually fetch recipients, it should return the next batch.
@@ -89,7 +89,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		$this->assertEmpty( get_post_meta( $this->campaign->id, 'subscriber_offset', true ) );
 
 		// No subscribers should remain in the batch.
-		$remaining_subscribers = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$remaining_subscribers = get_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), true );
 		$this->assertEmpty( $remaining_subscribers );
 
 		// All emails should have been sent.
@@ -124,7 +124,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 
 		// Set subscriber_to_send to an invalid value.
 		// This should force re-fetch instead of failing.
-		update_post_meta( $this->campaign->id, 'subscriber_to_send', 'not-an-array' );
+		update_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), 'not-an-array' );
 
 		// Should return 10 recipients (we have reset the offset).
 		$recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
@@ -132,7 +132,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		$this->assertCount( 10, $recipients );
 
 		// Remove cached recipients to force re-fetch.
-		delete_post_meta( $this->campaign->id, 'subscriber_to_send' );
+		delete_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key() );
 		delete_post_meta( $this->campaign->id, 'subscriber_offset' );
 
 		// Set batch size to zero (should be prevented).
@@ -150,7 +150,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		remove_filter( 'noptin_bulk_email_batch_size', '__return_zero' );
 
 		// Remove cached recipients to force re-fetch.
-		delete_post_meta( $this->campaign->id, 'subscriber_to_send' );
+		delete_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key() );
 
 		// Set offset to 11, more than available subscribers.
 		update_post_meta( $this->campaign->id, 'subscriber_offset', '11' );
@@ -164,7 +164,7 @@ class Test_Bulk_Email_Batching extends Noptin_Emails_Test_Case {
 		$this->assertEquals( 11, $offset );
 
 		// subscriber_to_send meta should be empty.
-		$cached = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$cached = get_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), true );
 		$this->assertEmpty( $cached );
 
 		// Test large batch size.

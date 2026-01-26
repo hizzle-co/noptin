@@ -258,7 +258,7 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 
 		// Simulate processing first batch.
 		update_post_meta( $this->campaign->id, 'subscriber_offset', 100 );
-		update_post_meta( $this->campaign->id, 'subscriber_to_send', array( 101, 102, 103 ) );
+		update_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), array( 101, 102, 103 ) );
 
 		// Pause mid-batch.
 		noptin_pause_email_campaign( $this->campaign->id, 'Mid-batch pause' );
@@ -268,7 +268,7 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 		$this->assertEquals( 1, $paused );
 
 		// Current batch should be preserved.
-		$batch = get_post_meta( $this->campaign->id, 'subscriber_to_send', true );
+		$batch = get_post_meta( $this->campaign->id, Main::$senders['noptin']->get_campaign_meta_key(), true );
 		$this->assertNotEmpty( $batch );
 	}
 }
