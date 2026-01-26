@@ -445,7 +445,7 @@ class Query {
 
 					$as          = isset( $function['as'] ) ? esc_sql( $function['as'] ) : strtolower( $function['function'] ) . '_' . $field;
 					$query_field = isset( $function['expression'] ) ? $this->prepare_math_expression( $function['expression'], $field ) : $table_field;
-					$distinct	 = ! empty( $function['distinct'] );
+					$distinct    = ! empty( $function['distinct'] );
 					$function    = $function['function'];
 				} else {
 					$as          = strtolower( $function ) . '_' . $field;
