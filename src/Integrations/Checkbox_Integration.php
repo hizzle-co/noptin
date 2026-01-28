@@ -351,7 +351,8 @@ abstract class Checkbox_Integration {
 					'value' => true,
 				),
 			),
-			'options'     => current( $position_keys ),
+			'options'     => $checkbox_positions,
+			'default'     => current( $position_keys ),
 			'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
 		);
 

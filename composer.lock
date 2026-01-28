@@ -56,16 +56,16 @@
         },
         {
             "name": "hizzle/wp",
-            "version": "1.4.5",
+            "version": "1.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/hizzle.git",
-                "reference": "1979f8c40f0d51f56792b638c79c4d8fb1c2f6ce"
+                "reference": "e68e8c3652b99e9c33c652a6f3cf05ee17393392"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/1979f8c40f0d51f56792b638c79c4d8fb1c2f6ce",
-                "reference": "1979f8c40f0d51f56792b638c79c4d8fb1c2f6ce",
+                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/e68e8c3652b99e9c33c652a6f3cf05ee17393392",
+                "reference": "e68e8c3652b99e9c33c652a6f3cf05ee17393392",
                 "shasum": ""
             },
             "require": {
@@ -98,9 +98,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/hizzle/issues",
-                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.5"
+                "source": "https://github.com/hizzle-co/hizzle/tree/v1.4.6"
             },
-            "time": "2026-01-09T04:45:02+00:00"
+            "time": "2026-01-28T17:48:50+00:00"
         },
         {
             "name": "symfony/css-selector",
