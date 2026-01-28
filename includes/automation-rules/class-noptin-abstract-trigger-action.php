@@ -3,7 +3,7 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-use \Hizzle\Noptin\Automation_Rules\Automation_Rule;
+use Hizzle\Noptin\Automation_Rules\Automation_Rule;
 
 /**
  * Base class for triggers and actions.

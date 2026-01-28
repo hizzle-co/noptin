@@ -169,6 +169,7 @@ class Main {
 				'description' => $trigger->get_description(),
 				'image'       => $trigger->get_image(),
 				'category'    => $trigger->depricated ? '' : $trigger->category,
+				'featured'    => $trigger->featured,
 			);
 		}
 

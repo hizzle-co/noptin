@@ -108,7 +108,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		foreach ( get_noptin_subscriber_filters() as $merge_tag => $options ) {
 
 			// Skip if no options.
-			if ( empty( $options['options'] ) || in_array( $merge_tag, array( 'confirmed', 'status', 'source' ), true ) ) {
+			if ( empty( $options['options'] ) || in_array( $merge_tag, array( 'confirmed', 'source' ), true ) ) {
 				continue;
 			}
 
@@ -1286,6 +1286,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			$action_args = array(
 				$field_name => isset( $args[ $field_name ] ) ? $args[ $field_name ] : '',
 			);
+		}
+
+		if ( 'status' === $field_name ) {
+			update_noptin_subscriber_status( $args['email'], $action_args['status'] );
+			return true;
 		}
 
 		return update_noptin_subscriber(
