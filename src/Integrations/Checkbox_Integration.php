@@ -335,6 +335,7 @@ abstract class Checkbox_Integration {
 			return $options;
 		}
 
+		$position_keys = array_keys( $checkbox_positions );
 		$options[ $this->get_checkbox_position_option_name() ] = array(
 			'el'          => 'select',
 			'section'     => 'integrations',
@@ -350,7 +351,7 @@ abstract class Checkbox_Integration {
 					'value' => true,
 				),
 			),
-			'options'     => $checkbox_positions,
+			'options'     => current( $position_keys ),
 			'placeholder' => __( 'Select an option', 'newsletter-optin-box' ),
 		);
 
@@ -589,7 +590,18 @@ abstract class Checkbox_Integration {
 	 * @return string|null
 	 */
 	public function get_checkbox_position() {
-		return get_noptin_option( $this->get_checkbox_position_option_name() );
+		$position = get_noptin_option( $this->get_checkbox_position_option_name() );
+
+		if ( is_null( $position ) ) {
+			$all_positions = $this->checkbox_positions();
+
+			if ( ! empty( $all_positions ) ) {
+				$all_positions = array_keys( $all_positions );
+				return current( $all_positions );
+			}
+		}
+
+		return  $position;
 	}
 
 	/**
