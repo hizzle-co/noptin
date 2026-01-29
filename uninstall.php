@@ -23,6 +23,8 @@ $wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE 'noptin\_%';"
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_subscribers" );
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_subscriber_meta" );
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_automation_rules" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_tasks" );
+$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}noptin_email_logs" );
 
 // Delete newsletters.
 $wpdb->query(
