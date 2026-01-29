@@ -9,6 +9,8 @@ global $wpdb;
 
 // Crons.
 wp_clear_scheduled_hook( 'noptin_daily_maintenance' );
+wp_clear_scheduled_hook( 'noptin_run_tasks' );
+wp_clear_scheduled_hook( 'noptin_run_tasks_health_check' );
 
 // Check if we need to delete all data.
 $noptin_options = (array) get_option( 'noptin_options', array() );
