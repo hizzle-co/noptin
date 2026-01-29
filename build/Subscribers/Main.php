@@ -27,11 +27,14 @@ class Main {
 		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init' );
 		add_action( 'noptin_subscribers_before_prepare_query', __CLASS__ . '::hide_blocked_subscribers' );
 		add_action( 'noptin_recalculate_subscriber_engagement_rate', __CLASS__ . '::recalculate_subscriber_engagement_rate' );
+		add_action( 'noptin_send_confirmation_email', array( __CLASS__, 'send_confirmation_email' ) );
 
 		// Subscribers menu.
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'filter_admin_tools' ) );
+			add_action( 'noptin_send_confirmation_emails', array( __CLASS__, 'send_confirmation_emails' ) );
 		}
 
 		// Initialize the schema.
@@ -187,6 +190,85 @@ class Main {
 		if ( self::$hook_suffix === $hook ) {
 			wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
+	}
+
+	/**
+	 * Filters admin tools to add subscriber related tools.
+	 *
+	 * @param array $tools The tools.
+	 * @return array
+	 */
+	public static function filter_admin_tools( $tools ) {
+		$tools['send_confirmation_emails'] = array(
+			'name'    => __( 'Send Confirmation Emails', 'newsletter-optin-box' ),
+			'button'  => __( 'Send', 'newsletter-optin-box' ),
+			'desc'    => __( 'Send confirmation emails to all unconfirmed subscribers.', 'newsletter-optin-box' ),
+			'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_send_confirmation_emails' ), 'noptin-send-confirmation-emails' ),
+			'confirm' => __( 'Are you sure you want to send confirmation emails to all unconfirmed subscribers?', 'newsletter-optin-box' ),
+		);
+
+		return $tools;
+	}
+
+	/**
+	 * Sends confirmation emails to unconfirmed subscribers.
+	 */
+	public static function send_confirmation_emails() {
+
+		// Only admins should be able to do this.
+		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['_wpnonce'] ) ) {
+			return;
+		}
+
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'noptin-send-confirmation-emails' ) ) {
+			return;
+		}
+
+		// Fetch unconfirmed subscribers.
+		$subscribers = noptin_get_subscribers(
+			array(
+				'confirmed' => 0,
+				'number'    => -1,
+				'fields'    => 'id',
+			)
+		);
+
+		if ( empty( $subscribers ) ) {
+			noptin()->admin->show_success( 'No unconfirmed subscribers found.' );
+			return;
+		}
+
+		// Schedule sending of confirmation emails.
+		// We don't want to do this in a loop directly to avoid timeouts.
+		foreach ( $subscribers as $subscriber ) {
+			schedule_noptin_background_action(
+				time(),
+				'noptin_send_confirmation_email',
+				$subscriber
+			);
+		}
+
+		noptin()->admin->show_success(
+			sprintf(
+				'Scheduled sending of confirmation emails to %s unconfirmed subscribers.',
+				count( $subscribers )
+			)
+		);
+	}
+
+	/**
+	 * Sends a confirmation email to a subscriber.
+	 *
+	 * @param int $subscriber_id The subscriber ID.
+	 */
+	public static function send_confirmation_email( $subscriber_id ) {
+		$subscriber = noptin_get_subscriber( $subscriber_id );
+
+		if ( ! $subscriber->get_email() ) {
+			return;
+		}
+
+		return $subscriber->do_send_confirmation_email();
 	}
 
 	/**

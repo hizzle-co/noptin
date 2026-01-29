@@ -146,7 +146,7 @@ class Noptin_Admin {
 		}
 
 		if ( ! empty( $_REQUEST['noptin_admin_action'] ) ) {
-			do_action( trim( $_REQUEST['noptin_admin_action'] ), $this );
+			do_action( trim( sanitize_text_field( wp_unslash( $_REQUEST['noptin_admin_action'] ) ) ), $this );
 		}
 
 		// Review nag.
@@ -414,7 +414,7 @@ class Noptin_Admin {
 		}
 
 		// Verify nonces to prevent CSRF attacks.
-		if ( ! wp_verify_nonce( $_GET['_wpnonce'], 'noptin-reset-data' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'noptin-reset-data' ) ) {
 			return;
 		}
 

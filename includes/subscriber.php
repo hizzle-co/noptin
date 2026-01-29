@@ -15,11 +15,11 @@ defined( 'ABSPATH' ) || exit;
  * Queries the subscribers database.
  *
  * @param array $args Query arguments.
- * @param string $return See Hizzle\Noptin\DB\Main::query for allowed values.
+ * @param string $to_return See Hizzle\Noptin\DB\Main::query for allowed values.
  * @return int|array|\Hizzle\Noptin\Subscribers\Subscriber[]|\Hizzle\Store\Query|WP_Error
  */
-function noptin_get_subscribers( $args = array(), $return = 'results' ) {
-	return noptin()->db()->query( 'subscribers', $args, $return );
+function noptin_get_subscribers( $args = array(), $to_return = 'results' ) {
+	return noptin()->db()->query( 'subscribers', $args, $to_return );
 }
 
 /**
@@ -47,7 +47,6 @@ function noptin_get_subscriber( $subscriber = 0 ) {
 
 	// Email or confirm key.
 	if ( is_string( $subscriber ) && ! is_numeric( $subscriber ) ) {
-
 		if ( is_email( $subscriber ) ) {
 			$subscriber = get_noptin_subscriber_id_by_email( $subscriber );
 		} else {
@@ -291,13 +290,11 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 				);
 			}
 		} elseif ( ! empty( $source ) ) {
-
 			if ( is_numeric( $source ) ) {
 
 				// The user subscribed via an opt-in form.
 				$form          = noptin_get_optin_form( $source );
 				$default_value = $form->__get( $field['merge_tag'] );
-
 			} else {
 
 				// The user subscribed via other means.
@@ -309,7 +306,6 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 					),
 					'-1'
 				);
-
 			}
 
 			if ( '-1' !== $default_value && '' !== $default_value ) {
@@ -324,7 +320,6 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 	}
 
 	if ( ! isset( $fields['tags'] ) ) {
-
 		if ( ! empty( $listener ) && ! is_null( $listener->processed_form ) ) {
 			$tags = array_filter( noptin_parse_list( $listener->get_cached( 'tags' ), true ) );
 
@@ -332,13 +327,11 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 				$fields['tags'] = $tags;
 			}
 		} elseif ( ! empty( $fields['source'] ) ) {
-
 			if ( is_numeric( $fields['source'] ) ) {
 
 				// The user subscribed via an opt-in form.
 				$form = noptin_get_optin_form( $fields['source'] );
 				$tags = $form->__get( 'tags' );
-
 			} else {
 
 				// The user subscribed via other means.
@@ -349,7 +342,6 @@ function prepare_noptin_subscriber_source_fields( $source, $fields = array() ) {
 					),
 					'-1'
 				);
-
 			}
 
 			$tags = array_diff( array_filter( noptin_parse_list( $tags, true ) ), array( '-1' ) );
@@ -687,7 +679,6 @@ function noptin_split_subscriber_name( $name ) {
 	$last_name  = ( strpos( $name, ' ' ) === false ) ? '' : preg_replace( '#.*\s([\w-]*)$#', '$1', $name );
 	$first_name = trim( preg_replace( '#' . $last_name . '#', '', $name ) );
 	return array( $first_name, $last_name );
-
 }
 
 /**
@@ -727,7 +718,6 @@ function get_default_noptin_subscriber_double_optin_email() {
 		),
 		'permission_text' => __( "You are receiving this email because we got your request to subscribe to our newsletter. If you don't want to join the newsletter, you can safely delete this email", 'newsletter-optin-box' ),
 	);
-
 }
 
 /**
@@ -798,7 +788,6 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 	);
 
 	foreach ( $merge_tags as $key => $value ) {
-
 		if ( is_scalar( $key ) ) {
 			$content = str_replace( "[[$key]]", wp_kses_post( $value ), $content );
 		}
@@ -912,7 +901,6 @@ function noptin_is_subscriber() {
 	}
 
 	return false;
-
 }
 
 /**
@@ -983,7 +971,6 @@ function _noptin_show_subscriber_field( $atts ) {
 
 	$value = $subscriber->get( $atts['field'] );
 	return is_scalar( $value ) ? esc_html( $value ) : esc_html( wp_json_encode( $value ) );
-
 }
 add_shortcode( 'noptin-subscriber-field', '_noptin_show_subscriber_field' );
 
@@ -1144,7 +1131,6 @@ function get_noptin_subscriber_smart_tags() {
 	$collection = noptin()->db()->store->get( 'subscribers' );
 
 	if ( ! empty( $collection ) ) {
-
 		foreach ( $collection->get_props() as $prop ) {
 
 			// Skip activity and sent_campaigns.
