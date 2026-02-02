@@ -19,13 +19,14 @@ A fast, GDPR-compliant newsletter plugin. Collect unlimited newsletter subscribe
 
 Noptin allows you to:-
 
-- Create unlimited newsletter subscription forms.
-- Add your optin forms anywhere on your website using a shortcode.
-- Display your optin forms in a popup or lightbox.
-- Add unlimited newsletter subscription widgets on any widget areas.
-- Collect unlimited newsletter subscribers.
-- Send your email subscribers one-off newsletters.
-- Automatically notify your subscribers everytime you publish a new blog post so that they can keep coming back to your website.
+- Create unlimited [newsletter subscription forms](https://noptin.com/guide/subscription-forms/).
+- Add your optin forms anywhere on your website using a [shortcode](https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/).
+- Display your optin forms in a [popup or lightbox](https://noptin.com/guide/subscription-forms/pop-up-forms/).
+- Add unlimited newsletter [subscription widgets](https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/) on any widget areas.
+- Collect unlimited [newsletter subscribers](https://noptin.com/guide/email-subscribers/).
+- [Send your email subscribers one-off newsletters](https://noptin.com/guide/sending-emails/newsletter-subscribers/).
+- Automatically [notify your subscribers everytime you publish a new blog post](https://noptin.com/guide/sending-emails/new-post-notifications/) so that they can keep coming back to your website.
+- Automate your email marketing using [automation rules](https://noptin.com/guide/automation-rules/).
 
 The best part is that you are able to do all this without leaving your WordPress dashboard. If you are worried about email deliverability, you can install any SMTP plugin of your choice and Noptin will automatically use it to send your newsletters. No configuration needed!
 
@@ -87,6 +88,20 @@ Increase traffic to your website by automatically emailing your newsletter subsc
 
 You can also send beautiful newsletters from WordPress to all your subscribers anytime you like. There is no limit to the number of newsletter emails you can send.
 
+= Seamless Integrations =
+
+Noptin plays nicely with the tools you already use:
+
+- **Form Builders:** Gravity Forms, Contact Form 7 (CF7), WPForms, Ninja Forms, Everest Forms, Fluent Forms, Forminator, Formidable Forms, HappyForms, JetFormBuilder, MetForm, weForms, WordPress registration forms, WordPress comment forms, WSForm, Convert Pro.
+- **Page Builders:** Elementor, Divi, Beaver Builder, Bricks Builder.
+- **E-Commerce:** WooCommerce, Easy Digital Downloads (EDD).
+- **Membership:** MemberPress, Simple Membership, Paid Memberships Pro (PMPro), SureMembers, WP eMember.
+- **Others:** Advanced Ads, ACF, Pods, Akismet, GeoDirectory, Toolset Types, Modern Events Calendar, The Events Calendar, myCRED, WPLoyalty, Polylang, WPML, WP Job Manager (WPJM), WP Job Openings, WP Recipe Maker.
+
+= Use Standalone or with another newsletter service =
+
+While Noptin works out of the box on its own, you can still decide to connect it to an external service using any of our available addons for ActiveCampaign, Activetrail, Agile CRM, Attio, AWeber, Birdsend, Brevo (Sendinblue), Campaign Monitor, Constant Contact, ConvertKit, Customerly, Drip, EmailOctopus, GetResponse, Gist, Google Sheets, HubSpot, iContact, Keap/Infusionsoft, Klaviyo, Mailchimp, MailerLite, Mailjet, Moosend, Ontraport, Ortto, Pipedrive, Quentn, Salesflare, Salesforce, SendFox, Sendgrid, Sendlane, SendPulse, Sendy, Slack, Smaily, Telegram, Twilio, VerticalResponse, Webhooks, Zoho Campaigns, Zoho CRM, etc.
+
 
 == Installation ==
 
@@ -117,6 +132,21 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 Yeah. Your newsletter subscription forms will take your theme's default styling.
 
+= Is Noptin a free Mailchimp alternative? =
+
+Yes. Noptin is a self-hosted alternative to Mailchimp. It allows you to send newsletters directly from WordPress without paying for subscriber limits. You can use Noptin on it's own or connect it to Mailchimp and get the best of both worlds.
+
+= Will Noptin slow down my website? =
+
+No. Noptin is designed to be lightweight. It uses your database efficiently and does not load heavy external scripts like hosted email platforms do.
+
+= Can I import subscribers from other tools? =
+
+Yes. You can easily import CSV files of subscribers from Mailchimp, AWeber, ConvertKit, Mailpoet, or any other email marketing tool.
+
+= How does Noptin handle email sending? =
+
+Noptin uses the standard WordPress `wp_mail` function. For the best deliverability, we recommend pairing it with a free SMTP plugin.
 
 == Screenshots ==
 1. Noptin overview page
