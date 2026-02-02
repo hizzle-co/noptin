@@ -11,7 +11,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "symfony/css-selector": "5.4.45",
+        "symfony/css-selector": "8.0.0",
         "hizzle/store": "^0",
         "hizzle/wp": "^1"
     },
