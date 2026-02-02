@@ -21,7 +21,7 @@ It helps you collect subscribers, grow your newsletter audience, and send newsle
 
 Noptin is designed for performance, privacy, and simplicity. It runs entirely on your own WordPress site, is GDPR-friendly by default, and does not limit the number of subscribers you can collect.
 
-With Noptin, users can subscribe to your newsletter using forms, popups, widgets, or checkout pages. You can then send newsletters, automate email notifications, and keep subscribers engaged.
+With Noptin, users can subscribe to your newsletter using subscription forms, popups, widgets, or checkout forms. You can then send them email newsletters, automatic new post notifications, and keep subscribers engaged.
 
 Noptin works with WooCommerce out of the box to help you automate your WooCommerce powered store. It is also multisite compatible.
 
@@ -31,12 +31,12 @@ Noptin helps you turn visitors into subscribers by making it easy to subscribe f
 
 You can:
 
-- Create unlimited [newsletter subscription forms](https://noptin.com/guide/subscription-forms/).
-- Let visitors subscribe using [shortcodes](https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/) or [blocks](https://noptin.com/guide/subscription-forms/newsletter-subscription-block/).
-- Show newsletter forms as[popup or lightbox](https://noptin.com/guide/subscription-forms/pop-up-forms/).
-- Add unlimited [newsletter subscription widgets](https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/) to sidebars, footers, and other widget areas.
-- Collect and manage unlimited [email subscribers](https://noptin.com/guide/email-subscribers/).
-- [Tag and segment](https://noptin.com/guide/email-subscribers/tagging-subscribers/) email subscribers for targeted newsletters.
+- Create unlimited [newsletter subscription forms](https://noptin.com/guide/subscription-forms/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- Let visitors subscribe using [shortcodes](https://noptin.com/guide/subscription-forms/newsletter-subscription-shortcode/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) or [blocks](https://noptin.com/guide/subscription-forms/newsletter-subscription-block/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- Show newsletter forms in a [popup or lightbox](https://noptin.com/guide/subscription-forms/pop-up-forms/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- Add unlimited [newsletter subscription widgets](https://noptin.com/guide/subscription-forms/newsletter-subscription-widget/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) to sidebars, footers, and other widget areas.
+- Collect and manage unlimited [email subscribers](https://noptin.com/guide/email-subscribers/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- [Tag and segment](https://noptin.com/guide/email-subscribers/tagging-subscribers/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) email subscribers for targeted newsletters.
 - Store subscribers securely inside WordPress.
 
 All subscribers are managed directly in your WordPress dashboard, though you can use an addon to connect an external email service such as Mailchimp and send subscribers there.
@@ -47,12 +47,12 @@ Once users subscribe, you can send them newsletters, SMS notifications, Slack or
 
 With Noptin, you can send:
 
-- [Latest Posts](https://noptin.com/guide/sending-emails/post-digest-emails-wordpress/) - Automatically send a daily, weekly, monthly or yearly email highlighting your latest posts.
-- [New Post Notification](https://noptin.com/guide/sending-emails/new-post-notifications/) - Automatically notify your subscribers, users, or customers everytime you publish new content on your site.
+- [Latest Posts](https://noptin.com/guide/sending-emails/post-digest-emails-wordpress/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) - Automatically send a daily, weekly, monthly or yearly email highlighting your latest posts.
+- [New Post Notification](https://noptin.com/guide/sending-emails/new-post-notifications/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) - Automatically notify your subscribers, users, or customers everytime you publish new content on your site.
 - Automatically send your subscribers, users, or customers an email every X days.
-- Welcome emails or SMS to new [subscribers](https://noptin.com/guide/sending-emails/welcome-emails/), [WooCommerce customers](https://noptin.com/guide/sending-emails/automatically-send-email-new-woocommerce-customers/), or [WordPress users](https://noptin.com/guide/sending-emails/welcome-users/).
-- Newsletters to [ email subscribers](https://noptin.com/guide/sending-emails/newsletter-subscribers/), [WordPress users](https://noptin.com/guide/sending-emails/wordpress-users/), or [WooCommerce customers](https://noptin.com/guide/sending-emails/woocommerce-customers/).
-- Automatically [notify your subscribers everytime you publish a new blog post](https://noptin.com/guide/sending-emails/new-post-notifications/) so that they can keep coming back to your website.
+- Welcome emails or SMS to new [subscribers](https://noptin.com/guide/sending-emails/welcome-emails/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), [WooCommerce customers](https://noptin.com/guide/sending-emails/automatically-send-email-new-woocommerce-customers/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), or [WordPress users](https://noptin.com/guide/sending-emails/welcome-users/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- Newsletters to [ email subscribers](https://noptin.com/guide/sending-emails/newsletter-subscribers/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), [WordPress users](https://noptin.com/guide/sending-emails/wordpress-users/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme), or [WooCommerce customers](https://noptin.com/guide/sending-emails/woocommerce-customers/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+- Automatically [notify your subscribers everytime you publish a new blog post](https://noptin.com/guide/sending-emails/new-post-notifications/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme) so that they can keep coming back to your website.
 - An email, SMS, or telegram message when a WooCommerce cart is abandoned.
 - Unique next order coupon codes or thank you emails.
 - Send notifications to slack when you get a new subscribers, WooCommerce order, etc.
@@ -146,7 +146,7 @@ Yes. Noptin lets you collect unlimited subscribers and send newsletters without 
 
 = Can I connect to my email service provider? =
 
-Yes. We have [addons](https://noptin.com/integrations/#crm-integrations) for Mailchimp, ConvertKit, Campaign Monitor, ActiveCampaign, AWeber, Constant Contact, GetResponse, HubSpot, Klaviyo, Sendgrid, Sendlane, Sendy and many more.
+Yes. We have [addons](https://noptin.com/integrations/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme#crm-integrations) for Mailchimp, ConvertKit, Campaign Monitor, ActiveCampaign, AWeber, Constant Contact, GetResponse, HubSpot, Klaviyo, Sendgrid, Sendlane, Sendy and many more.
 
 = Will Noptin work with my theme? =
 
@@ -170,7 +170,7 @@ Noptin uses the standard WordPress `wp_mail` function. For the best deliverabili
 
 = How can I get in touch? =
 
-* Use the [contact form on our website](https://noptin.com/contact/).
+* Use the [contact form on our website](https://noptin.com/contact/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 = How can I contribute to Noptin? =
 
