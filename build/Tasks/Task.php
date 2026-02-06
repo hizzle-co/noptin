@@ -390,6 +390,9 @@ class Task extends \Hizzle\Store\Record {
 			$args = array();
 		}
 
+		// Reschedule if it's a recurring task.
+		$this->maybe_reschedule();
+
 		// Run the task.
 		if ( is_null( $this->get_subject() ) && is_null( $this->get_primary_id() ) && is_null( $this->get_secondary_id() ) ) {
 			do_action_ref_array( $hook, array_values( $args ) );
@@ -398,6 +401,27 @@ class Task extends \Hizzle\Store\Record {
 		}
 
 		$noptin_current_task_user = $old_user;
+	}
+
+	private function maybe_reschedule() {
+		// Is this a recurring task?
+		$interval = $this->get_interval();
+
+		if ( empty( $interval ) || ! is_numeric( $interval ) ) {
+			return;
+		}
+
+		$new_task = $this->clone();
+		$new_task->set_date_created( time() );
+		$new_task->set_date_modified( time() );
+		$new_task->set_date_scheduled( time() + (int) $interval );
+		$new_task->add_log( 'Task rescheduled from #' . $this->get_id() );
+		$new_task->set_status( 'pending' );
+		$result = $new_task->save();
+
+		if ( is_wp_error( $result ) ) {
+			$this->add_log( 'Failed to reschedule task: ' . $result->get_error_message() );
+		}
 	}
 
 	/**
@@ -415,23 +439,6 @@ class Task extends \Hizzle\Store\Record {
 		}
 
 		$task->save();
-
-		// Is this a recurring task?
-		$interval = $task->get_interval();
-		if ( in_array( $task->get_status(), array( 'complete', 'failed' ), true ) && $interval ) {
-			$new_task = $task->clone();
-			$new_task->set_date_created( time() );
-			$new_task->set_date_modified( time() );
-			$new_task->set_date_scheduled( time() + (int) $interval );
-			$new_task->add_log( 'Task rescheduled from #' . $task->get_id() );
-			$new_task->set_status( 'pending' );
-			$result = $new_task->save();
-
-			if ( is_wp_error( $result ) ) {
-				$task->add_log( 'Failed to reschedule task: ' . $result->get_error_message() );
-				$task->save();
-			}
-		}
 	}
 
 	public function task_canceled( $task, $note = 'task canceled' ) {

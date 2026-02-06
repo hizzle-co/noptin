@@ -179,7 +179,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 * Runs overdue tasks on shutdown via ajax.
 	 */
 	public function run_overdue_tasks_on_shutdown() {
-		if ( wp_doing_ajax() || wp_doing_cron() || $this->is_process_running() ) {
+		if ( wp_doing_ajax() || wp_doing_cron() || ! did_action( 'noptin_db_init' ) || $this->is_process_running() ) {
 			return;
 		}
 

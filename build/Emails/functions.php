@@ -483,10 +483,26 @@ function get_default_noptin_footer_text() {
  * @param int $amount
  */
 function increment_noptin_campaign_stat( $campaign_id, $stat, $amount = 1 ) {
+	global $wpdb;
 
-	// Increment stat.
-	$current = (float) get_post_meta( $campaign_id, $stat, true );
-	update_post_meta( $campaign_id, $stat, $current + $amount );
+	// We don't want to use update_post_meta because
+	// it is not atomic and can cause race conditions when multiple emails are sent at the same time.
+	$wpdb->query(
+		$wpdb->prepare(
+			"UPDATE {$wpdb->postmeta}
+			SET meta_value = CAST(meta_value AS UNSIGNED) + %d
+			WHERE post_id = %d AND meta_key = %s",
+			$amount,
+			$campaign_id,
+			$stat
+		)
+	);
+
+	if ( ! $wpdb->rows_affected ) {
+		add_post_meta( $campaign_id, $stat, $amount, true );
+	}
+
+	wp_cache_delete( $campaign_id, 'post_meta' );
 
 	// Increment parent stat.
 	$parent = get_post_parent( $campaign_id );
