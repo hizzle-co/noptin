@@ -1975,7 +1975,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 		// Rules that don't need a value.
 		if ( in_array( $rule['condition'], array( 'is_empty', 'is_not_empty' ), true ) ) {
 			$rules[] = sprintf(
-				'%s %s <code>%s</code>',
+				'%s %s',
 				wp_kses_post( $label ),
 				sanitize_text_field( $comparisons[ $rule['condition'] ] )
 			);
