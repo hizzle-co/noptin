@@ -627,6 +627,27 @@ class REST_Controller extends \WP_REST_Controller {
 		);
 
 		// Add headers.
+		return $this->add_pagination_headers( $query, $response, $request );
+	}
+
+	/**
+	 * Adds pagination info.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Hizzle\Store\Query $query The query object.
+	 * @param \WP_REST_Response $response The response object.
+	 * @param \WP_REST_Request $request The request object.
+	 */
+	protected function add_pagination_headers( $query, $response, $request ) {
+
+		$per_page = (int) $query->query_vars['per_page'];
+		$total    = (int) $query->get_total();
+		$paged    = (int) $query->query_vars['page'];
+
+		$max_pages = $total > 0 && $per_page > 0 ? ceil( $total / $per_page ) : 1;
+
+		// Add headers.
 		$response->header( 'X-WP-Total', $total );
 		$response->header( 'X-WP-TotalPages', $max_pages );
 
@@ -1477,7 +1498,14 @@ class REST_Controller extends \WP_REST_Controller {
 
 		try {
 			$query = $collection->query( $request->get_params() );
-			return rest_ensure_response( $query->get_aggregate() );
+			$response = rest_ensure_response( $query->get_aggregate() );
+
+			// Add pagination headers if per_page was set.
+			if ( ! empty( $query->query_vars['per_page'] ) ) {
+				$response = $this->add_pagination_headers( $query, $response, $request );
+			}
+
+			return $response;
 		} catch ( Store_Exception $e ) {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
