@@ -124,6 +124,21 @@
 		border-spacing: 0;
 	}
 
+	.wp-block-noptin-progress {
+		background-color: #eeeeee;
+		border-radius: 10px;
+		height: 12px;
+		line-height: 12px;
+		overflow: hidden;
+	}
+
+	.wp-block-noptin-progress__bar {
+		background-color: <?php echo esc_attr( $settings['button_background'] ); ?>;
+		border-radius: 10px;
+		height: 12px;
+		line-height: 12px;
+	}
+
 	table.noptin-image-block__wrapper {
 		border-spacing: 0;
 	}
@@ -169,7 +184,7 @@
 		border-collapse: separate;
 	}
 
-	p, h1, h2, h3, h4, h5, h6, .noptin-block__margin-wrapper, .wp-block-noptin-badge table {
+	p, h1, h2, h3, h4, h5, h6, .wp-block-noptin-progress, .noptin-block__margin-wrapper, .wp-block-noptin-badge table {
 		margin-top: 0px;
 		margin-left: 10px;
 		margin-right: 10px;
@@ -195,6 +210,7 @@
 	p:last-child,
 	.noptin-columns:last-child,
 	.wp-block-noptin-badge:last-child table,
+	.wp-block-noptin-progress:last-child,
 	.noptin-image-block__wrapper:last-child .noptin-block__margin-wrapper {
 		margin-bottom: 0px;
 	}
