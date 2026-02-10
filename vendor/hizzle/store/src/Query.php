@@ -559,6 +559,11 @@ class Query {
 		}
 
 		$this->query_fields = implode( ', ', array_unique( (array) $this->query_fields ) );
+
+		// Check if we need to count the total number of items for aggregate queries.
+		if ( ! empty( $qv['per_page'] ) ) {
+			$this->count_field = sprintf( "DISTINCT COUNT(%s)", esc_sql( $this->prefix_field( 'id' ) ) );
+		}
 	}
 
 	/**
@@ -1308,6 +1313,8 @@ class Query {
 	protected function query_aggregate() {
 		global $wpdb;
 
+		$this->total_results = 0;
+
 		// Allow third party plugins to modify the query.
 		$collection      = Collection::instance( $this->collection_name );
 		$this->aggregate = apply_filters_ref_array( $collection->hook_prefix( 'pre_aggregate_query' ), array( null, &$this ) );
@@ -1316,6 +1323,11 @@ class Query {
 		if ( null === $this->aggregate ) {
 			$this->request   = "SELECT $this->query_fields $this->query_from $this->query_join $this->query_where $this->query_groupby $this->query_orderby $this->query_limit";
 			$this->aggregate = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+			// Calculate total results if requested (without ORDER BY, and LIMIT).
+			if ( ! empty( $this->count_field ) ) {
+				$this->total_results = (int) $wpdb->get_var( "SELECT $this->count_field $this->query_from $this->query_join $this->query_where $this->query_groupby" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			}
 		}
 	}
 }
