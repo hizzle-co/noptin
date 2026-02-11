@@ -87,7 +87,7 @@ class Log extends \Hizzle\Store\Record {
 		}
 
 		if ( empty( $text ) ) {
-			$text = $info;
+			$text = str_replace( array( 'https://', 'http://' ), '', $info );
 		}
 
 		return sprintf(

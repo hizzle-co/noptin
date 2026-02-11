@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.1.7 =
+* Add: See which links in your newsletters are getting the most clicks.
+
 = 4.1.6 =
 * Fix: Error when editing a newsletter subscriber.
 
