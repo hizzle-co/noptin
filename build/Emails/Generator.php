@@ -8,6 +8,8 @@
  * @package Noptin
  */
 
+namespace Hizzle\Noptin\Emails;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -18,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Noptin_Email_Generator {
+class Generator {
 
 	/**
 	 * Which type of image to generate.
@@ -127,7 +129,7 @@ class Noptin_Email_Generator {
 
 		// Ensure we have content.
 		if ( empty( $this->content ) ) {
-			return new WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'missing_content', __( 'The email body cannot be empty.', 'newsletter-optin-box' ) );
 		}
 
 		$method = array( $this, "generate_{$this->type}_email" );
@@ -426,11 +428,11 @@ class Noptin_Email_Generator {
 		$ids            = array_flip( $ids[1] );
 
 		// Load the HTML.
-		$doc = new DOMDocument();
+		$doc = new \DOMDocument();
 		@$doc->loadHTML( $html );
 
 		// Iterate over all elements.
-		$xpath    = new DOMXPath( $doc );
+		$xpath    = new \DOMXPath( $doc );
 		$elements = $xpath->query( '//*' );
 
 		if ( empty( $elements ) ) {
@@ -648,12 +650,12 @@ class Noptin_Email_Generator {
 				$width = '100%';
 
 				// Check if the image is inside a .noptin-column element
-				$parent = $element;
-				while ( $parent = $parent->parentNode ) {
+				$parent = $element->parentNode;
+				while ( $parent ) {
 					/** @var \DOMElement $parent */
-					if ( $parent->nodeType === XML_ELEMENT_NODE && $parent->hasAttribute( 'class' ) ) {
+					if ( \XML_ELEMENT_NODE === $parent->nodeType && $parent->hasAttribute( 'class' ) ) {
 						$parent_classes = explode( ' ', $parent->getAttribute( 'class' ) );
-						if ( in_array( 'noptin-column', $parent_classes ) && $parent->hasAttribute( 'style' ) ) {
+						if ( in_array( 'noptin-column', $parent_classes, true ) && $parent->hasAttribute( 'style' ) ) {
 							if ( preg_match( '/width:([^;]+);/', $parent->getAttribute( 'style' ), $matches ) ) {
 								$width = $matches[1];
 							}
@@ -662,9 +664,11 @@ class Noptin_Email_Generator {
 					}
 
 					// Stop if we reach the body or html element
-					if ( in_array( $parent->nodeName, array( 'body', 'html' ) ) ) {
+					if ( in_array( $parent->nodeName, array( 'body', 'html' ), true ) ) {
 						break;
 					}
+
+					$parent = $parent->parentNode;
 				}
 
 				// If width is a percentage, calculate the pixel value based on 600px
@@ -743,10 +747,10 @@ class Noptin_Email_Generator {
 			return $html;
 		}
 
-		$doc = new DOMDocument();
+		$doc = new \DOMDocument();
 		@$doc->loadHTML( $html );
 
-		$xpath    = new DOMXPath( $doc );
+		$xpath    = new \DOMXPath( $doc );
 		$elements = $xpath->query( '//*[@href]' );
 
 		if ( empty( $elements ) ) {
@@ -959,14 +963,14 @@ class Noptin_Email_Generator {
 		try {
 
 			// create inliner instance
-			$inliner = new \Hizzle\Noptin\Emails\CssToInlineStyles\CssToInlineStyles();
+			$inliner = new CssToInlineStyles\CssToInlineStyles();
 
 			// Inline styles.
 			return $inliner->convert( $content, $styles );
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			log_noptin_message( $e->getMessage() );
 			return $content;
-		} catch ( Symfony\Component\CssSelector\Exception\SyntaxErrorException $e ) {
+		} catch ( \Symfony\Component\CssSelector\Exception\SyntaxErrorException $e ) {
 			log_noptin_message( $e->getMessage() );
 			return $content;
 		}
