@@ -810,7 +810,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 
 	do_action( 'noptin_register_temporary_merge_tags' );
 
-	$generator     = new Noptin_Email_Generator();
+	$generator     = new \Hizzle\Noptin\Emails\Generator();
 	$email_body    = $generator->generate( $args );
 	$email_subject = noptin_parse_email_subject_tags( get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'] ) );
 

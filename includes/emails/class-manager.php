@@ -48,7 +48,6 @@ class Noptin_Email_Manager {
 	 */
 	public function load_files() {
 
-		require_once plugin_dir_path( __FILE__ ) . 'class-generator.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-html-to-text.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-tags.php';
 		require_once plugin_dir_path( __FILE__ ) . 'class-email-type.php';

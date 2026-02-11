@@ -546,7 +546,7 @@ class Email {
 					continue;
 				}
 
-				$value = \Noptin_Email_Generator::handle_item_lists_shortcode( $args[ $key ] );
+				$value = Generator::handle_item_lists_shortcode( $args[ $key ] );
 
 				// Parse paragraphs.
 				if ( 'content_normal' === $type ) {

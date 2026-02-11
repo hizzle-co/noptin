@@ -327,59 +327,92 @@ class Generator {
 			return $content;
 		}
 
-		// Inject preheader.
-		$content = $this->inject_preheader( $content );
+		// Apply processors via filters to allow other plugins to filter/override specific processing steps if needed.
+		$processors = array(
 
-		// Ensure that shortcodes are not wrapped in paragraphs.
-		$content = shortcode_unautop( $content );
+			// Inject preheader.
+			array( $this, 'inject_preheader' ),
 
-		// Process list items.
-		$content = self::handle_item_lists_shortcode( $content );
+			// Ensure that shortcodes are not wrapped in paragraphs.
+			'shortcode_unautop',
 
-		// Do merge tags.
-		$content = noptin_parse_email_content_tags( $content );
+			// Process list items.
+			__CLASS__ . '::handle_item_lists_shortcode',
 
-		// Execute shortcodes.
-		$content = do_shortcode( $content );
+			// Do merge tags.
+			'noptin_parse_email_content_tags',
 
-		// Make links clickable.
-		$content = make_clickable( $content );
+			// Execute shortcodes.
+			'do_shortcode',
 
-		// Add class to clickable links.
-		$content = $this->add_class_to_clickable_links( $content );
+			// Make links clickable.
+			'make_clickable',
 
-		// Track opens.
-		$content = $this->inject_tracking_pixel( $content );
+			// Add class to clickable links.
+			array( $this, 'add_class_to_clickable_links' ),
 
-		// Balance tags.
-		$content = force_balance_tags( $content );
+			// Track opens.
+			array( $this, 'inject_tracking_pixel' ),
 
-		// Remove double http://.
-		$content = $this->fix_links_with_double_http( $content );
+			// Balance tags.
+			'force_balance_tags',
 
-		// Backup hrefs.
-		$content = $this->backup_hrefs( $content );
+			// Remove double http://.
+			array( $this, 'fix_links_with_double_http' ),
 
-		// Inline CSS styles.
-		$content = $this->inline_styles( $content );
+			// Backup hrefs.
+			array( $this, 'backup_hrefs' ),
 
-		// Remove script tags.
-		$content = preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $content );
+			// Inline CSS styles.
+			array( $this, 'inline_styles' ),
 
-		// Remove unused classes and ids.
-		$content = $this->clean_html( $content );
+			// Remove script tags.
+			array( $this, 'remove_script_tags' ),
 
-		// Clean <style> tags.
-		$content = $this->clean_style_tags( $content );
+			// Remove unused classes and ids.
+			array( $this, 'clean_html' ),
 
-		// Restore hrefs.
-		$content = $this->restore_hrefs( $content );
+			// Clean <style> tags.
+			array( $this, 'clean_style_tags' ),
 
-		// Make links trackable.
-		$content = $this->make_links_trackable( $content );
+			// Restore hrefs.
+			array( $this, 'restore_hrefs' ),
 
-		// Filters a post processed email.
-		return apply_filters( 'noptin_post_process_email_content', $content, $this );
+			// Make links trackable.
+			array( $this, 'make_links_trackable' ),
+		);
+
+		foreach ( $processors as $priority => $processor ) {
+			add_filter(
+				'noptin_post_process_email_content',
+				$processor,
+				// 10, 20, etc. to allow other plugins to hook in between processors if needed.
+				( $priority + 1 ) * 10
+			);
+		}
+
+		// Apply all filters.
+		$content = apply_filters( 'noptin_post_process_email_content', $content, $this );
+
+		foreach ( $processors as $priority => $processor ) {
+			remove_filter(
+				'noptin_post_process_email_content',
+				$processor,
+				( $priority + 1 ) * 10
+			);
+		}
+
+		return $content;
+	}
+
+	/**
+	 * Processing step: Remove script tags.
+	 *
+	 * @param string $content
+	 * @return string
+	 */
+	public function remove_script_tags( $content ) {
+		return preg_replace( '/<(script|svg|iframe|meta|object|embed|applet|link)[^>]*?>.*?<\/\1>/is', '', $content );
 	}
 
 	public static function handle_item_lists_shortcode( $content ) {
@@ -411,7 +444,7 @@ class Generator {
 		return $content;
 	}
 
-	private function clean_html( $html ) {
+	public function clean_html( $html ) {
 
 		// Check if DOMDocument is available.
 		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
@@ -742,7 +775,7 @@ class Generator {
 		return $doc->saveHTML();
 	}
 
-	private function backup_hrefs( $html ) {
+	public function backup_hrefs( $html ) {
 		// Check if DOMDocument is available.
 		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
 			return $html;
@@ -779,12 +812,12 @@ class Generator {
 		return $doc->saveHTML();
 	}
 
-	private function clean_style_tags( $html ) {
+	public function clean_style_tags( $html ) {
 		$html = str_replace( '#noptin-email-content .main-content-wrapper .noptin-button-link,', '', $html );
 		return $html;
 	}
 
-	private function restore_hrefs( $html ) {
+	public function restore_hrefs( $html ) {
 		// Check if DOMDocument is available.
 		if ( ! class_exists( 'DOMDocument' ) || empty( $html ) ) {
 			return $html;
