@@ -101,6 +101,7 @@ class Main {
 			'brand'               => noptin()->white_label->get_details(),
 			'subscriber_statuses' => noptin_get_subscriber_statuses(),
 			'plugins'             => $plugins,
+			'home_url'            => home_url(),
 			'links'               => array(
 				array(
 					'text' => __( 'Report a bug or request a feature', 'newsletter-optin-box' ),
