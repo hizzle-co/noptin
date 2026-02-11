@@ -610,11 +610,6 @@ class REST_Controller extends \WP_REST_Controller {
 			$items[] = $this->prepare_response_for_collection( $data );
 		}
 
-		$per_page = (int) $query->query_vars['per_page'];
-		$total    = (int) $query->get_total();
-		$paged    = (int) $query->query_vars['page'];
-
-		$max_pages = $total > 0 && $per_page > 0 ? ceil( $total / $per_page ) : 1;
 
 		$response = rest_ensure_response(
 			apply_filters(
@@ -1497,7 +1492,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$collection = $this->fetch_collection();
 
 		try {
-			$query = $collection->query( $request->get_params() );
+			$query    = $collection->query( $request->get_params() );
 			$response = rest_ensure_response( $query->get_aggregate() );
 
 			// Add pagination headers if per_page was set.
