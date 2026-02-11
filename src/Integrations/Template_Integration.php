@@ -51,7 +51,7 @@ abstract class Template_Integration {
 	 *
 	 * @since 1.7.0
 	 * @param string $email.
-	 * @param \Noptin_Email_Generator $generator
+	 * @param \Hizzle\Noptin\Emails\Generator $generator
 	 * @return string
 	 */
 	public function maybe_process_template( $email, $generator ) {
@@ -76,7 +76,7 @@ abstract class Template_Integration {
 	/**
 	 * Applies custom email styles to Noptin templates.
 	 *
-	 * @param \Noptin_Email_Generator $generator
+	 * @param \Hizzle\Noptin\Emails\Generator $generator
 	 */
 	public function maybe_add_email_styles( $generator ) {
 
@@ -97,7 +97,7 @@ abstract class Template_Integration {
 	 *
 	 * @since 3.0.0
 	 * @param string $content
-	 * @param \Noptin_Email_Generator $generator
+	 * @param \Hizzle\Noptin\Emails\Generator $generator
 	 * @return string
 	 */
 	public function maybe_process_content_before_inline_styles( $content, $generator ) {

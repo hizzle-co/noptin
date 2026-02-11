@@ -529,7 +529,7 @@ class Email {
 					'name'         => sprintf( '%1$s - %2$s', esc_html( $this->name ), esc_html( $suffix ) ),
 					'subject'      => noptin_parse_email_subject_tags( $this->get_subject(), true ),
 					'heading'      => noptin_parse_email_content_tags( $this->get( 'heading' ), true ),
-					'content'      => 'visual' === $type ? noptin_parse_email_content_tags( \Noptin_Email_Generator::handle_item_lists_shortcode( $this->content ), true ) : '',
+					'content'      => 'visual' === $type ? noptin_parse_email_content_tags( Generator::handle_item_lists_shortcode( $this->content ), true ) : '',
 					'author'       => $this->author,
 					'preview_text' => noptin_parse_email_content_tags( $this->get( 'preview_text' ), true ),
 					'footer_text'  => noptin_parse_email_content_tags( $this->get( 'footer_text' ), true ),

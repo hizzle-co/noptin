@@ -81,7 +81,7 @@ function noptin_generate_email_content( $email, $recipient, $track = true ) {
 		'recipient'    => $recipient,
 	);
 
-	$generator = new Noptin_Email_Generator();
+	$generator = new \Hizzle\Noptin\Emails\Generator();
 	return $generator->generate( $args );
 }
 

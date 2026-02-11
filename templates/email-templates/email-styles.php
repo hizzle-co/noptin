@@ -3,7 +3,7 @@
 	/**
 	 * Email Styles template.
 	 *
-	 * @var Noptin_Email_Generator $generator
+	 * @var \Hizzle\Noptin\Emails\Generator $generator
 	 */
 
 	defined( 'ABSPATH' ) || exit;

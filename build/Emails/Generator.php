@@ -478,6 +478,7 @@ class Generator {
 				$parent   = $element->parentNode;
 				/** @var \DOMElement $parent */
 				while ( $parent && ! ( $parent->nodeName === $selector || ( $parent->hasAttribute( 'class' ) && strpos( $parent->getAttribute( 'class' ), $selector ) !== false ) || ( $parent->hasAttribute( 'id' ) && $parent->getAttribute( 'id' ) === $selector ) ) ) {
+					/** @var \DOMElement $parent */
 					$parent = $parent->parentNode;
 				}
 				if ( $parent ) {
