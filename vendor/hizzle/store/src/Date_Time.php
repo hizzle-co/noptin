@@ -1,13 +1,13 @@
 <?php
 
-namespace Hizzle\Store;
-
 /**
  * Wrapper for PHP DateTime which adds support for gmt/utc offset when a
  * timezone is absent
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Store;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -95,7 +95,7 @@ class Date_Time extends \DateTime {
 			return $this->date_i18n(
 				sprintf(
 					/* translators: 1: date, 2: time */
-					_x( '%1$s @ %2$s', 'date and time', 'hizzle-store' ),
+					_x( '%1$s %2$s', 'date and time', 'hizzle-store' ),
 					get_option( 'date_format', 'F j, Y' ),
 					get_option( 'time_format', 'g:i a' )
 				)
@@ -112,5 +112,4 @@ class Date_Time extends \DateTime {
 
 		return $this->__toString();
 	}
-
 }

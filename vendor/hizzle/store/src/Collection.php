@@ -128,7 +128,7 @@ class Collection {
 	/**
 	 * The Query schema.
 	 *
-	 * @var string
+	 * @var array
 	 */
 	protected $query_schema;
 
@@ -604,7 +604,7 @@ class Collection {
 	/**
 	 * Returns the Query schema as an array.
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function get_query_schema() {
 

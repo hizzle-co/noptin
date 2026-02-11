@@ -870,9 +870,11 @@ class Query {
 			$data_type  = $field->get_data_type();
 
 			// = or IN.
-			if ( isset( $qv[ $key ] ) && 'any' !== $qv[ $key ] ) {
+			if ( array_key_exists( $key, $qv ) && 'any' !== $qv[ $key ] ) {
 
-				if ( is_array( $qv[ $key ] ) ) {
+				if ( is_null( $qv[ $key ] ) ) {
+					$this->query_where .= " AND $field_name IS NULL";
+				} elseif ( is_array( $qv[ $key ] ) ) {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ $key ] ) ) . "'";
 					$this->query_where .= " AND $field_name IN ($enums)";
 				} else {
@@ -883,9 +885,11 @@ class Query {
 			}
 
 			// != or NOT IN.
-			if ( isset( $qv[ "{$key}_not" ] ) ) {
+			if ( array_key_exists( "{$key}_not", $qv ) ) {
 
-				if ( is_array( $qv[ "{$key}_not" ] ) ) {
+				if ( is_null( $qv[ "{$key}_not" ] ) ) {
+					$this->query_where .= " AND $field_name IS NOT NULL";
+				} elseif ( is_array( $qv[ "{$key}_not" ] ) ) {
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ "{$key}_not" ] ) ) . "'";
 					$this->query_where .= " AND $field_name NOT IN ($enums)";
 				} else {
