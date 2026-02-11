@@ -88,7 +88,7 @@ class Query {
 	 * Contains the 'FIELDS' sql clause
 	 *
 	 * @since 1.0.0
-	 * @var string
+	 * @var string[]
 	 */
 	public $query_fields;
 
@@ -544,12 +544,18 @@ class Query {
 			foreach ( wp_parse_list( $qv['extra_fields'] ) as $field ) {
 
 				// Ensure the field is supported.
-				$field = $this->prefix_field( esc_sql( $field ) );
-				if ( empty( $field ) ) {
+				$table_field = $this->prefix_field( esc_sql( $field ) );
+				if ( empty( $table_field ) ) {
 					throw new Store_Exception( 'query_invalid_field', 'Invalid extra field.' );
 				}
 
-				$this->query_fields[] = $field;
+				// Skip if the extra field is already included in the query fields (e.g. as a groupby field).
+				if ( in_array( $table_field . ' AS `' . $field . '`', $this->query_fields, true ) ) {
+					continue;
+				}
+
+				// Bypass MySQL ONLY_FULL_GROUP_BY mode by selecting any value for non-aggregated fields that are not in the GROUP BY clause.
+				$this->query_fields[] = sprintf( 'ANY_VALUE(%s) as `%s`', $table_field, esc_sql( str_replace( '.', '_', $field ) ) );
 			}
 		}
 
@@ -559,11 +565,6 @@ class Query {
 		}
 
 		$this->query_fields = implode( ', ', array_unique( (array) $this->query_fields ) );
-
-		// Check if we need to count the total number of items for aggregate queries.
-		if ( ! empty( $qv['per_page'] ) ) {
-			$this->count_field = sprintf( "DISTINCT COUNT(%s)", esc_sql( $this->prefix_field( 'id' ) ) );
-		}
 	}
 
 	/**
@@ -1151,6 +1152,10 @@ class Query {
 			$args['page'] = $args['paged'];
 		}
 
+		if ( ! empty( $args['group_by'] ) ) {
+			$args['groupby'] = $args['group_by'];
+		}
+
 		// Default to ordering by ID ascending when not an aggregate query.
 		if ( empty( $args['aggregate'] ) ) {
 			$defaults['orderby'] = array( 'id' );
@@ -1325,8 +1330,8 @@ class Query {
 			$this->aggregate = $wpdb->get_results( $this->request ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 			// Calculate total results if requested (without ORDER BY, and LIMIT).
-			if ( ! empty( $this->count_field ) ) {
-				$this->total_results = (int) $wpdb->get_var( "SELECT $this->count_field $this->query_from $this->query_join $this->query_where $this->query_groupby" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			if ( ! empty( $this->query_vars['count_total_aggregate_results'] ) ) {
+				$this->total_results = (int) $wpdb->get_var( "SELECT COUNT(*) AS total_rows FROM (SELECT $this->query_fields $this->query_from $this->query_join $this->query_where $this->query_groupby) as grouped_results;" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			}
 		}
 	}
