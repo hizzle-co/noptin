@@ -131,10 +131,16 @@ class Actions {
 
 		$destination = str_replace( array( '#038;', '&#38;', '&amp;' ), '&', rawurldecode( $recipient['to'] ) );
 
+		// Remove the utm tracking parameters from the destination URL.
+		$prepared_destination = remove_query_arg(
+			array( 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content' ),
+			$destination
+		);
+
 		// If we have a campaign....
 		if ( ! empty( Main::$current_email ) ) {
 			if ( ! empty( $recipient['subscriber'] ) ) {
-				log_noptin_subscriber_campaign_click( $recipient['subscriber'], Main::$current_email->id, $destination );
+				log_noptin_subscriber_campaign_click( $recipient['subscriber'], Main::$current_email->id, $prepared_destination );
 			} elseif ( ! empty( $recipient['email'] ) ) {
 				$clicks = get_post_meta( Main::$current_email->id, '_noptin_clicks_emails', true );
 
@@ -151,7 +157,7 @@ class Actions {
 
 			// Log the click.
 			if ( ! empty( $recipient['email'] ) ) {
-				Logs\Main::create( 'click', Main::$current_email->id, $recipient['email'], $destination );
+				Logs\Main::create( 'click', Main::$current_email->id, $recipient['email'], $prepared_destination );
 			}
 		}
 

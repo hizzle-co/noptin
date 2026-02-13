@@ -222,34 +222,6 @@ class Menu {
 				'label'    => __( 'General', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'track_campaign_stats'      => array(
-						'label'       => __( 'Show campaign stats', 'newsletter-optin-box' ),
-						'description' => __( 'Enable this to display opens and clicks on campaigns that you send.', 'newsletter-optin-box' ),
-						'type'        => 'checkbox_alt',
-						'el'          => 'input',
-						'default'     => true,
-					),
-					'enable_ecommerce_tracking' => array(
-						'label'            => __( 'Enable E-commerce Tracking', 'newsletter-optin-box' ),
-						'description'      => __( 'Enable this to track revenue collected per email campaign.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
-							'<a href="%s" target="_blank">%s</a>',
-							noptin_get_upsell_url( '/pricing', 'settings', 'ecommerce-tracking' ),
-							__( 'Activate your license key to unlock', 'newsletter-optin-box' )
-						) ),
-						'type'             => 'checkbox_alt',
-						'el'               => 'input',
-						'default'          => noptin_has_alk(),
-						'customAttributes' => array(
-							'disabled' => ! noptin_has_alk(),
-						),
-						'conditions'       => array(
-							array(
-								'key'      => 'track_campaign_stats',
-								'operator' => '==',
-								'value'    => true,
-							),
-						),
-					),
 					'allow_editors'             => array(
 						'label'       => __( 'Allow editors', 'newsletter-optin-box' ),
 						'description' => __( 'Allow editors to access and manage Noptin.', 'newsletter-optin-box' ),
@@ -363,10 +335,6 @@ class Menu {
 			),
 
 		);
-
-		if ( ! noptin_supports_ecommerce_tracking() ) {
-			unset( $settings['general']['settings']['enable_ecommerce_tracking'] );
-		}
 
 		$integration_settings = apply_filters( 'noptin_get_integration_settings', array() );
 		ksort( $integration_settings );

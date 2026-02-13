@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.1.8 =
+* Add: Automatically add UTM parameters to newsletter links for better tracking in Plausible and Google Analytics.
+
 = 4.1.7 =
 * Add: See which links in your newsletters are getting the most clicks.
 

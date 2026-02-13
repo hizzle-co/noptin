@@ -85,7 +85,7 @@ class Generator {
 	/**
 	 * The campaign for this email.
 	 *
-	 * @var Hizzle\Noptin\Emails\Email
+	 * @var Email
 	 */
 	public $campaign;
 
@@ -113,7 +113,7 @@ class Generator {
 	 * Generates the email's content.
 	 *
 	 * @param array $args
-	 * @return string|WP_Error
+	 * @return string|\WP_Error
 	 */
 	public function generate( $args = array() ) {
 
@@ -377,6 +377,9 @@ class Generator {
 
 			// Restore hrefs.
 			array( $this, 'restore_hrefs' ),
+
+			// Add UTM parameters.
+			array( $this, 'add_utm_parameters' ),
 
 			// Make links trackable.
 			array( $this, 'make_links_trackable' ),
@@ -866,6 +869,116 @@ class Generator {
 		$content = str_replace( '"http://https://', '"https://', $content );
 		$content = str_replace( '"https://http://', '"http://', $content );
 		return $content;
+	}
+
+	/**
+	 * Adds UTM parameters to links in the email.
+	 *
+	 * @param string $content The email content.
+	 * @return string
+	 */
+	public function add_utm_parameters( $content ) {
+
+		// Abort if globally disabled.
+		if ( ! get_noptin_option( 'add_utm_params', true ) ) {
+			return $content;
+		}
+
+		// Check if UTM parameters are disabled for this campaign.
+		if ( $this->campaign instanceof Email && $this->campaign->get( 'disable_utm_params' ) ) {
+			return $content;
+		}
+
+		// Replace URLs with new ones that include UTM parameters.
+		$_content = preg_replace_callback(
+			'/<a(.*?)href=["\'](.*?)["\'](.*?)>/mi',
+			array( $this, 'add_utm_parameters_callback' ),
+			$content
+		);
+
+		// Abort if the preg_replace failed.
+		if ( empty( $_content ) ) {
+			return $content;
+		}
+
+		return $_content;
+	}
+
+	/**
+	 * Callback for adding UTM parameters to links.
+	 *
+	 * @param array $matches
+	 * @return string
+	 */
+	public function add_utm_parameters_callback( $matches ) {
+
+		// Get the URL.
+		$url = str_replace( '&amp;', '&', $matches[2] );
+
+		// Skip non-http(s) URLs and action page URLs.
+		if ( ! preg_match( '/^https?:\/\//i', $url ) || false !== strpos( $url, 'noptin_ns' ) ) {
+			return $matches[0];
+		}
+
+		// Get UTM parameters.
+		$utm_params = $this->get_utm_params();
+
+		// Skip if no UTM parameters to add.
+		if ( empty( $utm_params ) ) {
+			return $matches[0];
+		}
+
+		// Parse the URL.
+		$query = wp_parse_url( $url, PHP_URL_QUERY );
+
+		// Parse existing query string.
+		$query_params = array();
+		if ( ! empty( $query ) ) {
+			wp_parse_str( $query ?? '', $query_params );
+		}
+
+		// Only add UTM parameters that are not already present.
+		$params_to_add = array_diff_key( $utm_params, $query_params );
+
+		// If no params to add, return original.
+		if ( empty( $params_to_add ) ) {
+			return $matches[0];
+		}
+
+		// Add the new parameters to the URL.
+		$url = sanitize_url( add_query_arg( $params_to_add, $url ) );
+
+		// Return the modified anchor tag.
+		$pre  = $matches[1];
+		$post = $matches[3];
+		return "<a $pre href='$url' $post >";
+	}
+
+	/**
+	 * Gets UTM parameters for the current campaign.
+	 *
+	 * @return array
+	 */
+	private function get_utm_params() {
+
+		// Default UTM parameters.
+		$utm_params = array(
+			'utm_source' => 'noptin',
+			'utm_medium' => 'email',
+		);
+
+		// Check for campaign-specific overrides.
+		if ( $this->campaign instanceof Email ) {
+			$utm_params['utm_campaign'] = $this->campaign->name;
+
+			foreach ( $this->campaign->options as $key => $value ) {
+				if ( strpos( $key, 'utm_' ) === 0 && ! empty( $value ) ) {
+					$utm_params[ $key ] = $value;
+				}
+			}
+		}
+
+		return array_map( 'rawurlencode', array_filter( $utm_params ) );
 	}
 
 	/**

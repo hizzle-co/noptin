@@ -422,6 +422,8 @@ class Main {
 					'from_email'   => get_noptin_option( 'from_email', '' ),
 					'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
 					'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
+					'utm_enabled'  => get_noptin_option( 'add_utm_params', true ),
+					'utm_docs_url' => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
 					'senders'      => array_merge(
 						array(
 							'manual_recipients' => array(
@@ -642,7 +644,7 @@ class Main {
 	public static function email_settings( $settings ) {
 		$double_optin = get_default_noptin_subscriber_double_optin_email();
 
-		return array_merge(
+		$settings = array_merge(
 			$settings,
 			array(
 				'general_email_info'  => array(
@@ -688,6 +690,56 @@ class Main {
 								'prefix' => __( 'After', 'newsletter-optin-box' ),
 								'suffix' => array( __( 'day', 'newsletter-optin-box' ), __( 'days', 'newsletter-optin-box' ) ),
 							),
+						),
+					),
+				),
+
+				'tracking_email_info' => array(
+					'el'       => 'settings_group',
+					'label'    => __( 'Tracking', 'newsletter-optin-box' ),
+					'section'  => 'emails',
+					'settings' => array(
+						'track_campaign_stats'      => array(
+							'label'       => __( 'Track campaign performance', 'newsletter-optin-box' ),
+							'description' => __( 'See how subscribers interact with your emails via opens and clicks.', 'newsletter-optin-box' ),
+							'type'        => 'checkbox_alt',
+							'el'          => 'input',
+							'default'     => true,
+						),
+						'enable_ecommerce_tracking' => array(
+							'label'            => __( 'Track e-commerce revenue', 'newsletter-optin-box' ),
+							'description'      => __( 'Measure exactly how much revenue each email generates.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
+								'<a href="%s" target="_blank">%s</a>',
+								noptin_get_upsell_url( '/pricing', 'settings', 'ecommerce-tracking' ),
+								__( 'Activate your license key to unlock', 'newsletter-optin-box' )
+							) ),
+							'type'             => 'checkbox_alt',
+							'el'               => 'input',
+							'default'          => noptin_has_alk(),
+							'customAttributes' => array(
+								'disabled' => ! noptin_has_alk(),
+							),
+							'conditions'       => array(
+								array(
+									'key'      => 'track_campaign_stats',
+									'operator' => '==',
+									'value'    => true,
+								),
+							),
+						),
+
+						'add_utm_params'            => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'section'     => 'emails',
+							'label'       => __( 'Auto-tag links (UTM)', 'newsletter-optin-box' ),
+							'description' => sprintf(
+								'%s <a href="%s" target="_blank">%s</a>',
+								__( 'Add UTM parameters so you can track traffic sources in analytics tools.', 'newsletter-optin-box' ),
+								noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
+								__( 'Learn more', 'newsletter-optin-box' )
+							),
+							'default'     => true,
 						),
 					),
 				),
@@ -880,5 +932,11 @@ class Main {
 				),
 			)
 		);
+
+		if ( ! noptin_supports_ecommerce_tracking() ) {
+			unset( $settings['tracking_email_info']['settings']['enable_ecommerce_tracking'] );
+		}
+
+		return $settings;
 	}
 }
