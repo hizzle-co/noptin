@@ -178,6 +178,32 @@ class Generic_Post_Type extends Post_Type {
 		// If date query is specified, ensure it is enabled.
 		$filters = $this->prepare_date_query_filter( $filters );
 
+		// Treat cf_* filters as post meta queries.
+		$meta_query = array();
+		if ( ! empty( $filters['meta_query'] ) && is_array( $filters['meta_query'] ) ) {
+			$meta_query = $filters['meta_query'];
+		}
+
+		foreach ( $filters as $key => $value ) {
+			if ( 0 === strpos( $key, 'cf_' ) ) {
+				$meta_key = substr( $key, 3 );
+
+				if ( '' !== $meta_key && '' !== $value && ! is_null( $value ) ) {
+					$meta_query[] = array(
+						'key'     => $meta_key,
+						'value'   => $value,
+						'compare' => is_array( $value ) ? 'IN' : '=',
+					);
+				}
+
+				unset( $filters[ $key ] );
+			}
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			$filters['meta_query'] = $meta_query;
+		}
+
 		if ( ! empty( $filters['lang'] ) ) {
 			$code            = noptin_convert_language_locale_to_slug( $filters['lang'] );
 			$filters['lang'] = empty( $code ) ? substr( $filters['lang'], 0, 2 ) : $code;
