@@ -48,6 +48,7 @@ class ScriptManager {
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_collection' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'preload_settings' ), 1000 );
 		do_action( 'hizzlewp_scripts_init' );
 	}
 
@@ -121,6 +122,40 @@ class ScriptManager {
 					add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
 				}
 			}
+		}
+	}
+
+	/**
+	 * Preloads the settings API.
+	 */
+	public static function preload_settings() {
+		if ( wp_script_is( 'hizzlewp-settings', 'enqueued' ) ) {
+			wp_add_inline_script(
+				'wp-api-fetch',
+				sprintf(
+					'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+					wp_json_encode(
+						array_reduce(
+							array(
+								'/wp/v2/settings',
+								array( '/wp/v2/settings', 'OPTIONS' ),
+							),
+							'rest_preload_api_request',
+							array()
+						)
+					)
+				),
+				'after'
+			);
+
+			wp_add_inline_script(
+				'wp-api-fetch',
+				sprintf(
+					'window.hizzleWPHomeURL="%s"',
+					esc_url( home_url() )
+				),
+				'before'
+			);
 		}
 	}
 
