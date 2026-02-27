@@ -141,7 +141,6 @@ class Generic_Post extends Record {
 
 		// Excerpt.
 		if ( 'excerpt' === strtolower( $field ) ) {
-
 			if ( ! isset( $args['words'] ) ) {
 				$args['words'] = 20;
 			}
@@ -149,7 +148,7 @@ class Generic_Post extends Record {
 			// Are we limiting the excerpt length?
 			if ( ! empty( $args['words'] ) ) {
 				$this->excerpt_length = (int) $args['words'];
-				add_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
+				add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), PHP_INT_MAX );
 			}
 
 			// Prevent wp_rss_aggregator from appending the feed name to excerpts.
@@ -164,8 +163,13 @@ class Generic_Post extends Record {
 				\WPBMap::addAllMappedShortcodes();
 			}
 
-			// Apply filters and strip tags
+			// Apply filters and strip tags.
 			$excerpt = wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
+
+			// Ensure manual excerpts do not exceed the max word count.
+			if ( ! empty( $args['words'] ) ) {
+				$excerpt = wp_trim_words( $excerpt, (int) $args['words'], '' );
+			}
 
 			if ( false !== $wp_rss_aggregator_fix ) {
 				add_filter( 'get_the_excerpt', 'mdwp_MarkdownPost', $wp_rss_aggregator_fix );
@@ -174,7 +178,7 @@ class Generic_Post extends Record {
 			// Remove the excerpt length filter.
 			if ( ! empty( $args['words'] ) ) {
 				$this->excerpt_length = null;
-				remove_filter( 'excerpt_length', array( $this, 'excerpt_length' ) );
+				remove_filter( 'excerpt_length', array( $this, 'excerpt_length' ), PHP_INT_MAX );
 			}
 
 			return $excerpt;
