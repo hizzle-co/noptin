@@ -164,7 +164,10 @@ class Generic_Post extends Record {
 			}
 
 			// Apply filters and strip tags.
-			$excerpt = wp_strip_all_tags( apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ) );
+			$excerpt = wp_strip_all_tags(
+				apply_filters( 'the_excerpt', get_the_excerpt( $this->external ) ),
+				true
+			);
 
 			// Ensure manual excerpts do not exceed the max word count.
 			if ( ! empty( $args['words'] ) ) {
