@@ -16,13 +16,6 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	/**
-	 * The installer.
-	 *
-	 * @var Installer
-	 */
-	public $installer;
-
-	/**
 	 * The data store.
 	 *
 	 * @var \Hizzle\Store\Store
@@ -99,9 +92,6 @@ class Main {
 	public function load() {
 
 		do_action( 'noptin_db_before_init', $this );
-
-		// The installer.
-		$this->installer = new Installer();
 
 		// Init the data store.
 		$this->store = \Hizzle\Store\Store::init( 'noptin', apply_filters( 'noptin_db_schema', array() ) );

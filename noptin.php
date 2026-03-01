@@ -306,9 +306,6 @@ class Noptin {
 		// Set up localisation.
 		add_action( 'init', array( $this, 'load_plugin_textdomain' ), 1 );
 
-		// (Maybe) upgrade the database;
-		add_action( 'noptin_db_before_init', array( $this, 'maybe_upgrade_db' ) );
-
 		// css body class.
 		add_filter( 'body_class', array( $this, 'body_class' ) );
 
@@ -413,24 +410,6 @@ class Noptin {
 	public function body_class( $classes ) {
 		$classes['noptin'] = 'noptin';
 		return $classes;
-	}
-
-	/**
-	 * Runs installation
-	 *
-	 * @since 1.0.5
-	 * @access public
-	 */
-	public function maybe_upgrade_db() {
-
-		$installed_version = absint( get_option( 'noptin_db_version', 0 ) );
-
-		// Upgrade db if installed version of noptin is lower than current version
-		if ( $installed_version < $this->db_version ) {
-			new Noptin_Install( $installed_version, $this->db_version );
-
-			do_action( 'noptin_upgrade_db', $installed_version, $this->db_version );
-		}
 	}
 
 	/**

@@ -27,6 +27,9 @@ class Main {
 			Menu::init();
 		}
 
+		// Install the database.
+		Installer::init();
+
 		// Install and activate plugins.
 		add_action( 'wp_ajax_noptin_onboarding_ajax_install_plugin', 'wp_ajax_install_plugin' );
 		add_action( 'wp_ajax_noptin_onboarding_ajax_activate_plugin', 'wp_ajax_activate_plugin' );
