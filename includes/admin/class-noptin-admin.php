@@ -117,6 +117,9 @@ class Noptin_Admin {
 		// (maybe) do an action.
 		add_action( 'admin_init', array( $this, 'maybe_do_action' ) );
 
+		// (Maybe) schedule a cron that runs daily.
+		add_action( 'admin_init', array( __CLASS__, 'maybe_create_scheduled_event' ) );
+
 		// Display notices.
 		add_action( 'admin_notices', array( $this, 'show_notices' ) );
 
@@ -130,6 +133,18 @@ class Noptin_Admin {
 		 * @param array $this The admin instance
 		 */
 		do_action( 'noptin_after_admin_init_hooks', $this );
+	}
+
+	/**
+	 * Schedules a cron to run every day at 7 a.m
+	 *
+	 */
+	public static function maybe_create_scheduled_event() {
+
+		if ( ! wp_next_scheduled( 'noptin_daily_maintenance' ) ) {
+			$timestamp = strtotime( 'tomorrow 07:00:00', time() );
+			wp_schedule_event( $timestamp, 'daily', 'noptin_daily_maintenance' );
+		}
 	}
 
 	/**

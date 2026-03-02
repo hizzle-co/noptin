@@ -20,6 +20,9 @@ class Main {
 	 * @since 3.0.0
 	 */
 	public static function init() {
+		// Load functions.
+		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
+
 		add_action( 'noptin_init', __CLASS__ . '::register_objects' );
 		add_filter( 'noptin_automation_rule_migrate_triggers', __CLASS__ . '::migrate_triggers' );
 		add_filter( 'noptin_subscriber_should_fire_has_changes_hook', __CLASS__ . '::should_fire_has_changes_hook', 10, 2 );

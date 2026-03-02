@@ -277,7 +277,7 @@ class Users extends People {
 	 * Retrieves newsletter recipients.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Email $email
-	 * @return int[] $subscribers The subscriber IDs.
+	 * @return int[] $recipients The recipient IDs.
 	 */
 	public function get_batched_newsletter_recipients( $options, $email, $batch_size, $offset ) {
 		// Prepare arguments.

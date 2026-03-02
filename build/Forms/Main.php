@@ -41,7 +41,7 @@ class Main {
 		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
 
 		// Load modules.
-		self::$listener = new Listener();
+		self::$listener   = new Listener();
 		self::$smart_tags = new Smart_Tags();
 
 		// Register widgets.
@@ -251,8 +251,8 @@ class Main {
 
 		$default_form = include plugin_dir_path( __FILE__ ) . 'Admin/default-form.php';
 		$new_form     = new Form(
-				array_merge(
-					array(
+			array_merge(
+				array(
 					'optinName' => __( 'Newsletter Subscription Form', 'newsletter-optin-box' ),
 				),
 				$default_form

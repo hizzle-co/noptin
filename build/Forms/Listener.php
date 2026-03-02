@@ -89,6 +89,9 @@ class Listener {
 		add_action( 'wp_ajax_noptin_process_ajax_subscriber', array( $this, 'ajax_add_subscriber' ) );
 		add_action( 'wp_ajax_nopriv_noptin_process_ajax_subscriber', array( $this, 'ajax_add_subscriber' ) );
 
+		// User is subscribing via custom forms.
+		add_action( 'init', array( __CLASS__, 'listen_to_custom_forms' ), 1000 );
+
 		// Log form impressions.
 		add_action( 'wp_ajax_noptin_log_form_impression', array( __CLASS__, 'log_form_impression' ) );
 		add_action( 'wp_ajax_nopriv_noptin_log_form_impression', array( __CLASS__, 'log_form_impression' ) );
@@ -339,7 +342,7 @@ class Listener {
 		}
 
 		// Finally, add connection data.
-		$subscriber = \Noptin_Hooks::add_connections( $subscriber, $this->get_cached( null, array() ) );
+		$subscriber = self::add_connections( $subscriber, $this->get_cached( null, array() ) );
 
 		/**
 		 * Filters subscriber details when adding a new subscriber via a noptin form.
@@ -799,6 +802,102 @@ class Listener {
 
 		// Send back the result.
 		wp_send_json( $this->get_response_json() );
+	}
+
+	/**
+	 * Subscribes users from custom integration.
+	 */
+	public static function listen_to_custom_forms() {
+
+		$submitted = wp_unslash( array_merge( (array) $_GET, (array) $_POST ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$checked   = $submitted['noptin-custom-subscribe'] ?? '';
+
+		// Abort if no subscription was attempted.
+		if ( ! in_array( $checked, array( 1, '1', 'yes', true, 'true', 'y', 'on' ), true ) || apply_filters( 'noptin_skip_custom_subscribe', false ) ) {
+			return;
+		}
+
+		// Guess core subscriber fields.
+		$data = self::guess_fields( $submitted );
+
+		// Add connection data.
+		$data = self::add_connections( $data, $submitted );
+
+		// Save the subscriber.
+		add_noptin_subscriber( map_deep( $data, 'esc_html' ) );
+	}
+
+	/**
+	 * Guesses subscriber fields.
+	 *
+	 * @param array $fields
+	 */
+	public static function guess_fields( $fields ) {
+
+		if ( ! is_array( $fields ) ) {
+			return array();
+		}
+
+		$guessed   = array();
+		$guessable = array(
+			'firstname'     => 'first_name',
+			'fname'         => 'first_name',
+			'secondname'    => 'last_name',
+			'lastname'      => 'last_name',
+			'lname'         => 'last_name',
+			'name'          => 'name',
+			'fullname'      => 'name',
+			'familyname'    => 'last_name',
+			'displayname'   => 'name',
+			'emailaddress'  => 'email',
+			'email'         => 'email',
+			'subscribedvia' => 'source',
+			'source'        => 'source',
+		);
+
+		// Add custom fields to the guessable list.
+		foreach ( get_noptin_custom_fields() as $custom_field ) {
+			$label_key = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $custom_field['label'] ) );
+			$merge_key = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $custom_field['merge_tag'] ) );
+
+			$guessable[ $merge_key ] = $custom_field['merge_tag'];
+			$guessable[ $label_key ] = $custom_field['merge_tag'];
+
+			$guessable[ 'cf' . $merge_key ] = $custom_field['merge_tag'];
+			$guessable[ 'cf' . $label_key ] = $custom_field['merge_tag'];
+		}
+
+		// Allow guessing with subscriber_ and noptin_ prefixes, e.g, subscriber_email, noptin_email etc.
+		foreach ( array_keys( $guessable ) as $key ) {
+			$guessable[ "subscriber$key" ] = $guessable[ $key ];
+			$guessable[ "noptin$key" ]     = $guessable[ $key ];
+		}
+
+		// Prepare subscriber fields.
+		foreach ( $fields as $key => $value ) {
+			$sanitized = strtolower( preg_replace( '/[^A-Za-z0-9]/', '', $key ) );
+
+			if ( isset( $guessable[ $sanitized ] ) && ! isset( $guessed[ $guessable[ $sanitized ] ] ) ) {
+				$guessed[ $guessable[ $sanitized ] ] = $value;
+			}
+		}
+
+		return $guessed;
+	}
+
+	/**
+	 * Adds connection details.
+	 *
+	 * @param array $data
+	 * @param array $submitted
+	 */
+	public static function add_connections( $data, $submitted ) {
+
+		if ( ! is_array( $submitted ) ) {
+			return;
+		}
+
+		return apply_filters( 'noptin_submitted_data_add_connections', $data, $submitted );
 	}
 
 	/**
