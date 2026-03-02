@@ -104,7 +104,7 @@ function noptin_convert_html_to_text( $html ) {
 	}
 
 	try {
-		$converter = new Noptin_HTML_Text( $html );
+		$converter = new \Hizzle\Noptin\Emails\Generate\HTML_To_Text( $html );
 		return $converter->getText();
 	} catch ( Exception $e ) {
 		return wp_strip_all_tags( $html );
