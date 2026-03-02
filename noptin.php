@@ -6,9 +6,9 @@
  * Simple WordPress optin form
  *
  *
- * Plugin Name:     Noptin - WordPress Newsletter Plugin
+ * Plugin Name:     Noptin
  * Plugin URI:      https://noptin.com
- * Description:     A very fast and lightweight WordPress newsletter plugin
+ * Description:     A very fast and lightweight WordPress marketing automation plugin
  * Author:          Noptin Newsletter
  * Author URI:      https://github.com/picocodes
  * Version:         4.1.8

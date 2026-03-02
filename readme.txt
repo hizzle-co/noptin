@@ -1,4 +1,4 @@
-=== Newsletter & Automation Plugin - Noptin ===
+=== Simple Newsletter Plugin - Noptin ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
