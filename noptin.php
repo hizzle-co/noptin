@@ -209,11 +209,6 @@ class Noptin {
 		// Load files / register the autoloader.
 		$this->load_files();
 
-		// If autoloading failed.
-		if ( ! class_exists( 'Noptin_Hooks' ) ) {
-			return;
-		}
-
 		// Set up globals.
 		$this->setup_globals();
 
