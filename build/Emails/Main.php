@@ -9,6 +9,8 @@
 
 namespace Hizzle\Noptin\Emails;
 
+use Hizzle\Noptin\Emails\Types\Type;
+
 defined( 'ABSPATH' ) || exit;
 
 /**

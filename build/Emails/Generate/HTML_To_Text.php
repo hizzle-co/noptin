@@ -22,7 +22,7 @@
 namespace Hizzle\Noptin\Emails\Generate;
 
 class HTML_To_Text {
-	public const ENCODING = 'UTF-8';
+	const ENCODING = 'UTF-8';
 
 	/**
 	 * Contains the HTML content to convert.
@@ -328,7 +328,7 @@ class HTML_To_Text {
 		$this->convertPre( $text );
 		$text = preg_replace( $this->search, $this->replace, $text );
 		$text = preg_replace_callback( $this->callbackSearch, array( $this, 'pregCallback' ), $text );
-		$text = strip_tags( $text );
+		$text = wp_strip_all_tags( $text );
 		$text = preg_replace( $this->entSearch, $this->entReplace, $text );
 		$text = html_entity_decode( $text, ENT_QUOTES | ENT_HTML5, self::ENCODING );
 
@@ -389,7 +389,7 @@ class HTML_To_Text {
 		}
 
 		if ( 'table' === $linkMethod ) {
-			$index = array_search( $url, $this->linkList );
+			$index = array_search( $url, $this->linkList, true );
 
 			if ( false === $index ) {
 				$index            = count( $this->linkList );
@@ -467,9 +467,7 @@ class HTML_To_Text {
 					--$level;
 					if ( 0 > $level ) {
 						$level = 0; // malformed HTML: go to next blockquote
-					} elseif ( 0 < $level ) {
-						// skip inner blockquote
-					} else {
+					} elseif ( 0 === $level ) {
 						$end = $m[1];
 						$len = $end - $taglen - $start;
 						// Get blockquote content
@@ -556,7 +554,7 @@ class HTML_To_Text {
 	 * @param  array  $matches PREG matches
 	 * @return string
 	 */
-	protected function pregPreCallback( /** @noinspection PhpUnusedParameterInspection */ $matches ) {
+	protected function pregPreCallback( $matches ) {
 		return $this->preContent;
 	}
 
@@ -601,8 +599,10 @@ class HTML_To_Text {
 	 * @return string Converted text
 	 */
 	protected function tostrike( $str ) {
-		$rtn = '';
-		for ( $i = 0; $i < mb_strlen( $str ); $i++ ) {
+		$rtn    = '';
+		$strlen = mb_strlen( $str );
+
+		for ( $i = 0; $i < $strlen; $i++ ) {
 			$chr          = mb_substr( $str, $i, 1 );
 			$combiningChr = chr( 0xC0 | 0x336 >> 6 ) . chr( 0x80 | 0x336 & 0x3F );
 			$rtn         .= $chr . $combiningChr;

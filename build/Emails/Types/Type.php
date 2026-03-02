@@ -7,7 +7,7 @@
  * @package Noptin
  */
 
-namespace Hizzle\Noptin\Emails;
+namespace Hizzle\Noptin\Emails\Types;
 
 defined( 'ABSPATH' ) || exit;
 

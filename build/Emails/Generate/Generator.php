@@ -8,7 +8,7 @@
  * @package Noptin
  */
 
-namespace Hizzle\Noptin\Emails;
+namespace Hizzle\Noptin\Emails\Generate;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
