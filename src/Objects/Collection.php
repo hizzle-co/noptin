@@ -777,6 +777,40 @@ abstract class Collection {
 	}
 
 	/**
+	 * Prepares a meta query filter.
+	 *
+	 * @param array $filters The filters.
+	 */
+	protected function prepare_meta_query_filter( $filters ) {
+		$meta_query = array();
+		if ( ! empty( $filters['meta_query'] ) && is_array( $filters['meta_query'] ) ) {
+			$meta_query = $filters['meta_query'];
+		}
+
+		foreach ( $filters as $key => $value ) {
+			if ( 0 === strpos( $key, 'meta.' ) ) {
+				$meta_key = substr( $key, 5 );
+
+				if ( '' !== $meta_key && '' !== $value && ! is_null( $value ) ) {
+					$meta_query[] = array(
+						'key'     => $meta_key,
+						'value'   => $value,
+						'compare' => is_array( $value ) ? 'IN' : '=',
+					);
+				}
+
+				unset( $filters[ $key ] );
+			}
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			$filters['meta_query'] = $meta_query;
+		}
+
+		return $filters;
+	}
+
+	/**
 	 * Generates taxonomy filters.
 	 *
 	 * @param string $post_type The post type.
