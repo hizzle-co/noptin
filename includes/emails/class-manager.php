@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 #[AllowDynamicProperties]
 class Noptin_Email_Manager {
 
-	/** @var Noptin_Email_Tags */
+	/** @var \Hizzle\Noptin\Emails\Merge_Tags */
 	public $tags;
 
 	/** @var Noptin_Automated_Email_Types */
@@ -60,7 +60,7 @@ class Noptin_Email_Manager {
 	 * Init class properties.
 	 */
 	public function init() {
-		$this->tags                  = new Noptin_Email_Tags();
+		$this->tags                  = new \Hizzle\Noptin\Emails\Merge_Tags();
 		$this->automated_email_types = new Noptin_Automated_Email_Types();
 
 		do_action( 'noptin_email_manager_init', $this );

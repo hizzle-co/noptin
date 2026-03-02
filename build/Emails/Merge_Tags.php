@@ -1,12 +1,12 @@
 <?php
 /**
- * Forms API: Dynamic Email Tags.
- *
- * Allows users to use dynamic tags in emails.
+ * Allows users to use merge tags in emails.
  *
  * @since   1.7.0
  * @package Noptin
  */
+
+namespace Hizzle\Noptin\Emails;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -19,10 +19,12 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.7.0
  * @ignore
  */
-class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
+class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 
 	/**
-	 * @var Noptin_Automation_Rules_Smart_Tags|Noptin_Automation_Rules_Smart_Tags[]|null $smart_tags
+	 * Filled if the email was triggered by an automation rule.
+	 *
+	 * @var \Noptin_Automation_Rules_Smart_Tags|\Noptin_Automation_Rules_Smart_Tags[]|null $smart_tags
 	 */
 	public $smart_tags = null;
 
@@ -393,7 +395,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 
 			if ( $last_send ) {
 				if ( is_numeric( $last_send ) ) {
-					$last_send = new DateTime( "@$last_send" );
+					$last_send = new \DateTime( "@$last_send" );
 					$last_send->setTimezone( wp_timezone() );
 					$last_send = $last_send->format( 'Y-m-d H:i' );
 				}
@@ -764,7 +766,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			array(
 				'noptin_conditional_email_content' => array( __CLASS__, 'conditional_email_content' ),
 			)
-        );
+		);
 	}
 
 	/**
@@ -773,7 +775,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 	 */
 	protected static function get_special_tags_regex( $tagnames = null ) {
 		if ( null === $tagnames ) {
-			$tagnames  = array_keys( self::get_special_tags() );
+			$tagnames = array_keys( self::get_special_tags() );
 		}
 
 		$tagregexp = implode( '|', array_map( 'preg_quote', $tagnames ) );
@@ -874,7 +876,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 			_doing_it_wrong(
 				__FUNCTION__,
 				/* translators: %s: Shortcode tag. */
-				sprintf( 'Attempting to parse a shortcode without a valid callback: %s', $tag ),
+				sprintf( 'Attempting to parse a shortcode without a valid callback: %s', esc_html( $tag ) ),
 				'4.3.0'
 			);
 			return $m[0];
@@ -932,7 +934,7 @@ class Noptin_Email_Tags extends Noptin_Dynamic_Content_Tags {
 				'{noptin_conditional_email_content enabled="true" action="%s" type="%s" rules="%s"}%s{/noptin_conditional_email_content}',
 				$action,
 				$type,
-				rawurlencode( json_encode( $is_met ) ),
+				rawurlencode( wp_json_encode( $is_met ) ),
 				$content
 			);
 		}
