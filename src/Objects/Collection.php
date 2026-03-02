@@ -597,6 +597,12 @@ abstract class Collection {
 	 */
 	public function register_object( $objects ) {
 
+		$filters = apply_filters(
+			"noptin_{$this->object_type}_collection_filters",
+			$this->get_filters(),
+			$this
+		);
+
 		$objects[ $this->type ] = array(
 			'object_type'    => $this->object_type,
 			'icon'           => $this->icon,
@@ -604,7 +610,7 @@ abstract class Collection {
 			'name'           => $this->plural_type(),
 			'label'          => $this->label,
 			'singular_label' => $this->singular_label,
-			'filters'        => (object) $this->get_filters(),
+			'filters'        => (object) $filters,
 			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
 			'template'       => (object) $this->get_list_shortcode_template(),
 			'provides'       => $this->provides,
