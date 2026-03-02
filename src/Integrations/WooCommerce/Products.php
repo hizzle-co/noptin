@@ -390,6 +390,11 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 			}
 		}
 
+		// Parse custom fields.
+		if ( is_callable( array( $this, 'prepare_meta_query_filter' ) ) ) {
+			$filters = $this->prepare_meta_query_filter( $filters );
+		}
+
 		return wc_get_products( array_filter( $filters ) );
 	}
 

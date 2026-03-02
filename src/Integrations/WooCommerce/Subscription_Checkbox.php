@@ -97,8 +97,8 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 	 */
 	public function add_checkbox_label_attributes( $attrs, $integration ) {
 		if ( $integration instanceof self ) {
-			trim(
-				'woocommerce-form__label-for-checkbox checkbox ' . ( $attrs['class'] ?? '' )
+			$attrs['class'] = trim(
+				'woocommerce-form__label woocommerce-form__label-for-checkbox checkbox ' . ( $attrs['class'] ?? '' )
 			);
 		}
 
@@ -210,7 +210,7 @@ class Subscription_Checkbox extends \Hizzle\Noptin\Integrations\Checkbox_Integra
 
 		$attributes = parent::get_checkbox_attributes();
 
-		$attributes['class'] = 'input-checkbox' . ( ! empty( $attributes['class'] ) ? ' ' . $attributes['class'] : '' );
+		$attributes['class'] = 'woocommerce-form__input woocommerce-form__input-checkbox input-checkbox' . ( ! empty( $attributes['class'] ) ? ' ' . $attributes['class'] : '' );
 
 		return $attributes;
 	}

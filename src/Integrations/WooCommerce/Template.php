@@ -49,7 +49,6 @@ class Template extends \Hizzle\Noptin\Integrations\Template_Integration {
 		remove_filter( 'woocommerce_email_footer_text', array( $this, 'email_template_add_extra_footer_text' ), 999 );
 
 		return ob_get_clean();
-
 	}
 
 	/**
