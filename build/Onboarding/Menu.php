@@ -67,6 +67,9 @@ class Menu {
 				}
 			}
 		}
+
+		// CSS fallback in case another hook re-adds the menu item later.
+		echo '<style>#adminmenu a[href="admin.php?page=noptin-setup-wizard"]{display:none!important;}</style>';
 	}
 
 	/**

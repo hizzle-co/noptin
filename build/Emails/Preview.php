@@ -80,13 +80,20 @@ class Preview {
 	 */
 	public static function admin_preview( $template ) {
 
-		// Check if we are previewing the post type noptin-campaign.
-		if ( ! is_singular( 'noptin-campaign' ) ) {
+		if ( is_singular( 'noptin-campaign' ) ) {
+			$campaign_id = get_the_ID();
+		} elseif ( 'noptin-campaign' === ( $_GET['post_type'] ?? '' ) && ! empty( $_GET['p'] ) ) {
+			$campaign_id = absint( $_GET['preview_id'] ?? $_GET['p'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		} else {
+			return $template;
+		}
+
+		if ( empty( $campaign_id ) || 'noptin-campaign' !== get_post_type( $campaign_id ) ) {
 			return $template;
 		}
 
 		// Ensure the current user can edit it.
-		if ( ! current_user_can( 'edit_post', get_the_ID() ) ) {
+		if ( ! current_user_can( 'edit_post', $campaign_id ) ) {
 			wp_die( 'You do not have permission to view this campaign.' );
 		}
 
@@ -95,11 +102,11 @@ class Preview {
 		// Prepare the preview.
 		self::$simulation = ! empty( $_GET['noptin_simulate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		self::$mode       = 'preview';
-		self::$campaign   = new Email( get_the_ID() );
+		self::$campaign   = new Email( $campaign_id );
 		$user             = wp_get_current_user();
 		self::$user       = array(
 			'email' => $user->user_email,
-			'cid'   => get_the_ID(),
+			'cid'   => $campaign_id,
 		);
 
 		// Maybe set plain text mode.
