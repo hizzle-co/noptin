@@ -10,6 +10,8 @@
 
 namespace Hizzle\Noptin\Emails\Generate;
 
+use Hizzle\Noptin\Emails\Email;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -567,7 +569,7 @@ class Generator {
 
 				// Remove tables with .noptin-button-block__wrapper that have a child a element with an empty or missing href attribute.
 				if ( false !== strpos( $element->getAttribute( 'class' ), 'noptin-button-block__wrapper' ) ) {
-					$anchors           = $element->getElementsByTagName( 'a' );
+					$anchors = $element->getElementsByTagName( 'a' );
 
 					if ( empty( $anchors->length ) ) {
 						$element->parentNode->removeChild( $element );
@@ -711,7 +713,7 @@ class Generator {
 				// If width is a percentage, calculate the pixel value based on 600px
 				if ( strpos( $width, '%' ) !== false ) {
 					$percentage = (float) $width;
-					$width_px   = round( ($percentage / 100) * 600 );
+					$width_px   = round( ( $percentage / 100 ) * 600 );
 					$width      = $width_px . 'px';
 				}
 
@@ -753,7 +755,7 @@ class Generator {
 				// Loop over all classes.
 				foreach ( $classes as $class ) {
 					if ( isset( $all_classes[ $class ] ) ) {
-						$styled[]  = $class;
+						$styled[] = $class;
 					}
 				}
 
