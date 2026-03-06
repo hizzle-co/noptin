@@ -814,7 +814,7 @@ class Main {
 							'el'          => 'select',
 							'label'       => __( 'Email Template', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Select a template', 'newsletter-optin-box' ),
-							'options'     => get_noptin_email_templates(),
+							'options'     => get_classic_noptin_email_templates(),
 							'default'     => 'paste',
 							'tooltip'     => __( 'Select "No Template" if you are using an email templates plugin.', 'newsletter-optin-box' ),
 						),

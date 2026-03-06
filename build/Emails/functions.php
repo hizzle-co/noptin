@@ -282,12 +282,14 @@ function get_noptin_campaign_sub_types( $type ) {
 }
 
 /**
- * Returns an array of email templates.
+ * Returns an array of classic email templates.
+ *
+ * This are only used if the user is using the classic email editor.
  *
  * @since 1.7.0
  * @return array
  */
-function get_noptin_email_templates() {
+function get_classic_noptin_email_templates() {
 
 	$templates = array(
 		'default'      => __( 'No template', 'newsletter-optin-box' ),
@@ -297,6 +299,17 @@ function get_noptin_email_templates() {
 	);
 
 	return apply_filters( 'noptin_email_templates', $templates );
+}
+
+/**
+ * Returns an array of email templates.
+ *
+ * @since 1.7.0
+ * @return array
+ * @deprecated
+ */
+function get_noptin_email_templates() {
+	return get_classic_noptin_email_templates();
 }
 
 /**
@@ -401,7 +414,7 @@ function get_noptin_email_template_defaults() {
 		),
 	);
 
-	foreach ( array_keys( get_noptin_email_templates() ) as $template ) {
+	foreach ( array_keys( get_classic_noptin_email_templates() ) as $template ) {
 		if ( ! isset( $defaults[ $template ] ) ) {
 			$defaults[ $template ] = array();
 		}

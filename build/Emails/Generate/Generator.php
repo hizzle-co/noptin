@@ -42,7 +42,7 @@ class Generator {
 	/**
 	 * The template to use.
 	 *
-	 * @see get_noptin_email_templates()
+	 * @see get_classic_noptin_email_templates()
 	 * @var string
 	 */
 	public $template = 'paste';
@@ -203,7 +203,7 @@ class Generator {
 		$email    = $content;
 
 		// Ensure the chosen template is supported.
-		if ( ! array_key_exists( $template, get_noptin_email_templates() ) ) {
+		if ( ! array_key_exists( $template, get_classic_noptin_email_templates() ) ) {
 			$template       = 'none';
 			$this->template = 'none';
 		}
