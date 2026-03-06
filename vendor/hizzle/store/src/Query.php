@@ -883,7 +883,7 @@ class Query {
 			if ( array_key_exists( $key, $qv ) && 'any' !== $qv[ $key ] ) {
 
 				if ( 'id' === $key || $primary === $key || ( isset( $collection->keys['unique'] ) && in_array( $key, (array) $collection->keys['unique'], true ) ) ) {
-					if ( is_string( $qv[ $key ] ) ) { 
+					if ( is_string( $qv[ $key ] ) ) {
 						$qv[ $key ] = noptin_parse_list( $qv[ $key ], true );
 					}
 				}

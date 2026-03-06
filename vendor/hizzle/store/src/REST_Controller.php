@@ -137,7 +137,16 @@ class REST_Controller extends \WP_REST_Controller {
 					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( $this, 'delete_items' ),
 					'permission_callback' => array( $this, 'delete_items_permissions_check' ),
-					'args'                => array(),
+					'args'                => array_diff_key(
+						$collection_params,
+						array(
+							'paged'    => true,
+							'per_page' => true,
+							'offset'   => true,
+							'order'    => true,
+							'orderby'  => true,
+						)
+					),
 				),
 
 				// Schema.

@@ -656,7 +656,7 @@ class Collection {
 
 		$query_schema['exclude'] = array(
 			'description'       => __( 'Ensure result set excludes specific IDs.', 'hizzle-store' ),
-			'type'              => 'array',
+			'type'              => array( 'array', 'string' ),
 			'items'             => array(
 				'type' => 'integer',
 			),
@@ -666,7 +666,7 @@ class Collection {
 
 		$query_schema['include'] = array(
 			'description'       => __( 'Limit result set to specific ids.', 'hizzle-store' ),
-			'type'              => array( 'array' ),
+			'type'              => array( 'array', 'string' ),
 			'items'             => array(
 				'type' => 'integer',
 			),
