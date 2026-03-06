@@ -863,6 +863,15 @@ class Query {
 		$collection = $this->get_collection();
 		$all_fields = array_merge( $this->known_fields['main'], $this->known_fields['post'] );
 
+		// Fix email filter not working.
+		$primary = 'id';
+
+		if ( in_array( 'email', $all_fields, true ) ) {
+			$primary = 'email';
+		} elseif ( in_array( 'name', $all_fields, true ) ) {
+			$primary = 'name';
+		}
+
 		// Table fields.
 		foreach ( $all_fields as $key ) {
 
@@ -872,6 +881,12 @@ class Query {
 
 			// = or IN.
 			if ( array_key_exists( $key, $qv ) && 'any' !== $qv[ $key ] ) {
+
+				if ( 'id' === $key || $primary === $key || ( isset( $collection->keys['unique'] ) && in_array( $key, (array) $collection->keys['unique'], true ) ) ) {
+					if ( is_string( $qv[ $key ] ) ) { 
+						$qv[ $key ] = noptin_parse_list( $qv[ $key ], true );
+					}
+				}
 
 				if ( is_null( $qv[ $key ] ) ) {
 					$this->query_where .= " AND $field_name IS NULL";
