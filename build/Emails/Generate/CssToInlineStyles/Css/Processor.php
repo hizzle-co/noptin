@@ -1,9 +1,9 @@
 <?php
 
-namespace Hizzle\Noptin\Emails\CssToInlineStyles\Generate\Css;
+namespace Hizzle\Noptin\Emails\Generate\CssToInlineStyles\Css;
 
-use Hizzle\Noptin\Emails\CssToInlineStyles\Generate\Css\Rule\Processor as RuleProcessor;
-use Hizzle\Noptin\Emails\CssToInlineStyles\Generate\Css\Rule\Rule;
+use Hizzle\Noptin\Emails\Generate\CssToInlineStyles\Css\Rule\Processor as RuleProcessor;
+use Hizzle\Noptin\Emails\Generate\CssToInlineStyles\Css\Rule\Rule;
 
 class Processor {
 

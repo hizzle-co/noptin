@@ -1,6 +1,6 @@
 <?php
 
-namespace Hizzle\Noptin\Emails\CssToInlineStyles\Generate;
+namespace Hizzle\Noptin\Emails\Generate\CssToInlineStyles;
 
 use Symfony\Component\CssSelector\CssSelectorConverter;
 use Symfony\Component\CssSelector\Exception\ExceptionInterface;
