@@ -239,23 +239,13 @@ class Noptin_COM {
 	 */
 	public static function get_connections() {
 
-		// Read from cache.
-		$cached = get_transient( 'noptin_com_connections' );
+		$all = get_option( 'noptin_connections' );
 
-		if ( is_array( $cached ) ) {
-			return $cached;
+		if ( ! is_array( $all ) ) {
+			$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'connections.json', array( 'associative' => true ) );
 		}
 
-		// Fetch the connections.
-		$result = self::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/connections.json' ) );
-
-		if ( ! is_array( $result ) ) {
-			$result = json_decode( file_get_contents( plugin_dir_path( __FILE__ ) . 'connections.json' ) );
-		}
-
-		// Cache the connections.
-		set_transient( 'noptin_com_connections', $result, 12 * HOUR_IN_SECONDS );
-		return $result;
+		return is_array( $all ) ? $all : array();
 	}
 
 	/**

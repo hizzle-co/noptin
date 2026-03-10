@@ -29,6 +29,7 @@ class Noptin_COM_Updater {
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
 		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
+		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
 	}
 
 	/**
@@ -442,6 +443,20 @@ class Noptin_COM_Updater {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Refreshes all known connections.
+	 *
+	 */
+	public static function refresh() {
+
+		// Fetch the connections.
+		$result = \Noptin_COM::process_api_response( wp_remote_get( 'https://noptin.com/wp-content/uploads/noptin/connections.json' ) );
+		if ( is_array( $result ) ) {
+			$result = json_decode( wp_json_encode( $result ), true );
+			update_option( 'noptin_connections', $result, false );
+		}
 	}
 }
 
