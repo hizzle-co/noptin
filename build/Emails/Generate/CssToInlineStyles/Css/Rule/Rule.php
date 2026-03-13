@@ -1,6 +1,6 @@
 <?php
 
-namespace Hizzle\Noptin\Emails\Generate\Generate\CssToInlineStyles\Css\Rule;
+namespace Hizzle\Noptin\Emails\Generate\CssToInlineStyles\Css\Rule;
 
 use Symfony\Component\CssSelector\Node\Specificity;
 use Hizzle\Noptin\Emails\Generate\CssToInlineStyles\Css\Property\Property;
