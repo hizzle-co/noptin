@@ -242,7 +242,7 @@ class Noptin_COM {
 		$all = get_option( 'noptin_connections' );
 
 		if ( ! is_array( $all ) ) {
-			$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'connections.json', array( 'associative' => true ) );
+			$all = wp_json_file_decode( plugin_dir_path( __FILE__ ) . 'connections.json' );
 		}
 
 		return is_array( $all ) ? $all : array();

@@ -20,9 +20,8 @@ defined( 'ABSPATH' ) || exit;
         --wp-components-color-accent-darker-20: #b82a2c;
     }
 </style>
-<div class="wrap noptin-list">
-	<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-	<div id="noptin-misc__lists_app">
+<div class="wrap noptin-workspace">
+	<div id="noptin-workspace__app">
 		<!-- spinner -->
 		<span class="spinner" style="visibility: visible; float: none;"></span>
 		<!-- /spinner -->

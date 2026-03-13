@@ -2629,8 +2629,12 @@ function noptin_memory_exceeded() {
 		$memory_limit = '32G';
 	}
 
-	$memory_limit    = wp_convert_hr_to_bytes( $memory_limit ) * 0.90;
-	$current_memory  = memory_get_usage( true );
+	$memory_limit   = wp_convert_hr_to_bytes( $memory_limit ) * 0.90;
+	$current_memory = memory_get_usage( true );
 
 	return apply_filters( 'noptin_memory_exceeded', $current_memory >= $memory_limit );
+}
+
+function noptin_add_block_editor_body_class( $classes ) {
+	return $classes . ' block-editor-page is-fullscreen-mode';
 }

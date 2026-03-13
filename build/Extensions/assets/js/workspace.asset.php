@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('hizzlewp-interface', 'react', 'react-jsx-runtime', 'wp-api-fetch', 'wp-components', 'wp-compose', 'wp-data', 'wp-dom-ready', 'wp-element', 'wp-notices', 'wp-primitives', 'wp-url'), 'version' => '77a5d921ad107ee9d8f0');

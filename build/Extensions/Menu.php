@@ -87,28 +87,28 @@ class Menu {
 			return;
 		}
 
-		$license = \Noptin_COM::get_active_license_key( true );
-		$path    = noptin()->plugin_path . 'build/Misc/assets/';
-		$url     = noptin()->plugin_url . 'build/Misc/assets/';
-		$config  = include $path . 'js/list.asset.php';
+		add_filter( 'admin_body_class', 'noptin_add_block_editor_body_class' );
 
-		wp_enqueue_media();
-
+		$config = include plugin_dir_path( __FILE__ ) . 'assets/js/workspace.asset.php';
 		wp_enqueue_script(
-			'noptin-list',
-			$url . 'js/list.js',
+			'noptin-workspace',
+			plugins_url( 'assets/js/workspace.js', __FILE__ ),
 			$config['dependencies'],
 			$config['version'],
 			true
 		);
 
+		$license = \Noptin_COM::get_active_license_key( true );
+
 		// Localize the script.
 		$account_url = ( $license && ! is_wp_error( $license ) && ! empty( $license->account_url ) ) ? $license->account_url : 'my-account';
 		wp_localize_script(
-			'noptin-list',
-			'noptinList',
+			'noptin-workspace',
+			'noptinWorkspace',
 			array(
 				'data' => array(
+					'home_url'     => home_url(),
+					'license'      => \Noptin_COM::get_active_license_key(),
 					'isExtensions' => true,
 					'cardGroups'   => self::group_extensions( $license ),
 					'actions'      => array(
@@ -119,17 +119,18 @@ class Menu {
 							'className' => 'noptin-components-button__pink',
 						),
 					),
+					'toolkit'      => get_option( 'noptin_toolkit', array() ),
 					'brand'        => noptin()->white_label->get_details(),
 				),
 			)
 		);
 
-		wp_set_script_translations( 'noptin-list', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+		wp_set_script_translations( 'noptin-workspace', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 		// Load the css.
 		wp_enqueue_style(
-			'noptin-list',
-			$url . 'css/style-list.css',
+			'noptin-workspace',
+			plugins_url( 'assets/css/style-workspace.css', __FILE__ ),
 			array( 'wp-components' ),
 			$config['version']
 		);
@@ -309,6 +310,10 @@ class Menu {
 		}
 
 		foreach ( \Noptin_COM::get_connections() as $connection ) {
+			if ( is_array( $connection ) ) {
+				$connection = (object) $connection;
+			}
+
 			$groups['Connections'][ $connection->slug ] = array(
 				'name'        => $connection->slug,
 				'label'       => $connection->name,

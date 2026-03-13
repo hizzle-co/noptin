@@ -70,7 +70,7 @@ class Main {
 			return;
 		}
 
-		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
+		add_filter( 'admin_body_class', 'noptin_add_block_editor_body_class' );
 
 		$config = include plugin_dir_path( __DIR__ ) . 'assets/js/form-editor.asset.php';
 		wp_enqueue_script(
@@ -255,11 +255,6 @@ class Main {
 		}
 
 		return array_merge( $custom_templates, $inbuilt_templates );
-	}
-
-	public static function add_block_editor_body_class( $classes ) {
-		$classes .= ' block-editor-page is-fullscreen-mode';
-		return $classes;
 	}
 
 	/**
