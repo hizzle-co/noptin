@@ -29,6 +29,7 @@ class Noptin_COM_Helper {
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_routes' ) );
 		add_action( 'noptin_load', array( __CLASS__, 'noptin_load' ) );
+		add_filter( 'noptin_show_addons_page', array( __CLASS__, 'should_show_addons_page' ), 5 );
 
 		do_action( 'noptin_com_helper_loaded' );
 	}
@@ -387,7 +388,7 @@ class Noptin_COM_Helper {
 	 * Fires after Noptin is loaded.
 	 */
 	public static function noptin_load() {
-		if ( Noptin_COM::get_active_license_key() ) {
+		if ( ! Noptin_COM::get_active_license_key() ) {
 			return;
 		}
 
@@ -397,6 +398,25 @@ class Noptin_COM_Helper {
 		if ( is_array( $options ) && is_callable( array( $white_label, 'set' ) ) ) {
 			$white_label->set( $options );
 		}
+	}
+
+	/**
+	 * Determines whether to show the addons page.
+	 *
+	 * @return bool True if we should show the addons page, false otherwise.
+	 */
+	public static function should_show_addons_page( $should_show ) {
+		if ( ! Noptin_COM::get_active_license_key() ) {
+			return $should_show;
+		}
+
+		$visibility = get_noptin_option( 'visibility' );
+
+		if ( is_array( $visibility ) && ! empty( $visibility['hide_workspace'] ) && get_current_user_id() !== $visibility['last_edited_by'] ) {
+			return false;
+		}
+
+		return $should_show;
 	}
 }
 
