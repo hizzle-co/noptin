@@ -98,31 +98,27 @@ class Menu {
 			true
 		);
 
-		$license = \Noptin_COM::get_active_license_key( true );
+		// Localize the script.
+		$data = array(
+			'home_url'     => home_url(),
+			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+			'updatesNonce' => wp_create_nonce( 'updates' ),
+			'plugins'      => \Hizzle\Noptin\Onboarding\Menu::get_installed_plugins(),
+			'integrations' => \Hizzle\Noptin\Onboarding\Main::get_detected_integrations(),
+			'connections'  => \Hizzle\Noptin\Onboarding\Main::get_crm_connections(),
+			'license_key'  => \Noptin_COM::get_active_license_key(),
+			'ui'           => array(
+				'brand' => noptin()->white_label->get_details(),
+			),
+			'options'      => get_option( 'noptin_options', array() ),
+			'user_id'      => get_current_user_id(),
+		);
 
 		// Localize the script.
-		$account_url = ( $license && ! is_wp_error( $license ) && ! empty( $license->account_url ) ) ? $license->account_url : 'my-account';
-		wp_localize_script(
+		wp_add_inline_script(
 			'noptin-workspace',
-			'noptinWorkspace',
-			array(
-				'data' => array(
-					'home_url'     => home_url(),
-					'license'      => \Noptin_COM::get_active_license_key(),
-					'isExtensions' => true,
-					'cardGroups'   => self::group_extensions( $license ),
-					'actions'      => array(
-						array(
-							'href'      => noptin_get_upsell_url( $account_url, 'view-account', 'extensionsscreen' ),
-							'variant'   => 'primary',
-							'text'      => esc_html__( 'Manage your account', 'newsletter-optin-box' ),
-							'className' => 'noptin-components-button__pink',
-						),
-					),
-					'toolkit'      => get_option( 'noptin_toolkit', array() ),
-					'brand'        => noptin()->white_label->get_details(),
-				),
-			)
+			'window.noptinWorkspace = ' . wp_json_encode( $data ) . ';',
+			'before'
 		);
 
 		wp_set_script_translations( 'noptin-workspace', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
