@@ -48,19 +48,32 @@ class Noptin_White_Label {
     }
 
     /**
+     * Sets values.
+     *
+     * @param array $args The whitelabel options.
+     */
+    public function set( $args = array() ) {
+        foreach ( $args as $key => $value ) {
+            if ( property_exists( $this, $key ) && ! empty( $value ) ) {
+                $this->{$key} = $value;
+            }
+        }
+    }
+
+    /**
      * Retrieves a white label option.
      *
      * @param string $option The option name.
-     * @param mixed  $default The default value.
+     * @param mixed  $default_value The default value.
      */
-    public function get( $option, $default = '' ) {
+    public function get( $option, $default_value = '' ) {
 
         // Check if the property is set.
         if ( isset( $this->{$option} ) ) {
             return $this->{$option};
         }
 
-        return $default;
+        return $default_value;
     }
 
     /**

@@ -28,6 +28,7 @@ class Noptin_COM_Helper {
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_routes' ) );
+		add_action( 'noptin_load', array( __CLASS__, 'noptin_load' ) );
 
 		do_action( 'noptin_com_helper_loaded' );
 	}
@@ -380,6 +381,22 @@ class Noptin_COM_Helper {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Fires after Noptin is loaded.
+	 */
+	public static function noptin_load() {
+		if ( Noptin_COM::get_active_license_key() ) {
+			return;
+		}
+
+		$options     = get_noptin_option( 'white_label' );
+		$white_label = noptin()->white_label;
+
+		if ( is_array( $options ) && is_callable( array( $white_label, 'set' ) ) ) {
+			$white_label->set( $options );
+		}
 	}
 }
 
