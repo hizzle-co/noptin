@@ -38,6 +38,11 @@ class Noptin_White_Label {
     public $logo;
 
     /**
+     * The support URL.
+     */
+    public $support_url;
+
+    /**
      * Class constructor.
      */
     public function __construct() {
@@ -69,7 +74,7 @@ class Noptin_White_Label {
     public function get( $option, $default_value = '' ) {
 
         // Check if the property is set.
-        if ( isset( $this->{$option} ) ) {
+        if ( ! empty( $this->{$option} ) ) {
             return $this->{$option};
         }
 
@@ -117,38 +122,57 @@ class Noptin_White_Label {
         $current_page = isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '';
 
         $menu = array(
-            array(
+            'dashboard'     => array(
                 'text'      => __( 'Dashboard', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin' ),
                 'isPressed' => 'noptin' === $current_page,
             ),
-            array(
+            'forms'         => array(
                 'text'      => __( 'Forms', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'edit.php?post_type=noptin-form' ),
                 'isPressed' => 'noptin-forms' === $current_page,
             ),
-            array(
+            'subscribers'   => array(
                 'text'      => __( 'Subscribers', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin-subscribers' ),
                 'isPressed' => 'noptin-subscribers' === $current_page,
             ),
-            array(
+            'emails'        => array(
                 'text'      => __( 'Emails', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin-email-campaigns' ),
                 'isPressed' => 'noptin-email-campaigns' === $current_page,
             ),
-            array(
+            'automation'    => array(
                 'text'      => __( 'Automation', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin-automation-rules' ),
                 'isPressed' => 'noptin-automation-rules' === $current_page,
             ),
-            array(
+            'settings'      => array(
                 'text'      => __( 'Settings', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin-settings' ),
                 'isPressed' => 'noptin-settings' === $current_page,
             ),
+            'addons'        => array(
+                'text'      => __( 'Extensions', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-addons' ),
+                'isPressed' => 'noptin-addons' === $current_page,
+            ),
+            'documentation' => array(
+                'text'      => __( 'Support', 'newsletter-optin-box' ),
+                'href'      => empty( $this->support_url ) ? noptin_get_guide_url( 'Admin Menu' ) : $this->support_url,
+                'isPressed' => false,
+            ),
         );
 
-        return apply_filters( 'noptin_white_label_menu', $menu );
+        foreach ( $menu as $key => $item ) {
+            if ( 'none' === ( $item['href'] ?? 'none' ) || ! apply_filters( "noptin_show_{$key}_page", true ) ) {
+                unset( $menu[ $key ] );
+                continue;
+            }
+
+            $menu[ $key ]['className'] = apply_filters( "noptin_nav_menu_{$key}_class", 'noptin-menu-' . $key );
+        }
+
+        return apply_filters( 'noptin_white_label_menu', array_values( $menu ) );
     }
 }
