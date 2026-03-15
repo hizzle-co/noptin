@@ -949,3 +949,13 @@ function noptin_email_campaign_sent_to( $campaign_id, $email_address, $since = f
 		$since
 	);
 }
+
+/**
+ * Checks if we should split the emails menu into two separate menus: Campaigns and Templates.
+ */
+function noptin_should_split_emails_menu() {
+	$visibility = get_noptin_option( 'visibility' );
+	$split      = is_array( $visibility ) && ! empty( $visibility['split_email_menu'] );
+
+	return apply_filters( 'noptin_should_split_emails_menu', $split );
+}

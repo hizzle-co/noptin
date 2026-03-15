@@ -47,14 +47,16 @@ class Noptin_Admin_Menus {
 	 * Add help menu item.
 	 */
 	public function documentation_menu() {
-		if ( apply_filters( 'noptin_show_documentation_link', true ) ) {
+		$url = noptin()->white_label->get( 'support_url', noptin_get_guide_url( 'Admin Menu' ) );
 
+		// noptin_show_documentation_link is here for backward compatibility. It can be removed in a future release.
+		if ( 'none' !== $url && apply_filters( 'noptin_show_documentation_link', true ) && apply_filters( 'noptin_show_documentation_page', true ) ) {
 			add_submenu_page(
 				'noptin',
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				esc_html__( 'Documentation', 'newsletter-optin-box' ),
 				get_noptin_capability(),
-				noptin_get_guide_url( 'Admin Menu' ),
+				$url,
 				''
 			);
 		}

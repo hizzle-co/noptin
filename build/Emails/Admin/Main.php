@@ -41,6 +41,7 @@ class Main {
 		add_action( 'admin_init', array( __CLASS__, 'maybe_do_action' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'email_campaigns_menu' ), 35 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+		add_filter( 'admin_body_class', array( __CLASS__, 'add_split_menu_body_class' ) );
 
 		// Email settings.
 		add_filter( 'noptin_get_settings', array( __CLASS__, 'email_settings' ), 10 );
@@ -305,15 +306,52 @@ class Main {
 	 * Email campaigns menu.
 	 */
 	public static function email_campaigns_menu() {
+		if ( noptin_should_split_emails_menu() ) {
+			$email_types = array_values( \Hizzle\Noptin\Emails\Main::get_email_types() );
 
-		self::$hook_suffix = add_submenu_page(
-			'noptin',
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
-			get_noptin_capability(),
-			'noptin-email-campaigns',
-			array( __CLASS__, 'render_admin_page' )
-		);
+			foreach ( $email_types as $index => $type ) {
+				if ( 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+					continue;
+				}
+
+				if ( empty( $index ) ) {
+					self::$hook_suffix = add_submenu_page(
+						'noptin',
+						$type->plural_label,
+						$type->plural_label,
+						get_noptin_capability(),
+						'noptin-email-campaigns',
+						array( __CLASS__, 'render_admin_page' )
+					);
+
+					continue;
+				}
+
+				add_submenu_page(
+					'noptin',
+					$type->plural_label,
+					$type->plural_label,
+					get_noptin_capability(),
+					add_query_arg(
+						array(
+							'page'              => 'noptin-email-campaigns',
+							'noptin_email_type' => rawurlencode( $type->type ),
+						),
+						admin_url( '/admin.php' )
+					),
+					''
+				);
+			}
+		} else {
+			self::$hook_suffix = add_submenu_page(
+				'noptin',
+				esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
+				esc_html__( 'Emails', 'newsletter-optin-box' ),
+				get_noptin_capability(),
+				'noptin-email-campaigns',
+				array( __CLASS__, 'render_admin_page' )
+			);
+		}
 	}
 
 	/**
@@ -938,5 +976,19 @@ class Main {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Adds 'noptin-has-split-email-menu' to the body class.
+	 *
+	 * @param string $classes The current body classes.
+	 * @return string The modified body classes.
+	 */
+	public static function add_split_menu_body_class( $classes ) {
+		if ( noptin_should_split_emails_menu() ) {
+			$classes .= ' noptin-has-split-email-menu';
+		}
+
+		return $classes;
 	}
 }

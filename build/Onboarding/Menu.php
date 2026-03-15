@@ -60,8 +60,14 @@ class Menu {
 		global $submenu;
 
 		if ( isset( $submenu['noptin'] ) ) {
+			$to_remove = array( 'noptin-setup-wizard' );
+
+			if ( ! noptin_should_split_emails_menu() ) {
+				$to_remove[] = 'noptin-tools';
+			}
+
 			foreach ( $submenu['noptin'] as $index => $menu_item ) {
-				if ( isset( $menu_item[2] ) && 'noptin-setup-wizard' === $menu_item[2] ) {
+				if ( isset( $menu_item[2] ) && in_array( $menu_item[2], $to_remove, true ) ) {
 					unset( $submenu['noptin'][ $index ] );
 					break;
 				}
@@ -69,7 +75,67 @@ class Menu {
 		}
 
 		// CSS fallback in case another hook re-adds the menu item later.
-		echo '<style>#adminmenu a[href="admin.php?page=noptin-setup-wizard"]{display:none!important;}</style>';
+		?>
+		<style>
+			#adminmenu a[href="admin.php?page=noptin-setup-wizard"],
+			body:not(.noptin-has-split-email-menu) #adminmenu a[href="admin.php?page=noptin-tools"] {
+				display: none !important;
+			}
+			li#toplevel_page_noptin .wp-menu-image img {
+				width: 20px;
+				height: auto;
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:not(:has(a[href*="page=noptin-email-campaigns"])) + li:has(a[href*="page=noptin-email-campaigns"]) a {
+				position: relative;
+				margin-top: 16px;
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:has(a[href*="page=noptin-email-campaigns"]):not(:has(~ li a[href*="page=noptin-email-campaigns"])) a {
+				position: relative;
+				margin-bottom: 16px;
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:not(:has(a[href*="page=noptin-email-campaigns"])) + li:has(a[href*="page=noptin-email-campaigns"]) a:before,
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:has(a[href*="page=noptin-email-campaigns"]):not(:has(~ li a[href*="page=noptin-email-campaigns"])) a:after,
+			.noptin-has-split-email-menu #toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-automation-rules"]:after,
+			#toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-addons"]:before,
+			#toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-addons"]:after {
+				display: block;
+				content: '';
+				position: absolute;
+				left: 5px;
+				right: 5px;
+				height: 0;
+				border-bottom: 1px solid rgba( 255, 255, 255, 0.15 );
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:not(:has(a[href*="page=noptin-email-campaigns"])) + li:has(a[href*="page=noptin-email-campaigns"]) a:before,
+			#toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-addons"]:before {
+				top: -8px;
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin .wp-submenu li:has(a[href*="page=noptin-email-campaigns"]):not(:has(~ li a[href*="page=noptin-email-campaigns"])) a:after,
+			.noptin-has-split-email-menu #toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-automation-rules"]:after,
+			#toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-addons"]:after { 
+				bottom: -8px;
+			}
+
+			.noptin-has-split-email-menu #toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-automation-rules"] {
+				position: relative;
+				margin-bottom: 16px;
+			}
+
+			#toplevel_page_noptin li:not(:last-child) a[href="admin.php?page=noptin-addons"] {
+				position: relative;
+				margin: 16px 0;
+			}
+
+			#adminmenu #toplevel_page_noptin a[href="admin.php?page=noptin-addons"] {
+				color: #adff2f;
+			}
+		</style>
+		<?php
 	}
 
 	/**
