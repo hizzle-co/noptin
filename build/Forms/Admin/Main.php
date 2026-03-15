@@ -34,7 +34,7 @@ class Main {
 		List_Table::init();
 
 		// Admin menu.
-		add_action( 'admin_menu', array( __CLASS__, 'forms_menu' ), 30 );
+		add_action( 'admin_menu', array( __CLASS__, 'forms_menu' ), 33 );
 		add_action( 'admin_menu', array( __CLASS__, 'menu_highlight' ), 15 );
 	}
 
@@ -264,7 +264,7 @@ class Main {
 		add_submenu_page(
 			'noptin',
 			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
-			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
+			esc_html__( 'Forms', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'edit.php?post_type=noptin-form'
 		);

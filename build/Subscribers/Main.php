@@ -34,7 +34,7 @@ class Main {
 
 		// Subscribers menu.
 		if ( is_admin() ) {
-			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 33 );
+			add_action( 'admin_menu', array( __CLASS__, 'subscribers_menu' ), 30 );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'filter_admin_tools' ) );
 			add_action( 'noptin_send_confirmation_emails', array( __CLASS__, 'send_confirmation_emails' ) );
