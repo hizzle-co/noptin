@@ -152,8 +152,13 @@ class Noptin_White_Label {
                 'href'      => admin_url( 'admin.php?page=noptin-settings' ),
                 'isPressed' => 'noptin-settings' === $current_page,
             ),
+            'tools'         => array(
+                'text'      => esc_html__( 'Tools', 'newsletter-optin-box' ),
+                'href'      => admin_url( 'admin.php?page=noptin-tools' ),
+                'isPressed' => 'noptin-tools' === $current_page,
+            ),
             'addons'        => array(
-                'text'      => __( 'Extensions', 'newsletter-optin-box' ),
+                'text'      => esc_html__( 'Add-ons', 'newsletter-optin-box' ),
                 'href'      => admin_url( 'admin.php?page=noptin-addons' ),
                 'isPressed' => 'noptin-addons' === $current_page,
             ),

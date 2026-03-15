@@ -46,15 +46,10 @@ class Menu {
 			return;
 		}
 
-		$count_html = \Noptin_COM_Updater::get_updates_count_html();
-
-		/* translators: %s: extensions count */
-		$menu_title = sprintf( __( 'Extensions %s', 'newsletter-optin-box' ), $count_html );
-
 		self::$hook_suffix = add_submenu_page(
 			'noptin',
-			esc_html__( 'Extensions', 'newsletter-optin-box' ),
-			$menu_title,
+			esc_html__( 'Add-ons', 'newsletter-optin-box' ),
+			esc_html__( 'Add-ons', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-addons',
 			array( __CLASS__, 'render_admin_page' )
