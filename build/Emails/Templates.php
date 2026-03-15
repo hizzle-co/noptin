@@ -81,8 +81,12 @@ class Templates {
 			return $settings;
 		}
 
+		$template_options = get_noptin_option( 'templates' );
+		$hide_cloud       = is_array( $template_options ) && ! empty( $template_options['hide_cloud'] );
+		$hide_custom      = is_array( $template_options ) && ! empty( $template_options['hide_custom'] );
+
 		$local_templates = array();
-		if ( apply_filters( 'noptin_show_local_templates', true ) ) {
+		if ( ! $hide_custom && apply_filters( 'noptin_show_local_templates', true ) ) {
 			foreach ( self::get_local_templates() as $template ) {
 				$local_templates[] = array(
 					'id'   => $template->id,
@@ -94,6 +98,10 @@ class Templates {
 
 		if ( ! empty( $local_templates ) ) {
 			$settings['local_templates'] = $local_templates;
+		}
+
+		if ( $hide_cloud ) {
+			return $settings;
 		}
 
 		$templates = get_option( 'noptin_email_templates', array() );
