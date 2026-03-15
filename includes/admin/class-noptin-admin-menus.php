@@ -53,8 +53,8 @@ class Noptin_Admin_Menus {
 		if ( 'none' !== $url && apply_filters( 'noptin_show_documentation_link', true ) && apply_filters( 'noptin_show_documentation_page', true ) ) {
 			add_submenu_page(
 				'noptin',
-				esc_html__( 'Documentation', 'newsletter-optin-box' ),
-				esc_html__( 'Documentation', 'newsletter-optin-box' ),
+				esc_html__( 'Need Help?', 'newsletter-optin-box' ),
+				esc_html__( 'Need Help?', 'newsletter-optin-box' ),
 				get_noptin_capability(),
 				$url,
 				''

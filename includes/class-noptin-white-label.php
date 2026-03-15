@@ -163,7 +163,7 @@ class Noptin_White_Label {
                 'isPressed' => 'noptin-addons' === $current_page,
             ),
             'documentation' => array(
-                'text'      => __( 'Support', 'newsletter-optin-box' ),
+                'text'      => __( 'Need Help?', 'newsletter-optin-box' ),
                 'href'      => empty( $this->support_url ) ? noptin_get_guide_url( 'Admin Menu' ) : $this->support_url,
                 'isPressed' => false,
             ),
