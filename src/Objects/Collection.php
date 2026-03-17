@@ -182,14 +182,14 @@ abstract class Collection {
 
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this, $key );
 
-			$rules->add_trigger(
+			\Hizzle\Noptin\Automation_Rules\Triggers\Main::add(
 				new Trigger( $key, $args, $this )
 			);
 		}
 
 		// Register actions.
 		foreach ( $this->get_all_actions() as $key => $args ) {
-			$rules->add_action(
+			\Hizzle\Noptin\Automation_Rules\Actions\Main::add(
 				new Action( $key, $args, $this )
 			);
 		}
