@@ -50,7 +50,7 @@ abstract class Form_Integration extends Automation_Integration {
 	 * @inheritDoc
 	 */
 	public function register_triggers( $rules ) {
-		$rules->add_trigger( new \Noptin_Form_Submit_Trigger( $this->slug, $this->name ) );
+		\Hizzle\Noptin\Automation_Rules\Triggers\Main::add( new \Noptin_Form_Submit_Trigger( $this->slug, $this->name ) );
 	}
 
 	/**
