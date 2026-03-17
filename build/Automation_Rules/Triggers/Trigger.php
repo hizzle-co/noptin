@@ -27,12 +27,12 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	public $mail_config = array();
 
 	/**
-	 * Prepares email test data.
+	 * Prepares automation rule test data.
 	 *
 	 * @since 1.11.0
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @return \Hizzle\Noptin\Automation_Rules\Smart_Tags
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
 		// Override in child classes.
@@ -61,7 +61,7 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	 *
 	 * @since 1.11.9
 	 * @param array $meta
-	 * @param Noptin_Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @return string
 	 */
 	public function rule_trigger_meta( $meta, $rule ) {
