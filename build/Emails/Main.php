@@ -406,7 +406,7 @@ class Main {
 					),
 				),
 				'ai'                 => array(
-					'route'                => 'https://my.noptin.com/ai/generate-email',
+					'route'                => 'https://my.noptin.com/ai/generate/newsletter',
 					'senders'              => true,
 					'overview_placeholder' => sprintf(
 						/* translators: %s is the current date. */
