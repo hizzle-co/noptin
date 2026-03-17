@@ -1,16 +1,16 @@
 <?php
 
+namespace Hizzle\Noptin\Automation_Rules;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
-
-use Hizzle\Noptin\Automation_Rules\Automation_Rule;
 
 /**
  * Base class for triggers and actions.
  *
  * @since 1.11.9
  */
-abstract class Noptin_Abstract_Trigger_Action {
+abstract class Trigger_Action {
 
 	/**
 	 * @var  Automation_Rule[]
@@ -104,7 +104,7 @@ abstract class Noptin_Abstract_Trigger_Action {
 
 		// Connections.
 		if ( ! empty( $this->connection ) ) {
-			$connection = Noptin_COM::get_connection( $this->connection );
+			$connection = \Noptin_COM::get_connection( $this->connection );
 
 			if ( ! empty( $connection ) ) {
 				return $connection->image_url;
