@@ -122,8 +122,8 @@ class Main {
 								),
 								admin_url( 'admin.php' )
 							),
-							'triggers' => self::prepare_triggers_for_editor( noptin()->automation_rules->get_triggers() ),
-							'actions'  => self::prepare_triggers_for_editor( noptin()->automation_rules->get_actions() ),
+							'triggers' => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
+							'actions'  => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
 							'app'      => 'automation-rule-editor' === $script ? self::prepare_app() : array(),
 						),
 					),
