@@ -65,11 +65,9 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 	/**
 	 * Gets the action.
-	 *
-	 * @return false|\Noptin_Abstract_Action
 	 */
 	public function get_action() {
-		return noptin()->automation_rules->get_action( $this->get_action_id() );
+		return Actions\Main::get( $this->get_action_id() );
 	}
 
 	/**
@@ -129,11 +127,9 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 	/**
 	 * Gets the trigger.
-	 *
-	 * @return false|\Noptin_Abstract_Trigger
 	 */
 	public function get_trigger() {
-		return noptin()->automation_rules->get_trigger( $this->get_trigger_id() );
+		return Triggers\Main::get( $this->get_trigger_id() );
 	}
 
 	/**
