@@ -26,7 +26,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	protected $trigger_id;
 
 	/**
-	 * @var Noptin_Automation_Rules_Smart_Tags
+	 * @var \Hizzle\Noptin\Automation_Rules\Smart_Tags
 	 */
 	public $smart_tags;
 

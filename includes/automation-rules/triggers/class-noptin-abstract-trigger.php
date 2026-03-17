@@ -29,7 +29,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 	 *
 	 * @since 1.11.0
 	 * @param Noptin_Automation_Rule $rule
-	 * @return Noptin_Automation_Rules_Smart_Tags
+	 * @return \Hizzle\Noptin\Automation_Rules\Smart_Tags
 	 * @throws Exception
 	 */
 	public function get_test_smart_tags( $rule ) {
@@ -428,7 +428,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 			return true;
 		}
 
-		/** @var Noptin_Automation_Rules_Smart_Tags $smart_tags */
+		/** @var \Hizzle\Noptin\Automation_Rules\Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
 		// Check if the conditional logic is met.
@@ -515,7 +515,7 @@ abstract class Noptin_Abstract_Trigger extends Noptin_Abstract_Trigger_Action {
 
 		$args['subject']    = $subject;
 		$args               = apply_filters( 'noptin_automation_trigger_args', $args, $this );
-		$args['smart_tags'] = new Noptin_Automation_Rules_Smart_Tags( $this, $subject, $args );
+		$args['smart_tags'] = new \Hizzle\Noptin\Automation_Rules\Smart_Tags( $this, $subject, $args );
 
 		return $args;
 	}

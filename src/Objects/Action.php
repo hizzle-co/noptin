@@ -274,7 +274,7 @@ class Action extends \Noptin_Abstract_Action {
 
 		$settings = array();
 
-		/** @var \Noptin_Automation_Rules_Smart_Tags $smart_tags */
+		/** @var \Hizzle\Noptin\Automation_Rules\Smart_Tags $smart_tags */
 		$smart_tags = $args['smart_tags'];
 
 		foreach ( $this->get_action_fields() as $key => $args ) {
