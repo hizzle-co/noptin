@@ -222,19 +222,99 @@ class Menu {
 				'label'    => __( 'General', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'allow_editors'             => array(
+					'allow_editors'          => array(
 						'label'       => __( 'Allow editors', 'newsletter-optin-box' ),
 						'description' => __( 'Allow editors to access and manage Noptin.', 'newsletter-optin-box' ),
 						'type'        => 'checkbox_alt',
 						'el'          => 'input',
 						'default'     => false,
 					),
-					'keep_data_on_uninstall'    => array(
+					'keep_data_on_uninstall' => array(
 						'label'       => __( 'Keep data on uninstall', 'newsletter-optin-box' ),
 						'description' => __( 'Keep all data when the plugin is uninstalled.', 'newsletter-optin-box' ),
 						'type'        => 'checkbox_alt',
 						'el'          => 'input',
 						'default'     => false,
+					),
+				),
+			),
+
+			'ai_info'           => array(
+				'el'       => 'settings_group',
+				'label'    => __( 'AI', 'newsletter-optin-box' ),
+				'section'  => 'general',
+				'settings' => array(
+					'ai_model'             => array(
+						'el'               => 'select',
+						'label'            => __( 'AI Model', 'newsletter-optin-box' ),
+						'description'      => __( 'Select the AI model to use for generating content.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
+							'<a href="%s" target="_blank">%s</a>',
+							noptin_get_upsell_url( '/pricing', 'settings', 'ai' ),
+							__( 'Activate your license key to unlock', 'newsletter-optin-box' )
+						) ),
+						'options'          => apply_filters(
+							'noptin_ai_model_options',
+							array(
+								'gemini/gemini-3.1-pro-preview' => 'Gemini 3.1 Pro Preview',
+								'gemini/gemini-3-flash-preview' => 'Gemini 3 Flash Preview',
+								'openai/gpt-5.4'    => 'GPT-5.4',
+								'openai/gpt-5-mini' => 'GPT-5 Mini',
+								'anthropic/claude-sonnet-4-6' => 'Claude Sonnet 4.6',
+								'anthropic/claude-haiku-4-5' => 'Claude Haiku 4.5',
+							)
+						),
+						'customAttributes' => array(
+							'disabled' => ! noptin_has_alk(),
+						),
+						'default'          => 'openai/gpt-5.4',
+					),
+					'ai_gemini_api_key'    => array(
+						'el'               => 'input',
+						'type'             => 'text',
+						'label'            => __( 'Gemini API Key', 'newsletter-optin-box' ),
+						'description'      => __( 'Enter your Google Gemini API key.', 'newsletter-optin-box' ),
+						'customAttributes' => array(
+							'disabled' => ! noptin_has_alk(),
+						),
+						'conditions'       => array(
+							array(
+								'key'      => 'ai_model',
+								'operator' => '^includes',
+								'value'    => 'gemini',
+							),
+						),
+					),
+					'ai_openai_api_key'    => array(
+						'el'               => 'input',
+						'type'             => 'text',
+						'label'            => __( 'OpenAI API Key', 'newsletter-optin-box' ),
+						'description'      => __( 'Enter your OpenAI API key.', 'newsletter-optin-box' ),
+						'customAttributes' => array(
+							'disabled' => ! noptin_has_alk(),
+						),
+						'conditions'       => array(
+							array(
+								'key'      => 'ai_model',
+								'operator' => '^includes',
+								'value'    => 'openai',
+							),
+						),
+					),
+					'ai_anthropic_api_key' => array(
+						'el'               => 'input',
+						'type'             => 'text',
+						'label'            => __( 'Anthropic API Key', 'newsletter-optin-box' ),
+						'description'      => __( 'Enter your Anthropic API key.', 'newsletter-optin-box' ),
+						'customAttributes' => array(
+							'disabled' => ! noptin_has_alk(),
+						),
+						'conditions'       => array(
+							array(
+								'key'      => 'ai_model',
+								'operator' => '^includes',
+								'value'    => 'anthropic',
+							),
+						),
 					),
 				),
 			),
@@ -341,7 +421,6 @@ class Menu {
 
 		if ( noptin_upsell_integrations() ) {
 			foreach ( \Noptin_COM::get_connections() as $data ) {
-
 				$slug = sanitize_key( str_replace( '-', '_', $data->slug ) );
 
 				if ( isset( $integration_settings[ "settings_section_$slug" ] ) ) {
@@ -386,7 +465,6 @@ class Menu {
 						),
 					),
 				);
-
 			}
 		}
 

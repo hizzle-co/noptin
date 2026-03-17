@@ -451,6 +451,10 @@ class Main {
 			}
 
 			// Localize the script.
+			$ai_model     = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
+			$model_prefix = strstr( $ai_model, '/', true );
+			$ai_api_key   = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
+
 			$data = apply_filters(
 				'noptin_email_settings_misc',
 				array(
@@ -503,6 +507,12 @@ class Main {
 					),
 					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
 					'brand'        => noptin()->white_label->get_details(),
+					'ai'           => array(
+						'configured'   => ! empty( $ai_api_key ),
+						'api_key'      => $ai_api_key,
+						'model'        => $ai_model,
+						'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
+					),
 				),
 				$script
 			);
@@ -648,6 +658,11 @@ class Main {
 		// Set the template.
 		if ( ! empty( $query_args['noptin_email_template'] ) ) {
 			$campaign->options['noptin_source_template'] = sanitize_text_field( $query_args['noptin_email_template'] );
+		}
+
+		// Set the ai overview.
+		if ( ! empty( $query_args['noptin_ai_overview'] ) && 'none' !== $query_args['noptin_ai_overview'] ) {
+			$campaign->options['noptin_ai_overview'] = sanitize_textarea_field( $query_args['noptin_ai_overview'] );
 		}
 
 		return $campaign;

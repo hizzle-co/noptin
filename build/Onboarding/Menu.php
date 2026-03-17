@@ -32,7 +32,7 @@ class Menu {
 	 *
 	 */
 	public static function init() {
-		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 100 );
+		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 20 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		// Hide the menu item.
 		add_action( 'admin_head', array( __CLASS__, 'hide_menu_item' ) );
@@ -69,7 +69,6 @@ class Menu {
 			foreach ( $submenu['noptin'] as $index => $menu_item ) {
 				if ( isset( $menu_item[2] ) && in_array( $menu_item[2], $to_remove, true ) ) {
 					unset( $submenu['noptin'][ $index ] );
-					break;
 				}
 			}
 		}

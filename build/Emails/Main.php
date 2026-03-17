@@ -405,6 +405,15 @@ class Main {
 						date_i18n( get_option( 'date_format' ) )
 					),
 				),
+				'ai'                 => array(
+					'route'                => 'https://my.noptin.com/ai/generate-email',
+					'senders'              => true,
+					'overview_placeholder' => sprintf(
+						/* translators: %s is the current date. */
+						__( 'For example, write a thank you email to all subscribers who subscribed via our homepage popup after %s', 'newsletter-optin-box' ),
+						date_i18n( get_option( 'date_format' ), time() - WEEK_IN_SECONDS )
+					),
+				),
 			)
 		);
 

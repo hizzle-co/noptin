@@ -107,6 +107,11 @@ class Type {
 	public $defaults = array();
 
 	/**
+	 * @var array|null AI configuration for the email type.
+	 */
+	public $ai = null;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param array $args The email type args.
