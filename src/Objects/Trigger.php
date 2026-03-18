@@ -578,7 +578,7 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	 *
 	 * @since 3.0.0
 	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
-	 * @return \Noptin_Automation_Rules_Smart_Tags
+	 * @return \Hizzle\Noptin\Automation_Rules\Smart_Tags
 	 * @throws \Exception
 	 */
 	public function get_test_smart_tags( $rule ) {

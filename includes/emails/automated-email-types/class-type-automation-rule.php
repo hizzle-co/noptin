@@ -26,7 +26,7 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 	protected $trigger_id;
 
 	/**
-	 * @var Noptin_Automation_Rules_Smart_Tags
+	 * @var \Hizzle\Noptin\Automation_Rules\Smart_Tags
 	 */
 	public $smart_tags;
 
@@ -64,11 +64,9 @@ class Noptin_Automation_Rule_Email extends Noptin_Automated_Email_Type {
 
 	/**
 	 * Returns the trigger object.
-	 *
-	 * @return Noptin_Abstract_Trigger|null
 	 */
 	public function get_trigger() {
-		return noptin()->automation_rules->get_trigger( $this->trigger_id );
+		return \Hizzle\Noptin\Automation_Rules\Triggers\Main::get( $this->trigger_id );
 	}
 
 	/**

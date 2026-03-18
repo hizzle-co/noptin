@@ -118,7 +118,7 @@ abstract class Collection {
 
 		// Load automation rule.
 		if ( did_action( 'noptin_automation_rules_load' ) ) {
-			$this->load_automation_rules( noptin()->automation_rules );
+			$this->load_automation_rules();
 		} else {
 			add_action( 'noptin_automation_rules_load', array( $this, 'load_automation_rules' ) );
 		}
@@ -134,10 +134,8 @@ abstract class Collection {
 
 	/**
 	 * Loads the automation rule triggers and actions.
-	 *
-	 * @param \Noptin_Automation_Rules $rules The automation rules instance.
 	 */
-	public function load_automation_rules( $rules ) {
+	public function load_automation_rules() {
 
 		// Register triggers.
 		foreach ( $this->get_all_triggers() as $key => $args ) {
@@ -182,14 +180,14 @@ abstract class Collection {
 
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this, $key );
 
-			$rules->add_trigger(
+			\Hizzle\Noptin\Automation_Rules\Triggers\Main::add(
 				new Trigger( $key, $args, $this )
 			);
 		}
 
 		// Register actions.
 		foreach ( $this->get_all_actions() as $key => $args ) {
-			$rules->add_action(
+			\Hizzle\Noptin\Automation_Rules\Actions\Main::add(
 				new Action( $key, $args, $this )
 			);
 		}
