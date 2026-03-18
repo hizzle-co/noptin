@@ -409,6 +409,10 @@ class Main {
 		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
 		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
 		$localize_script = 'noptin-' . $script;
+		$ai_model        = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
+		$ai_model        = 'openai/gpt-5-mini';
+		$model_prefix    = strstr( $ai_model, '/', true );
+		$ai_api_key      = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
@@ -423,7 +427,92 @@ class Main {
 			}
 
 			// Prepare the block editor.
-			if ( 'email-editor' === $script ) {
+			$load_blocks = 'email-editor' === $script;
+
+			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
+				$load_blocks = true;
+
+				$ai = include plugin_dir_path( __DIR__ ) . 'assets/js/ai.asset.php';
+				wp_register_script(
+					'noptin-ai',
+					plugins_url( 'assets/js/ai.js', __DIR__ ),
+					$ai['dependencies'],
+					$ai['version'],
+					true
+				);
+
+				wp_enqueue_style(
+					'noptin-ai',
+					plugins_url( 'assets/css/style-ai.css', __DIR__ ),
+					array(),
+					$ai['version']
+				);
+
+				$ai_localization          = array(
+					'email_types'         => array_filter(
+						array_map(
+							function ( $type ) {
+								// Skip email_templates and trash.
+								if ( 'email_template' === $type->type || 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+									return null;
+								}
+
+								/** @var \Hizzle\Noptin\Emails\Types\Type $type */
+								$to_return = array(
+									'label' => $type->label,
+									'type'  => $type->type,
+								);
+
+								if ( $type->supports_sub_types ) {
+									$to_return['types'] = array_map(
+										function ( $sub_type ) {
+											return array(
+												'label' => $sub_type['label'],
+												'description' => $sub_type['description'],
+											);
+										},
+										$type->get_sub_types()
+									);
+								}
+
+								return $to_return;
+							},
+							\Hizzle\Noptin\Emails\Main::get_email_types()
+						)
+					),
+					'automation_triggers' => array_map(
+						function ( $trigger ) {
+							noptin_dump( $trigger );exit;
+							/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
+							return array(
+								'description' => $trigger->get_description(),
+								'name'        => $trigger->get_name(),
+							);
+						},
+						\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
+					),
+					'automation_actions'  => array_map(
+						function ( $action ) {
+							/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
+							return array(
+								'description' => $action->get_description(),
+								'name'        => $action->get_name(),
+							);
+						},
+						\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
+					),
+				);
+
+				wp_add_inline_script(
+					'noptin-ai',
+					'window.noptinAIInfo = ' . wp_json_encode( $ai_localization ) . ';',
+					'before'
+				);
+
+				$config['dependencies'][] = 'noptin-ai';
+			}
+
+			if ( $load_blocks ) {
 				$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
 				wp_register_script(
 					'noptin-blocks',
@@ -451,9 +540,6 @@ class Main {
 			}
 
 			// Localize the script.
-			$ai_model     = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
-			$model_prefix = strstr( $ai_model, '/', true );
-			$ai_api_key   = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
 
 			$data = apply_filters(
 				'noptin_email_settings_misc',
@@ -466,6 +552,14 @@ class Main {
 					'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
 					'utm_enabled'  => get_noptin_option( 'add_utm_params', true ),
 					'utm_docs_url' => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
+					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
+					'brand'        => noptin()->white_label->get_details(),
+					'ai'           => array(
+						'configured'   => ! empty( $ai_api_key ),
+						'api_key'      => $ai_api_key,
+						'model'        => $ai_model,
+						'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
+					),
 					'senders'      => array_merge(
 						array(
 							'manual_recipients' => array(
@@ -505,17 +599,65 @@ class Main {
 						),
 						get_noptin_email_senders( true )
 					),
-					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
-					'brand'        => noptin()->white_label->get_details(),
-					'ai'           => array(
-						'configured'   => ! empty( $ai_api_key ),
-						'api_key'      => $ai_api_key,
-						'model'        => $ai_model,
-						'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
-					),
 				),
 				$script
 			);
+
+			if ( 'view-campaigns' === $script && $load_blocks ) {
+				$objects = apply_filters( 'noptin_email_editor_objects', array() );
+				$blocks  = array();
+
+				foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
+					foreach ( $merge_tags as $tag => $merge_tag_data ) {
+						if ( ! empty( $merge_tag_data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
+							$blocks[ $tag ] = array_merge(
+								array(
+									'description' => isset( $merge_tag_data['description'] ) ? $merge_tag_data['description'] : $merge_tag_data['label'],
+									'mergeTag'    => $tag,
+									'name'        => Editor::merge_tag_to_block_name( $tag ),
+								),
+								$merge_tag_data['block']
+							);
+						}
+					}
+				}
+
+				$data['blocks']  = $blocks;
+				$data['objects'] = $objects;
+			}
+
+			// Add available automation triggers for sequence emails.
+			if (
+				'view-campaigns' === $script &&
+				$type &&
+				'sequence' === $type->type &&
+				is_object( $data['data'] ) &&
+				! empty( $data['data']->ai ) &&
+				is_array( $data['data']->ai )
+			) {
+				$ai_triggers = array();
+
+				foreach ( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() as $trigger ) {
+					if ( ! empty( $trigger->depricated ) || empty( $trigger->category ) ) {
+						continue;
+					}
+
+					if ( ! isset( $ai_triggers[ $trigger->category ] ) ) {
+						$ai_triggers[ $trigger->category ] = array();
+					}
+
+					$ai_triggers[ $trigger->category ][] = array(
+						'id'          => $trigger->get_id(),
+						'name'        => $trigger->get_name(),
+						'description' => $trigger->get_description(),
+						'merge_tags'  => $trigger->get_known_smart_tags_for_js(),
+					);
+				}
+
+				if ( ! empty( $ai_triggers ) ) {
+					$data['data']->ai['triggers'] = $ai_triggers;
+				}
+			}
 
 			wp_add_inline_script(
 				$localize_script,

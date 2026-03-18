@@ -24,7 +24,7 @@ class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 	/**
 	 * Filled if the email was triggered by an automation rule.
 	 *
-	 * @var \Noptin_Automation_Rules_Smart_Tags|\Noptin_Automation_Rules_Smart_Tags[]|null $smart_tags
+	 * @var \Hizzle\Noptin\Automation_Rules\Smart_Tags|\Hizzle\Noptin\Automation_Rules\Smart_Tags[]|null $smart_tags
 	 */
 	public $smart_tags = null;
 

@@ -406,7 +406,8 @@ class Main {
 					),
 				),
 				'ai'                 => array(
-					'route'                => 'https://my.noptin.com/ai/generate-email',
+					'route'                => 'https://my.noptin.com/ai/generate/newsletter',
+					'context'              => 'newsletter',
 					'senders'              => true,
 					'overview_placeholder' => sprintf(
 						/* translators: %s is the current date. */
@@ -428,10 +429,25 @@ class Main {
 				'click_to_add_first' => __( 'Click the button below to set-up your first automated email', 'newsletter-optin-box' ),
 				'supports_timing'    => true,
 				'supports_sub_types' => true,
+				'ai'                 => array(
+					'context'              => 'automated email',
+					'senders'              => true,
+					'overview_placeholder' => __( 'For example, wait 5 minutes then send a coupon code to everyone who subscribes to our newsletter', 'newsletter-optin-box' ),
+				),
 			)
 		);
 
 		do_action( 'noptin_register_email_types' );
+
+		// Add AI config to the sequence type if not already set.
+		if ( isset( self::$types['sequence'] ) && empty( self::$types['sequence']->ai ) ) {
+			self::$types['sequence']->ai = array(
+				'setup_route'          => 'https://my.noptin.com/ai/generate/sequence-setup',
+				'route'                => 'https://my.noptin.com/ai/generate/sequence',
+				'is_sequence'          => true,
+				'overview_placeholder' => __( 'For example, create a 5-email welcome series for new subscribers who sign up via the homepage popup.', 'newsletter-optin-box' ),
+			);
+		}
 
 		if ( ! isset( self::$types['sequence'] ) ) {
 			self::register_email_type(
@@ -442,6 +458,13 @@ class Main {
 					'plural_label' => __( 'Sequences / Courses', 'newsletter-optin-box' ),
 					'icon'         => 'clock',
 					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc.', 'newsletter-optin-box' ),
+					'ai'           => array(
+						'setup_route'          => 'https://my.noptin.com/ai/generate/sequence-setup',
+						'route'                => 'https://my.noptin.com/ai/generate/sequence',
+						'is_sequence'          => true,
+						'context'              => 'sequence',
+						'overview_placeholder' => __( 'For example, create a 5-email welcome series for new subscribers who sign up via the homepage popup.', 'newsletter-optin-box' ),
+					),
 				)
 			);
 		}
@@ -574,6 +597,20 @@ class Main {
 
 		if ( 'publish' === $new_status && 'publish' !== $old_status ) {
 			self::fire_email_action_hook( 'published', $email );
+
+			// If this is a new sequence with an AI-generated config, fire a dedicated
+			// action so the sequence plugin can auto-create child emails from the config.
+			if ( 'sequence' === $email->type && ! empty( $email->options['noptin_ai_sequence_config'] ) ) {
+				/**
+				 * Fires when a new sequence campaign is published with an AI-generated config.
+				 *
+				 * @param Email $email           The sequence campaign.
+				 * @param array $ai_sequence_config The AI-generated sequence config from the Cloudflare worker.
+				 *                               Contains: campaign_name, entry, email (array), optional
+				 *                               entry_conditional_logic, exit, exit_conditional_logic, notes.
+				 */
+				do_action( 'noptin_ai_sequence_config_available', $email, $email->options['noptin_ai_sequence_config'] );
+			}
 		}
 
 		// Fire unpublished hooks.
