@@ -448,19 +448,23 @@ class Main {
 					$ai['version']
 				);
 
-				$ai_localization          = array(
+				$ai_localization = array(
 					'email_types'         => array_filter(
 						array_map(
 							function ( $type ) {
 								// Skip email_templates and trash.
-								if ( 'email_template' === $type->type || 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+								if ( 'email_template' === $type->type || 'trash' === $type->type ) {
 									return null;
 								}
 
 								/** @var \Hizzle\Noptin\Emails\Types\Type $type */
 								$to_return = array(
-									'label' => $type->label,
-									'type'  => $type->type,
+									'label'               => $type->label,
+									'type'                => $type->type,
+									'plural_label'        => $type->plural_label,
+									'supports_recipients' => $type->supports_recipients,
+									'supports_timing'     => $type->supports_timing,
+									'supports_menu_order' => $type->supports_menu_order,
 								);
 
 								if ( $type->supports_sub_types ) {
@@ -475,33 +479,111 @@ class Main {
 									);
 								}
 
+								foreach ( array( 'child_type', 'parent_type' ) as $property ) {
+									if ( $type->{$property} ) {
+										$to_return[ $property ] = $type->{$property};
+									}
+								}
+
 								return $to_return;
 							},
 							\Hizzle\Noptin\Emails\Main::get_email_types()
 						)
 					),
-					'automation_triggers' => array_map(
-						function ( $trigger ) {
-							noptin_dump( $trigger );exit;
-							/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
-							return array(
-								'description' => $trigger->get_description(),
-								'name'        => $trigger->get_name(),
-							);
-						},
-						\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
+					'automation_triggers' => array_filter(
+						array_map(
+							function ( $trigger ) {
+								/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
+								if ( $trigger->depricated || empty( $trigger->category ) ) {
+									return null;
+								}
+
+								return array(
+									'description' => $trigger->get_description(),
+									'name'        => $trigger->get_name(),
+									'settings'    => $trigger->get_settings(),
+								);
+							},
+							\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
+						)
 					),
-					'automation_actions'  => array_map(
-						function ( $action ) {
-							/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
-							return array(
-								'description' => $action->get_description(),
-								'name'        => $action->get_name(),
-							);
-						},
-						\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
+					'automation_actions'  => array_filter(
+						array_map(
+							function ( $action ) {
+								/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
+
+								if ( $action->depricated || empty( $action->category ) ) {
+									return null;
+								}
+
+								return array(
+									'description' => $action->get_description(),
+									'name'        => $action->get_name(),
+									'settings'    => $action->get_settings(),
+								);
+							},
+							\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
+						)
 					),
 				);
+
+				$senders = array_merge(
+					array(
+						'manual_recipients' => array(
+							'label'        => __( 'Specific People', 'newsletter-optin-box' ),
+							'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
+							'image'        => array(
+								'icon' => 'businessperson',
+								'fill' => '#212121',
+							),
+							'is_active'    => true,
+							'is_installed' => true,
+							'is_local'     => true,
+							'settings'     => array(
+								'disableMergeTags' => false,
+								'fields'           => array(
+									'recipients' => array(
+										'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
+										'description' => sprintf(
+											'%s<br /> <br />%s',
+											__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
+											sprintf(
+												/* translators: %s: code */
+												__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
+												'<code>--notracking</code>'
+											)
+										),
+										'type'        => 'text',
+										'placeholder' => sprintf(
+											/* translators: %s: The Example */
+											__( 'For example, %s', 'newsletter-optin-box' ),
+											'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
+										),
+									),
+								),
+							),
+						),
+					),
+					get_noptin_email_senders( true )
+				);
+
+				$potential_senders = array();
+
+				foreach ( $senders as $key => $sender ) {
+					if ( ! is_array( $sender ) || empty( $sender['is_installed'] ) ) {
+						continue;
+					}
+
+					$potential_senders[ $key ] = array(
+						'label'       => $sender['label'] ?? $key,
+						'description' => $sender['description'] ?? '',
+						'settings'    => $sender['settings'] ?? array(),
+					);
+				}
+
+				if ( ! empty( $potential_senders ) ) {
+					$ai_localization['potential_senders'] = $potential_senders;
+				}
 
 				wp_add_inline_script(
 					'noptin-ai',

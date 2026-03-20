@@ -262,7 +262,21 @@ class Main {
 			}
 		}
 
-		return rest_ensure_response( $senders );
+		$prepared = array();
+
+		foreach ( $senders as $key => $sender ) {
+			if ( ! is_array( $sender ) || empty( $sender['is_installed'] ) ) {
+				continue;
+			}
+
+			$prepared[ $key ] = array(
+				'label'       => $sender['label'] ?? $key,
+				'description' => $sender['description'] ?? '',
+				'settings'    => $sender['settings'] ?? array(),
+			);
+		}
+
+		return rest_ensure_response( $prepared );
 	}
 
 	/**
