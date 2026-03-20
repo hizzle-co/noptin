@@ -393,6 +393,184 @@ class Main {
 	}
 
 	/**
+	 * Loads AI script
+	 */
+	public static function load_ai_script() {
+
+		self::load_blocks_script();
+
+		$ai = include plugin_dir_path( __DIR__ ) . 'assets/js/ai.asset.php';
+
+		$ai['dependencies'][] = 'noptin-blocks';
+
+		wp_register_script(
+			'noptin-ai',
+			plugins_url( 'assets/js/ai.js', __DIR__ ),
+			$ai['dependencies'],
+			$ai['version'],
+			true
+		);
+
+		wp_enqueue_style(
+			'noptin-ai',
+			plugins_url( 'assets/css/style-ai.css', __DIR__ ),
+			array(),
+			$ai['version']
+		);
+
+		$ai_localization = array(
+			'email_types'         => array_filter(
+				array_map(
+					function ( $type ) {
+						// Skip email_templates and trash.
+						if ( 'email_template' === $type->type || 'trash' === $type->type ) {
+							return null;
+						}
+
+						/** @var \Hizzle\Noptin\Emails\Types\Type $type */
+						$to_return = array(
+							'label'               => $type->label,
+							'type'                => $type->type,
+							'plural_label'        => $type->plural_label,
+							'supports_recipients' => $type->supports_recipients,
+							'supports_timing'     => $type->supports_timing,
+							'supports_menu_order' => $type->supports_menu_order,
+						);
+
+						if ( $type->supports_sub_types ) {
+							$to_return['types'] = array_map(
+								function ( $sub_type ) {
+									return array(
+										'label'       => $sub_type['label'],
+										'description' => $sub_type['description'],
+									);
+								},
+								$type->get_sub_types()
+							);
+						}
+
+						foreach ( array( 'child_type', 'parent_type' ) as $property ) {
+							if ( $type->{$property} ) {
+								$to_return[ $property ] = $type->{$property};
+							}
+						}
+
+						return $to_return;
+					},
+					\Hizzle\Noptin\Emails\Main::get_email_types()
+				)
+			),
+			'automation_triggers' => array_filter(
+				array_map(
+					function ( $trigger ) {
+						/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
+						if ( $trigger->depricated || empty( $trigger->category ) ) {
+							return null;
+						}
+
+						return array(
+							'description' => $trigger->get_description(),
+							'name'        => $trigger->get_name(),
+							'settings'    => $trigger->get_settings(),
+						);
+					},
+					\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
+				)
+			),
+			'automation_actions'  => array_filter(
+				array_map(
+					function ( $action ) {
+						/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
+
+						if ( $action->depricated || empty( $action->category ) ) {
+							return null;
+						}
+
+						return array(
+							'description' => $action->get_description(),
+							'name'        => $action->get_name(),
+							'settings'    => $action->get_settings(),
+						);
+					},
+					\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
+				)
+			),
+		);
+
+		$senders = array_merge(
+			array(
+				'manual_recipients' => array(
+					'label'        => __( 'Specific People', 'newsletter-optin-box' ),
+					'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
+					'is_installed' => true,
+					'settings'     => array(
+						'disableMergeTags' => false,
+						'fields'           => array(
+							'recipients' => array(
+								'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
+								'description' => sprintf(
+									'%s<br /> <br />%s',
+									__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
+									sprintf(
+										/* translators: %s: code */
+										__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
+										'<code>--notracking</code>'
+									)
+								),
+								'type'        => 'text',
+								'placeholder' => sprintf(
+									/* translators: %s: The Example */
+									__( 'For example, %s', 'newsletter-optin-box' ),
+									'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
+								),
+							),
+						),
+					),
+				),
+			),
+			get_noptin_email_senders( true )
+		);
+
+		$potential_senders = array();
+
+		foreach ( $senders as $key => $sender ) {
+			if ( ! is_array( $sender ) || empty( $sender['is_installed'] ) ) {
+				continue;
+			}
+
+			$potential_senders[ $key ] = array(
+				'label'       => $sender['label'] ?? $key,
+				'description' => $sender['description'] ?? '',
+				'settings'    => $sender['settings'] ?? array(),
+			);
+		}
+
+		if ( ! empty( $potential_senders ) ) {
+			$ai_localization['potential_senders'] = $potential_senders;
+		}
+
+		wp_add_inline_script(
+			'noptin-ai',
+			'window.noptinAIInfo = ' . wp_json_encode( $ai_localization ) . ';',
+			'before'
+		);
+	}
+
+	/**
+	 * Loads blocks script
+	 */
+	public static function load_blocks_script() {
+		$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
+		wp_register_script(
+			'noptin-blocks',
+			plugins_url( 'assets/js/blocks.js', __DIR__ ),
+			$blocks['dependencies'],
+			$blocks['version'],
+			true
+		);
+	}
+
+	/**
 	 * Enqueues scripts and styles.
 	 *
 	 * @param string $hook The current admin page.
@@ -432,177 +610,13 @@ class Main {
 			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
 				$load_blocks = true;
 
-				$ai = include plugin_dir_path( __DIR__ ) . 'assets/js/ai.asset.php';
-				wp_register_script(
-					'noptin-ai',
-					plugins_url( 'assets/js/ai.js', __DIR__ ),
-					$ai['dependencies'],
-					$ai['version'],
-					true
-				);
-
-				wp_enqueue_style(
-					'noptin-ai',
-					plugins_url( 'assets/css/style-ai.css', __DIR__ ),
-					array(),
-					$ai['version']
-				);
-
-				$ai_localization = array(
-					'email_types'         => array_filter(
-						array_map(
-							function ( $type ) {
-								// Skip email_templates and trash.
-								if ( 'email_template' === $type->type || 'trash' === $type->type ) {
-									return null;
-								}
-
-								/** @var \Hizzle\Noptin\Emails\Types\Type $type */
-								$to_return = array(
-									'label'               => $type->label,
-									'type'                => $type->type,
-									'plural_label'        => $type->plural_label,
-									'supports_recipients' => $type->supports_recipients,
-									'supports_timing'     => $type->supports_timing,
-									'supports_menu_order' => $type->supports_menu_order,
-								);
-
-								if ( $type->supports_sub_types ) {
-									$to_return['types'] = array_map(
-										function ( $sub_type ) {
-											return array(
-												'label' => $sub_type['label'],
-												'description' => $sub_type['description'],
-											);
-										},
-										$type->get_sub_types()
-									);
-								}
-
-								foreach ( array( 'child_type', 'parent_type' ) as $property ) {
-									if ( $type->{$property} ) {
-										$to_return[ $property ] = $type->{$property};
-									}
-								}
-
-								return $to_return;
-							},
-							\Hizzle\Noptin\Emails\Main::get_email_types()
-						)
-					),
-					'automation_triggers' => array_filter(
-						array_map(
-							function ( $trigger ) {
-								/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
-								if ( $trigger->depricated || empty( $trigger->category ) ) {
-									return null;
-								}
-
-								return array(
-									'description' => $trigger->get_description(),
-									'name'        => $trigger->get_name(),
-									'settings'    => $trigger->get_settings(),
-								);
-							},
-							\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
-						)
-					),
-					'automation_actions'  => array_filter(
-						array_map(
-							function ( $action ) {
-								/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
-
-								if ( $action->depricated || empty( $action->category ) ) {
-									return null;
-								}
-
-								return array(
-									'description' => $action->get_description(),
-									'name'        => $action->get_name(),
-									'settings'    => $action->get_settings(),
-								);
-							},
-							\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
-						)
-					),
-				);
-
-				$senders = array_merge(
-					array(
-						'manual_recipients' => array(
-							'label'        => __( 'Specific People', 'newsletter-optin-box' ),
-							'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
-							'image'        => array(
-								'icon' => 'businessperson',
-								'fill' => '#212121',
-							),
-							'is_active'    => true,
-							'is_installed' => true,
-							'is_local'     => true,
-							'settings'     => array(
-								'disableMergeTags' => false,
-								'fields'           => array(
-									'recipients' => array(
-										'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
-										'description' => sprintf(
-											'%s<br /> <br />%s',
-											__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
-											sprintf(
-												/* translators: %s: code */
-												__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
-												'<code>--notracking</code>'
-											)
-										),
-										'type'        => 'text',
-										'placeholder' => sprintf(
-											/* translators: %s: The Example */
-											__( 'For example, %s', 'newsletter-optin-box' ),
-											'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
-										),
-									),
-								),
-							),
-						),
-					),
-					get_noptin_email_senders( true )
-				);
-
-				$potential_senders = array();
-
-				foreach ( $senders as $key => $sender ) {
-					if ( ! is_array( $sender ) || empty( $sender['is_installed'] ) ) {
-						continue;
-					}
-
-					$potential_senders[ $key ] = array(
-						'label'       => $sender['label'] ?? $key,
-						'description' => $sender['description'] ?? '',
-						'settings'    => $sender['settings'] ?? array(),
-					);
-				}
-
-				if ( ! empty( $potential_senders ) ) {
-					$ai_localization['potential_senders'] = $potential_senders;
-				}
-
-				wp_add_inline_script(
-					'noptin-ai',
-					'window.noptinAIInfo = ' . wp_json_encode( $ai_localization ) . ';',
-					'before'
-				);
+				self::load_ai_script();
 
 				$config['dependencies'][] = 'noptin-ai';
 			}
 
-			if ( $load_blocks ) {
-				$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
-				wp_register_script(
-					'noptin-blocks',
-					plugins_url( 'assets/js/blocks.js', __DIR__ ),
-					$blocks['dependencies'],
-					$blocks['version'],
-					true
-				);
+			if ( 'email-editor' === $script ) {
+				self::load_blocks_script();
 
 				$config['dependencies'][] = 'noptin-blocks';
 				$localize_script          = 'noptin-blocks';
