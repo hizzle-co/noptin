@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 <?php return array('dependencies' => array('hizzlewp-components', 'react', 'react-jsx-runtime', 'wp-api-fetch', 'wp-blob', 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-compose', 'wp-core-data', 'wp-data', 'wp-data-controls', 'wp-deprecated', 'wp-dom', 'wp-editor', 'wp-element', 'wp-format-library', 'wp-hooks', 'wp-html-entities', 'wp-i18n', 'wp-keyboard-shortcuts', 'wp-keycodes', 'wp-media-utils', 'wp-notices', 'wp-preferences', 'wp-primitives', 'wp-rich-text', 'wp-url'), 'version' => '1acf8a4715aae6e5c572');
+=======
+<?php return array('dependencies' => array('hizzlewp-components', 'react', 'react-jsx-runtime', 'wp-api-fetch', 'wp-blob', 'wp-block-editor', 'wp-blocks', 'wp-components', 'wp-compose', 'wp-core-data', 'wp-data', 'wp-data-controls', 'wp-deprecated', 'wp-dom', 'wp-editor', 'wp-element', 'wp-format-library', 'wp-hooks', 'wp-html-entities', 'wp-i18n', 'wp-keyboard-shortcuts', 'wp-keycodes', 'wp-media-utils', 'wp-notices', 'wp-preferences', 'wp-primitives', 'wp-rich-text', 'wp-url'), 'version' => '3e391fbf63b1dd9a61df');
+>>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
