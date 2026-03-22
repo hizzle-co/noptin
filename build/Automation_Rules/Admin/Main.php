@@ -93,9 +93,19 @@ class Main {
 			$script = 'automation-rules';
 		}
 
+		$ai_model     = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
+		$ai_model     = 'openai/gpt-5-mini';
+		$model_prefix = strstr( $ai_model, '/', true );
+		$ai_api_key   = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
+
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
+
+			if ( ! empty( $ai_api_key ) ) {
+				\Hizzle\Noptin\Emails\Admin\Main::load_ai_script();
+				$config['dependencies'][] = 'noptin-ai';
+			}
 
 			wp_enqueue_script(
 				'noptin-' . $script,
@@ -114,6 +124,12 @@ class Main {
 					array(
 						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
 						'integrations' => apply_filters( 'noptin_get_all_known_integrations', array() ),
+						'ai'           => array(
+							'configured'   => ! empty( $ai_api_key ),
+							'api_key'      => $ai_api_key,
+							'model'        => $ai_model,
+							'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
+						),
 						'data'         => array(
 							'add_new'  => add_query_arg(
 								array(

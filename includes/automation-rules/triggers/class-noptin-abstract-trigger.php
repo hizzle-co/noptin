@@ -11,6 +11,6 @@ defined( 'ABSPATH' ) || exit;
  */
 abstract class Noptin_Abstract_Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 	public function __construct() {
-		_deprecated_class( __CLASS__, '4.2.0', 'Use \Hizzle\Noptin\Automation_Rules\Triggers\Trigger instead.' );
+		//_deprecated_class( __CLASS__, '4.2.0', 'Use \Hizzle\Noptin\Automation_Rules\Triggers\Trigger instead.' );
 	}
 }
