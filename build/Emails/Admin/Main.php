@@ -395,15 +395,9 @@ class Main {
 	/**
 	 * Loads AI script
 	 */
-<<<<<<< HEAD
 	public static function load_ai_script( $edited_campaign = null ) {
 
 		self::load_blocks_script( $edited_campaign );
-=======
-	public static function load_ai_script() {
-
-		self::load_blocks_script();
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 
 		$ai = include plugin_dir_path( __DIR__ ) . 'assets/js/ai.asset.php';
 
@@ -424,14 +418,11 @@ class Main {
 			$ai['version']
 		);
 
-<<<<<<< HEAD
 		$current_user = wp_get_current_user();
 
 		$brand_color = get_noptin_option( 'brand_color' );
 		$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 
-=======
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 		$ai_localization = array(
 			'email_types'         => array_filter(
 				array_map(
@@ -509,7 +500,6 @@ class Main {
 					\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
 				)
 			),
-<<<<<<< HEAD
 			'user'                => array(
 				'id'    => $current_user->ID,
 				'name'  => $current_user->display_name,
@@ -523,8 +513,6 @@ class Main {
 				'language'    => get_locale(),
 				'brand_color' => $brand_color,
 			),
-=======
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 		);
 
 		$senders = array_merge(
@@ -589,22 +577,15 @@ class Main {
 	/**
 	 * Loads blocks script
 	 */
-<<<<<<< HEAD
 	public static function load_blocks_script( $edited_campaign = null ) {
 		$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
 		wp_enqueue_script(
-=======
-	public static function load_blocks_script() {
-		$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
-		wp_register_script(
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 			'noptin-blocks',
 			plugins_url( 'assets/js/blocks.js', __DIR__ ),
 			$blocks['dependencies'],
 			$blocks['version'],
 			true
 		);
-<<<<<<< HEAD
 
 		$objects = apply_filters( 'noptin_email_editor_objects', array() );
 		$blocks  = array();
@@ -654,8 +635,6 @@ class Main {
 				)
 			)
 		);
-=======
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 	}
 
 	/**
@@ -693,27 +672,13 @@ class Main {
 			}
 
 			// Prepare the block editor.
-<<<<<<< HEAD
 			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
 				self::load_ai_script( $edited_campaign );
-=======
-			$load_blocks = 'email-editor' === $script;
-
-			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
-				$load_blocks = true;
-
-				self::load_ai_script();
-
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 				$config['dependencies'][] = 'noptin-ai';
 			}
 
 			if ( 'email-editor' === $script ) {
-<<<<<<< HEAD
 				self::load_blocks_script( $edited_campaign );
-=======
-				self::load_blocks_script();
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 
 				$config['dependencies'][] = 'noptin-blocks';
 				$localize_script          = 'noptin-blocks';
@@ -796,32 +761,6 @@ class Main {
 				$script
 			);
 
-<<<<<<< HEAD
-=======
-			if ( 'view-campaigns' === $script && $load_blocks ) {
-				$objects = apply_filters( 'noptin_email_editor_objects', array() );
-				$blocks  = array();
-
-				foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
-					foreach ( $merge_tags as $tag => $merge_tag_data ) {
-						if ( ! empty( $merge_tag_data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
-							$blocks[ $tag ] = array_merge(
-								array(
-									'description' => isset( $merge_tag_data['description'] ) ? $merge_tag_data['description'] : $merge_tag_data['label'],
-									'mergeTag'    => $tag,
-									'name'        => Editor::merge_tag_to_block_name( $tag ),
-								),
-								$merge_tag_data['block']
-							);
-						}
-					}
-				}
-
-				$data['blocks']  = $blocks;
-				$data['objects'] = $objects;
-			}
-
->>>>>>> b821f12926f4bdc7dcd732b63f1a7b0cbe7a67d8
 			// Add available automation triggers for sequence emails.
 			if (
 				'view-campaigns' === $script &&
