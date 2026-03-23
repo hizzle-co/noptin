@@ -210,8 +210,8 @@ class Main {
 						return array();
 					}
 
-					return \Noptin_Automation_Rule_Email::sync_campaign_to_rule(
-						new \Hizzle\Noptin\Emails\Email( $data_object->ID ),
+					return \Hizzle\Noptin\Automation_Rules\Triggers\Email_Type::sync_campaign_to_rule(
+						new Email( $data_object->ID ),
 						(array) $value['saved']
 					);
 				},
