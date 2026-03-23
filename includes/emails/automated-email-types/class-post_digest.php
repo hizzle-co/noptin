@@ -73,6 +73,15 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 			}
 		}
 
+		// Send deprecation notice to admin.
+		if ( 'automation' === $email->type && $this->type === $email->get_sub_type() ) {
+			wp_mail(
+				get_option( 'admin_email' ),
+				'Post Digest Email Type Deprecated',
+				'The Post Digest email type is deprecated and will soon stop sending emails. Please delete the existing automated email and create a new one using the updated "Latest Posts" email type.'
+			);
+		}
+
 		return $can_send;
 	}
 

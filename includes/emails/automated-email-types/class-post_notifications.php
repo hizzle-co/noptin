@@ -167,6 +167,13 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			return;
 		}
 
+		// Send deprecation notice to admin.
+		wp_mail(
+			get_option( 'admin_email' ),
+			'New Post Notification Email Type Deprecated',
+			'The New Post Notification email type is deprecated and will soon stop sending emails. Please delete the existing automated email and create a new one using the updated New Post Notification email type.'
+		);
+
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.

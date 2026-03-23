@@ -188,28 +188,4 @@ abstract class Noptin_Automated_Email_Type extends Noptin_Email_Type {
 		$timestamp        = strtotime( "+ $sends_after $sends_after_unit", time() );
 		return schedule_noptin_background_action( $timestamp, $this->notification_hook, $object_id, $automation->id );
 	}
-
-	/**
-	 * Returns an array of email recipients.
-	 *
-	 * @param \Hizzle\Noptin\Emails\Email $automation
-	 * @param array $merge_tags
-	 * @return array
-	 */
-	public function get_recipients( $automation, $merge_tags = array() ) {
-
-		$recipients = array();
-
-		$merge_tags['--notracking'] = '';
-		foreach ( explode( ',', $automation->get_recipients() ) as $recipient ) {
-			$track     = false === strpos( $recipient, '--notracking' );
-			$recipient = trim( str_replace( array_keys( $merge_tags ), array_values( $merge_tags ), $recipient ) );
-
-			if ( ! empty( $recipient ) ) {
-				$recipients[ $recipient ] = $track;
-			}
-		}
-
-		return $recipients;
-	}
 }
