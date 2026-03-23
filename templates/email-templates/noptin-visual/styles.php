@@ -110,6 +110,7 @@
 		padding-right: 40px;
 		padding-bottom: 16px;
 		padding-left: 40px;
+		text-align: center;
 	}
 
 	table.noptin-button-block__wrapper {
