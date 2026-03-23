@@ -229,38 +229,6 @@ JS;
 
 		// Localize noptin-email-editor.
 		$current_user = wp_get_current_user();
-		$objects      = apply_filters( 'noptin_email_editor_objects', array() );
-		$blocks       = array();
-
-		foreach ( $edited_campaign->get_merge_tags() as $tag => $data ) {
-			if ( ! empty( $data['block'] ) ) {
-				$blocks[ $tag ] = array_merge(
-					array(
-						'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
-						'mergeTag'    => $tag,
-						'name'        => self::merge_tag_to_block_name( $tag ),
-					),
-					$data['block']
-				);
-
-				unset( $blocks[ $tag ]['metadata']['ancestor'] );
-			}
-		}
-
-		foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
-			foreach ( $merge_tags as $tag => $data ) {
-				if ( ! empty( $data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
-					$blocks[ $tag ] = array_merge(
-						array(
-							'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
-							'mergeTag'    => $tag,
-							'name'        => self::merge_tag_to_block_name( $tag ),
-						),
-						$data['block']
-					);
-				}
-			}
-		}
 
 		wp_localize_script(
 			'noptin-blocks',
@@ -276,9 +244,7 @@ JS;
 				'templateDefaults' => get_noptin_email_template_defaults(),
 				'languages'        => noptin_get_available_languages(),
 				'back'             => esc_url( $edited_campaign->get_base_url() ),
-				'objects'          => (object) $objects,
 				'context'          => $edited_campaign->get_contexts(),
-				'dynamicBlocks'    => array_values( $blocks ),
 				'user'             => array(
 					'id'        => $current_user->ID,
 					'email'     => $current_user->user_email,

@@ -395,9 +395,9 @@ class Main {
 	/**
 	 * Loads AI script
 	 */
-	public static function load_ai_script() {
+	public static function load_ai_script( $edited_campaign = null ) {
 
-		self::load_blocks_script();
+		self::load_blocks_script( $edited_campaign );
 
 		$ai = include plugin_dir_path( __DIR__ ) . 'assets/js/ai.asset.php';
 
@@ -417,6 +417,11 @@ class Main {
 			array(),
 			$ai['version']
 		);
+
+		$current_user = wp_get_current_user();
+
+		$brand_color = get_noptin_option( 'brand_color' );
+		$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 
 		$ai_localization = array(
 			'email_types'         => array_filter(
@@ -495,6 +500,19 @@ class Main {
 					\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
 				)
 			),
+			'user'                => array(
+				'id'    => $current_user->ID,
+				'name'  => $current_user->display_name,
+				'email' => $current_user->user_email,
+			),
+			'website'             => array(
+				'name'        => get_bloginfo( 'name' ),
+				'description' => get_bloginfo( 'description' ),
+				'url'         => home_url(),
+				'admin_email' => get_option( 'admin_email' ),
+				'language'    => get_locale(),
+				'brand_color' => $brand_color,
+			),
 		);
 
 		$senders = array_merge(
@@ -559,14 +577,63 @@ class Main {
 	/**
 	 * Loads blocks script
 	 */
-	public static function load_blocks_script() {
+	public static function load_blocks_script( $edited_campaign = null ) {
 		$blocks = include plugin_dir_path( __DIR__ ) . 'assets/js/blocks.asset.php';
-		wp_register_script(
+		wp_enqueue_script(
 			'noptin-blocks',
 			plugins_url( 'assets/js/blocks.js', __DIR__ ),
 			$blocks['dependencies'],
 			$blocks['version'],
 			true
+		);
+
+		$objects = apply_filters( 'noptin_email_editor_objects', array() );
+		$blocks  = array();
+
+		if ( $edited_campaign ) {
+			/** @var \Hizzle\Noptin\Emails\Email|null $edited_campaign */
+			foreach ( $edited_campaign->get_merge_tags() as $tag => $data ) {
+				if ( ! empty( $data['block'] ) ) {
+					$blocks[ $tag ] = array_merge(
+						array(
+							'description' => isset( $data['description'] ) ? $data['description'] : $data['label'],
+							'mergeTag'    => $tag,
+							'name'        => Editor::merge_tag_to_block_name( $tag ),
+						),
+						$data['block']
+					);
+
+					unset( $blocks[ $tag ]['metadata']['ancestor'] );
+				}
+			}
+		}
+
+		foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
+			foreach ( $merge_tags as $tag => $merge_tag_data ) {
+				if ( ! empty( $merge_tag_data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
+					$blocks[ $tag ] = array_merge(
+						array(
+							'description' => $merge_tag_data['description'] ?? $merge_tag_data['label'],
+							'mergeTag'    => $tag,
+							'name'        => Editor::merge_tag_to_block_name( $tag ),
+						),
+						$merge_tag_data['block']
+					);
+				}
+			}
+		}
+
+		wp_localize_script(
+			'noptin-blocks',
+			'noptinEmailBlocksData',
+			apply_filters(
+				'noptin_email_blocks_data',
+				array(
+					'objects'       => (object) $objects,
+					'dynamicBlocks' => array_values( $blocks ),
+					'context'       => 'ai',
+				)
+			)
 		);
 	}
 
@@ -605,18 +672,13 @@ class Main {
 			}
 
 			// Prepare the block editor.
-			$load_blocks = 'email-editor' === $script;
-
 			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
-				$load_blocks = true;
-
-				self::load_ai_script();
-
+				self::load_ai_script( $edited_campaign );
 				$config['dependencies'][] = 'noptin-ai';
 			}
 
 			if ( 'email-editor' === $script ) {
-				self::load_blocks_script();
+				self::load_blocks_script( $edited_campaign );
 
 				$config['dependencies'][] = 'noptin-blocks';
 				$localize_script          = 'noptin-blocks';
@@ -698,29 +760,6 @@ class Main {
 				),
 				$script
 			);
-
-			if ( 'view-campaigns' === $script && $load_blocks ) {
-				$objects = apply_filters( 'noptin_email_editor_objects', array() );
-				$blocks  = array();
-
-				foreach ( wp_list_pluck( $objects, 'merge_tags' ) as $merge_tags ) {
-					foreach ( $merge_tags as $tag => $merge_tag_data ) {
-						if ( ! empty( $merge_tag_data['block'] ) && ! isset( $blocks[ $tag ] ) ) {
-							$blocks[ $tag ] = array_merge(
-								array(
-									'description' => isset( $merge_tag_data['description'] ) ? $merge_tag_data['description'] : $merge_tag_data['label'],
-									'mergeTag'    => $tag,
-									'name'        => Editor::merge_tag_to_block_name( $tag ),
-								),
-								$merge_tag_data['block']
-							);
-						}
-					}
-				}
-
-				$data['blocks']  = $blocks;
-				$data['objects'] = $objects;
-			}
 
 			// Add available automation triggers for sequence emails.
 			if (
