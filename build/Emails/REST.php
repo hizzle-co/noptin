@@ -213,4 +213,14 @@ class REST extends \WP_REST_Posts_Controller {
 
 		return rest_ensure_response( true );
 	}
+
+	protected function prepare_item_for_database( $request ) {
+		$data = parent::prepare_item_for_database( $request );
+
+		if ( ! is_wp_error( $data ) && isset( $data->post_content ) && false !== strpos( $data->post_content, '{{DEFAULT_FOOTER_TEXT}}' ) ) {
+			$data->post_content = str_replace( '{{DEFAULT_FOOTER_TEXT}}', get_default_noptin_footer_text(), $data->post_content );
+		}
+
+		return $data;
+	}
 }
