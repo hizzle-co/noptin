@@ -127,14 +127,14 @@ class Main {
 		$source_id   = $request->get_param( 'id' );
 
 		if ( empty( $source_type ) || empty( $source_id ) ) {
-			return new \WP_Error( 'noptin_rest_merge_tags_invalid', __( 'Please provide both type and id.', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Please provide both type and id.', array( 'status' => 400 ) );
 		}
 
 		if ( 'automation_trigger' === $source_type ) {
 			$trigger = \Hizzle\Noptin\Automation_Rules\Triggers\Main::get( $source_id );
 
 			if ( ! $trigger ) {
-				return new \WP_Error( 'noptin_rest_merge_tags_invalid', __( 'Invalid automation trigger.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Invalid automation trigger.', array( 'status' => 404 ) );
 			}
 
 			$merge_tags = self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() );
@@ -143,19 +143,19 @@ class Main {
 		}
 
 		if ( 'automated_email' === $source_type ) {
-			$types = noptin()->emails->automated_email_types;
+			$email = new \Hizzle\Noptin\Emails\Email(
+				array(
+					'type'            => 'automation',
+					'automation_type' => $source_id,
+				)
+			);
 
-			if ( empty( $types ) || ! is_object( $types ) || empty( $types->types ) || ! is_array( $types->types ) || ! isset( $types->types[ $source_id ] ) ) {
-				return new \WP_Error( 'noptin_rest_merge_tags_invalid', __( 'Invalid automated email type.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
-			}
-
-			$raw_merge_tags = $types->types[ $source_id ]->get_merge_tags();
-			$merge_tags     = self::normalize_merge_tags_for_response( $raw_merge_tags );
-
-			return rest_ensure_response( $merge_tags );
+			return rest_ensure_response(
+				self::normalize_merge_tags_for_response( $email->get_merge_tags() )
+			);
 		}
 
-		return new \WP_Error( 'noptin_rest_merge_tags_invalid', __( 'Invalid merge tag type.', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+		return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Invalid merge tag type.', array( 'status' => 400 ) );
 	}
 
 	/**
@@ -170,12 +170,12 @@ class Main {
 		$sub_type = $request->get_param( 'sub_type' );
 
 		if ( empty( $type ) ) {
-			return new \WP_Error( 'noptin_rest_recipients_invalid', __( 'Please provide a campaign type.', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'noptin_rest_recipients_invalid', 'Please provide a campaign type.', array( 'status' => 400 ) );
 		}
 
 		$email_type = \Hizzle\Noptin\Emails\Main::get_email_type( $type );
 		if ( ! $email_type ) {
-			return new \WP_Error( 'noptin_rest_recipients_invalid', __( 'Invalid campaign type.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'noptin_rest_recipients_invalid', 'Invalid campaign type.', array( 'status' => 404 ) );
 		}
 
 		$senders = array_merge(

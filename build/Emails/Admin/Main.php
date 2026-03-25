@@ -393,6 +393,70 @@ class Main {
 	}
 
 	/**
+	 * Slims down a settings schema for AI consumption.
+	 * Removes noise keys and omits defaults (type=text, el=input).
+	 *
+	 * @param array $settings Raw settings schema.
+	 * @return array
+	 */
+	private static function slim_settings_for_ai( $settings ) {
+		$result = array();
+
+		foreach ( $settings as $key => $field ) {
+			if ( ! is_array( $field ) ) {
+				continue;
+			}
+
+			// Recurse into grouped fields.
+			if ( isset( $field['fields'] ) && is_array( $field['fields'] ) ) {
+				$children = self::slim_settings_for_ai( $field['fields'] );
+				if ( ! empty( $children ) ) {
+					$result[ $key ] = $children;
+				}
+				continue;
+			}
+
+			$slim = array();
+
+			$label = $field['label'] ?? $key;
+
+			if ( ! empty( $field['description'] ) ) {
+				$label .= ' (' . $field['description'] . ')';
+			}
+
+			if ( ! empty( $label ) ) {
+				$slim['label'] = $label;
+			}
+
+			// type: only include if not the default 'text'.
+			if ( ! empty( $field['type'] ) && 'text' !== $field['type'] ) {
+				$slim['type'] = $field['type'];
+			}
+
+			// el: only include if not the default 'input'.
+			if ( ! empty( $field['el'] ) && 'input' !== $field['el'] ) {
+				$slim['el'] = $field['el'];
+			}
+
+			// options.
+			if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
+				$slim['options'] = $field['options'];
+			}
+
+			// default.
+			if ( isset( $field['default'] ) && '' !== $field['default'] ) {
+				$slim['default'] = $field['default'];
+			}
+
+			if ( ! empty( $slim ) ) {
+				$result[ $key ] = $slim;
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Loads AI script
 	 */
 	public static function load_ai_script( $edited_campaign = null ) {
@@ -440,18 +504,23 @@ class Main {
 							'supports_recipients' => $type->supports_recipients,
 							'supports_timing'     => $type->supports_timing,
 							'supports_menu_order' => $type->supports_menu_order,
+							'contexts'            => $type->contexts,
 						);
 
 						if ( $type->supports_sub_types ) {
-							$to_return['types'] = array_map(
-								function ( $sub_type ) {
-									return array(
-										'label'       => $sub_type['label'],
-										'description' => $sub_type['description'],
-									);
-								},
-								$type->get_sub_types()
-							);
+							$to_return['types'] = array();
+
+							foreach ( $type->get_sub_types() as $sub_type_key => $sub_type ) {
+								if ( 0 === strpos( $sub_type_key, 'automation_rule_' ) || empty( $sub_type['category'] ) ) {
+									continue;
+								}
+
+								$to_return['types'][ $sub_type_key ] = array(
+									'label'       => $sub_type['label'],
+									'description' => $sub_type['description'],
+									'contexts'    => $sub_type['contexts'] ?? array(),
+								);
+							}
 						}
 
 						foreach ( array( 'child_type', 'parent_type' ) as $property ) {
@@ -473,11 +542,14 @@ class Main {
 							return null;
 						}
 
-						return array(
+						$entry = array(
 							'description' => $trigger->get_description(),
-							'name'        => $trigger->get_name(),
-							'settings'    => $trigger->get_settings(),
 						);
+						$settings = self::slim_settings_for_ai( $trigger->get_settings() );
+						if ( ! empty( $settings ) ) {
+							$entry['settings'] = $settings;
+						}
+						return $entry;
 					},
 					\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
 				)
@@ -491,11 +563,14 @@ class Main {
 							return null;
 						}
 
-						return array(
+						$entry = array(
 							'description' => $action->get_description(),
-							'name'        => $action->get_name(),
-							'settings'    => $action->get_settings(),
 						);
+						$settings = self::slim_settings_for_ai( $action->get_settings() );
+						if ( ! empty( $settings ) ) {
+							$entry['settings'] = $settings;
+						}
+						return $entry;
 					},
 					\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
 				)
@@ -654,10 +729,8 @@ class Main {
 		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
 		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
 		$localize_script = 'noptin-' . $script;
-		$ai_model        = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
-		$ai_model        = 'openai/gpt-5-mini';
-		$model_prefix    = strstr( $ai_model, '/', true );
-		$ai_api_key      = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
+		$ai_model        = get_noptin_option( 'ai_model', 'google-ai-studio' );
+		$ai_api_key      = get_noptin_option( 'ai_' . $ai_model . '_api_key', '' );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {

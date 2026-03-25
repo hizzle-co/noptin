@@ -244,31 +244,28 @@ class Menu {
 				'label'    => __( 'AI', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'ai_model'             => array(
+					'ai_model'                    => array(
 						'el'               => 'select',
-						'label'            => __( 'AI Model', 'newsletter-optin-box' ),
-						'description'      => __( 'Select the AI model to use for generating content.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
+						'label'            => __( 'AI Provider', 'newsletter-optin-box' ),
+						'description'      => __( 'Select the AI provider to use for generating content.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
 							'<a href="%s" target="_blank">%s</a>',
 							noptin_get_upsell_url( '/pricing', 'settings', 'ai' ),
 							__( 'Activate your license key to unlock', 'newsletter-optin-box' )
 						) ),
 						'options'          => apply_filters(
-							'noptin_ai_model_options',
+							'noptin_ai_provider_options',
 							array(
-								'gemini/gemini-3.1-pro-preview' => 'Gemini 3.1 Pro Preview',
-								'gemini/gemini-3-flash-preview' => 'Gemini 3 Flash Preview',
-								'openai/gpt-5.4'    => 'GPT-5.4',
-								'openai/gpt-5-mini' => 'GPT-5 Mini',
-								'anthropic/claude-sonnet-4-6' => 'Claude Sonnet 4.6',
-								'anthropic/claude-haiku-4-5' => 'Claude Haiku 4.5',
+								'openai'           => 'OpenAI',
+								'google-ai-studio' => 'Google AI Studio',
+								'anthropic'        => 'Anthropic',
 							)
 						),
 						'customAttributes' => array(
 							'disabled' => ! noptin_has_alk(),
 						),
-						'default'          => 'openai/gpt-5.4',
+						'default'          => 'google-ai-studio',
 					),
-					'ai_gemini_api_key'    => array(
+					'ai_google-ai-studio_api_key' => array(
 						'el'               => 'input',
 						'type'             => 'text',
 						'label'            => __( 'Gemini API Key', 'newsletter-optin-box' ),
@@ -278,13 +275,12 @@ class Menu {
 						),
 						'conditions'       => array(
 							array(
-								'key'      => 'ai_model',
-								'operator' => '^includes',
-								'value'    => 'gemini',
+								'key'   => 'ai_model',
+								'value' => 'google-ai-studio',
 							),
 						),
 					),
-					'ai_openai_api_key'    => array(
+					'ai_openai_api_key'           => array(
 						'el'               => 'input',
 						'type'             => 'text',
 						'label'            => __( 'OpenAI API Key', 'newsletter-optin-box' ),
@@ -294,13 +290,12 @@ class Menu {
 						),
 						'conditions'       => array(
 							array(
-								'key'      => 'ai_model',
-								'operator' => '^includes',
-								'value'    => 'openai',
+								'key'   => 'ai_model',
+								'value' => 'openai',
 							),
 						),
 					),
-					'ai_anthropic_api_key' => array(
+					'ai_anthropic_api_key'        => array(
 						'el'               => 'input',
 						'type'             => 'text',
 						'label'            => __( 'Anthropic API Key', 'newsletter-optin-box' ),
@@ -310,9 +305,8 @@ class Menu {
 						),
 						'conditions'       => array(
 							array(
-								'key'      => 'ai_model',
-								'operator' => '^includes',
-								'value'    => 'anthropic',
+								'key'   => 'ai_model',
+								'value' => 'anthropic',
 							),
 						),
 					),

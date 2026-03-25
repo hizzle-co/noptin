@@ -93,10 +93,8 @@ class Main {
 			$script = 'automation-rules';
 		}
 
-		$ai_model     = get_noptin_option( 'ai_model', 'openai/gpt-5.4' );
-		$ai_model     = 'openai/gpt-5-mini';
-		$model_prefix = strstr( $ai_model, '/', true );
-		$ai_api_key   = get_noptin_option( 'ai_' . $model_prefix . '_api_key', '' );
+		$ai_model   = get_noptin_option( 'ai_model', 'google-ai-studio' );
+		$ai_api_key = get_noptin_option( 'ai_' . $ai_model . '_api_key', '' );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
