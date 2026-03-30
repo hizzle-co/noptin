@@ -167,18 +167,22 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 			return;
 		}
 
-		// Send deprecation notice to admin.
-		wp_mail(
-			get_option( 'admin_email' ),
-			'New Post Notification Email Type Deprecated',
-			'The New Post Notification email type is deprecated and will soon stop sending emails. Please delete the existing automated email and create a new one using the updated New Post Notification email type.'
-		);
-
+		$sent_reminder = false;
 		foreach ( $automations as $automation ) {
 
 			// Check if the automation applies here.
 			if ( $automation->can_send() && $this->is_automation_valid_for( $automation, $post ) ) {
 				$this->schedule_notification( $post->ID, $automation );
+
+				// Send deprecation notice to admin.
+				if ( ! $sent_reminder ) {
+					$sent_reminder = true;
+					wp_mail(
+						get_option( 'admin_email' ),
+						'New Post Notification Email Type Deprecated',
+						'The New Post Notification email type is deprecated and will soon stop sending emails. Please delete the existing automated email and create a new one using the updated New Post Notification email type.'
+					);
+				}
 			}
 		}
 	}
