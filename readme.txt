@@ -2,10 +2,10 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Version: 4.1.8
-Stable tag: 4.1.8
+Version: 4.2.0
+Stable tag: 4.2.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -198,6 +198,10 @@ There are a lot of ways to contribute to this newsletter plugin:-
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.2.0 =
+* Add: AI generation framework for newsletters, sequences, automated emails and automation rules.
+* Add: Agency control settings.
 
 = 4.1.8 =
 * Add: Automatically add UTM parameters to newsletter links for better tracking in Plausible and Google Analytics.
