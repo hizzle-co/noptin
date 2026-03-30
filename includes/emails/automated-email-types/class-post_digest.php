@@ -74,7 +74,7 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		}
 
 		// Send deprecation notice to admin.
-		if ( 'automation' === $email->type && $this->type === $email->get_sub_type() ) {
+		if ( $can_send && 'automation' === $email->type && $this->type === $email->get_sub_type() ) {
 			wp_mail(
 				get_option( 'admin_email' ),
 				'Post Digest Email Type Deprecated',
