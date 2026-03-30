@@ -209,7 +209,7 @@ class List_Table extends \WP_List_Table {
 	public function get_bulk_actions() {
 
 		$actions = array(
-			'delete' => __( 'Delete', 'hizzle-store' ),
+			'delete' => 'Delete',
 		);
 
 		/**
@@ -343,7 +343,7 @@ class List_Table extends \WP_List_Table {
 
 			<?php
 				do_action( $this->collection->hook_prefix( 'restrict_manage_records' ), $which, $this );
-				submit_button( __( 'Filter', 'hizzle-store' ), '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+				submit_button( 'Filter', '', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
 			?>
 
 		</div>

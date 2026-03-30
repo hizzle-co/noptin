@@ -380,8 +380,7 @@ class Prop {
 		// Has the value.
 		$query_schema[ $this->name ] = array(
 			'description'       => sprintf(
-				// translators: Placeholder %s is the property name.
-				__( 'Limit response to resources where %s has the provided value.', 'hizzle-store' ),
+				'Limit response to resources where %s has the provided value.',
 				$this->name
 			),
 			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
@@ -395,8 +394,7 @@ class Prop {
 		// Does not have the value.
 		$query_schema[ "{$this->name}_not" ] = array(
 			'description'       => sprintf(
-				// translators: Placeholder %s is the property name.
-				__( 'Limit response to resources where %s does not have the provided value.', 'hizzle-store' ),
+				'Limit response to resources where %s does not have the provided value.',
 				$this->name
 			),
 			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
@@ -412,8 +410,7 @@ class Prop {
 
 			$query_schema[ "{$this->name}_before" ] = array(
 				'description'       => sprintf(
-					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is before a given strtotime compatible date.', 'hizzle-store' ),
+					'Limit response to resources where %s is before a given strtotime compatible date.',
 					$this->name
 				),
 				'type'              => 'string',
@@ -422,8 +419,7 @@ class Prop {
 
 			$query_schema[ "{$this->name}_after" ] = array(
 				'description'       => sprintf(
-					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is after a given strtotime compatible date.', 'hizzle-store' ),
+					'Limit response to resources where %s is after a given strtotime compatible date.',
 					$this->name
 				),
 				'type'              => 'string',
@@ -431,7 +427,7 @@ class Prop {
 			);
 
 			$query_schema[ "{$this->name}_query" ] = array(
-				'description'       => __( 'An array to pass to WP_Date_Query.', 'hizzle-store' ),
+				'description'       => 'An array to pass to WP_Date_Query.',
 				'type'              => 'object',
 				'validate_callback' => 'rest_validate_request_arg',
 			);
@@ -443,8 +439,7 @@ class Prop {
 
 			$query_schema[ "{$this->name}_min" ] = array(
 				'description'       => sprintf(
-					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is greater than or equal to a given number.', 'hizzle-store' ),
+					'Limit response to resources where %s is greater than or equal to a given number.',
 					$this->name
 				),
 				'type'              => $rest_schema['type'],
@@ -453,8 +448,7 @@ class Prop {
 
 			$query_schema[ "{$this->name}_max" ] = array(
 				'description'       => sprintf(
-					// translators: Placeholder %s is the property name.
-					__( 'Limit response to resources where %s is less than or equal to a given number.', 'hizzle-store' ),
+					'Limit response to resources where %s is less than or equal to a given number.',
 					$this->name
 				),
 				'type'              => $rest_schema['type'],

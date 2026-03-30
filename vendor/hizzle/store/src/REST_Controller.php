@@ -161,7 +161,7 @@ class REST_Controller extends \WP_REST_Controller {
 			array(
 				'args'   => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+						'description' => 'Unique identifier for the object.',
 						'type'        => 'integer',
 					),
 				),
@@ -188,7 +188,7 @@ class REST_Controller extends \WP_REST_Controller {
 						'force' => array(
 							'default'     => false,
 							'type'        => 'boolean',
-							'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
+							'description' => 'Whether to bypass trash and force deletion.',
 						),
 					) : array(),
 					'allow_batch'         => array( 'v1' => true ),
@@ -204,7 +204,7 @@ class REST_Controller extends \WP_REST_Controller {
 			array(
 				'args'   => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+						'description' => 'Unique identifier for the object.',
 						'type'        => 'integer',
 					),
 				),
@@ -227,7 +227,7 @@ class REST_Controller extends \WP_REST_Controller {
 			array(
 				'args'   => array(
 					'id'     => array(
-						'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+						'description' => 'Unique identifier for the object.',
 						'type'        => 'integer',
 					),
 					'action' => array(
@@ -259,12 +259,12 @@ class REST_Controller extends \WP_REST_Controller {
 				array(
 					'args'   => array(
 						'hizzle_get_by' => array(
-							'description' => __( 'Unique field to search by.', 'hizzle-store' ),
+							'description' => 'Unique field to search by.',
 							'type'        => 'string',
 							'enum'        => $collection->keys['unique'],
 						),
 						'hizzle_value'  => array(
-							'description' => __( 'URL encoded value to search for.', 'hizzle-store' ),
+							'description' => 'URL encoded value to search for.',
 							'type'        => array( 'string', 'integer' ),
 						),
 					),
@@ -291,7 +291,7 @@ class REST_Controller extends \WP_REST_Controller {
 							'force' => array(
 								'default'     => false,
 								'type'        => 'boolean',
-								'description' => __( 'Whether to bypass trash and force deletion.', 'hizzle-store' ),
+								'description' => 'Whether to bypass trash and force deletion.',
 							),
 						) : array(),
 						'allow_batch'         => array( 'v1' => true ),
@@ -318,11 +318,11 @@ class REST_Controller extends \WP_REST_Controller {
 				array(
 					'args'   => array(
 						'id'     => array(
-							'description' => __( 'Unique identifier for the object.', 'hizzle-store' ),
+							'description' => 'Unique identifier for the object.',
 							'type'        => 'integer',
 						),
 						'tab_id' => array(
-							'description' => __( 'Unique identifier for the matched tab id.', 'hizzle-store' ),
+							'description' => 'Unique identifier for the matched tab id.',
 							'type'        => 'string',
 						),
 					),
@@ -375,16 +375,16 @@ class REST_Controller extends \WP_REST_Controller {
 						array(
 							'aggregate'    => array(
 								'type'        => array( 'object' ),
-								'description' => __( 'column => function array of columns to aggregate.', 'hizzle-store' ),
+								'description' => 'column => function array of columns to aggregate.',
 								'required'    => true,
 							),
 							'groupby'      => array(
 								'type'        => array( 'string', 'array', 'object' ),
-								'description' => __( 'Optional. Columns to group results by.', 'hizzle-store' ),
+								'description' => 'Optional. Columns to group results by.',
 							),
 							'extra_fields' => array(
 								'type'        => array( 'string', 'array' ),
-								'description' => __( 'Optional. Extra fields to include in the response.', 'hizzle-store' ),
+								'description' => 'Optional. Extra fields to include in the response.',
 							),
 						)
 					),
@@ -481,7 +481,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 */
 	public function get_items_permissions_check( $request ) {
 		if ( ! $this->check_record_permissions( 'read' ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_view', __( 'Sorry, you cannot list resources.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_view', 'Sorry, you cannot list resources.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -495,7 +495,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 */
 	public function create_item_permissions_check( $request ) {
 		if ( ! $this->check_record_permissions( 'create' ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_create', __( 'Sorry, you are not allowed to create resources.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_create', 'Sorry, you are not allowed to create resources.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -511,7 +511,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'read', $object->get_id() ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_view', __( 'Sorry, you cannot view this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_view', 'Sorry, you cannot view this resource.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -527,7 +527,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'edit', $object->get_id() ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_edit', __( 'Sorry, you are not allowed to edit this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit this resource.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -543,7 +543,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'delete', $object->get_id() ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_delete', __( 'Sorry, you are not allowed to delete this resource.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_delete', 'Sorry, you are not allowed to delete this resource.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -556,7 +556,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 */
 	public function delete_items_permissions_check() {
 		if ( ! $this->check_record_permissions( 'delete_multiple' ) ) {
-			return new \WP_Error( 'hizzle_rest_cannot_delete', __( 'Sorry, you cannot delete resources.', 'hizzle-store' ), array( 'status' => rest_authorization_required_code() ) );
+			return new \WP_Error( 'hizzle_rest_cannot_delete', 'Sorry, you cannot delete resources.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		return true;
@@ -710,7 +710,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 400 ) );
 		}
 
 		$data = $this->prepare_item_for_response( $object, $request );
@@ -734,7 +734,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 404 ) );
 		}
 
 		return rest_ensure_response(
@@ -767,7 +767,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 404 ) );
 		}
 
 		// Make sure we have a valid tab.
@@ -802,14 +802,14 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 404 ) );
 		}
 
 		$action = $request['action'];
 		$method = 'do_' . $action;
 
 		if ( ! method_exists( $object, $method ) ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Action not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Action not found.', array( 'status' => 400 ) );
 		}
 
 		$result = $object->$method( $request );
@@ -840,7 +840,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 		if ( ! empty( $request['id'] ) ) {
 			/* translators: %s: rest base */
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_exists", sprintf( __( 'Cannot create existing %s.', 'hizzle-store' ), $this->rest_base ), array( 'status' => 400 ) );
+			return new \WP_Error( "hizzle_rest_{$this->rest_base}_exists", sprintf( 'Cannot create existing %s.', $this->rest_base ), array( 'status' => 400 ) );
 		}
 
 		$object = $this->save_object( $request, true );
@@ -850,7 +850,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( "hizzle_rest_{$this->rest_base}_create_failed", __( 'Creating resource failed.', 'hizzle-store' ), array( 'status' => 500 ) );
+			return new \WP_Error( "hizzle_rest_{$this->rest_base}_create_failed", 'Creating resource failed.', array( 'status' => 500 ) );
 		}
 
 		try {
@@ -898,7 +898,7 @@ class REST_Controller extends \WP_REST_Controller {
 				if ( ! $this->check_record_permissions( 'edit', $item->get_id() ) ) {
 					$response[ $item->get_id() ] = array(
 						'error'   => 'hizzle_rest_cannot_edit',
-						'message' => __( 'Sorry, you are not allowed to edit this resource.', 'hizzle-store' ),
+						'message' => 'Sorry, you are not allowed to edit this resource.',
 						'status'  => rest_authorization_required_code(),
 					);
 					continue;
@@ -943,7 +943,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( ! $object || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 400 ) );
 		}
 
 		$object = $this->save_object( $request, false );
@@ -983,7 +983,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( empty( $object ) || ! $object->exists() ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 404 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 404 ) );
 		}
 
 		$object->delete( $force );
@@ -1034,7 +1034,7 @@ class REST_Controller extends \WP_REST_Controller {
 		}
 
 		if ( empty( $record ) ) {
-			return new \WP_Error( $this->prefix_hook( 'not_found' ), __( 'Record not found.', 'hizzle-store' ), array( 'status' => 400 ) );
+			return new \WP_Error( $this->prefix_hook( 'not_found' ), 'Record not found.', array( 'status' => 400 ) );
 		}
 
 		foreach ( array_keys( $this->get_endpoint_args_for_item_schema( \WP_REST_Server::CREATABLE ) ) as $arg ) {
@@ -1240,8 +1240,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$limit = apply_filters( $this->prefix_hook( 'batch_items_limit' ), 100, $this->get_normalized_rest_base() );
 
 		if ( $total > $limit ) {
-			/* translators: %s: items limit */
-			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( __( 'Unable to accept more than %s items for this request.', 'hizzle-store' ), $limit ), array( 'status' => 413 ) );
+			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( 'Unable to accept more than %s items for this request.', $limit ), array( 'status' => 413 ) );
 		}
 
 		// Is the user updating all items matching a query?
@@ -1468,7 +1467,7 @@ class REST_Controller extends \WP_REST_Controller {
 			'type'       => 'object',
 			'properties' => array(
 				'create' => array(
-					'description' => __( 'List of created resources.', 'hizzle-store' ),
+					'description' => 'List of created resources.',
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
@@ -1476,7 +1475,7 @@ class REST_Controller extends \WP_REST_Controller {
 					),
 				),
 				'update' => array(
-					'description' => __( 'List of updated resources.', 'hizzle-store' ),
+					'description' => 'List of updated resources.',
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
@@ -1484,7 +1483,7 @@ class REST_Controller extends \WP_REST_Controller {
 					),
 				),
 				'delete' => array(
-					'description' => __( 'List of deleted resources.', 'hizzle-store' ),
+					'description' => 'List of deleted resources.',
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(
@@ -1492,7 +1491,7 @@ class REST_Controller extends \WP_REST_Controller {
 					),
 				),
 				'import' => array(
-					'description' => __( 'List of imported resources.', 'hizzle-store' ),
+					'description' => 'List of imported resources.',
 					'type'        => 'array',
 					'context'     => array( 'view', 'edit' ),
 					'items'       => array(

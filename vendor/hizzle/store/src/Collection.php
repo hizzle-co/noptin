@@ -575,8 +575,7 @@ class Collection {
 			if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
 				$schema['properties'][ $prop->name . '::add' ] = array(
 					'description' => sprintf(
-						/* translators: %s: field label */
-						__( 'Add %s', 'hizzle-store' ),
+						'Add %s',
 						strtolower( $prop->description )
 					),
 					'type'        => 'array',
@@ -585,8 +584,7 @@ class Collection {
 
 				$schema['properties'][ $prop->name . '::remove' ] = array(
 					'description' => sprintf(
-						/* translators: %s: field label */
-						__( 'Remove %s', 'hizzle-store' ),
+						'Remove %s',
 						strtolower( $prop->description )
 					),
 					'type'        => 'array',
@@ -616,12 +614,12 @@ class Collection {
 		$query_schema = array();
 
 		$query_schema['paged'] = array(
-			'description' => __( 'Current page of the collection.', 'hizzle-store' ),
+			'description' => 'Current page of the collection.',
 			'type'        => 'integer',
 		);
 
 		$query_schema['per_page'] = array(
-			'description'       => __( 'Maximum number of items to be returned in result set.', 'hizzle-store' ),
+			'description'       => 'Maximum number of items to be returned in result set.',
 			'type'              => 'integer',
 			'default'           => 25,
 			'minimum'           => -1,
@@ -631,21 +629,21 @@ class Collection {
 		);
 
 		$query_schema['offset'] = array(
-			'description'       => __( 'Offset the result set by a specific number of items.', 'hizzle-store' ),
+			'description'       => 'Offset the result set by a specific number of items.',
 			'type'              => 'integer',
 			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		$query_schema['search'] = array(
-			'description'       => __( 'Limit results to those matching a string.', 'hizzle-store' ),
+			'description'       => 'Limit results to those matching a string.',
 			'type'              => 'string',
 			'sanitize_callback' => 'sanitize_text_field',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		$query_schema['search_columns'] = array(
-			'description'       => __( 'An array of props to search in.', 'hizzle-store' ),
+			'description'       => 'An array of props to search in.',
 			'type'              => 'array',
 			'items'             => array(
 				'type' => 'string',
@@ -655,7 +653,7 @@ class Collection {
 		);
 
 		$query_schema['exclude'] = array(
-			'description'       => __( 'Ensure result set excludes specific IDs.', 'hizzle-store' ),
+			'description'       => 'Ensure result set excludes specific IDs.',
 			'type'              => array( 'array', 'string' ),
 			'items'             => array(
 				'type' => 'integer',
@@ -665,7 +663,7 @@ class Collection {
 		);
 
 		$query_schema['include'] = array(
-			'description'       => __( 'Limit result set to specific ids.', 'hizzle-store' ),
+			'description'       => 'Limit result set to specific ids.',
 			'type'              => array( 'array', 'string' ),
 			'items'             => array(
 				'type' => 'integer',
@@ -682,7 +680,7 @@ class Collection {
 		}
 
 		$query_schema['order'] = array(
-			'description'       => __( 'Order sort attribute ascending or descending.', 'hizzle-store' ),
+			'description'       => 'Order sort attribute ascending or descending.',
 			'type'              => 'string',
 			'default'           => 'desc',
 			'enum'              => array( 'asc', 'desc' ),
@@ -692,20 +690,19 @@ class Collection {
 		$all_fields = $this->get_known_fields();
 
 		$query_schema['orderby'] = array(
-			'description'       => __( 'Sort collection by object attribute.', 'hizzle-store' ),
+			'description'       => 'Sort collection by object attribute. Any of:- ' . implode( ', ', array_merge( $all_fields['main'], $all_fields['post'], array( 'id', 'include' ) ) ),
 			'type'              => 'string',
 			'default'           => 'id',
 			'items'             => array(
 				'type' => 'string',
 			),
-			'enum'              => array_merge( $all_fields['main'], $all_fields['post'], array( 'id', 'include' ) ),
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
 		// Add join parameter if joins are configured.
 		if ( ! empty( $this->joins ) ) {
 			$query_schema['join'] = array(
-				'description'       => __( 'Join aliases to include in the query. If not specified, no joins will be included.', 'hizzle-store' ),
+				'description'       => 'Join aliases to include in the query. If not specified, no joins will be included.',
 				'type'              => array( 'string', 'array' ),
 				'items'             => array(
 					'type' => 'string',
@@ -1662,8 +1659,7 @@ class Collection {
 		$message = apply_filters(
 			$this->hook_prefix( 'not_found_message', true ),
 			sprintf(
-				// Translators: %s is the resource type.
-				__( '%s not found.', 'hizzle-store' ),
+				'%s not found.',
 				$this->get_label( 'singular_name', $this->get_singular_name() )
 			)
 		);
@@ -1684,10 +1680,9 @@ class Collection {
 		$message  = apply_filters(
 			$this->hook_prefix( 'not_saved_message', true ),
 			sprintf(
-				// Translators: %s is the resource type.
-				__( 'Error saving %1$s: %2$s.', 'hizzle-store' ),
+				'Error saving %1$s: %2$s.',
 				$this->get_label( 'singular_name', $this->get_singular_name() ),
-				empty( $db_error ) ? __( 'Unknown error', 'hizzle-store' ) : $db_error
+				empty( $db_error ) ? 'Unknown error' : $db_error
 			)
 		);
 
