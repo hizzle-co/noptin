@@ -44,9 +44,9 @@ class Main {
 	public static function automation_rules_menu() {
 
 		if ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
-			$title  = __( 'Edit Automation Rule', 'newsletter-optin-box' );
+			$title = __( 'Edit Automation Rule', 'newsletter-optin-box' );
 		} else {
-			$title  = __( 'Automation Rules', 'newsletter-optin-box' );
+			$title = __( 'Automation Rules', 'newsletter-optin-box' );
 		}
 
 		self::$hook_suffix = add_submenu_page(
@@ -93,14 +93,13 @@ class Main {
 			$script = 'automation-rules';
 		}
 
-		$ai_model   = get_noptin_option( 'ai_model', 'google-ai-studio' );
-		$ai_api_key = get_noptin_option( 'ai_' . $ai_model . '_api_key', '' );
+		$disable_ai = get_noptin_option( 'disable_ai', false );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
-			if ( ! empty( $ai_api_key ) ) {
+			if ( ! $disable_ai ) {
 				\Hizzle\Noptin\Emails\Admin\Main::load_ai_script();
 				$config['dependencies'][] = 'noptin-ai';
 			}
@@ -123,10 +122,7 @@ class Main {
 						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
 						'integrations' => apply_filters( 'noptin_get_all_known_integrations', array() ),
 						'ai'           => array(
-							'configured'   => ! empty( $ai_api_key ),
-							'api_key'      => $ai_api_key,
-							'model'        => $ai_model,
-							'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
+							'disabled' => (bool) $disable_ai,
 						),
 						'data'         => array(
 							'add_new'  => add_query_arg(

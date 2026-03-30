@@ -317,20 +317,6 @@ class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 	 * @return string
 	 */
 	public function noptin_url() {
-		static $subscriber_count = null;
-
-		if ( null === $subscriber_count ) {
-			$subscriber_count = get_noptin_subscribers_count();
-		}
-
-		// Don't show link if subscriber count is greater than 100 (typical spammers).
-		if ( $subscriber_count > 100 ) {
-			return sprintf(
-				'<a target="_blank" href="%s">WordPress</a>',
-				home_url()
-			);
-		}
-
 		return sprintf(
 			'<a target="_blank" href="%s">Noptin</a>',
 			noptin_get_upsell_url( 'https://noptin.com/', 'Powered By', 'Referrals' )

@@ -729,8 +729,7 @@ class Main {
 		$script          = empty( $edited_campaign ) ? 'view-campaigns' : $edited_campaign->admin_screen;
 		$type            = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
 		$localize_script = 'noptin-' . $script;
-		$ai_model        = get_noptin_option( 'ai_model', 'google-ai-studio' );
-		$ai_api_key      = get_noptin_option( 'ai_' . $ai_model . '_api_key', '' );
+		$disable_ai      = get_noptin_option( 'disable_ai', false );
 
 		// Load the js.
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
@@ -745,7 +744,7 @@ class Main {
 			}
 
 			// Prepare the block editor.
-			if ( 'view-campaigns' === $script && ! empty( $ai_api_key ) ) {
+			if ( 'view-campaigns' === $script && ! $disable_ai ) {
 				self::load_ai_script( $edited_campaign );
 				$config['dependencies'][] = 'noptin-ai';
 			}
@@ -771,7 +770,6 @@ class Main {
 			}
 
 			// Localize the script.
-
 			$data = apply_filters(
 				'noptin_email_settings_misc',
 				array(
@@ -786,10 +784,7 @@ class Main {
 					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
 					'brand'        => noptin()->white_label->get_details(),
 					'ai'           => array(
-						'configured'   => ! empty( $ai_api_key ),
-						'api_key'      => $ai_api_key,
-						'model'        => $ai_model,
-						'settings_url' => admin_url( 'admin.php?page=noptin-settings' ) . '#hizzlewp-setting-group-ai_info',
+						'disabled' => (bool) $disable_ai,
 					),
 					'senders'      => array_merge(
 						array(

@@ -229,86 +229,19 @@ class Menu {
 						'el'          => 'input',
 						'default'     => false,
 					),
+					'disable_ai'             => array(
+						'el'          => 'input',
+						'type'        => 'checkbox_alt',
+						'label'       => __( 'Disable AI', 'newsletter-optin-box' ),
+						'default'     => false,
+						'description' => __( 'Disable AI generation for this site.', 'newsletter-optin-box' ),
+					),
 					'keep_data_on_uninstall' => array(
 						'label'       => __( 'Keep data on uninstall', 'newsletter-optin-box' ),
 						'description' => __( 'Keep all data when the plugin is uninstalled.', 'newsletter-optin-box' ),
 						'type'        => 'checkbox_alt',
 						'el'          => 'input',
 						'default'     => false,
-					),
-				),
-			),
-
-			'ai_info'           => array(
-				'el'       => 'settings_group',
-				'label'    => __( 'AI', 'newsletter-optin-box' ),
-				'section'  => 'general',
-				'settings' => array(
-					'ai_model'                    => array(
-						'el'               => 'select',
-						'label'            => __( 'AI Provider', 'newsletter-optin-box' ),
-						'description'      => __( 'Select the AI provider to use for generating content.', 'newsletter-optin-box' ) . ( noptin_has_alk() ? '' : ' ' . sprintf(
-							'<a href="%s" target="_blank">%s</a>',
-							noptin_get_upsell_url( '/pricing', 'settings', 'ai' ),
-							__( 'Activate your license key to unlock', 'newsletter-optin-box' )
-						) ),
-						'options'          => apply_filters(
-							'noptin_ai_provider_options',
-							array(
-								'openai'           => 'OpenAI',
-								'google-ai-studio' => 'Google AI Studio',
-								'anthropic'        => 'Anthropic',
-							)
-						),
-						'customAttributes' => array(
-							'disabled' => ! noptin_has_alk(),
-						),
-						'default'          => 'google-ai-studio',
-					),
-					'ai_google-ai-studio_api_key' => array(
-						'el'               => 'input',
-						'type'             => 'text',
-						'label'            => __( 'Gemini API Key', 'newsletter-optin-box' ),
-						'description'      => __( 'Enter your Google Gemini API key.', 'newsletter-optin-box' ),
-						'customAttributes' => array(
-							'disabled' => ! noptin_has_alk(),
-						),
-						'conditions'       => array(
-							array(
-								'key'   => 'ai_model',
-								'value' => 'google-ai-studio',
-							),
-						),
-					),
-					'ai_openai_api_key'           => array(
-						'el'               => 'input',
-						'type'             => 'text',
-						'label'            => __( 'OpenAI API Key', 'newsletter-optin-box' ),
-						'description'      => __( 'Enter your OpenAI API key.', 'newsletter-optin-box' ),
-						'customAttributes' => array(
-							'disabled' => ! noptin_has_alk(),
-						),
-						'conditions'       => array(
-							array(
-								'key'   => 'ai_model',
-								'value' => 'openai',
-							),
-						),
-					),
-					'ai_anthropic_api_key'        => array(
-						'el'               => 'input',
-						'type'             => 'text',
-						'label'            => __( 'Anthropic API Key', 'newsletter-optin-box' ),
-						'description'      => __( 'Enter your Anthropic API key.', 'newsletter-optin-box' ),
-						'customAttributes' => array(
-							'disabled' => ! noptin_has_alk(),
-						),
-						'conditions'       => array(
-							array(
-								'key'   => 'ai_model',
-								'value' => 'anthropic',
-							),
-						),
 					),
 				),
 			),
