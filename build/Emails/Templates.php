@@ -77,7 +77,7 @@ class Templates {
 	 * @return array
 	 */
 	public static function add_templates( $settings, $script ) {
-		if ( 'view-campaigns' !== $script ) {
+		if ( 'view-campaigns' !== $script && 'email-editor' !== $script ) {
 			return $settings;
 		}
 

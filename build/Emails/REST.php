@@ -25,6 +25,26 @@ class REST extends \WP_REST_Posts_Controller {
 	 */
 	public function register_routes() {
 
+		// Get template content.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/get-template',
+			array(
+				'methods'             => \WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_template_content' ),
+				'permission_callback' => function () {
+					return current_user_can( get_noptin_capability() );
+				},
+				'args'                => array(
+					'noptin_template' => array(
+						'description' => 'The template ID.',
+						'type'        => 'string',
+						'required'    => true,
+					),
+				),
+			)
+		);
+
 		// Send a test email.
 		register_rest_route(
 			$this->namespace,
@@ -32,7 +52,7 @@ class REST extends \WP_REST_Posts_Controller {
 			array(
 				'args'        => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the post.', 'newsletter-optin-box' ),
+						'description' => 'Unique identifier for the post.',
 						'type'        => 'integer',
 					),
 				),
@@ -57,7 +77,7 @@ class REST extends \WP_REST_Posts_Controller {
 				'permission_callback' => array( $this, 'create_item_permissions_check' ),
 				'args'                => array(
 					'ids' => array(
-						'description' => __( 'The IDs of the emails to reorder.', 'newsletter-optin-box' ),
+						'description' => 'The IDs of the emails to reorder.',
 						'type'        => 'array',
 						'items'       => array(
 							'type' => 'integer',
@@ -108,13 +128,13 @@ class REST extends \WP_REST_Posts_Controller {
 
 		// Abort if the email is not found.
 		if ( ! $email->exists() ) {
-			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'noptin_rest_email_invalid', 'Invalid email', array( 'status' => 404 ) );
 		}
 
 		// Ensure we have a subject.
 		$subject = $email->get_subject();
 		if ( empty( $subject ) ) {
-			return new \WP_Error( 'noptin_rest_email_invalid', __( 'You need to provide a subject for your email.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'noptin_rest_email_invalid', 'You need to provide a subject for your email.', array( 'status' => 404 ) );
 		}
 
 		$user = array(
@@ -188,7 +208,7 @@ class REST extends \WP_REST_Posts_Controller {
 		$ids = $request->get_param( 'ids' );
 
 		if ( empty( $ids ) || ! is_array( $ids ) ) {
-			return new \WP_Error( 'noptin_rest_email_invalid', __( 'Invalid email IDs', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'noptin_rest_email_invalid', 'Invalid email IDs', array( 'status' => 400 ) );
 		}
 
 		$ids = array_map( 'intval', $ids );
@@ -212,6 +232,93 @@ class REST extends \WP_REST_Posts_Controller {
 		do_action( 'noptin_after_reorder_emails', $ids );
 
 		return rest_ensure_response( true );
+	}
+
+	/**
+	 * Retrieves the content of an email template.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function get_template_content( $request ) {
+		$template = sanitize_text_field( $request->get_param( 'noptin_template' ) );
+
+		if ( empty( $template ) || 'blank' === $template ) {
+			$defaults = get_noptin_email_template_defaults();
+			return rest_ensure_response(
+				array(
+					'content' => '',
+					'options' => $defaults['noptin-visual']
+				)
+			);
+		}
+
+		// Check if the template is a local campaign template.
+		if ( false !== strpos( $template, 'noptin_campaign_' ) ) {
+			$campaign_id = (int) str_replace( 'noptin_campaign_', '', $template );
+			$email       = noptin_get_email_campaign_object( $campaign_id );
+
+			if ( empty( $email->id ) ) {
+				return new \WP_Error(
+					'noptin_template_not_found',
+					'Template not found.',
+					array( 'status' => 404 )
+				);
+			}
+
+			$options = array_filter(
+				array(
+					'color'             => $email->get( 'color' ),
+					'button_background' => $email->get( 'button_background' ),
+					'button_color'      => $email->get( 'button_color' ),
+					'background_color'  => $email->get( 'background_color' ),
+					'custom_css'        => $email->get( 'custom_css' ),
+					'font_family'       => $email->get( 'font_family' ),
+					'font_size'         => $email->get( 'font_size' ),
+					'font_style'        => $email->get( 'font_style' ),
+					'font_weight'       => $email->get( 'font_weight' ),
+					'line_height'       => $email->get( 'line_height' ),
+					'link_color'        => $email->get( 'link_color' ),
+					'block_css'         => $email->get( 'block_css' ),
+					'background_image'  => $email->get( 'background_image' ),
+				)
+			);
+
+			return rest_ensure_response(
+				array(
+					'content' => $email->content,
+					'options' => $options,
+				)
+			);
+		}
+
+		// Fetch a remote template from noptin.com.
+		$response = \Noptin_COM::process_api_response( wp_remote_get( "https://noptin.com/email-templates/{$template}.json" ) );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$template_data = json_decode( wp_json_encode( $response ), true );
+
+		if ( ! is_array( $template_data ) || empty( $template_data['content'] ) ) {
+			return new \WP_Error(
+				'noptin_template_invalid',
+				'Invalid template data.',
+				array( 'status' => 500 )
+			);
+		}
+
+		return rest_ensure_response(
+			array(
+				'content' => str_ireplace(
+					array( '{{DEFAULT_FOOTER_TEXT}}', '{{FOOTER_TEXT}}' ),
+					get_noptin_footer_text(),
+					$template_data['content']
+				),
+				'options' => isset( $template_data['options'] ) ? $template_data['options'] : array(),
+			)
+		);
 	}
 
 	protected function prepare_item_for_database( $request ) {
