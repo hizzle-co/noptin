@@ -472,6 +472,9 @@ class Task extends \Hizzle\Store\Record {
 	 */
 	public function save() {
 
+		// Ensure the cron is scheduled to run pending tasks.
+		do_action( 'noptin_tasks_ensure_cron_scheduled' );
+
 		if ( ! $this->exists() && is_null( $this->get_meta( 'current_task_user' ) ) ) {
 			$this->update_meta( 'current_task_user', get_current_user_id() );
 		}

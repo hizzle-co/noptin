@@ -14,12 +14,31 @@ defined( 'ABSPATH' ) || exit;
  * Main component Class.
  *
  */
-class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
+class Main {
 
 	/**
 	 * The cron hook.
 	 */
 	public $cron_hook = 'noptin_run_tasks';
+
+	/**
+	 * The cron health check hook.
+	 */
+	public $cron_health_check_hook = 'noptin_run_tasks_health_check';
+
+	/**
+	 * The start time.
+	 *
+	 * @var int
+	 */
+	protected $start_time;
+
+	/**
+	 * The number of tasks processed.
+	 *
+	 * @var int
+	 */
+	public $processed_tasks = 0;
 
 	/**
 	 * Current task.
@@ -41,7 +60,12 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 *
 	 */
 	public function __construct() {
-		parent::__construct();
+		add_action( 'admin_init', array( $this, 'add_wp_cron_event' ) );
+		add_action( $this->cron_hook, array( $this, 'run' ) );
+		add_action( $this->cron_health_check_hook, array( $this, 'handle_cron_healthcheck' ) );
+		add_filter( 'cron_schedules', array( $this, 'filter_cron_schedules' ) );
+		add_action( 'wp_ajax_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
+		add_action( 'wp_ajax_nopriv_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 
 		add_filter( 'noptin_db_schema', array( __CLASS__, 'add_tasks_table' ) );
 		add_filter( 'hizzle_rest_noptin_tasks_collection_js_params', array( __CLASS__, 'filter_tasks_collection_js_params' ) );
@@ -52,6 +76,7 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 		add_action( 'noptin_tasks_after_execute', array( __CLASS__, 'reset_task' ), 0 );
 		add_action( 'noptin_tasks_failed_execution', array( __CLASS__, 'reset_task' ), 0 );
 		add_action( 'noptin_tasks_run_pending', array( $this, 'run_pending' ) );
+		add_action( 'noptin_tasks_ensure_cron_scheduled', array( $this, 'ensure_cron_scheduled' ) );
 
 		if ( is_admin() ) {
 			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'filter_admin_tools' ) );
@@ -74,20 +99,56 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public static function filter_cron_schedules( $schedules ) {
 
-		$schedules = parent::filter_cron_schedules( $schedules );
+		$schedules['every_5_minutes'] = array(
+			'interval' => 300,
+			'display'  => sprintf(
+				'Every %d Minutes',
+				5
+			),
+		);
 
 		$schedules['every_minute'] = array(
-			'interval' => 60, // in seconds
-			'display'  => __( 'Every minute', 'newsletter-optin-box' ),
+			'interval' => 60,
+			'display'  => 'Every minute',
 		);
 
 		return $schedules;
 	}
 
+	private static function has_pending_tasks() {
+		$pending = self::query(
+			array(
+				'status' => 'pending',
+				'number' => 1,
+			),
+			'count'
+		);
+
+		return ! empty( $pending );
+	}
+
 	/**
-	 * Add cron workers
+	 * Add or remove the cron event depending on whether pending tasks exist.
 	 */
 	public function add_wp_cron_event() {
+		if ( ! did_action( 'noptin_db_init' ) ) {
+			return;
+		}
+
+		if ( self::has_pending_tasks() ) {
+			$this->ensure_cron_scheduled();
+		} else {
+			$timestamp = wp_next_scheduled( $this->cron_hook );
+			if ( $timestamp ) {
+				wp_unschedule_event( $timestamp, $this->cron_hook );
+			}
+		}
+	}
+
+	/**
+	 * Ensures the every_minute cron event is scheduled.
+	 */
+	public function ensure_cron_scheduled() {
 		if ( ! wp_next_scheduled( $this->cron_hook ) ) {
 			$result = wp_schedule_event( time(), 'every_minute', $this->cron_hook, array(), true );
 
@@ -103,11 +164,149 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	 */
 	public function before_run() {
 
-		// Parent actions.
-		parent::before_run();
+		$this->start_time = time();
+		$this->lock_process();
+		wp_raise_memory_limit();
+		noptin_raise_time_limit( $this->get_time_limit() + 10 );
+		$this->start_cron_healthcheck();
 
 		// Cleanup long running actions.
 		self::clean( 10 * $this->get_time_limit() );
+	}
+
+	/**
+	 * Runs the queue.
+	 */
+	public function run() {
+
+		if ( $this->is_process_running() ) {
+			return;
+		}
+
+		$this->before_run();
+
+		do {
+			$task = $this->get_next_task();
+
+			if ( empty( $task ) ) {
+				break;
+			}
+
+			$this->process_task( $task );
+			++$this->processed_tasks;
+
+		} while ( ! $this->batch_limits_exceeded() );
+
+		$this->unlock_process();
+		$this->clear_caches();
+
+		if ( empty( $task ) ) {
+			$this->end_cron_healthcheck();
+		}
+	}
+
+	/**
+	 * Lock the process so multiple instances can't run simultaneously.
+	 */
+	protected function lock_process() {
+		$lock_duration = apply_filters( $this->cron_hook . '_queue_lock_time', 60 );
+		set_transient( $this->cron_hook . '_process_lock', microtime(), $lock_duration );
+	}
+
+	/**
+	 * Unlock the process.
+	 */
+	protected function unlock_process() {
+		delete_transient( $this->cron_hook . '_process_lock' );
+	}
+
+	/**
+	 * Flush object caches between batches.
+	 */
+	protected function clear_caches() {
+		if ( ! wp_using_ext_object_cache() || apply_filters( 'noptin_tasks_runner_flush_cache', false ) ) {
+			wp_cache_flush();
+		}
+	}
+
+	/**
+	 * Get the maximum number of seconds a batch can run.
+	 */
+	protected function get_time_limit() {
+		return absint( apply_filters( $this->cron_hook . '_time_limit', 20 ) );
+	}
+
+	/**
+	 * Check whether the time limit is likely to be exceeded.
+	 */
+	protected function time_likely_to_be_exceeded() {
+		if ( 0 === $this->processed_tasks ) {
+			return false;
+		}
+
+		$execution_time        = time() - $this->start_time;
+		$max_execution_time    = $this->get_time_limit();
+		$time_per_action       = $execution_time / $this->processed_tasks;
+		$estimated_time        = $execution_time + ( $time_per_action * 3 );
+		$likely_to_be_exceeded = $estimated_time > $max_execution_time;
+
+		return apply_filters( $this->cron_hook . '_maximum_execution_time_likely_to_be_exceeded', $likely_to_be_exceeded, $this, $execution_time, $max_execution_time );
+	}
+
+	/**
+	 * Check if batch limits (memory or time) have been exceeded.
+	 */
+	protected function batch_limits_exceeded() {
+		return noptin_memory_exceeded() || $this->time_likely_to_be_exceeded();
+	}
+
+	/**
+	 * Get the URL for async AJAX processing.
+	 */
+	protected function get_query_url() {
+		$url = add_query_arg(
+			array(
+				'action'      => $this->cron_hook,
+				'_ajax_nonce' => wp_create_nonce( $this->cron_hook ),
+			),
+			admin_url( 'admin-ajax.php' )
+		);
+
+		return apply_filters( $this->cron_hook . '_ajax_query_url', $url );
+	}
+
+	/**
+	 * Get the arguments for the async AJAX request.
+	 */
+	protected function get_ajax_args() {
+		$args = array(
+			'timeout'   => 0.01,
+			'blocking'  => false,
+			'cookies'   => $_COOKIE,
+			'sslverify' => false,
+		);
+
+		return apply_filters( $this->cron_hook . '_ajax_query_args', $args );
+	}
+
+	/**
+	 * Handles a rescheduled batch process via AJAX.
+	 */
+	public function maybe_handle_rescheduled() {
+		session_write_close();
+		check_ajax_referer( $this->cron_hook );
+		$this->ensure_cron_scheduled();
+		$this->run();
+		wp_die();
+	}
+
+	/**
+	 * Start cron healthcheck.
+	 */
+	protected function start_cron_healthcheck() {
+		if ( ! wp_next_scheduled( $this->cron_health_check_hook ) ) {
+			wp_schedule_event( time(), 'every_5_minutes', $this->cron_health_check_hook );
+		}
 	}
 
 	/**
@@ -143,21 +342,22 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	}
 
 	/**
-	 * Schedules the remaining tasks to be run in the background.
-	 */
-	protected function schedule_remaining_tasks() {
-		// Do nothing.
-	}
-
-	/**
-	 * End cron healthcheck
+	 * Remove the main cron event and healthcheck when all tasks are done.
 	 */
 	protected function end_cron_healthcheck() {
-		// Do nothing.
+		$timestamp = wp_next_scheduled( $this->cron_hook );
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, $this->cron_hook );
+		}
+
+		$healthcheck_timestamp = wp_next_scheduled( $this->cron_health_check_hook );
+		if ( $healthcheck_timestamp ) {
+			wp_unschedule_event( $healthcheck_timestamp, $this->cron_health_check_hook );
+		}
 	}
 
 	/**
-	 * Handle cron healthcheck
+	 * Handle cron healthcheck.
 	 *
 	 * Restart the background process if not already running
 	 * and data exists in the queue.
@@ -165,7 +365,11 @@ class Main extends \Hizzle\Noptin\Core\Bulk_Task_Runner {
 	public function handle_cron_healthcheck() {
 		$this->add_wp_cron_event();
 
-		parent::handle_cron_healthcheck();
+		if ( ! $this->is_process_running() ) {
+			$this->run();
+		}
+
+		exit;
 	}
 
 	/**
