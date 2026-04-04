@@ -26,8 +26,73 @@ class Main {
 		add_filter( 'noptin_convert_language_locale_to_slug', array( __CLASS__, 'convert_language_locale_to_slug' ) );
 		add_filter( 'noptin_woocommerce_order_locale', array( __CLASS__, 'filter_order_locale' ), 10, 2 );
 		add_filter( 'noptin_post_type_get_all_filters', array( __CLASS__, 'post_type_get_all_filters' ) );
+		add_filter( 'wpml_use_tm_editor', array( __CLASS__, 'use_native_editor_for_noptin_form' ), 10, 2 );
 
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_form_editor_language_middleware' ), 100 );
 		add_action( 'admin_init', array( __CLASS__, 'maybe_save_post_language_data' ) );
+		add_action( 'rest_after_insert_noptin-form', array( __CLASS__, 'set_rest_api_language' ), 10, 3 );
+	}
+
+	/**
+	 * Registers an apiFetch middleware on the form editor so that WPML language
+	 * params (lang, trid, source_lang) present in the page URL are forwarded as
+	 * query-string params on every non-GET REST request for noptin-form posts.
+	 * This ensures WPML can read $_GET['lang'] / $_GET['source_lang'] during
+	 * save_post when the block editor saves via the REST API.
+	 */
+	public static function add_form_editor_language_middleware() {
+		if ( ! wp_script_is( 'noptin-form-editor', 'enqueued' ) ) {
+			return;
+		}
+
+		$args = array();
+
+		foreach ( array( 'lang', 'trid', 'source_lang' ) as $param ) {
+			if ( isset( $_GET[ $param ] ) ) {
+				$args[ 'noptin_' . $param ] = sanitize_text_field( wp_unslash( urldecode( $_GET[ $param ] ) ) );
+			}
+		}
+
+		if ( empty( $args ) ) {
+			return;
+		}
+
+		wp_add_inline_script(
+			'noptin-form-editor',
+			sprintf(
+				"( function() {
+				var writeArgs = %s;
+				wp.apiFetch.use( function( options, next ) {
+					var method = ( options.method || 'GET' ).toUpperCase();
+					if (
+						options.path &&
+						options.path.indexOf( '/noptin-form' ) !== -1 &&
+						method !== 'GET'
+					) {
+						options = Object.assign( {}, options, { path: wp.url.addQueryArgs( options.path, writeArgs ) } );
+					}
+					return next( options );
+				} );
+				} )();",
+				wp_json_encode( $args )
+			),
+			'after'
+		);
+	}
+
+	/**
+	 * Forces noptin-form translations to open in the native WordPress editor.
+	 *
+	 * @param bool $use_tm_editor
+	 * @param int  $post_id
+	 * @return bool
+	 */
+	public static function use_native_editor_for_noptin_form( $use_tm_editor, $post_id ) {
+		if ( 'noptin-form' === get_post_type( $post_id ) ) {
+			return false;
+		}
+
+		return $use_tm_editor;
 	}
 
 	/**
@@ -53,6 +118,42 @@ class Main {
 	}
 
 	/**
+	 * Sets the WPML language for a noptin-form post saved via the REST API.
+	 *
+	 * Fires after the post is inserted/updated so WPML always receives the
+	 * correct language, translation group (trid) and source language even when
+	 * the save_post chain does not pick them up from $_GET.
+	 *
+	 * @param \WP_Post         $post     The inserted/updated post object.
+	 * @param \WP_REST_Request $request  The REST request.
+	 * @param bool            $creating True on insert, false on update.
+	 */
+	public static function set_rest_api_language( $post, $request, $creating ) {
+		$lang = $request->get_param( 'noptin_lang' );
+
+		if ( ! $lang ) {
+			$lang = apply_filters( 'wpml_current_language', null );
+		}
+
+		if ( ! $lang || 'all' === $lang ) {
+			return;
+		}
+
+		do_action(
+			'wpml_set_element_language_details',
+			array_filter(
+				array(
+					'element_id'           => $post->ID,
+					'element_type'         => 'post_noptin-form',
+					'trid'                 => $request->get_param( 'noptin_trid' ),
+					'language_code'        => $lang,
+					'source_language_code' => $request->get_param( 'noptin_source_lang' ),
+				)
+			)
+		);
+	}
+
+	/**
 	 * Find the right form and return it in the current language.
 	 *
 	 * @param int $form_id The form ID being displayed.
@@ -73,7 +174,7 @@ class Main {
 	public static function filter_post_locale( $locale, $post_id ) {
 		$lang = apply_filters( 'wpml_post_language_details', '', $post_id );
 
-		if ( is_array( $lang ) && ! empty( $lang['locale'] ) )  {
+		if ( is_array( $lang ) && ! empty( $lang['locale'] ) ) {
 			return $lang['locale'];
 		}
 
