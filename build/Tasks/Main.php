@@ -115,46 +115,60 @@ class Main {
 		return $schedules;
 	}
 
-	private static function has_pending_tasks() {
-		$pending = self::query(
-			array(
-				'status' => 'pending',
-				'number' => 1,
-			),
-			'count'
-		);
-
-		return ! empty( $pending );
-	}
-
 	/**
-	 * Add or remove the cron event depending on whether pending tasks exist.
+	 * Reconcile the cron event with the next pending task.
 	 */
 	public function add_wp_cron_event() {
 		if ( ! did_action( 'noptin_db_init' ) ) {
 			return;
 		}
 
-		if ( self::has_pending_tasks() ) {
-			$this->ensure_cron_scheduled();
-		} else {
+		$this->ensure_cron_scheduled();
+	}
+
+	/**
+	 * Schedules a single cron event at the time of the next pending task.
+	 * If no pending tasks exist, the cron event is unscheduled.
+	 */
+	public function ensure_cron_scheduled() {
+		// Find the earliest pending task.
+		$next_tasks = self::query(
+			array(
+				'status'  => 'pending',
+				'number'  => 1,
+				'orderby' => 'date_scheduled',
+				'order'   => 'ASC',
+			)
+		);
+
+		if ( empty( $next_tasks ) || is_wp_error( $next_tasks ) ) {
+			// No pending tasks — unschedule.
 			$timestamp = wp_next_scheduled( $this->cron_hook );
 			if ( $timestamp ) {
 				wp_unschedule_event( $timestamp, $this->cron_hook );
 			}
+			return;
 		}
-	}
 
-	/**
-	 * Ensures the every_minute cron event is scheduled.
-	 */
-	public function ensure_cron_scheduled() {
-		if ( ! wp_next_scheduled( $this->cron_hook ) ) {
-			$result = wp_schedule_event( time(), 'every_minute', $this->cron_hook, array(), true );
+		/** @var Task $next_task */
+		$next_task      = $next_tasks[0];
+		$scheduled_time = $next_task->get_date_scheduled() ? $next_task->get_date_scheduled()->getTimestamp() : time();
+		$run_at         = max( time(), $scheduled_time );
+		$existing       = wp_next_scheduled( $this->cron_hook );
 
-			if ( is_wp_error( $result ) ) {
-				log_noptin_message( 'Failed to schedule task runner cron event: ' . $result->get_error_message() );
-			}
+		// Already scheduled within a 60-second window — nothing to do.
+		if ( $existing && abs( $existing - $run_at ) <= MINUTE_IN_SECONDS ) {
+			return;
+		}
+
+		if ( $existing ) {
+			wp_unschedule_event( $existing, $this->cron_hook );
+		}
+
+		$result = wp_schedule_event( $run_at, 'every_minute', $this->cron_hook, array(), true );
+
+		if ( is_wp_error( $result ) ) {
+			log_noptin_message( 'Failed to schedule task runner cron event: ' . $result->get_error_message() );
 		}
 	}
 
@@ -199,6 +213,9 @@ class Main {
 
 		$this->unlock_process();
 		$this->clear_caches();
+
+		// Schedule the next run at the time of the next pending task.
+		$this->ensure_cron_scheduled();
 
 		if ( empty( $task ) ) {
 			$this->end_cron_healthcheck();
@@ -342,14 +359,10 @@ class Main {
 	}
 
 	/**
-	 * Remove the main cron event and healthcheck when all tasks are done.
+	 * Remove the healthcheck cron event when all tasks are done.
+	 * The main cron hook is managed by ensure_cron_scheduled().
 	 */
 	protected function end_cron_healthcheck() {
-		$timestamp = wp_next_scheduled( $this->cron_hook );
-		if ( $timestamp ) {
-			wp_unschedule_event( $timestamp, $this->cron_hook );
-		}
-
 		$healthcheck_timestamp = wp_next_scheduled( $this->cron_health_check_hook );
 		if ( $healthcheck_timestamp ) {
 			wp_unschedule_event( $healthcheck_timestamp, $this->cron_health_check_hook );
