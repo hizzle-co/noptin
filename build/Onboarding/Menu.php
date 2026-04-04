@@ -174,6 +174,7 @@ class Menu {
 		$current_user = wp_get_current_user();
 		$data         = array(
 			'brand'                => noptin()->white_label->get_details(),
+			'home_url'             => home_url(),
 			'dashboardURL'         => add_query_arg(
 				array(
 					'page' => 'noptin',

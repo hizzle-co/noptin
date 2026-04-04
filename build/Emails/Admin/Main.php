@@ -588,6 +588,7 @@ class Main {
 				'language'    => get_locale(),
 				'brand_color' => $brand_color,
 			),
+			'default_footer_text' => get_noptin_footer_text(),
 		);
 
 		$senders = array_merge(

@@ -1259,7 +1259,7 @@ function get_noptin_subscriber_filters() {
  * @return array
  */
 function noptin_clear_subscription_sources_cache() {
-	delete_transient( 'noptin_subscription_sources' );
+	wp_cache_delete( 'noptin_subscription_sources', 'noptin' );
 }
 add_action( 'noptin_subscriber_created', 'noptin_clear_subscription_sources_cache' );
 add_action( 'noptin_subscriber_updated', 'noptin_clear_subscription_sources_cache' );
@@ -1273,9 +1273,9 @@ add_action( 'noptin_subscriber_updated', 'noptin_clear_subscription_sources_cach
 function noptin_get_subscription_sources() {
 
 	// Fetch from cache.
-	$sources = get_transient( 'noptin_subscription_sources' );
+	$sources = wp_cache_get( 'noptin_subscription_sources', 'noptin' );
 
-	if ( $sources ) {
+	if ( false !== $sources ) {
 		return apply_filters( 'noptin_subscription_sources', $sources );
 	}
 
@@ -1312,7 +1312,7 @@ function noptin_get_subscription_sources() {
 	$sources = array_filter( $sources );
 
 	// Cache.
-	set_transient( 'noptin_subscription_sources', $sources, HOUR_IN_SECONDS );
+	wp_cache_set( 'noptin_subscription_sources', $sources, 'noptin', HOUR_IN_SECONDS );
 
 	return apply_filters( 'noptin_subscription_sources', $sources );
 }
