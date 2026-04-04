@@ -1,0 +1,72 @@
+<wpml-config>
+
+	<admin-texts>
+		<key name="noptin_options">
+			<key name="address" />
+			<key name="from_name" />
+			<key name="from_email" />
+			<key name="company" />
+			<key name="permission_text" />
+			<key name="footer_text" />
+			<key name="success_message" />
+			<key name="double_optin_email_subject" />
+            <key name="double_optin_hero_text" />
+            <key name="double_optin_email_body" />
+            <key name="double_optin_cta_text" />
+            <key name="double_optin_after_cta_text" />
+            <key name="double_optin_permission_text" />
+			<key name="pages_unsubscribe_page_message" />
+            <key name="pages_unsubscribe_page" />
+            <key name="pages_resubscribe_page_message" />
+            <key name="pages_resubscribe_page" />
+            <key name="pages_confirm_page_message" />
+            <key name="pages_confirm_page" />
+			<key name="pages_*" />
+			<key name="noptin_*_integration_checkbox_message" />
+			<key name="register_form_msg" />
+			<key name="comment_form_msg" />
+			<key name="custom_fields">
+                <key name="*">
+                    <key name="label" />
+                    <key name="placeholder" />
+                    <key name="description" />
+                    <key name="options" />
+                </key>
+			</key>
+		</key>
+	</admin-texts>
+
+	<shortcodes>
+        <shortcode>
+            <tag label="Newsletter subscription form (Noptin)">noptin</tag>
+            <attributes>
+                <attribute encoding="allow_html_tags" label="Shown before fields">before_fields</attribute>
+				<attribute encoding="allow_html_tags" label="Shown after fields">after_fields</attribute>
+				<attribute>redirect</attribute>
+				<attribute>submit</attribute>
+            </attributes>
+        </shortcode>
+	</shortcodes>
+
+	<custom-types>
+		<custom-type translate="1" display-as-translated="1">noptin-form</custom-type>
+	</custom-types>
+
+	<custom-fields>
+		<custom-field action="translate">form_messages</custom-field>
+		<custom-field action="translate">form_email</custom-field>
+		<custom-field action="copy-once">form_appearance</custom-field>
+		<custom-field action="copy-once">form_settings</custom-field>
+		<custom-field action="ignore">_noptin_form_views</custom-field>
+		<custom-field action="ignore">_noptin_subscribers_count</custom-field>
+	</custom-fields>
+
+	<custom-fields-texts>
+		<key name="form_email">
+			<key style="line" name="subject" />
+			<key style="visual" name="content" />
+		</key>
+	</custom-fields-texts>
+
+	
+</wpml-config>
