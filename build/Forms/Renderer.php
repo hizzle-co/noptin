@@ -727,7 +727,6 @@ class Renderer {
 				'tabindex'             => $form->is_slide_in() || $form->is_popup() ? '-1' : false,
 				'data-slide-direction' => $form->is_slide_in() ? $form->slideDirection : false,
 				'aria-labelledby'      => sprintf( '%s__title', $args['html_id'] ),
-				'style'                => $attr,
 			),
 			$args
 		);
@@ -739,11 +738,11 @@ class Renderer {
 			echo '<div class="noptin-popup__container">';
 		}
 
-		if ( ! empty( $form->CSS ) ) {
+		if ( ! empty( $form->CSS ) || ! empty( $attr ) ) {
 			$id_class   = sprintf( 'noptin-form-id-%d', $form->id );
 			$type_class = sprintf( 'noptin-%s-main-wrapper', $form->optinType );
 			printf(
-				'<style>%s</style>',
+				'<style>%s #%s__wrapper {%s}</style>',
 				wp_strip_all_tags( // phpcs:ignore
 					str_ireplace(
 						'.noptin-optin-form-wrapper',
@@ -754,7 +753,9 @@ class Renderer {
 							$form->CSS
 						)
 					)
-				)
+				),
+				esc_attr( $args['html_id'] ),
+				wp_strip_all_tags( $attr )  // phpcs:ignore
 			);
 		}
 
