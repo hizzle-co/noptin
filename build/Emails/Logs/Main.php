@@ -65,6 +65,25 @@ class Main {
 			return;
 		}
 
+		// Throttle repeated opens from the same email within 5 minutes.
+		if ( 'open' === $activity && ! empty( $campaign_id ) ) {
+			$five_minutes_ago = gmdate( 'Y-m-d H:i:s', time() - 5 * MINUTE_IN_SECONDS );
+			$recent_open      = self::query(
+				array(
+					'email'              => $email,
+					'campaign_id'        => (int) $campaign_id,
+					'activity'           => 'open',
+					'number'             => 1,
+					'date_created_after' => $five_minutes_ago,
+				),
+				'count'
+			);
+
+			if ( ! empty( $recent_open ) ) {
+				return;
+			}
+		}
+
 		$log = self::get( 0 );
 		$log->set( 'activity', $activity );
 		$log->set( 'email', $email );
