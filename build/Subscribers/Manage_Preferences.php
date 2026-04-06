@@ -70,6 +70,7 @@ class Manage_Preferences {
 				'email'      => $user->user_email,
 				'first_name' => $user->first_name,
 				'last_name'  => $user->last_name,
+				'name'       => $user->display_name,
 			);
 		}
 

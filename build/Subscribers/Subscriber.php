@@ -18,6 +18,13 @@ class Subscriber extends \Hizzle\Store\Record {
 	 * @return string
 	 */
 	public function get_name( $context = 'view' ) {
+		// In case the full name is stored in the name property, return it.
+		$name = $this->get_prop( 'name', $context );
+
+		if ( ! empty( $name ) ) {
+			return $name;
+		}
+
 		return trim( $this->get_first_name( $context ) . ' ' . $this->get_last_name( $context ) );
 	}
 
@@ -32,6 +39,10 @@ class Subscriber extends \Hizzle\Store\Record {
 			return;
 		}
 
+		// If the name property exists, use it.
+		$this->set_prop( 'name', sanitize_text_field( $value ) );
+
+		// Also, split the name into first and last name.
 		$parts = is_array( $value ) ? $value : explode( ' ', $value, 2 );
 
 		$this->set_first_name( array_shift( $parts ) );
