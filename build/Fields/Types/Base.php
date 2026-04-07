@@ -67,14 +67,20 @@ abstract class Base {
 	 * @param array $field
 	 */
 	public function filter_db_schema( $schema, $custom_field ) {
-		$schema[ $this->get_column_name( $custom_field ) ] = array(
+		$columns_name = $this->get_column_name( $custom_field );
+
+		$schema[ $columns_name ] = array(
 			'type'        => 'TEXT',
 			'label'       => wp_strip_all_tags( $custom_field['label'] ),
 			'description' => wp_strip_all_tags( $custom_field['label'] ),
 		);
 
+		if ( ! empty( $custom_field['dynamic'] ) ) {
+			$schema[ $columns_name ]['is_dynamic'] = true;
+		}
+
 		if ( isset( $custom_field['default_value'] ) && '' !== $custom_field['default_value'] ) {
-			$schema[ $this->get_column_name( $custom_field ) ]['default'] = $custom_field['default_value'];
+			$schema[ $columns_name ]['default'] = $custom_field['default_value'];
 		}
 		return $schema;
 	}

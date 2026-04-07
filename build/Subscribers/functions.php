@@ -1010,7 +1010,25 @@ function get_noptin_custom_fields( $public_only = false ) {
 
 	// Clean the fields.
 	$custom_fields = apply_filters( 'noptin_custom_fields', $custom_fields );
-	$fields        = array();
+
+	// If first_name and last_name are present but there is no 'name' field, inject a virtual
+	// 'name' field so it can be added to subscription forms. The Subscriber object's set_name()
+	// method will automatically split the submitted value into first and last name.
+	$_merge_tags = wp_list_pluck( $custom_fields, 'merge_tag' );
+	if ( in_array( 'first_name', $_merge_tags, true ) && in_array( 'last_name', $_merge_tags, true ) && ! in_array( 'name', $_merge_tags, true ) ) {
+		$custom_fields[] = array(
+			'type'        => 'name',
+			'merge_tag'   => 'name',
+			'label'       => __( 'Name', 'newsletter-optin-box' ),
+			'description' => __( "The subscriber's name.", 'newsletter-optin-box' ),
+			'visible'     => true,
+			'required'    => false,
+			'predefined'  => true,
+			'dynamic'     => true,
+		);
+	}
+
+	$fields = array();
 
 	foreach ( $custom_fields as $index => $field ) {
 		$prepared_field = array(

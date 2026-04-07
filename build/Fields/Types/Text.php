@@ -87,7 +87,7 @@ class Text extends Base {
 		);
 
 		if ( in_array( $custom_field['merge_tag'], array( 'first_name', 'last_name', 'name' ), true ) ) {
-			$schema[ $column ]['length']   = 100;
+			$schema[ $column ]['length']   = 'name' === $custom_field['merge_tag'] ? 200 : 100;
 			$schema[ $column ]['nullable'] = false;
 			$schema[ $column ]['default']  = '';
 		}

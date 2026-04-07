@@ -41,6 +41,12 @@ function get_noptin_custom_field_types() {
 				'label'      => __( 'Last Name', 'newsletter-optin-box' ),
 				'class'      => '\\Hizzle\\Noptin\\Fields\\Types\\Text',
 			),
+			'name'           => array(
+				'predefined' => true,
+				'merge_tag'  => 'name',
+				'label'      => __( 'Full Name', 'newsletter-optin-box' ),
+				'class'      => '\\Hizzle\\Noptin\\Fields\\Types\\Text',
+			),
 			'language'       => array(
 				'predefined' => true,
 				'merge_tag'  => 'language',

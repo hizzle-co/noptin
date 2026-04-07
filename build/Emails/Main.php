@@ -406,14 +406,8 @@ class Main {
 					),
 				),
 				'ai'                 => array(
-					'route'                => 'https://my.noptin.com/ai/generate/newsletter',
-					'context'              => 'newsletter',
-					'senders'              => true,
-					'overview_placeholder' => sprintf(
-						/* translators: %s is the current date. */
-						__( 'For example, write a thank you email to all subscribers who subscribed via our homepage popup after %s', 'newsletter-optin-box' ),
-						date_i18n( get_option( 'date_format' ), time() - WEEK_IN_SECONDS )
-					),
+					'context' => 'newsletter',
+					'senders' => true,
 				),
 			)
 		);
@@ -430,9 +424,8 @@ class Main {
 				'supports_timing'    => true,
 				'supports_sub_types' => true,
 				'ai'                 => array(
-					'context'              => 'automated email',
-					'senders'              => true,
-					'overview_placeholder' => __( 'For example, wait 5 minutes then send a coupon code to everyone who subscribes to our newsletter', 'newsletter-optin-box' ),
+					'context' => 'automated email',
+					'senders' => true,
 				),
 			)
 		);
@@ -442,10 +435,7 @@ class Main {
 		// Add AI config to the sequence type if not already set.
 		if ( isset( self::$types['sequence'] ) && empty( self::$types['sequence']->ai ) ) {
 			self::$types['sequence']->ai = array(
-				'setup_route'          => 'https://my.noptin.com/ai/generate/sequence-setup',
-				'route'                => 'https://my.noptin.com/ai/generate/sequence',
-				'is_sequence'          => true,
-				'overview_placeholder' => __( 'For example, create a 5-email welcome series for new subscribers who sign up via the homepage popup.', 'newsletter-optin-box' ),
+				'context' => 'sequence',
 			);
 		}
 
@@ -459,11 +449,7 @@ class Main {
 					'icon'         => 'clock',
 					'upsell'       => __( 'Set-up a series of emails to be sent at specific intervals one after another. Usefull for courses, welcome series, etc.', 'newsletter-optin-box' ),
 					'ai'           => array(
-						'setup_route'          => 'https://my.noptin.com/ai/generate/sequence-setup',
-						'route'                => 'https://my.noptin.com/ai/generate/sequence',
-						'is_sequence'          => true,
-						'context'              => 'sequence',
-						'overview_placeholder' => __( 'For example, create a 5-email welcome series for new subscribers who sign up via the homepage popup.', 'newsletter-optin-box' ),
+						'context' => 'sequence',
 					),
 				)
 			);

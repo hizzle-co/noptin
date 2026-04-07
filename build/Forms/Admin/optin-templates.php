@@ -224,8 +224,8 @@
 					array(
 						'type'    => array(
 							'label' => __( 'Enter your name here', 'newsletter-optin-box' ),
-							'name'  => 'first_name',
-							'type'  => 'first_name',
+							'name'  => 'name',
+							'type'  => 'name',
 						),
 
 						'require' => false,
@@ -387,8 +387,8 @@
 					array(
 						'type'    => array(
 							'label' => __( 'First Name', 'newsletter-optin-box' ),
-							'name'  => 'first_name',
-							'type'  => 'first_name',
+							'name'  => 'name',
+							'type'  => 'name',
 						),
 
 						'require' => false,
@@ -1144,22 +1144,12 @@
 					array(
 						'type'    => array(
 							'label' => __( 'First Name', 'newsletter-optin-box' ),
-							'name'  => 'first_name',
-							'type'  => 'first_name',
+							'name'  => 'name',
+							'type'  => 'name',
 						),
 
 						'require' => false,
-						'key'     => 'noptin_first_name',
-					),
-					array(
-						'type'    => array(
-							'label' => __( 'Last Name', 'newsletter-optin-box' ),
-							'name'  => 'last_name',
-							'type'  => 'last_name',
-						),
-
-						'require' => false,
-						'key'     => 'noptin_last_name',
+						'key'     => 'noptin_name',
 					),
 					array(
 						'type'    => array(

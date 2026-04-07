@@ -42,13 +42,6 @@ class Schema {
 				'description' => __( "The subscriber's email address.", 'newsletter-optin-box' ),
 				'nullable'    => false,
 			),
-
-			'name'  => array(
-				'type'        => 'VARCHAR',
-				'length'      => 200,
-				'description' => __( "The subscriber's name.", 'newsletter-optin-box' ),
-				'is_dynamic'  => true,
-			),
 		);
 
 		// Custom fields.
