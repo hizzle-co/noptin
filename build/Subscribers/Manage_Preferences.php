@@ -38,11 +38,19 @@ class Manage_Preferences {
 	 *
 	 * @return string
 	 */
-	public static function get_form() {
+	public static function get_form( $atts = array() ) {
+
+		$atts = shortcode_atts(
+			array(
+				'subscribe_label' => __( 'Subscribe to our newsletter', 'newsletter-optin-box' ),
+			),
+			$atts,
+			'noptin_manage_subscription'
+		);
 
 		// Generate mark-up.
 		ob_start();
-		self::display_form();
+		self::display_form( $atts );
 		return ob_get_clean();
 	}
 
@@ -51,7 +59,11 @@ class Manage_Preferences {
 	 *
 	 * @return string
 	 */
-	public static function display_form() {
+	public static function display_form( $atts = array() ) {
+
+		if ( ! isset( $atts['subscribe_label'] ) ) {
+			$atts['subscribe_label'] = __( 'Subscribe to our newsletter', 'newsletter-optin-box' );
+		}
 
 		// Prepare subscriber details.
 		$subscriber = noptin_get_subscriber( get_current_noptin_subscriber_id() );
@@ -148,14 +160,14 @@ class Manage_Preferences {
 					</div>
 				<?php endif; ?>
 
-				<?php if ( apply_filters( 'noptin_manage_subscriptions_show_status_field', true ) ) : ?>
-					<div class="noptin-field-wrapper noptin-field-wrapper--status">
-						<input type="hidden" name="noptin_fields[status]" value="unsubscribed" />
+				<?php if ( apply_filters( 'noptin_manage_subscriptions_show_status_field', true ) && ! empty( $atts['subscribe_label'] ) ) : ?>
+					<input type="hidden" name="noptin_fields[status]" value="unsubscribed" />
+					<label class="noptin-field-wrapper noptin-field-wrapper--status" style="display: block;">
 						<input type="checkbox" name="noptin_fields[status]" value="subscribed" <?php checked( $subscribed ); ?> />
 						<span>
-							<?php esc_html_e( 'Subscribe to our newsletter', 'noptin-addons-pack' ); ?>
+							<?php echo esc_html( $atts['subscribe_label'] ); ?>
 						</span>
-					</div>
+					</label>
 				<?php endif; ?>
 
 				<?php
@@ -191,7 +203,7 @@ class Manage_Preferences {
 				<input type="hidden" name="noptin-subscriber-key" value="<?php echo $subscriber ? esc_attr( $subscriber->get_confirm_key() ) : ''; ?>" />
 
 				<div class="noptin-field-wrapper noptin-field-wrapper--submit">
-					<input type="submit" name="submit" class="btn button wp-element-button" value="<?php esc_attr_e( 'Update Preferences', 'noptin-addons-pack' ); ?>" />
+					<input type="submit" name="submit" class="btn button wp-element-button" value="<?php esc_attr_e( 'Update Preferences', 'newsletter-optin-box' ); ?>" />
 				</div>
 			</form>
 		<?php
@@ -211,13 +223,13 @@ class Manage_Preferences {
 
 		// Verify nonce.
 		if ( ! wp_verify_nonce( $_POST['noptin-manage-subscription-nonce'], 'noptin-manage-subscription-nonce' ) ) {
-			self::$error_message = __( 'Could not verify nonce. Please try again.', 'noptin-addons-pack' );
+			self::$error_message = __( 'Could not verify nonce. Please try again.', 'newsletter-optin-box' );
 			return;
 		}
 
 		$posted = wp_unslash( $_POST['noptin_fields'] );
 		if ( empty( $posted['email'] ) || ! is_email( $posted['email'] ) ) {
-			self::$error_message = __( 'Missing or invalid email address.', 'noptin-addons-pack' );
+			self::$error_message = __( 'Missing or invalid email address.', 'newsletter-optin-box' );
 			return;
 		}
 
@@ -271,7 +283,7 @@ class Manage_Preferences {
 		} elseif ( is_wp_error( $result ) ) {
 			self::$error_message = $result->get_error_message();
 		} else {
-			self::$success_message = __( 'Your changes have been saved', 'noptin-addons-pack' );
+			self::$success_message = __( 'Your changes have been saved', 'newsletter-optin-box' );
 		}
 	}
 }
