@@ -174,6 +174,10 @@ class Manage_Preferences {
 
 				foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
 
+					if ( ! empty( $custom_field['dynamic'] ) ) {
+						continue;
+					}
+
 					if ( ! empty( $defaults[ $custom_field['merge_tag'] ] ) ) {
 						printf(
 							'<input type="hidden" name="noptin_fields[%s]" value="%s" />',
