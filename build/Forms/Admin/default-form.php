@@ -26,10 +26,12 @@
 
 		// Form Design.
 		'noptinFormBg'          => '#eeeeee',
+		'noptinFormBgGradient'  => '',
 		'noptinFormBorderColor' => '#eeeeee',
 		'borderSize'            => '4px',
 		'formWidth'             => '620px',
 		'formHeight'            => '280px',
+		'formBoxShadow'         => '',
 
 		// image Design.
 		'image'                 => '',
@@ -39,6 +41,14 @@
 
 		// Button designs.
 		'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
+		'noptinButtonBgGradient' => '',
+		'noptinButtonRadius'    => '',
+		'noptinButtonShadow'    => '',
+
+		// Field designs.
+		'fieldBg'               => '',
+		'fieldTextColor'        => '',
+		'fieldBorder'           => array(),
 
 		// Title design.
 		'hideTitle'             => false,

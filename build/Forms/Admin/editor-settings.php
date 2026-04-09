@@ -428,6 +428,10 @@ $editor_settings = array(
 					'el'    => 'input',
 					'label' => __( 'Box Shadow', 'newsletter-optin-box' ),
 				),
+				'formBorder'    => array(
+					'el'    => 'border',
+					'label' => __( 'Border', 'newsletter-optin-box' ),
+				),
 			),
 		),
 
@@ -439,7 +443,7 @@ $editor_settings = array(
 			'listen_to' => '.noptin-form-field-wrapper:not(.noptin-form-field-submit)',
 			'children'  => array(
 
-				'fields'            => array(
+				'fields'          => array(
 					'el'               => 'repeater',
 					'conditions'       => array(
 						array(
@@ -477,13 +481,13 @@ $editor_settings = array(
 					),
 				),
 
-				'hideFields'        => array(
+				'hideFields'      => array(
 					'type'  => 'switch',
 					'el'    => 'input',
 					'label' => __( 'Hide form fields', 'newsletter-optin-box' ),
 				),
 
-				'singleLine'        => array(
+				'singleLine'      => array(
 					'type'       => 'switch',
 					'el'         => 'input',
 					'label'      => __( 'Show all fields in a single line', 'newsletter-optin-box' ),
@@ -495,7 +499,7 @@ $editor_settings = array(
 					),
 				),
 
-				'showLabels'        => array(
+				'showLabels'      => array(
 					'type'       => 'switch',
 					'el'         => 'input',
 					'label'      => __( 'Show field labels outside the fields', 'newsletter-optin-box' ),
@@ -507,7 +511,7 @@ $editor_settings = array(
 					),
 				),
 
-				'gdprCheckbox'      => array(
+				'gdprCheckbox'    => array(
 					'type'       => 'switch',
 					'el'         => 'input',
 					'label'      => __( 'Show GDPR checkbox', 'newsletter-optin-box' ),
@@ -519,7 +523,7 @@ $editor_settings = array(
 					),
 				),
 
-				'gdprConsentText'   => array(
+				'gdprConsentText' => array(
 					'type'       => 'text',
 					'el'         => 'input',
 					'label'      => __( 'Consent Text', 'newsletter-optin-box' ),
@@ -535,7 +539,7 @@ $editor_settings = array(
 					),
 				),
 
-				'hideEmail'         => array(
+				'hideEmail'       => array(
 					'type'       => 'switch',
 					'el'         => 'input',
 					'label'      => __( 'Hide email field if the email address is already known', 'newsletter-optin-box' ),
@@ -547,17 +551,15 @@ $editor_settings = array(
 					),
 				),
 
-			),
-		),
-
-		// Field border.
-		'fieldBorder'  => array(
-			'el'         => 'border',
-			'label'      => __( 'Field Border', 'newsletter-optin-box' ),
-			'conditions' => array(
-				array(
-					'key'   => 'hideFields',
-					'value' => false,
+				'fieldBorder'     => array(
+					'el'         => 'border',
+					'label'      => __( 'Field Border', 'newsletter-optin-box' ),
+					'conditions' => array(
+						array(
+							'key'   => 'hideFields',
+							'value' => false,
+						),
+					),
 				),
 			),
 		),
@@ -899,8 +901,8 @@ $editor_settings = array(
 					'label' => __( 'Background', 'newsletter-optin-box' ),
 					'tabs'  => array(
 						array(
-							'key'        => 'noptinFormBg',
-							'label'      => __( 'Color', 'newsletter-optin-box' ),
+							'key'   => 'noptinFormBg',
+							'label' => __( 'Color', 'newsletter-optin-box' ),
 						),
 						array(
 							'key'        => 'noptinFormBgGradient',
@@ -910,36 +912,42 @@ $editor_settings = array(
 					),
 				),
 				array(
-					'key'   => 'descriptionColor',
+					'key'   => 'noptinTextColor',
 					'label' => __( 'Text', 'newsletter-optin-box' ),
-				),
-				array(
-					'key'        => 'titleColor',
-					'label'      => __( 'Heading', 'newsletter-optin-box' ),
-					'conditions' => array(
+					'tabs'  => array(
 						array(
-							'key'   => 'hideTitle',
-							'value' => false,
+							'key'   => 'descriptionColor',
+							'label' => __( 'Description', 'newsletter-optin-box' ),
 						),
-					),
-				),
-				array(
-					'key'        => 'prefixColor',
-					'label'      => __( 'Prefix', 'newsletter-optin-box' ),
-					'conditions' => array(
 						array(
-							'key'   => 'hidePrefix',
-							'value' => false,
+							'key'        => 'titleColor',
+							'label'      => __( 'Heading', 'newsletter-optin-box' ),
+							'conditions' => array(
+								array(
+									'key'   => 'hideTitle',
+									'value' => false,
+								),
+							),
 						),
-					),
-				),
-				array(
-					'key'        => 'noteColor',
-					'label'      => __( 'Note', 'newsletter-optin-box' ),
-					'conditions' => array(
 						array(
-							'key'   => 'hideNote',
-							'value' => false,
+							'key'        => 'prefixColor',
+							'label'      => __( 'Prefix', 'newsletter-optin-box' ),
+							'conditions' => array(
+								array(
+									'key'   => 'hidePrefix',
+									'value' => false,
+								),
+							),
+						),
+						array(
+							'key'        => 'noteColor',
+							'label'      => __( 'Note', 'newsletter-optin-box' ),
+							'conditions' => array(
+								array(
+									'key'   => 'hideNote',
+									'value' => false,
+								),
+							),
 						),
 					),
 				),
@@ -983,12 +991,6 @@ $editor_settings = array(
 					),
 				),
 			),
-		),
-
-		// Form border.
-		'formBorder'  => array(
-			'el'    => 'border',
-			'label' => __( 'Border', 'newsletter-optin-box' ),
 		),
 	),
 	'integrations' => array(

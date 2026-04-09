@@ -254,6 +254,36 @@ class Main {
 			$custom_templates = array();
 		}
 
+		// New custom templates are now stored as custom post types. So we need to get them from the database.
+		$forms = get_posts(
+			array(
+				'numberposts' => -1,
+				'fields'      => 'ids',
+				'post_type'   => 'noptin-form',
+				'post_status' => 'publish',
+				'meta_key'    => '_noptin_optin_type',
+				'meta_value'  => 'template',
+			)
+		);
+
+		foreach ( $forms as $form_id ) {
+			$form = noptin_get_optin_form( $form_id );
+
+			if ( $form->exists() ) {
+				$custom_templates[ "user_{$form_id}" ] = array(
+					'title' => empty( $form->optinName ) ? 'Form #' . $form_id : $form->optinName,
+					'data'  => array_diff_key(
+						$form->get_all_data(),
+						array(
+							'id'          => true,
+							'optinName'   => true,
+							'optinStatus' => true,
+						)
+					),
+				);
+			}
+		}
+
 		return array_merge( $custom_templates, $inbuilt_templates );
 	}
 

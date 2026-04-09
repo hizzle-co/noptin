@@ -432,7 +432,7 @@ class Form {
 		$state = $this->data;
 		unset( $state['optinType'] );
 		unset( $state['id'] );
-		update_post_meta( $id, '_noptin_state', $this->data );
+		update_post_meta( $id, '_noptin_state', $state );
 		update_post_meta( $id, '_noptin_optin_type', $this->optinType );
 		return true;
 	}
