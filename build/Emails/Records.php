@@ -327,10 +327,16 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		$campaign = noptin_get_email_campaign_object( $automated_email_id );
-		$can_send = $campaign->can_send();
+		$can_send = $campaign->can_send( true );
 
 		if ( is_wp_error( $can_send ) ) {
-			throw new \Exception( esc_html( $can_send->get_error_message() ) );
+			throw new \Exception(
+				sprintf(
+					'Email campaign "%s" cannot be sent:- %s',
+					esc_html( $campaign->get( 'name' ) ),
+					esc_html( $can_send->get_error_message() )
+				)
+			);
 		}
 
 		if ( ! $can_send ) {
