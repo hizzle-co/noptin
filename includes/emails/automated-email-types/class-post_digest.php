@@ -90,7 +90,7 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 	 *
 	 */
 	public function get_name() {
-		return __( 'Post Digest', 'newsletter-optin-box' );
+		return 'Post Digest (Deprecated)';
 	}
 
 	/**
@@ -98,7 +98,7 @@ class Noptin_Post_Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 	 *
 	 */
 	public function get_description() {
-		return __( 'Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content.', 'newsletter-optin-box' );
+		return 'Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content. (Deprecated)';
 	}
 
 	/**

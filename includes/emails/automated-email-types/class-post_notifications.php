@@ -57,7 +57,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function get_name() {
-		return __( 'New Post Notification', 'newsletter-optin-box' );
+		return 'New Post Notification (Deprecated)';
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Noptin_New_Post_Notification extends Noptin_Automated_Email_Type {
 	 *
 	 */
 	public function get_description() {
-		return __( 'Get more traffic to your site by notifying your subscribers every time you publish new content.', 'newsletter-optin-box' );
+		return 'Get more traffic to your site by notifying your subscribers every time you publish new content.';
 	}
 
 	/**
