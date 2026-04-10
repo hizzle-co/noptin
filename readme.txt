@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.0
 Requires PHP: 7.4
-Version: 4.2.1
-Stable tag: 4.2.1
+Version: 4.2.2
+Stable tag: 4.2.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -198,6 +198,10 @@ There are a lot of ways to contribute to this newsletter plugin:-
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.2.2 =
+* Add: Ability to change an automated email's type after it's created.
+* Add: Support creating a custom `name` custom field for newsletter subscribers.
 
 = 4.2.0 =
 * Add: AI generation framework for newsletters, sequences, automated emails and automation rules.
