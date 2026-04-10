@@ -206,13 +206,21 @@ class Main {
 				},
 				'update_callback' => function ( $value, $data_object ) {
 
-					if ( empty( $value ) ) {
+					// Abort if no id.
+					if ( empty( $data_object->ID ) ) {
+						return array();
+					}
+
+					$email = new Email( $data_object->ID );
+
+					// Abort if email is not found.
+					if ( ! $email->is_automation_rule() ) {
 						return array();
 					}
 
 					return \Hizzle\Noptin\Automation_Rules\Triggers\Email_Type::sync_campaign_to_rule(
-						new Email( $data_object->ID ),
-						(array) $value['saved']
+						$email,
+						(array) ( $value['saved'] ?? array() )
 					);
 				},
 				'schema'          => array(
