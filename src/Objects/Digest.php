@@ -113,15 +113,17 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 
 		$name  = $collection->plural_type();
 		$block = str_replace( '_', '-', $name );
-		$query = array(
-			'number'  => 10,
-			'order'   => 'desc',
-			'orderby' => 'date',
+		$query = array_merge(
+			array(
+				'number'  => 10,
+				'order'   => 'desc',
+				'orderby' => 'date',
+            ),
+            $collection->query_defaults()
 		);
 
 		foreach ( $collection->get_filters() as $key => $data ) {
 			if ( isset( $data['default'] ) && '' !== $data['default'] && array() !== $data['default'] ) {
-
 				if ( is_bool( $data['default'] ) ) {
 					$data['default'] = $data['default'] ? 'true' : 'false';
 				}

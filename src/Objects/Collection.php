@@ -347,6 +347,15 @@ abstract class Collection {
 			$attributes = ' ' . $attributes;
 		}
 
+		// Allow collections to reference provided collections as fields.
+		foreach ( $this->provides as $provided ) {
+			$provided = Store::get( $provided );
+
+			if ( $provided && strpos( $field, $provided->smart_tags_prefix . '.' ) === 0 ) {
+				return "[[{$field}{$attributes}]]";
+			}
+		}
+
 		return "[[{$this->smart_tags_prefix}.{$field}{$attributes}]]";
 	}
 
@@ -629,6 +638,15 @@ abstract class Collection {
 			"noptin_{$this->type}_collection_query_defaults",
 			array()
 		);
+	}
+
+	/**
+	 * Alias for get_query_defaults for backwards compatibility.
+	 *
+	 * This is here because visibility of get_query_defaults is protected.
+	 */
+	public function query_defaults() {
+		return $this->get_query_defaults();
 	}
 
 	/**
