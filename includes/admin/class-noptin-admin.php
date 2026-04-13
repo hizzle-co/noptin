@@ -178,13 +178,6 @@ class Noptin_Admin {
 			exit;
 		}
 
-		// AI Launch notice dismissal.
-		if ( isset( $_GET['noptin_ai_launch_dismissed'] ) && isset( $_GET['noptin-ai-launch-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['noptin-ai-launch-nonce'] ) ), 'noptin-ai-launch-nag' ) ) {
-			update_option( 'noptin_ai_launch_dismissed', PHP_INT_MAX );
-			wp_safe_redirect( remove_query_arg( array( 'noptin_ai_launch_dismissed', 'noptin-ai-launch-nonce' ) ) );
-			exit;
-		}
-
 		// Redirect to welcome page.
 		if ( ! get_option( '_noptin_has_welcomed', false ) && ! wp_doing_ajax() ) {
 
@@ -321,31 +314,7 @@ class Noptin_Admin {
 			// Black Friday promotion dismissed.
 			$black_friday_dismissed = get_option( 'noptin_black_friday_dismissed', 0 );
 
-			$ai_launch_dismissed = get_option( 'noptin_ai_launch_dismissed', 0 );
-
-			if ( ! noptin_has_alk() && $ai_launch_dismissed < time() && time() < strtotime( '2026-04-13 00:00:00' ) ) {
-				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_ai_launch_dismissed', '1' ), 'noptin-ai-launch-nag', 'noptin-ai-launch-nonce' );
-				$this->print_notice(
-					'info',
-					sprintf(
-						'<p><strong>%s</strong> &nbsp;<span style="background:#ef4444;color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700;">79%% OFF</span></p><p>%s</p><p>%s&nbsp;&nbsp;%s</p>',
-						'Use AI to create beautiful newsletters, automations, and email sequences in minutes.',
-						'Get the AI Launch Pass to unlock AI, premium templates, premium integrations, and 500 AI credits for just $79. Offer ends April 12th.',
-						sprintf(
-							'<a href="%s" target="_blank" class="button button-primary">%s</a>',
-							noptin_get_upsell_url( 'noptin-ai-launch/', 'ai-launch-upsell', 'ai-launch-admin-notice' ),
-							'Claim AI Launch Pass →'
-						),
-						sprintf(
-							'<a href="%s">%s</a>',
-							$dismiss_url,
-							__( 'Dismiss', 'newsletter-optin-box' )
-						)
-					),
-					$dismiss_url
-				);
-			// Show notice.
-			} elseif ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() && ! noptin_has_alk() ) {
+			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() && ! noptin_has_alk() ) {
 				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_black_friday_dismissed', time() + MONTH_IN_SECONDS ), 'noptin-black-friday-nag', 'noptin-black-friday-nonce' );
 				$this->print_notice(
 					'info',

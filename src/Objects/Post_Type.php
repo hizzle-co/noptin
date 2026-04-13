@@ -215,7 +215,7 @@ abstract class Post_Type extends Collection {
 			$triggers[ $event ] = array();
 		}
 
-		if ( in_array( $post_id, $triggers[ $event ] ) ) {
+		if ( in_array( $post_id, $triggers[ $event ], true ) ) {
 			return;
 		}
 
