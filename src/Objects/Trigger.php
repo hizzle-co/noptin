@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Generic object trigger.
  */
-class Trigger extends \Noptin_Abstract_Trigger {
+class Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 
 	/**
 	 * @var string $object_type The object type.
@@ -525,11 +525,11 @@ class Trigger extends \Noptin_Abstract_Trigger {
 	/**
 	 * Auto-provides objects.
 	 *
-	 * @param \Hizzle\Noptin\Objects\Record $object The object.
+	 * @param \Hizzle\Noptin\Objects\Record $record The object.
 	 * @param string $object_type The object type, e.g order.product.
 	 * @param bool $is_start Whether this is the start.
 	 */
-	private function auto_provide( $object, $object_type, $is_start = false ) {
+	private function auto_provide( $record, $object_type, $is_start = false ) {
 		global $noptin_current_objects;
 
 		// Abort if already provided.
@@ -560,15 +560,15 @@ class Trigger extends \Noptin_Abstract_Trigger {
 				continue;
 			}
 
-			$record = $object->provide( $provided_object_type );
-			$record = ! empty( $record ) ? $provided_collection->get( $record ) : $record;
+			$provided_record = $record->provide( $provided_object_type );
+			$provided_record = ! empty( $provided_record ) ? $provided_collection->get( $provided_record ) : $provided_record;
 
-			if ( ! empty( $record ) && $record->exists() ) {
+			if ( ! empty( $provided_record ) && $provided_record->exists() ) {
 				// E.g, order.product.post_author.
-				$noptin_current_objects[ $use_key ] = $record;
+				$noptin_current_objects[ $use_key ] = $provided_record;
 
 				// Useful for nested provides, e.g order.product.post_author.subscriber.
-				$this->auto_provide( $record, $use_key );
+				$this->auto_provide( $provided_record, $use_key );
 			}
 		}
 	}
