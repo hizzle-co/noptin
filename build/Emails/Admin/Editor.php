@@ -227,6 +227,9 @@ JS;
 			}
 		}
 
+		$to_remove = array( 'wp-editor-classic-layout-styles' );
+		$to_load   = array_diff_key( $to_load, array_flip( $to_remove ) );
+
 		// Localize noptin-email-editor.
 		$current_user = wp_get_current_user();
 
