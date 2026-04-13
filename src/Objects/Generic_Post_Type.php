@@ -32,7 +32,7 @@ class Generic_Post_Type extends Post_Type {
 			_doing_it_wrong( __METHOD__, sprintf( 'Post type %s does not exist.', esc_html( $type ) ), esc_html( noptin()->version ) );
 		} else {
 			$this->label          = $post_type->labels->name;
-			$this->singular_label = $post_type->labels->singular_name;
+			$this->singular_label = empty( $post_type->labels->singular_name ) ? $post_type->labels->name : $post_type->labels->singular_name;
 		}
 
 		$this->type = $type;
@@ -546,7 +546,7 @@ class Generic_Post_Type extends Post_Type {
 	 * @return array $actions The actions.
 	 */
 	public function get_actions() {
-		$is_vowel = in_array( strtolower( $this->singular_label[0] ), array( 'a', 'e', 'i', 'o', 'u' ), true );
+		$is_vowel = in_array( strtolower( $this->singular_label[0] ?? '' ), array( 'a', 'e', 'i', 'o', 'u' ), true );
 		return array_merge(
 			parent::get_actions(),
 			array(
