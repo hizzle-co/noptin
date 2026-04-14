@@ -22,32 +22,22 @@
 		'inject'                => '0',
 		'buttonPosition'        => 'block',
 		'subscribeAction'       => 'message', // redirect.
-		'redirectUrl'           => '',
 
 		// Form Design.
 		'noptinFormBg'          => '#eeeeee',
-		'noptinFormBgGradient'  => '',
 		'noptinFormBorderColor' => '#eeeeee',
 		'borderSize'            => '4px',
 		'formWidth'             => '620px',
 		'formHeight'            => '280px',
-		'formBoxShadow'         => '',
 
 		// image Design.
-		'image'                 => '',
 		'imagePos'              => 'right',
-		'imageMain'             => '',
 		'imageMainPos'          => 'right',
 
 		// Button designs.
 		'noptinButtonLabel'     => __( 'Subscribe Now', 'newsletter-optin-box' ),
-		'noptinButtonBgGradient' => '',
-		'noptinButtonRadius'    => '',
-		'noptinButtonShadow'    => '',
 
 		// Field designs.
-		'fieldBg'               => '',
-		'fieldTextColor'        => '',
 		'fieldBorder'           => array(),
 
 		// Title design.
@@ -148,8 +138,6 @@
 			'showBlog',
 			'post',
 		),
-		'neverShowOn'           => '',
-		'onlyShowOn'            => '',
 		'whoCanSee'             => 'all',
 		'userRoles'             => array(),
 		'hideSmallScreens'      => false,
@@ -158,6 +146,5 @@
 
 		// custom css.
 		'CSS'                   => '.noptin-optin-form-wrapper *{}',
-		'tags'                  => '',
 
 	);

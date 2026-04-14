@@ -151,44 +151,32 @@ class Form {
 	 */
 	public function get_defaults() {
 
-		$defaults = array_merge(
-			include plugin_dir_path( __FILE__ ) . 'Admin/default-form.php',
-			array(
-				'optinName'            => '',
-				'optinStatus'          => true,
-				'id'                   => null,
-				'hideSeconds'          => WEEK_IN_SECONDS,
-
-				// Opt in options.
-				'formRadius'           => '0px',
-
-				// Form Design.
-				'noptinFormBgImg'      => '',
-				'noptinFormBgVideo'    => '',
-
-				// Overlay.
-				'noptinOverlayBgImg'   => '',
-				'noptinOverlayBgVideo' => '',
-				'noptinOverlayBg'      => 'rgba(96, 125, 139, 0.6)',
-			)
-		);
-
-		// Add filters for all known taxonomies.
-		foreach ( array_keys( noptin_get_post_types() ) as $post_type ) {
-			$taxonomies = wp_list_pluck(
-				wp_list_filter(
-					get_object_taxonomies( $post_type, 'objects' ),
-					array(
-						'public' => true,
-					)
+		$defaults = array(
+			'optinName'       => '',
+			'optinType'       => 'inpost',
+			'optinStatus'     => true,
+			'id'              => null,
+			'singleLine'      => false,
+			'gdprCheckbox'    => false,
+			'hideSeconds'     => WEEK_IN_SECONDS,
+			'fields'          => array(
+				array(
+					'type'    => array(
+						'label' => __( 'Email Address', 'newsletter-optin-box' ),
+						'name'  => 'email',
+						'type'  => 'email',
+					),
+					'require' => 'true',
+					'key'     => 'noptin_email_key',
 				),
-				'name'
-			);
-
-			foreach ( $taxonomies as $taxonomy ) {
-				$defaults[ 'showTaxonomy_' . $taxonomy ] = '';
-			}
-		}
+			),
+			'noptinOverlayBg' => 'rgba(96, 125, 139, 0.6)',
+			'hideFields'      => false,
+			'inject'          => '0',
+			'buttonPosition'  => 'block',
+			'subscribeAction' => 'message',
+			'hidePrefix'      => true,
+		);
 
 		// Loop through all custom fields.
 		foreach ( get_noptin_multicheck_custom_fields() as $field ) {
@@ -214,9 +202,9 @@ class Form {
 		if ( empty( $data['formBorder'] ) || ! is_array( $data['formBorder'] ) ) {
 			$data['formBorder'] = array(
 				'style'         => 'solid',
-				'border_radius' => intval( $data['formRadius'] ),
-				'border_width'  => intval( $data['borderSize'] ),
-				'border_color'  => $data['noptinFormBorderColor'],
+				'border_radius' => intval( $data['formRadius'] ?? 0 ),
+				'border_width'  => intval( $data['borderSize'] ?? 0 ),
+				'border_color'  => $data['noptinFormBorderColor'] ?? '',
 			);
 
 			extract( $data['formBorder'] ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
