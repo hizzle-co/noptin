@@ -347,7 +347,7 @@ class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 		if ( empty( $posts ) ) {
 			if ( isset( $args['skiponempty'] ) && 'yes' === $args['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
-					'message' => __( 'No posts found.', 'newsletter-optin-box' ),
+					'message' => 'No posts found.',
 				);
 			}
 
