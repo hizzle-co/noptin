@@ -159,7 +159,7 @@ msgid "How to fix emails not sending."
 msgstr "So beheben Sie das Problem, dass E-Mails nicht gesendet werden."
 
 #: build/Emails/Admin/Editor.php:147
-#: build/Emails/Admin/Editor.php:344
+#: build/Emails/Admin/Editor.php:347
 msgid "Add email subject"
 msgstr "E-Mail-Betreff hinzufügen"
 
@@ -168,21 +168,21 @@ msgstr "E-Mail-Betreff hinzufügen"
 msgid "Start writing or type / to choose a block"
 msgstr "Schreibe etwas oder gebe \"/\" ein, um einen Block auszuwählen"
 
-#: build/Emails/Admin/Editor.php:419
+#: build/Emails/Admin/Editor.php:422
 msgid "Primary"
 msgstr "Primär"
 
-#: build/Emails/Admin/Editor.php:424
+#: build/Emails/Admin/Editor.php:427
 #: build/Forms/Widgets/New_Form.php:47
 msgid "White"
 msgstr "Weiß"
 
-#: build/Emails/Admin/Editor.php:429
+#: build/Emails/Admin/Editor.php:432
 #: build/Forms/Widgets/New_Form.php:46
 msgid "Black"
 msgstr "Schwarz"
 
-#: build/Emails/Admin/Editor.php:439
+#: build/Emails/Admin/Editor.php:442
 msgid "Light Gray"
 msgstr "Hellgrau"
 
@@ -1623,6 +1623,7 @@ msgstr "Jetzt installieren"
 #: build/Fields/functions.php:29
 #: build/Fields/Main.php:240
 #: build/Forms/Admin/default-form.php:13
+#: build/Forms/Form.php:165
 #: build/Forms/Widgets/New_Form.php:178
 msgid "Email Address"
 msgstr "E-Mail-Adresse"
@@ -1758,23 +1759,23 @@ msgstr "Abonnenten MÜSSEN dieses Feld ausfüllen, wenn es zu einem Abonnementfo
 msgid "I consent to receive promotional emails about your products and services."
 msgstr "Ich bin damit einverstanden, Werbe-E-Mails über Ihre Produkte und Dienstleistungen zu erhalten."
 
-#: build/Forms/Admin/default-form.php:43
+#: build/Forms/Admin/default-form.php:38
 msgid "Subscribe Now"
 msgstr "Jetzt abonnieren"
 
-#: build/Forms/Admin/default-form.php:55
+#: build/Forms/Admin/default-form.php:45
 #: build/Forms/assets/js/new-form-block.js:1
 msgid "JOIN OUR NEWSLETTER"
 msgstr "ABONNIERE UNSEREN NEWSLETTER"
 
-#: build/Forms/Admin/default-form.php:76
+#: build/Forms/Admin/default-form.php:66
 #: build/Forms/Admin/editor-settings.php:680
 #: build/Forms/Admin/editor-settings.php:693
 #: build/Forms/Admin/editor-settings.php:934
 msgid "Prefix"
 msgstr "Präfix"
 
-#: build/Forms/Admin/default-form.php:96
+#: build/Forms/Admin/default-form.php:86
 msgid "And get notified everytime we publish a new blog post."
 msgstr "Und lassen Sie sich jedes Mal benachrichtigen, wenn wir einen neuen Blogbeitrag veröffentlichen."
 
@@ -2124,7 +2125,7 @@ msgid "Background Image"
 msgstr "Hintergrundbild"
 
 #: build/Forms/Admin/editor-settings.php:586
-#: src/Objects/Collection.php:444
+#: src/Objects/Collection.php:453
 msgid "Avatar URL"
 msgstr "Avatar-URL"
 
@@ -3087,7 +3088,7 @@ msgstr "Optional. Leer lassen, um an alle zu senden"
 
 #. translators: %s is the filter label, e.g, "Tags".
 #: build/Subscribers/Records.php:811
-#: src/Objects/Collection.php:882
+#: src/Objects/Collection.php:900
 msgid "%s - Exclude"
 msgstr "%s - Ausschließen"
 
@@ -3403,28 +3404,28 @@ msgid "Re-run"
 msgstr "Re-run"
 
 #. translators: %s: Update URL.
-#: includes/admin/class-noptin-admin.php:312
+#: includes/admin/class-noptin-admin.php:305
 msgid "Your Addons Pack is outdated and nolonger works with this version of Noptin. Please update to the latest version to continue using it. <a href=\"%s\">Update Now</a>"
 msgstr "Ihr Addons Pack ist veraltet und funktioniert nicht mehr mit dieser Version von Noptin. Bitte aktualisieren Sie auf die neueste Version, um es weiter verwenden zu können. <a href=\"%s\">Jetzt aktualisieren</a>"
 
-#: includes/admin/class-noptin-admin.php:374
+#: includes/admin/class-noptin-admin.php:343
 msgid "You have been using Noptin for a while now."
 msgstr "Sie verwenden Noptin nun schon eine Weile."
 
 #. Translators: %1$s Opening link tag, %2$s Closing link tag.
-#: includes/admin/class-noptin-admin.php:377
+#: includes/admin/class-noptin-admin.php:346
 msgid "Thousands of hours have gone into this plugin. If you love it, Consider %1$sgiving us a 5* rating on WordPress.org%2$s. It takes less than 5 minutes."
 msgstr "Tausende von Stunden sind in dieses Plugin geflossen. Wenn es Ihnen gefällt, können Sie %1$suns eine 5*-Bewertung auf WordPress.org%2$s geben. Es dauert weniger als 5 Minuten."
 
-#: includes/admin/class-noptin-admin.php:383
+#: includes/admin/class-noptin-admin.php:352
 msgid "Rate Noptin"
 msgstr "Noptin bewerten"
 
-#: includes/admin/class-noptin-admin.php:388
+#: includes/admin/class-noptin-admin.php:357
 msgid "I already did!"
 msgstr "Das habe ich bereits getan!"
 
-#: includes/admin/class-noptin-admin.php:393
+#: includes/admin/class-noptin-admin.php:362
 msgid "Not now"
 msgstr "Nicht jetzt"
 
@@ -3905,14 +3906,6 @@ msgstr "Formulare"
 msgid "Automation"
 msgstr "Automatisierung"
 
-#: includes/emails/automated-email-types/class-post_digest.php:93
-msgid "Post Digest"
-msgstr "Beitrag Digest"
-
-#: includes/emails/automated-email-types/class-post_digest.php:101
-msgid "Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content."
-msgstr "Senden Sie Ihren Abonnenten automatisch eine tägliche, wöchentliche, monatliche oder jährliche E-Mail mit Ihren neuesten Inhalten."
-
 #: includes/emails/automated-email-types/class-post_digest.php:109
 msgid "Check out our latest blog posts"
 msgstr "Lesen Sie hier unsere neuesten Blogs"
@@ -3925,18 +3918,9 @@ msgstr "Zusammenfassen"
 msgid "Displays your latest content."
 msgstr "Zeigt Ihre neuesten Inhalte an."
 
-#: build/Emails/Generate/Merge_Tags.php:350
 #: includes/emails/automated-email-types/class-post_digest.php:320
 msgid "No posts found."
 msgstr "Keine Beiträge gefunden."
-
-#: includes/emails/automated-email-types/class-post_notifications.php:60
-msgid "New Post Notification"
-msgstr "Benachrichtigung bei neuem Beitrag"
-
-#: includes/emails/automated-email-types/class-post_notifications.php:68
-msgid "Get more traffic to your site by notifying your subscribers every time you publish new content."
-msgstr "Erhöhen Sie den Traffic auf Ihrer Website, indem Sie Ihre Abonnenten jedes Mal benachrichtigen, wenn Sie neue Inhalte veröffentlichen."
 
 #: includes/emails/automated-email-types/class-post_notifications.php:104
 msgid "New post published on [[blog_name]]"
@@ -4766,7 +4750,7 @@ msgstr "Zahlungs-IDs"
 #: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1145
+#: src/Objects/Collection.php:1163
 msgid "Meta Value"
 msgstr "Meta-Wert"
 
@@ -5104,7 +5088,7 @@ msgstr "Nachname"
 
 #: src/Integrations/EDD/Orders.php:277
 #: src/Integrations/WooCommerce/Customers.php:118
-#: src/Objects/Collection.php:462
+#: src/Objects/Collection.php:471
 #: src/Objects/Users.php:449
 msgid "Email"
 msgstr "E-Mail"
@@ -5988,14 +5972,14 @@ msgstr "Der Attributschlüssel, der angezeigt werden soll."
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:845
-#: src/Objects/Collection.php:1169
+#: src/Objects/Collection.php:1187
 #: src/Objects/Post_Type.php:491
 msgid "Default Value"
 msgstr "Standardwert"
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:848
-#: src/Objects/Collection.php:1172
+#: src/Objects/Collection.php:1190
 #: src/Objects/Post_Type.php:494
 msgid "The default value to display if not set."
 msgstr "Der Standardwert, der angezeigt wird, wenn er nicht festgelegt ist."
@@ -6516,85 +6500,85 @@ msgstr "Fehler: \"%s\" nicht angegeben"
 msgid "%s Information"
 msgstr "%s Information"
 
-#: src/Objects/Collection.php:410
+#: src/Objects/Collection.php:419
 msgid "Read more"
 msgstr "Mehr erfahren"
 
-#: src/Objects/Collection.php:435
+#: src/Objects/Collection.php:444
 msgid "Newsletter subscription status"
 msgstr "Status des Newsletter-Abonnements"
 
-#: src/Objects/Collection.php:438
+#: src/Objects/Collection.php:447
 msgid "subscribed"
 msgstr "abonniert"
 
-#: src/Objects/Collection.php:439
+#: src/Objects/Collection.php:448
 msgid "unsubscribed"
 msgstr "abgemeldet"
 
 #. translators: %s is the object type label, e.g. "orders".
-#: src/Objects/Collection.php:530
-#: src/Objects/Collection.php:1009
+#: src/Objects/Collection.php:539
+#: src/Objects/Collection.php:1027
 msgid "No %s found."
 msgstr "Keine %s gefunden."
 
-#: src/Objects/Collection.php:673
+#: src/Objects/Collection.php:691
 msgid "Since Last Send"
 msgstr "Seit der letzten Sendung"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:678
+#: src/Objects/Collection.php:696
 msgid "Only show %s created since last send"
 msgstr "Zeige nur %s erstellt seit dem letzten Senden"
 
-#: src/Objects/Collection.php:685
+#: src/Objects/Collection.php:703
 msgid "Date Before"
 msgstr "Datum vor"
 
 #. translators: %s: Examples.
-#: src/Objects/Collection.php:690
-#: src/Objects/Collection.php:712
+#: src/Objects/Collection.php:708
+#: src/Objects/Collection.php:730
 msgid "Examples: %s"
 msgstr "Beispiele: %s"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:702
+#: src/Objects/Collection.php:720
 msgid "Show %s created before this date."
 msgstr "Zeige %s, die vor diesem Datum erstellt wurden."
 
-#: src/Objects/Collection.php:707
+#: src/Objects/Collection.php:725
 msgid "Date After"
 msgstr "Datum Nach"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:724
+#: src/Objects/Collection.php:742
 msgid "Show %s created after this date."
 msgstr "Zeige %s erstellt nach diesem Datum."
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:872
+#: src/Objects/Collection.php:890
 msgid "Filter by %s."
 msgstr "Nach %s filtern."
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:889
+#: src/Objects/Collection.php:907
 msgid "Exclude %s."
 msgstr "Ausschließen %s."
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1152
+#: src/Objects/Collection.php:1170
 msgid "%s Meta"
 msgstr "%s Meta"
 
-#: src/Objects/Collection.php:1155
+#: src/Objects/Collection.php:1173
 msgid "Displays a custom field value."
 msgstr "Zeigt den Wert eines benutzerdefinierten Feldes an."
 
-#: src/Objects/Collection.php:1163
+#: src/Objects/Collection.php:1181
 msgid "Meta Key / Field Key"
 msgstr "Meta-Schlüssel / Feldschlüssel"
 
-#: src/Objects/Collection.php:1166
+#: src/Objects/Collection.php:1184
 msgid "The meta key or field key to display."
 msgstr "Der anzuzeigende Metaschlüssel oder Feldschlüssel."
 
@@ -6988,12 +6972,11 @@ msgstr "Einzelne Zeile"
 #~ msgid "Setup Wizard"
 #~ msgstr "Installationsassistent"
 
-#: includes/admin/class-noptin-admin.php:359
+#: includes/admin/class-noptin-admin.php:328
 #~ msgid "Get the Deal"
 #~ msgstr "Get the Deal"
 
-#: includes/admin/class-noptin-admin.php:342
-#: includes/admin/class-noptin-admin.php:364
+#: includes/admin/class-noptin-admin.php:333
 #~ msgid "Dismiss"
 #~ msgstr "Verwerfen"
 
@@ -7001,15 +6984,15 @@ msgstr "Einzelne Zeile"
 #~ msgid "The license key to activate."
 #~ msgstr "Der Lizenzschlüssel zum aktivieren."
 
-#: src/Objects/Collection.php:447
+#: src/Objects/Collection.php:456
 #~ msgid "Avatar"
 #~ msgstr "Avatar"
 
-#: src/Objects/Collection.php:448
+#: src/Objects/Collection.php:457
 #~ msgid "Displays the avatar image."
 #~ msgstr "Zeigt das Avatar Bild an."
 
-#: src/Objects/Collection.php:463
+#: src/Objects/Collection.php:472
 #~ msgid "Displays the email address."
 #~ msgstr "Zeigt die E-Mail-Adresse an."
 

@@ -91,7 +91,7 @@ msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
 #: build/Subscribers/Records.php:811
-#: src/Objects/Collection.php:882
+#: src/Objects/Collection.php:900
 msgid "%s - Exclude"
 msgstr ""
 
@@ -211,7 +211,7 @@ msgid "%s Equivalent"
 msgstr ""
 
 #. translators: %s: object type label
-#: src/Objects/Collection.php:1152
+#: src/Objects/Collection.php:1170
 msgid "%s Meta"
 msgstr ""
 
@@ -340,7 +340,7 @@ msgid "Add downloadable files to your site and restrict access by user role or n
 msgstr ""
 
 #: build/Emails/Admin/Editor.php:147
-#: build/Emails/Admin/Editor.php:344
+#: build/Emails/Admin/Editor.php:347
 msgid "Add email subject"
 msgstr ""
 
@@ -561,7 +561,7 @@ msgstr ""
 msgid "AND"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:96
+#: build/Forms/Admin/default-form.php:86
 msgid "And get notified everytime we publish a new blog post."
 msgstr "og få besked hver gang der er et nyt blogindlæg."
 
@@ -650,10 +650,6 @@ msgstr "Automatisk nyhedsbrev"
 msgid "Automatically send a daily, weekly, monthly or yearly email highlighting your latest %s."
 msgstr ""
 
-#: includes/emails/automated-email-types/class-post_digest.php:101
-msgid "Automatically send your subscribers a daily, weekly, monthly or yearly email highlighting your latest content."
-msgstr ""
-
 #: build/Emails/Types/Recurring.php:87
 msgid "Automatically send your subscribers, users, or customers an email every X days."
 msgstr ""
@@ -672,7 +668,7 @@ msgid "Avatar Position"
 msgstr ""
 
 #: build/Forms/Admin/editor-settings.php:586
-#: src/Objects/Collection.php:444
+#: src/Objects/Collection.php:453
 msgid "Avatar URL"
 msgstr ""
 
@@ -868,7 +864,7 @@ msgstr ""
 msgid "BIO"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:429
+#: build/Emails/Admin/Editor.php:432
 #: build/Forms/Widgets/New_Form.php:46
 msgid "Black"
 msgstr "Sort"
@@ -1389,11 +1385,11 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: src/Objects/Collection.php:707
+#: src/Objects/Collection.php:725
 msgid "Date After"
 msgstr ""
 
-#: src/Objects/Collection.php:685
+#: src/Objects/Collection.php:703
 msgid "Date Before"
 msgstr ""
 
@@ -1515,7 +1511,7 @@ msgstr "Standard succésmeddelelse"
 
 #: src/Integrations/WooCommerce/Order_Items.php:99
 #: src/Integrations/WooCommerce/Products.php:845
-#: src/Objects/Collection.php:1169
+#: src/Objects/Collection.php:1187
 #: src/Objects/Post_Type.php:491
 msgid "Default Value"
 msgstr ""
@@ -1662,7 +1658,7 @@ msgstr ""
 msgid "Displays a button link to view the order."
 msgstr ""
 
-#: src/Objects/Collection.php:1155
+#: src/Objects/Collection.php:1173
 msgid "Displays a custom field value."
 msgstr ""
 
@@ -1915,7 +1911,7 @@ msgstr ""
 
 #: src/Integrations/EDD/Orders.php:277
 #: src/Integrations/WooCommerce/Customers.php:118
-#: src/Objects/Collection.php:462
+#: src/Objects/Collection.php:471
 #: src/Objects/Users.php:449
 msgid "Email"
 msgstr ""
@@ -1924,6 +1920,7 @@ msgstr ""
 #: build/Fields/functions.php:29
 #: build/Fields/Main.php:240
 #: build/Forms/Admin/default-form.php:13
+#: build/Forms/Form.php:165
 #: build/Forms/Widgets/New_Form.php:178
 msgid "Email Address"
 msgstr "E-mailadresse"
@@ -2136,8 +2133,8 @@ msgid "Everywhere"
 msgstr "Overalt"
 
 #. translators: %s: Examples.
-#: src/Objects/Collection.php:690
-#: src/Objects/Collection.php:712
+#: src/Objects/Collection.php:708
+#: src/Objects/Collection.php:730
 msgid "Examples: %s"
 msgstr ""
 
@@ -2149,7 +2146,7 @@ msgid "Excerpt"
 msgstr ""
 
 #. translators: %s is the filter label, e.g, "Tags".
-#: src/Objects/Collection.php:889
+#: src/Objects/Collection.php:907
 msgid "Exclude %s."
 msgstr ""
 
@@ -2242,7 +2239,7 @@ msgid "File Download Limit"
 msgstr ""
 
 #. translators: %s: Taxonomy name.
-#: src/Objects/Collection.php:872
+#: src/Objects/Collection.php:890
 msgid "Filter by %s."
 msgstr ""
 
@@ -2387,10 +2384,6 @@ msgstr ""
 
 #: build/Forms/functions.php:370
 msgid "Generic error"
-msgstr ""
-
-#: includes/emails/automated-email-types/class-post_notifications.php:68
-msgid "Get more traffic to your site by notifying your subscribers every time you publish new content."
 msgstr ""
 
 #: src/Integrations/WooCommerce/Products.php:297
@@ -2755,7 +2748,7 @@ msgstr ""
 msgid "Items"
 msgstr ""
 
-#: build/Forms/Admin/default-form.php:55
+#: build/Forms/Admin/default-form.php:45
 #: build/Forms/assets/js/new-form-block.js:1
 msgid "JOIN OUR NEWSLETTER"
 msgstr "TILMELD DIG VORES NYHEDSBREV"
@@ -2888,7 +2881,7 @@ msgstr ""
 msgid "Light Blue"
 msgstr "lyseblå"
 
-#: build/Emails/Admin/Editor.php:439
+#: build/Emails/Admin/Editor.php:442
 msgid "Light Gray"
 msgstr ""
 
@@ -3043,14 +3036,14 @@ msgstr "Besked"
 msgid "Messages"
 msgstr ""
 
-#: src/Objects/Collection.php:1163
+#: src/Objects/Collection.php:1181
 msgid "Meta Key / Field Key"
 msgstr ""
 
 #: src/Integrations/EDD/Customers.php:151
 #: src/Integrations/EDD/Orders.php:330
 #: src/Integrations/PMPro/Membership_Levels.php:112
-#: src/Objects/Collection.php:1145
+#: src/Objects/Collection.php:1163
 msgid "Meta Value"
 msgstr ""
 
@@ -3166,11 +3159,6 @@ msgstr ""
 msgid "New Post Automation"
 msgstr ""
 
-#: includes/emails/automated-email-types/class-post_notifications.php:60
-#, fuzzy
-msgid "New Post Notification"
-msgstr "Notifikation om nyt indlæg"
-
 #: includes/emails/automated-email-types/class-post_notifications.php:104
 #, fuzzy
 msgid "New post published on [[blog_name]]"
@@ -3204,7 +3192,7 @@ msgstr ""
 msgid "Newsletter Subscription Form"
 msgstr ""
 
-#: src/Objects/Collection.php:435
+#: src/Objects/Collection.php:444
 msgid "Newsletter subscription status"
 msgstr ""
 
@@ -3244,8 +3232,8 @@ msgid "No"
 msgstr "Nej"
 
 #. translators: %s is the object type label, e.g. "orders".
-#: src/Objects/Collection.php:530
-#: src/Objects/Collection.php:1009
+#: src/Objects/Collection.php:539
+#: src/Objects/Collection.php:1027
 msgid "No %s found."
 msgstr ""
 
@@ -3265,7 +3253,6 @@ msgstr "Ingen formularer i affaldsspand."
 msgid "No forms found."
 msgstr "Ingen formularer fundet."
 
-#: build/Emails/Generate/Merge_Tags.php:350
 #: includes/emails/automated-email-types/class-post_digest.php:320
 msgid "No posts found."
 msgstr ""
@@ -3389,7 +3376,7 @@ msgid "Only add to Noptin if"
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:678
+#: src/Objects/Collection.php:696
 msgid "Only show %s created since last send"
 msgstr ""
 
@@ -3676,10 +3663,6 @@ msgstr "Popup-formularer"
 msgid "Post"
 msgstr ""
 
-#: includes/emails/automated-email-types/class-post_digest.php:93
-msgid "Post Digest"
-msgstr ""
-
 #: includes/admin/class-noptin-tools.php:215
 #: src/Objects/Generic_Post_Type.php:230
 msgid "Post ID"
@@ -3707,7 +3690,7 @@ msgstr ""
 msgid "Preferred Width"
 msgstr "Foretrukken bredde"
 
-#: build/Forms/Admin/default-form.php:76
+#: build/Forms/Admin/default-form.php:66
 #: build/Forms/Admin/editor-settings.php:680
 #: build/Forms/Admin/editor-settings.php:693
 #: build/Forms/Admin/editor-settings.php:934
@@ -3769,7 +3752,7 @@ msgstr ""
 msgid "Price ID"
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:419
+#: build/Emails/Admin/Editor.php:422
 msgid "Primary"
 msgstr ""
 
@@ -3879,7 +3862,7 @@ msgstr ""
 msgid "Read More"
 msgstr ""
 
-#: src/Objects/Collection.php:410
+#: src/Objects/Collection.php:419
 msgid "Read more"
 msgstr ""
 
@@ -4360,12 +4343,12 @@ msgid "Shortcode Forms"
 msgstr "Shortcodeformularer"
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:724
+#: src/Objects/Collection.php:742
 msgid "Show %s created after this date."
 msgstr ""
 
 #. translators: %s: Object type label.
-#: src/Objects/Collection.php:702
+#: src/Objects/Collection.php:720
 msgid "Show %s created before this date."
 msgstr ""
 
@@ -4418,7 +4401,7 @@ msgstr ""
 msgid "Shown when someone unsubscribes with an email that is not already subscribed."
 msgstr ""
 
-#: src/Objects/Collection.php:673
+#: src/Objects/Collection.php:691
 msgid "Since Last Send"
 msgstr ""
 
@@ -4562,7 +4545,7 @@ msgstr "Abonnér"
 msgid "SUBSCRIBE NOW"
 msgstr "ABONNÉR NU"
 
-#: build/Forms/Admin/default-form.php:43
+#: build/Forms/Admin/default-form.php:38
 msgid "Subscribe Now"
 msgstr "Abonnér nu"
 
@@ -4578,7 +4561,7 @@ msgstr "Abonnér på vores nyhedsbrev og få at vide hver gang der er nye blogin
 msgid "Subscribed"
 msgstr ""
 
-#: src/Objects/Collection.php:438
+#: src/Objects/Collection.php:447
 msgid "subscribed"
 msgstr ""
 
@@ -4960,7 +4943,7 @@ msgstr ""
 
 #: src/Integrations/WooCommerce/Order_Items.php:102
 #: src/Integrations/WooCommerce/Products.php:848
-#: src/Objects/Collection.php:1172
+#: src/Objects/Collection.php:1190
 #: src/Objects/Post_Type.php:494
 msgid "The default value to display if not set."
 msgstr ""
@@ -5030,7 +5013,7 @@ msgstr ""
 msgid "The message to show to subscribers after they unsubscribe. Only used if you do not provide a redirect url below."
 msgstr "Abonnenterne får vist denne besked, når de har afmeldt nyhedsbrevet. Bruges kun, hvis du ikke angiver en viderestilling nedenunder."
 
-#: src/Objects/Collection.php:1166
+#: src/Objects/Collection.php:1184
 msgid "The meta key or field key to display."
 msgstr ""
 
@@ -5374,7 +5357,7 @@ msgid "This text is shown after the call to action button"
 msgstr ""
 
 #. Translators: %1$s Opening link tag, %2$s Closing link tag.
-#: includes/admin/class-noptin-admin.php:377
+#: includes/admin/class-noptin-admin.php:346
 msgid "Thousands of hours have gone into this plugin. If you love it, Consider %1$sgiving us a 5* rating on WordPress.org%2$s. It takes less than 5 minutes."
 msgstr "Tusindvis af timer har vi brugt på dette plugin. Hvis du kan lide det, håber vi du vil give os %1$s 5 stjerner på wordpress.org%2$s. Det tager mindre end 5 minutter."
 
@@ -5581,7 +5564,7 @@ msgstr "afmeld dem"
 msgid "Unsubscribed"
 msgstr "Afmeldt"
 
-#: src/Objects/Collection.php:439
+#: src/Objects/Collection.php:448
 msgid "unsubscribed"
 msgstr ""
 
@@ -6022,7 +6005,7 @@ msgstr ""
 msgid "Whether to link to the term."
 msgstr ""
 
-#: build/Emails/Admin/Editor.php:424
+#: build/Emails/Admin/Editor.php:427
 #: build/Forms/Widgets/New_Form.php:47
 msgid "White"
 msgstr "Hvid"
@@ -6138,7 +6121,7 @@ msgid "You won't be subscribed if you don't click on the button below."
 msgstr "Du er ikke tilmeldt før du klikker på knappen nedenfor."
 
 #. translators: %s: Update URL.
-#: includes/admin/class-noptin-admin.php:312
+#: includes/admin/class-noptin-admin.php:305
 msgid "Your Addons Pack is outdated and nolonger works with this version of Noptin. Please update to the latest version to continue using it. <a href=\"%s\">Update Now</a>"
 msgstr ""
 
@@ -6320,19 +6303,19 @@ msgstr ""
 msgid "The \"View in Browser\" URL."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:374
+#: includes/admin/class-noptin-admin.php:343
 msgid "You have been using Noptin for a while now."
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:383
+#: includes/admin/class-noptin-admin.php:352
 msgid "Rate Noptin"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:388
+#: includes/admin/class-noptin-admin.php:357
 msgid "I already did!"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:393
+#: includes/admin/class-noptin-admin.php:362
 msgid "Not now"
 msgstr ""
 
@@ -7023,12 +7006,11 @@ msgstr ""
 msgid "Sending rate"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:359
+#: includes/admin/class-noptin-admin.php:328
 msgid "Get the Deal"
 msgstr ""
 
-#: includes/admin/class-noptin-admin.php:342
-#: includes/admin/class-noptin-admin.php:364
+#: includes/admin/class-noptin-admin.php:333
 msgid "Dismiss"
 msgstr ""
 
@@ -7036,15 +7018,15 @@ msgstr ""
 msgid "The license key to activate."
 msgstr ""
 
-#: src/Objects/Collection.php:447
+#: src/Objects/Collection.php:456
 msgid "Avatar"
 msgstr ""
 
-#: src/Objects/Collection.php:448
+#: src/Objects/Collection.php:457
 msgid "Displays the avatar image."
 msgstr ""
 
-#: src/Objects/Collection.php:463
+#: src/Objects/Collection.php:472
 msgid "Displays the email address."
 msgstr ""
 
