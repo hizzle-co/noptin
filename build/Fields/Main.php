@@ -28,7 +28,7 @@ class Main {
 		require_once plugin_dir_path( __FILE__ ) . 'functions.php';
 
 		// Load custom field types.
-		add_action( 'after_setup_theme', array( __CLASS__, 'load_custom_field_types' ) );
+		add_action( 'noptin_db_before_init', array( __CLASS__, 'load_custom_field_types' ) );
 
 		// Custom field settings.
 		add_filter( 'noptin_get_settings', array( __CLASS__, 'custom_field_settings' ), 40 );
