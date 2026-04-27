@@ -59,6 +59,7 @@
 		<custom-field action="copy-once">form_settings</custom-field>
 		<custom-field action="ignore">_noptin_form_views</custom-field>
 		<custom-field action="ignore">_noptin_subscribers_count</custom-field>
+		<custom-field action="translate">_noptin_state</custom-field>
 	</custom-fields>
 
 	<custom-fields-texts>
@@ -66,7 +67,22 @@
 			<key style="line" name="subject" />
 			<key style="visual" name="content" />
 		</key>
+		<key name="_noptin_state">
+			<key name="gdprConsentText" />
+			<key name="noptinButtonLabel" />
+			<key name="title" />
+			<key name="prefix" />
+			<key name="description" />
+			<key name="note" />
+
+			<key name="fields">
+				<key name="*">
+					<key name="type">
+						<key name="label" />
+					</key>
+				</key>
+			</key>
+		</key>
 	</custom-fields-texts>
 
-	
 </wpml-config>
