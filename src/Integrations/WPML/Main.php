@@ -26,7 +26,6 @@ class Main {
 		add_filter( 'noptin_convert_language_locale_to_slug', array( __CLASS__, 'convert_language_locale_to_slug' ) );
 		add_filter( 'noptin_woocommerce_order_locale', array( __CLASS__, 'filter_order_locale' ), 10, 2 );
 		add_filter( 'noptin_post_type_get_all_filters', array( __CLASS__, 'post_type_get_all_filters' ) );
-		add_filter( 'wpml_use_tm_editor', array( __CLASS__, 'use_native_editor_for_noptin_form' ), 10, 2 );
 
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_form_editor_language_middleware' ), 100 );
 		add_action( 'admin_init', array( __CLASS__, 'maybe_save_post_language_data' ) );
@@ -78,21 +77,6 @@ class Main {
 			),
 			'after'
 		);
-	}
-
-	/**
-	 * Forces noptin-form translations to open in the native WordPress editor.
-	 *
-	 * @param bool $use_tm_editor
-	 * @param int  $post_id
-	 * @return bool
-	 */
-	public static function use_native_editor_for_noptin_form( $use_tm_editor, $post_id ) {
-		if ( 'noptin-form' === get_post_type( $post_id ) ) {
-			return false;
-		}
-
-		return $use_tm_editor;
 	}
 
 	/**
