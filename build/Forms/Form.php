@@ -221,7 +221,7 @@ class Form {
 		}
 
 		if ( ! empty( $data['showPostTypes'] ) ) {
-			$data['showPlaces']    = array_unique( array_merge( $data['showPlaces'], $data['showPostTypes'] ) );
+			$data['showPlaces']    = array_unique( array_merge( $data['showPlaces'] ?? array(), $data['showPostTypes'] ) );
 			$data['showPostTypes'] = array();
 		}
 
@@ -266,13 +266,13 @@ class Form {
 				$key = 'tags';
 			}
 
-			// convert 'true' to a boolean true.
+			// convert 'false' to a boolean false.
 			if ( 'false' === $value ) {
 				$return[ $key ] = false;
 				continue;
 			}
 
-			// convert 'false' to a boolean false.
+			// convert 'true' to a boolean true.
 			if ( 'true' === $value ) {
 				$return[ $key ] = true;
 				continue;
@@ -374,7 +374,7 @@ class Form {
 	 */
 	public function save( $status = false ) {
 
-		if ( isset( $this->id ) ) {
+		if ( $this->exists() ) {
 			$id = $this->update( $status );
 		} else {
 			$id = $this->create( $status );
@@ -453,7 +453,7 @@ class Form {
 		$state = $this->data;
 		unset( $state['optinType'] );
 		unset( $state['id'] );
-		update_post_meta( $id, '_noptin_state', $this->data );
+		update_post_meta( $id, '_noptin_state', $state );
 		update_post_meta( $id, '_noptin_optin_type', $this->optinType );
 		return true;
 	}
@@ -468,17 +468,17 @@ class Form {
 	 */
 	private function get_post_array() {
 		$data = array(
-			'post_title'   => empty( $this->optinName ) ? '' : $this->optinName,
-			'ID'           => $this->id,
 			'post_content' => 'Noptin Form',
 			'post_status'  => empty( $this->optinStatus ) ? 'draft' : 'publish',
 			'post_type'    => 'noptin-form',
 		);
 
-		foreach ( $data as $key => $val ) {
-			if ( empty( $val ) ) {
-				unset( $data[ $key ] );
-			}
+		if ( ! empty( $this->optinName ) ) {
+			$data['post_title'] = $this->optinName;
+		}
+
+		if ( ! empty( $this->id ) ) {
+			$data['ID'] = $this->id;
 		}
 
 		return $data;
@@ -667,26 +667,22 @@ class Form {
 			return false;
 		}
 
-		$check = noptin_parse_list( $check, true );
+		$check  = noptin_parse_list( $check, true );
+		$simple = array(
+			'frontpage'    => is_front_page(),
+			'showHome'     => is_front_page(),
+			'blogpage'     => is_home(),
+			'showBlog'     => is_home(),
+			'searchpage'   => is_search(),
+			'showSearch'   => is_search(),
+			'archives'     => is_archive(),
+			'showArchives' => is_archive(),
+		);
 
-		// frontpage.
-		if ( is_front_page() ) {
-			return in_array( 'frontpage', $check, true ) || in_array( 'showHome', $check, true );
-		}
-
-		// blog page.
-		if ( is_home() ) {
-			return in_array( 'blogpage', $check, true ) || in_array( 'showBlog', $check, true );
-		}
-
-		// search.
-		if ( is_search() ) {
-			return in_array( 'searchpage', $check, true ) || in_array( 'showSearch', $check, true );
-		}
-
-		// other archive pages.
-		if ( is_archive() ) {
-			return in_array( 'archives', $check, true ) || in_array( 'showArchives', $check, true );
+		foreach ( array_intersect( array_keys( $simple ), $check ) as $key ) {
+			if ( $simple[ $key ] ) {
+				return true;
+			}
 		}
 
 		// Post types.
@@ -697,7 +693,7 @@ class Form {
 		}
 
 		// URLs and Post IDs.
-		$remaining = array_intersect( $check, $post_types );
+		$remaining = array_diff( $check, $post_types, array_keys( $simple ) );
 		return ! empty( $remaining ) && noptin_is_singular( $remaining );
 	}
 
