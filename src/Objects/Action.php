@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Generic object action.
  */
-class Action extends \Noptin_Abstract_Action {
+class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 
 	/**
 	 * @var string $object_type The object type.
