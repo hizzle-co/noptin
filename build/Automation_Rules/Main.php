@@ -91,7 +91,7 @@ class Main {
 	/**
 	 * Runs an automation rule if the Noptin tasks package is installed.
 	 *
-	 * @param \Noptin\Addons_Pack\Tasks\Task $task
+	 * @param \Hizzle\Noptin\Tasks\Task $task
 	 * @param array $args The trigger arguments.
 	 */
 	public static function handle_automation_rule_task( $task, $args ) {
@@ -101,7 +101,7 @@ class Main {
 	/**
 	 * Runs a delayed automation rule.
 	 *
-	 * @param string $automation_rule The rule id to schedule.
+	 * @param string $rule_id The rule id to schedule.
 	 * @param array $args The trigger arguments.
 	 */
 	public static function run_delayed_automation_rule( $rule_id, $args ) {
