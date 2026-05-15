@@ -1003,4 +1003,23 @@ class Subscriber extends \Hizzle\Store\Record {
 		// Very old (over 6 months)
 		return 0.2;
 	}
+
+	/**
+	 * Delete a subscriber.
+	 *
+	 * @since  1.0.0
+	 * @param  bool $force_delete Should the data be deleted permanently.
+	 * @return bool|\WP_Error result
+	 */
+	public function delete( $force_delete = false ) {
+
+		$email = $this->get_email();
+		if ( true === parent::delete( $force_delete ) && is_string( $email ) && is_email( $email ) ) {
+			// Delete email logs.
+			noptin()->db()->delete_where( array( 'email' => $email ), 'email_logs' );
+
+			// Delete tasks.
+			noptin()->db()->delete_where( array( 'subject' => $email ), 'tasks' );
+		}
+	}
 }
