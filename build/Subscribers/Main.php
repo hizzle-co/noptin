@@ -31,6 +31,8 @@ class Main {
 		add_action( 'noptin_subscribers_before_prepare_query', __CLASS__ . '::hide_blocked_subscribers' );
 		add_action( 'noptin_recalculate_subscriber_engagement_rate', __CLASS__ . '::recalculate_subscriber_engagement_rate' );
 		add_action( 'noptin_send_confirmation_email', array( __CLASS__, 'send_confirmation_email' ) );
+		// Activate deferred automation rule tasks after subscriber confirmation.
+		add_action( 'noptin_subscriber_status_set_to_subscribed', array( __CLASS__, 'activate_deferred_subscriber_tasks' ), 20, 2 );
 
 		// Subscribers menu.
 		if ( is_admin() ) {
@@ -272,6 +274,47 @@ class Main {
 		}
 
 		return $subscriber->do_send_confirmation_email();
+	}
+
+	/**
+	 * Activates deferred automation rule tasks after subscriber confirmation.
+	 *
+	 * @param Subscriber $subscriber The subscriber.
+	 * @param string $from Previous subscriber status.
+	 */
+	public static function activate_deferred_subscriber_tasks( $subscriber, $from = '' ) {
+		if ( ! $subscriber->exists() || 'pending' !== $from ) {
+			return;
+		}
+
+		$tasks = \Hizzle\Noptin\Tasks\Main::query(
+			array(
+				'hook'    => 'noptin_run_automation_rule',
+				'status'  => 'manual',
+				'subject' => $subscriber->get_email(),
+			)
+		);
+
+		if ( empty( $tasks ) || is_wp_error( $tasks ) ) {
+			return;
+		}
+
+		/** @var \Hizzle\Noptin\Tasks\Task $task */
+		foreach ( $tasks as $task ) {
+			$rule = noptin_get_automation_rule( $task->get_primary_id() );
+
+			if ( is_wp_error( $rule ) || ! $rule->exists() ) {
+				continue;
+			}
+
+			$delay = $rule->get_delay();
+
+			$task->set_status( 'pending' );
+			// If no delay, set to expire 1 minute ago so it runs immediately.
+			$task->set_date_scheduled( ! empty( $delay ) ? time() + $delay : time() - MINUTE_IN_SECONDS );
+			$task->add_log( 'Task activated after subscriber confirmation.' );
+			$task->save();
+		}
 	}
 
 	/**

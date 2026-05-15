@@ -194,8 +194,8 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 				);
 		} else {
 				$smart_tags = array_replace(
-                    $smart_tags,
-                    array(
+					$smart_tags,
+					array(
 
 						'user_id'     => array(
 							'description'       => __( 'User ID', 'newsletter-optin-box' ),
@@ -259,7 +259,7 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 							'conditional_logic' => 'string',
 							'group'             => __( 'User', 'newsletter-optin-box' ),
 						),
-                    )
+					)
 				);
 		}
 

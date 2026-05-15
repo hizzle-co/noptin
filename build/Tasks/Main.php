@@ -15,6 +15,12 @@ defined( 'ABSPATH' ) || exit;
  *
  */
 class Main {
+	/**
+	 * Action IDs whose tasks should wait for subscriber confirmation when double opt-in is enabled.
+	 *
+	 * @var string[]
+	 */
+	private const DEFERRED_CONFIRMATION_ACTION_IDS = array( 'email', 'add_to_sequence' );
 
 	/**
 	 * The cron hook.
@@ -451,6 +457,7 @@ class Main {
 	public static function get_statuses() {
 		return array(
 			'pending'  => _x( 'Pending', 'Status', 'newsletter-optin-box' ),
+			'manual'   => _x( 'Manual', 'Status', 'newsletter-optin-box' ),
 			'running'  => _x( 'Running', 'Status', 'newsletter-optin-box' ),
 			'failed'   => _x( 'Failed', 'Status', 'newsletter-optin-box' ),
 			'canceled' => _x( 'Canceled', 'Status', 'newsletter-optin-box' ),
@@ -500,7 +507,7 @@ class Main {
 	 *    - secondary_id: The secondary ID.
 	 *    - lookup_key: An optional lookup key.
 	 *    - date_scheduled: The date scheduled.
-	 * @return Task|WP_Error
+	 * @return Task|\WP_Error
 	 */
 	public static function create( $args = array() ) {
 
@@ -578,7 +585,7 @@ class Main {
 	/**
 	 * Runs an automation rule in the background.
 	 *
-	 * @param \Hizzle\Noptin\DB\Automation_Rule $rule
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule
 	 * @param \Noptin_Abstract_Trigger $trigger  The trigger.
 	 * @param \Noptin_Abstract_Action $action  The action.
 	 * @param mixed $subject The subject.
@@ -588,8 +595,15 @@ class Main {
 	public static function run_automation_rule( $subject, $rule, $args, $trigger ) {
 
 		// Are we delaying the action?
-		$delay = $rule->get_delay();
-		$delay = ! is_numeric( $delay ) ? 0 : (int) $delay;
+		$delay  = $rule->get_delay();
+		$delay  = ! is_numeric( $delay ) ? 0 : (int) $delay;
+		$status = 'pending';
+		$email  = $trigger->get_subject_email( $subject, $rule, $args );
+
+		if ( self::should_defer_automation_rule_until_confirmation( $email, $rule->get_action_id() ) ) {
+			$status = 'manual';
+			$delay  = 0;
+		}
 
 		// Create the task.
 		$task = self::create(
@@ -598,7 +612,7 @@ class Main {
 				'args'           => $trigger->serialize_trigger_args( $args ),
 				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
 				'subject'        => $trigger->get_subject_email( $subject, $rule, $args ),
-				'status'         => 'pending',
+				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
 				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
 				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
@@ -611,6 +625,23 @@ class Main {
 		}
 
 		return is_wp_error( $task ) ? $task : true;
+	}
+
+	/**
+	 * Checks whether an automation rule task should wait for subscriber confirmation.
+	 *
+	 * @param string $email The email in question.
+	 * @param string $action_id The automation rule action ID.
+	 * @return bool
+	 */
+	private static function should_defer_automation_rule_until_confirmation( $email, $action_id ) {
+		// Only defer if the action is in the deferred confirmation list, we have an email, and the subscriber is not confirmed.
+		if ( ! function_exists( 'noptin_get_subscriber' ) || ! $email || ! in_array( $action_id, self::DEFERRED_CONFIRMATION_ACTION_IDS, true ) ) {
+			return false;
+		}
+
+		$subscriber = noptin_get_subscriber( $email );
+		return $subscriber && $subscriber->exists() && 'pending' === $subscriber->get_status();
 	}
 
 	/**
@@ -629,7 +660,7 @@ class Main {
 		$query = array(
 			'hook'       => 'noptin_run_automation_rule',
 			'primary_id' => $GLOBALS['current_noptin_rule'],
-			'status'     => array( 'complete', 'pending' ),
+			'status'     => array( 'complete', 'pending', 'manual' ),
 		);
 
 		if ( ! empty( $args['count_for'] ) && 'user' === $args['count_for'] ) {
