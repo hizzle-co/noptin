@@ -160,7 +160,7 @@ class Renderer {
 				$atts,
 				array(
 					'fields'         => $form->fields,
-					'redirect'       => $form->redirect,
+					'redirect'       => 'redirect' === $form->subscribeAction ? $form->redirect : '',
 					'labels'         => empty( $form->showLabels ) ? 'hide' : 'show',
 					'acceptance'     => $form->gdprCheckbox ? $form->gdprConsentText : '',
 					'is_unsubscribe' => ! ! $form->is_unsubscribe,

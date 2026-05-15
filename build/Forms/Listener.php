@@ -509,6 +509,12 @@ class Listener {
 	 */
 	public function get_redirect_url() {
 
+		// If the form's subscribe action is not 'redirect', don't redirect even if a URL is present.
+		$subscribe_action = $this->get_cached( 'subscribeAction' );
+		if ( ! empty( $subscribe_action ) && 'redirect' !== $subscribe_action ) {
+			return '';
+		}
+
 		$url = trim( $this->get_cached( 'redirectUrl' ) );
 
 		if ( empty( $url ) ) {
