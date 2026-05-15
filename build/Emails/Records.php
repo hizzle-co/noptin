@@ -33,6 +33,7 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 		$this->singular_label    = __( 'Email Campaign', 'newsletter-optin-box' );
 		$this->type              = 'noptin-campaign';
 		$this->smart_tags_prefix = 'campaign';
+		$this->provides          = array( 'post_author' );
 		$this->can_list          = false;
 		$this->icon              = array(
 			'icon' => 'email',
@@ -178,7 +179,6 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 						$this->singular_label
 					),
 					'description' => __( 'When a newsletter is sent', 'newsletter-optin-box' ),
-					'subject'     => 'post_author',
 				),
 			)
 		);

@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 3.0.0
  */
-class Record extends \Hizzle\Noptin\Objects\Person {
+class Record extends \Hizzle\Noptin\Objects\Record {
 
 	/**
 	 * @var \Hizzle\Noptin\Emails\Email The external object.
@@ -47,5 +47,18 @@ class Record extends \Hizzle\Noptin\Objects\Person {
 		}
 
 		return $this->external->get( $field, true );
+	}
+
+	/**
+	 * Provides a related id.
+	 *
+	 * @param string $collection The collect.
+	 */
+	public function provide( $collection ) {
+		if ( 'post_author' === $collection ) {
+			return $this->external->author;
+		}
+
+		return parent::provide( $collection );
 	}
 }
