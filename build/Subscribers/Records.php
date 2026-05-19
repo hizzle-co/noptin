@@ -100,7 +100,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		return array_combine( $tags, $tags );
 	}
 
-	private function subscriber_fields( $partial = false ) {
+	public static function subscriber_fields( $partial = false ) {
 		$fields = array(
 			'tags' => array(
 				'label'    => __( 'Tags', 'newsletter-optin-box' ),
@@ -113,7 +113,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		foreach ( get_noptin_subscriber_filters() as $merge_tag => $options ) {
 
 			// Skip if no options.
-			if ( empty( $options['options'] ) || in_array( $merge_tag, array( 'confirmed', 'source' ), true ) ) {
+			if ( ! is_array( $options['options'] ) || in_array( $merge_tag, array( 'confirmed', 'source' ), true ) ) {
 				continue;
 			}
 
@@ -1364,6 +1364,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 				admin_url( 'admin.php' )
 			),
 		);
+
+		// Field Manager.
+		foreach ( self::subscriber_fields( true ) as $merge_tag => $field ) {
+			if ( in_array( $merge_tag, Fields_REST_API::SKIP_FIELDS, true ) ) {
+				continue;
+			}
+
+			$routes[ "noptin/subscribers/{$merge_tag}_manager" ] = array(
+				'title' => empty( $field['label'] ) ? $merge_tag : $field['label'],
+				'href'  => add_query_arg( 'noptin_cf', $merge_tag ),
+			);
+		}
 
 		return $routes;
 	}

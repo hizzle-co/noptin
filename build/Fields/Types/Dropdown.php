@@ -140,12 +140,12 @@ class Dropdown extends Base {
 			$schema[ $column ]['length'] = 255;
 		}
 
-		$available_options = $this->get_field_options( $custom_field );
+		$schema[ $column ]['enum'] = $this->get_field_options( $custom_field );
 
-		if ( ! empty( $available_options ) ) {
+		if ( ! empty( $schema[ $column ]['enum'] ) ) {
 			$max_length = 0;
 
-			foreach ( array_keys( $available_options ) as $option ) {
+			foreach ( array_keys( $schema[ $column ]['enum'] ) as $option ) {
 				$option_length = strlen( (string) $option );
 
 				if ( $option_length > $max_length ) {
@@ -156,8 +156,6 @@ class Dropdown extends Base {
 			if ( ! $this->is_multiple ) {
 				$schema[ $column ]['length'] = $max_length + 1;
 			}
-
-			$schema[ $column ]['enum'] = $available_options;
 		}
 
 		return $schema;

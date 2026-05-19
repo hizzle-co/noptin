@@ -1259,15 +1259,15 @@ function get_noptin_subscriber_smart_tag( $merge_tag ) {
  * @return array
  */
 function get_noptin_subscriber_filters() {
+	$prepared = array();
 
-	return apply_filters(
-		'noptin_subscriber_filters',
-		wp_list_filter(
-			get_noptin_subscriber_smart_tags(),
-			array( 'options' => false ),
-			'NOT'
-		)
-	);
+	foreach ( get_noptin_subscriber_smart_tags() as $merge_tag => $data ) {
+		if ( false !== $data['options'] ) {
+			$prepared[ $merge_tag ] = $data;
+		}
+	}
+
+	return apply_filters( 'noptin_subscriber_filters', $prepared );
 }
 
 /**

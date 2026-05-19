@@ -53,6 +53,9 @@ class Main {
 
 		// Initialize the bounce handler.
 		Bounce_Handler::init();
+
+		// Initialize the fields REST API.
+		Fields_REST_API::init();
 	}
 
 	/**
@@ -169,21 +172,50 @@ class Main {
 	 * New subscribers menu.
 	 */
 	public static function subscribers_menu() {
-
+		$is_field_page     = ! empty( $_GET['noptin_cf'] );
 		self::$hook_suffix = add_submenu_page(
 			'noptin',
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			esc_html__( 'Subscribers', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-subscribers',
-			'\Hizzle\WordPress\ScriptManager::render_collection'
+			$is_field_page ? __CLASS__ . '::render_field_page' : '\Hizzle\WordPress\ScriptManager::render_collection'
 		);
 
-		\Hizzle\WordPress\ScriptManager::add_collection(
-			self::$hook_suffix,
-			'noptin',
-			'subscribers'
-		);
+		if ( ! $is_field_page ) {
+			\Hizzle\WordPress\ScriptManager::add_collection(
+				self::$hook_suffix,
+				'noptin',
+				'subscribers'
+			);
+		}
+	}
+
+	/**
+	 * Renders the fields admin page.
+	 */
+	public static function render_field_page() {
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
+		?>
+			<style>
+				table.hizzlewp-records-view-table tr th:nth-last-child(2) {
+					text-align: right;
+				}
+
+				table.hizzlewp-records-view-table tr td:nth-last-child(2)  .hizzlewp-records-view-table__cell-content-wrapper {
+					text-align: right;
+					display: block;
+				}
+			</style>
+			<div id="noptin-field-manager-app">
+				<!-- spinner -->
+				<span class="spinner" style="visibility: visible; float: none;"></span>
+				<!-- /spinner -->
+			</div>
+		<?php
 	}
 
 	/**
@@ -193,8 +225,62 @@ class Main {
 	 */
 	public static function enqueue_scripts( $hook ) {
 		if ( self::$hook_suffix === $hook ) {
-			wp_set_script_translations( 'hizzlewp-store-ui', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+			$script = 'hizzlewp-store-ui';
+
+			if ( ! empty( $_GET['noptin_cf'] ) ) {
+				$script = 'noptin-field-manager';
+
+				// Enqueue the field manager script.
+				$config = include plugin_dir_path( __FILE__ ) . 'assets/js/field-manager.asset.php';
+				wp_enqueue_script(
+					$script,
+					plugin_dir_url( __FILE__ ) . 'assets/js/field-manager.js',
+					$config['dependencies'],
+					$config['version'],
+					true
+				);
+
+				$data = array(
+					'brand'          => noptin()->white_label->get_details(),
+					'fields'         => self::get_field_manager_fields(),
+					'subscribersUrl' => add_query_arg( 'page', 'noptin-subscribers', admin_url( 'admin.php' ) ),
+				);
+
+				// Localize the script.
+				wp_add_inline_script(
+					$script,
+					'window.noptinFieldManager = ' . wp_json_encode( $data ) . ';',
+					'before'
+				);
+			}
+
+			wp_set_script_translations( $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
+	}
+
+	/**
+	 * Returns available fields for the field manager navigation menu.
+	 *
+	 * @return array<int, array<string, string>>
+	 */
+	private static function get_field_manager_fields() {
+		$fields   = array();
+		$existing = Records::subscriber_fields( true );
+
+		foreach ( $existing as $merge_tag => $field ) {
+			if ( in_array( $merge_tag, Fields_REST_API::SKIP_FIELDS, true ) ) {
+				continue;
+			}
+
+			$label = ! empty( $field['label'] ) ? wp_strip_all_tags( $field['label'] ) : $merge_tag;
+
+			$fields[] = array(
+				'value' => (string) $merge_tag,
+				'label' => (string) $label,
+			);
+		}
+
+		return array_values( $fields );
 	}
 
 	/**
