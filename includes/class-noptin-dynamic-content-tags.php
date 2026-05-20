@@ -27,6 +27,11 @@ abstract class Noptin_Dynamic_Content_Tags {
 	public $is_partial = false;
 
 	/**
+	 * Default attributes for tags.
+	 */
+	public $default_attributes = array();
+
+	/**
 	 * Registers a new tag
 	 */
 	public function add_tag( $tag, $details ) {
@@ -72,7 +77,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 		$this->tags['current_path'] = array(
 			'description' => __( 'The path of the page.', 'newsletter-optin-box' ),
-			'replacement' => esc_html( $_SERVER['REQUEST_URI'] ?? '' ),
+			'replacement' => esc_html( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) ) ),
 		);
 
 		$this->tags['date'] = array(
@@ -249,10 +254,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$replacement = '';
 
 		// Parse attributes.
-		$attributes = array();
+		$attributes = $this->default_attributes;
 		if ( isset( $matches[2] ) ) {
 			$attribute_string = html_entity_decode( $matches[2] );
-			$attributes       = shortcode_parse_atts( $attribute_string );
+			$attributes       = array_merge( $attributes, shortcode_parse_atts( $attribute_string ) );
 		}
 
 		if ( isset( $config['replacement'] ) ) {
@@ -272,6 +277,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			$replacement = $replacement ? 'yes' : 'no';
 		}
 
+		$is_display = in_array( $attributes['return'] ?? '', array( 'display', 'label' ), true );
 		if ( is_array( $replacement ) ) {
 			$is_all_scalar = array_reduce(
 				$replacement,
@@ -284,7 +290,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			if ( ! wp_is_numeric_array( $replacement ) || ! $is_all_scalar ) {
 				$replacement = wp_json_encode( $replacement );
 			} else {
-				if ( is_array( $config['options'] ?? '' ) && 'label' === ( $attributes['return'] ?? '' ) ) {
+				if ( is_array( $config['options'] ?? '' ) && $is_display ) {
 					$new_replacement = array();
 					foreach ( $replacement as $value ) {
 						$new_replacement[] = $config['options'][ $value ] ?? $value;
@@ -294,7 +300,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 
 				$replacement = implode( ', ', $replacement );
 			}
-		} elseif ( ( is_string( $replacement ) || is_numeric( $replacement )) && is_array( $config['options'] ?? '' ) && 'label' === ( $attributes['return'] ?? '' ) ) {
+		} elseif ( ( is_string( $replacement ) || is_numeric( $replacement )) && is_array( $config['options'] ?? '' ) && $is_display ) {
 			$replacement = $config['options'][ $replacement ] ?? $replacement;
 		}
 
