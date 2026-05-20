@@ -73,8 +73,6 @@ class Test_Fields_REST_API extends WP_UnitTestCase {
 	}
 
 	public function test_update_field_option_renames_tag_everywhere() {
-		global $wpdb;
-
 		$subscriber_id = add_noptin_subscriber(
 			array(
 				'email' => 'rename@example.com',
@@ -102,25 +100,14 @@ class Test_Fields_REST_API extends WP_UnitTestCase {
 		$this->assertContains( 'new-tag', $unassigned, 'New tag should be in unassigned options' );
 		$this->assertNotContains( 'old-tag', $unassigned, 'Old tag should not be in unassigned options' );
 
-		// Check that the subscriber's tags have been updated in DB.
-		$subscriber_tags = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT meta_value
-				 FROM {$wpdb->prefix}noptin_subscriber_meta
-				 WHERE noptin_subscriber_id = %d
-				 AND meta_key = %s",
-				$subscriber_id,
-				'tags'
-			)
-		);
+		// Check that the subscriber's tags have been updated (re-fetched fresh from DB).
+		$subscriber_tags = noptin_get_subscriber( $subscriber_id )->get( 'tags' );
 		$this->assertSame( 1, count( $subscriber_tags ), 'Subscriber should have one tag after update' );
 		$this->assertContains( 'new-tag', $subscriber_tags, 'Subscriber should have the new tag' );
 		$this->assertNotContains( 'old-tag', $subscriber_tags, 'Subscriber should not have the old tag' );
 	}
 
 	public function test_delete_field_option_removes_tag_and_relationships() {
-		global $wpdb;
-
 		$subscriber_id = add_noptin_subscriber(
 			array(
 				'email' => 'delete@example.com',
@@ -142,16 +129,7 @@ class Test_Fields_REST_API extends WP_UnitTestCase {
 		// Check that the response indicates one deleted record.
 		$this->assertSame( 1, $response->get_data()['deleted'], 'Response should indicate one deleted record' );
 
-		$subscriber_tags = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT meta_value
-				 FROM {$wpdb->prefix}noptin_subscriber_meta
-				 WHERE noptin_subscriber_id = %d
-				 AND meta_key = %s",
-				$subscriber_id,
-				'tags'
-			)
-		);
+		$subscriber_tags = noptin_get_subscriber( $subscriber_id )->get( 'tags' );
 		$this->assertNotContains( 'to-delete', $subscriber_tags, 'Deleted tag should not be in subscriber tags' );
 		$this->assertContains( 'stay', $subscriber_tags, 'Tag that should remain should still be in subscriber tags' );
 

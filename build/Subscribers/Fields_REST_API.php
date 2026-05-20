@@ -402,11 +402,7 @@ class Fields_REST_API {
 			);
 		}
 
-		if ( function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ) ) {
-			wp_cache_flush_group( 'noptin_subscribers' );
-		} else {
-			wp_cache_flush();
-		}
+		self::flush_subscriber_caches();
 
 		return rest_ensure_response( array( 'updated' => (int) $updated ) );
 	}
@@ -467,11 +463,7 @@ class Fields_REST_API {
 			);
 		}
 
-		if ( function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ) ) {
-			wp_cache_flush_group( 'noptin_subscribers' );
-		} else {
-			wp_cache_flush();
-		}
+		self::flush_subscriber_caches();
 
 		return rest_ensure_response( array( 'deleted' => (int) ( false === $deleted ? 0 : $deleted ) ) );
 	}
@@ -636,6 +628,23 @@ class Fields_REST_API {
 		}
 
 		return new \WP_Error( 'noptin_field_not_found', 'Field not found.', array( 'status' => 404 ) );
+	}
+
+	/**
+	 * Flushes all subscriber-related object caches.
+	 *
+	 * Clears both the main record cache group and the WP metadata cache group
+	 * so that subsequent reads via noptin_get_subscriber() always return fresh data.
+	 */
+	private static function flush_subscriber_caches() {
+		if ( function_exists( 'wp_cache_supports' ) && wp_cache_supports( 'flush_group' ) ) {
+			// Main record cache (noptin_subscribers).
+			wp_cache_flush_group( 'noptin_subscribers' );
+			// WP metadata API cache (get_metadata uses <meta_type>_meta as group).
+			wp_cache_flush_group( 'noptin_subscriber_meta' );
+		} else {
+			wp_cache_flush();
+		}
 	}
 
 	/**
