@@ -260,6 +260,10 @@ abstract class Noptin_Dynamic_Content_Tags {
 			$attributes       = array_merge( $attributes, shortcode_parse_atts( $attribute_string ) );
 		}
 
+		if ( 'display' === ( $attributes['return'] ?? '' ) && ! isset( $attributes['format'] ) && isset( $config['display_format'] ) ) {
+			$attributes['format'] = $config['display_format'];
+		}
+
 		if ( isset( $config['replacement'] ) ) {
 			$replacement = $config['replacement'];
 		} elseif ( isset( $config['callback'] ) ) {
