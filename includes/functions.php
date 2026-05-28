@@ -2616,3 +2616,54 @@ function noptin_memory_exceeded() {
 function noptin_add_block_editor_body_class( $classes ) {
 	return $classes . ' block-editor-page is-fullscreen-mode';
 }
+
+/**
+ * Normalizes a date string for comparison.
+ *
+ * @param string $value The date string.
+ * @return string|null Normalized date in Ymd format or null if invalid.
+ */
+function noptin_normalize_date_for_comparison( $value ) {
+	if ( is_array( $value ) || is_object( $value ) ) {
+		return null;
+	}
+
+	$value = trim( (string) $value );
+
+	if ( '' === $value ) {
+		return null;
+	}
+
+	// Already normalized: 20260101.
+	if ( preg_match( '/^\d{8}$/', $value ) ) {
+		$year  = (int) substr( $value, 0, 4 );
+		$month = (int) substr( $value, 4, 2 );
+		$day   = (int) substr( $value, 6, 2 );
+
+		return checkdate( $month, $day, $year ) ? $value : null;
+	}
+
+	// Common date formats: 2026-01-01, 2026/01/01, 01/01/2026.
+	$formats = array(
+		'Y-m-d',
+		'Y/m/d',
+		'm/d/Y',
+		'd/m/Y',
+		'M j, Y',
+		'F j, Y',
+	);
+
+	foreach ( $formats as $format ) {
+		$date = DateTime::createFromFormat( $format, $value );
+
+		if ( $date instanceof DateTime ) {
+			$errors = DateTime::getLastErrors();
+
+			if ( empty( $errors['warning_count'] ) && empty( $errors['error_count'] ) ) {
+				return $date->format( 'Ymd' );
+			}
+		}
+	}
+
+	return null;
+}
