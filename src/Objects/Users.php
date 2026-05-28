@@ -333,72 +333,163 @@ class Users extends People {
 
 			// Check if an operator was specified.
 			// For example, if the value is ">= 10", we'll use the >= operator.
-			if ( preg_match( '/^(\=|\!\=|\<\=|\>\=|\<|\>|LIKE|NOT LIKE|IN|NOT IN|BETWEEN|NOT BETWEEN|EXISTS|NOT EXISTS|REGEXP|NOT REGEXP|RLIKE)(.*)/', $value, $matches ) ) {
-				$value = isset( $matches[2] ) ? trim( $matches[2] ) : '';
+			if ( preg_match( '/^\s*(NOT\s+BETWEEN|NOT\s+REGEXP|NOT\s+LIKE|NOT\s+IN|BETWEEN|REGEXP|RLIKE|LIKE|NOT\s+EXISTS|EXISTS|!=|<>|<=|>=|=|<|>)\s*(.*)$/i', $value, $matches ) ) {
+				$operator = strtoupper( preg_replace( '/\s+/', ' ', trim( $matches[1] ) ) );
+				$value    = isset( $matches[2] ) ? trim( $matches[2] ) : '';
 
 				// Maybe convert to array.
-				if ( in_array( $matches[1], array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
+				if ( in_array( $operator, array( 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN' ), true ) ) {
 					$value = array_map( 'trim', explode( ',', $value ) );
 				}
 
-				switch ( $matches[1] ) {
+				$has_value = null !== $current_value && '' !== $current_value && array() !== $current_value;
+
+				switch ( $operator ) {
 					case 'EXISTS':
-						if ( empty( $current_value ) && 0 !== $current_value ) {
+						if ( ! $has_value ) {
 							return false;
 						}
 						break;
 
 					case 'NOT EXISTS':
-						if ( ! empty( $current_value ) ) {
+						if ( $has_value ) {
 							return false;
 						}
 						break;
 
 					case 'IN':
-						if ( ! in_array( $current_value, $value, true ) ) {
+						if ( ! in_array( (string) $current_value, array_map( 'strval', $value ), true ) ) {
 							return false;
 						}
 						break;
 
 					case 'NOT IN':
-						if ( in_array( $current_value, $value, true ) ) {
+						if ( in_array( (string) $current_value, array_map( 'strval', $value ), true ) ) {
 							return false;
 						}
 						break;
 
 					case 'BETWEEN':
-						if ( ! is_numeric( $current_value ) || $current_value < $value[0] || $current_value > $value[1] ) {
+					case 'NOT BETWEEN':
+						if ( count( $value ) < 2 ) {
 							return false;
 						}
-						break;
 
-					case 'NOT BETWEEN':
-						if ( ! is_numeric( $current_value ) || $current_value >= $value[0] || $current_value <= $value[1] ) {
+						// If we're comparing dates, convert them to Ymd format for a proper numeric comparison.
+						$current_date = noptin_normalize_date_for_comparison( $current_value );
+						$start_date   = noptin_normalize_date_for_comparison( $value[0] );
+						$end_date     = noptin_normalize_date_for_comparison( $value[1] );
+
+						if ( null !== $current_date && null !== $start_date && null !== $end_date ) {
+							$current = (int) $current_date;
+							$start   = (int) $start_date;
+							$end     = (int) $end_date;
+						} elseif ( is_numeric( $current_value ) && is_numeric( $value[0] ) && is_numeric( $value[1] ) ) {
+							$current = (float) $current_value;
+							$start   = (float) $value[0];
+							$end     = (float) $value[1];
+						} else {
+							return false;
+						}
+
+						if ( $start > $end ) {
+							list( $start, $end ) = array( $end, $start );
+						}
+
+						$is_between = $current >= $start && $current <= $end;
+
+						if ( 'BETWEEN' === $operator && ! $is_between ) {
+							return false;
+						}
+
+						if ( 'NOT BETWEEN' === $operator && $is_between ) {
 							return false;
 						}
 						break;
 
 					case 'LIKE':
-						if ( false === strpos( $current_value, $value ) ) {
+						if ( false === strpos( (string) $current_value, (string) $value ) ) {
 							return false;
 						}
 						break;
 
 					case 'NOT LIKE':
-						if ( false !== strpos( $current_value, $value ) ) {
+						if ( false !== strpos( (string) $current_value, (string) $value ) ) {
 							return false;
 						}
 						break;
 
 					case 'REGEXP':
 					case 'RLIKE':
-						if ( ! preg_match( $value, $current_value ) ) {
+					case 'NOT REGEXP':
+						$pattern = $value;
+
+						if ( '' === $pattern ) {
+							return false;
+						}
+
+						// Allow plain values like "foo" instead of requiring "/foo/".
+						if ( ! preg_match( '/^(.).+\1[imsxuADSUXJ]*$/', $pattern ) ) {
+							$pattern = '~' . str_replace( '~', '\~', $pattern ) . '~';
+						}
+
+						$matched = @preg_match( $pattern, (string) $current_value );
+
+						if ( false === $matched ) {
+							return false;
+						}
+
+						if ( 'NOT REGEXP' === $operator ? 1 === $matched : 1 !== $matched ) {
 							return false;
 						}
 						break;
 
-					case 'NOT REGEXP':
-						if ( preg_match( $value, $current_value ) ) {
+					case '=':
+						if ( (string) $current_value !== (string) $value ) {
+							return false;
+						}
+						break;
+
+					case '!=':
+					case '<>':
+						if ( (string) $current_value === (string) $value ) {
+							return false;
+						}
+						break;
+
+					case '<':
+					case '<=':
+					case '>':
+					case '>=':
+						// If we're comparing dates, convert them to Ymd format for a proper numeric comparison.
+						$current_date = noptin_normalize_date_for_comparison( $current_value );
+						$target_date  = noptin_normalize_date_for_comparison( $value );
+
+						if ( null !== $current_date && null !== $target_date ) {
+							$current_value = $current_date;
+							$value         = $target_date;
+						}
+
+						if ( ! is_numeric( $current_value ) || ! is_numeric( $value ) ) {
+							return false;
+						}
+
+						$current = (float) $current_value;
+						$target  = (float) $value;
+
+						if ( '<' === $operator && ! ( $current < $target ) ) {
+							return false;
+						}
+
+						if ( '<=' === $operator && ! ( $current <= $target ) ) {
+							return false;
+						}
+
+						if ( '>' === $operator && ! ( $current > $target ) ) {
+							return false;
+						}
+
+						if ( '>=' === $operator && ! ( $current >= $target ) ) {
 							return false;
 						}
 						break;
