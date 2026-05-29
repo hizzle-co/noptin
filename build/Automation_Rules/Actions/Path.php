@@ -15,11 +15,6 @@ defined( 'ABSPATH' ) || exit;
 class Path extends Action {
 
 	/**
-	 * @var string
-	 */
-	public $category = '';
-
-	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {
