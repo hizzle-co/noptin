@@ -40,19 +40,19 @@ class Schema {
 							'length'      => 20,
 							'nullable'    => false,
 							'extra'       => 'AUTO_INCREMENT',
-							'description' => __( 'Unique identifier for this resource.', 'newsletter-optin-box' ),
+							'description' => 'Unique identifier for this resource.',
 						),
 
 						'action_id'        => array(
 							'type'        => 'VARCHAR',
 							'length'      => 200,
-							'description' => __( 'The action ID.', 'newsletter-optin-box' ),
+							'description' => 'The action ID.',
 							'nullable'    => false,
 						),
 
 						'action_settings'  => array(
 							'type'              => 'TEXT',
-							'description'       => __( 'Action settings JSON', 'newsletter-optin-box' ),
+							'description'       => 'Action settings JSON',
 							'extra_rest_schema' => array(
 								'type' => array( 'object', 'array', 'null', 'string' ),
 							),
@@ -61,13 +61,13 @@ class Schema {
 						'trigger_id'       => array(
 							'type'        => 'VARCHAR',
 							'length'      => 200,
-							'description' => __( 'The trigger ID.', 'newsletter-optin-box' ),
+							'description' => 'The trigger ID.',
 							'nullable'    => false,
 						),
 
 						'trigger_settings' => array(
 							'type'              => 'TEXT',
-							'description'       => __( 'Trigger settings JSON', 'newsletter-optin-box' ),
+							'description'       => 'Trigger settings JSON',
 							'extra_rest_schema' => array(
 								'type' => array( 'object', 'array', 'null', 'string' ),
 							),
@@ -78,7 +78,7 @@ class Schema {
 							'length'      => 1,
 							'nullable'    => false,
 							'default'     => 1, // 1 === active, 0 === inactive.
-							'description' => __( 'The rule status', 'newsletter-optin-box' ),
+							'description' => 'The rule status',
 						),
 
 						'times_run'        => array(
@@ -87,33 +87,53 @@ class Schema {
 							'nullable'    => false,
 							'default'     => 0,
 							'readonly'    => true,
-							'description' => __( 'The number of times this rule has run.', 'newsletter-optin-box' ),
+							'description' => 'The number of times this rule has run.',
 						),
 
 						'delay'            => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'default'     => 0,
-							'description' => __( 'The number of seconds to wait before firing the action.', 'newsletter-optin-box' ),
+							'description' => 'The number of seconds to wait before firing the action.',
 						),
 
 						'created_at'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'readonly'    => true,
-							'description' => __( 'The date this rule was created.', 'newsletter-optin-box' ),
+							'description' => 'The date this rule was created.',
 						),
 
 						'updated_at'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'readonly'    => true,
-							'description' => __( 'The date this rule was last modified.', 'newsletter-optin-box' ),
+							'description' => 'The date this rule was last modified.',
+						),
+
+						'workflow_name'    => array(
+							'type'        => 'VARCHAR',
+							'length'      => 200,
+							'description' => 'The workflow name.',
+						),
+
+						'parent_id'        => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'default'     => 0,
+							'description' => 'The parent rule ID. Defaults to 0. If set, this rule fires after the parent rule fires.',
+						),
+
+						'priority'         => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'default'     => 0,
+							'description' => 'The execution priority. Lower values run first.',
 						),
 
 						'metadata'         => array(
 							'type'        => 'TEXT',
-							'description' => __( 'A key value array of additional metadata about this rule', 'newsletter-optin-box' ),
+							'description' => 'A key value array of additional metadata about this rule',
 						),
 					),
 
@@ -121,6 +141,8 @@ class Schema {
 						'primary'    => array( 'id' ),
 						'action_id'  => array( 'action_id' ),
 						'trigger_id' => array( 'trigger_id' ),
+						'parent_id'  => array( 'parent_id' ),
+						'priority'   => array( 'priority' ),
 					),
 				),
 			)
