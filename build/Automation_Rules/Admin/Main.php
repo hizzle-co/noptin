@@ -113,6 +113,7 @@ class Main {
 			);
 
 			// Localize the script.
+			$map = 'automation-rule-editor' === $script ? self::prepare_app() : array();
 			wp_localize_script(
 				'noptin-' . $script,
 				'noptinEmailSettingsMisc',
@@ -134,14 +135,21 @@ class Main {
 							),
 							'triggers' => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
 							'actions'  => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
-							'app'      => 'automation-rule-editor' === $script ? self::prepare_app() : array(),
+							'app'      => 'automation-rule-editor' === $script ? $map : array(),
 						),
+						'brand'        => noptin()->white_label->get_details(),
+						'comparisons'  => noptin_get_conditional_logic_comparisons(),
 					),
 					$script
 				)
 			);
 
 			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+
+			// Preload the automation rule being edited into wp.apiFetch cache.
+			if ( 'automation-rule-editor' === $script ) {
+				self::preload_current_rule_rest_api( $map['treeMap'] ?? array() );
+			}
 		}
 
 		// Load the css.
@@ -156,6 +164,55 @@ class Main {
 				$version
 			);
 		}
+	}
+
+	/**
+	 * Preloads the current automation rule being edited into wp.apiFetch cache to speed up loading in the editor.
+	 *
+	 * @param array $tree_map The tree map of the current rule, used to preload all rules in the workflow.
+	 */
+	private static function preload_current_rule_rest_api( $tree_map = array() ) {
+		$rule = noptin_get_current_automation_rule();
+
+		// Preload paths.
+		$preload_paths = array(
+			'/noptin/v1/automation_rules/collection_schema',
+		);
+
+		if ( ! is_wp_error( $rule ) ) {
+			if ( $rule->exists() ) {
+				foreach ( $tree_map as $tree_rule ) {
+					if ( empty( $tree_rule['id'] ) ) {
+						continue;
+					}
+
+					$preload_paths[] = sprintf( '/noptin/v1/automation_rules/%d?context=view', $tree_rule['id'] );
+				}
+			}
+
+			if ( ! empty( $rule->get_trigger_id() ) ) {
+				$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?trigger_id=%s&noptin_raw=true', $rule->get_trigger_id() );
+			}
+
+			if ( ! empty( $rule->get_action_id() ) ) {
+				$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?action_id=%s&noptin_raw=true', $rule->get_action_id() );
+			}
+		}
+
+		$preload_data = array_reduce(
+			$preload_paths,
+			'rest_preload_api_request',
+			array()
+		);
+
+		wp_add_inline_script(
+			'wp-api-fetch',
+			sprintf(
+				'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+				wp_json_encode( $preload_data )
+			),
+			'after'
+		);
 	}
 
 	/**
@@ -200,6 +257,7 @@ class Main {
 
 		return array(
 			'automationRule' => $rule->get_data(),
+			'treeMap'        => $rule->to_tree_map(),
 		);
 	}
 
