@@ -725,18 +725,32 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
-	 * Recursively adds an automation rule and its children to a tree map.
+	 * Converts the rule and its children into a flat tree map.
+	 *
+	 * @param array<int, bool> $visited Visited rule IDs.
+	 *
+	 * @return array<string, array{id: int, parent_id: int, children: string[]}>
 	 */
-	public function to_tree_map() {
-		// Get or generate a UUID for the rule.
+	public function to_tree_map( $visited = array() ) {
+		$id = (int) $this->get_id();
+
+		if ( $id && isset( $visited[ $id ] ) ) {
+			return array();
+		}
+
+		if ( $id ) {
+			$visited[ $id ] = true;
+		}
+
 		$uuid = $this->get_meta( 'uuid' );
+
 		if ( ! $uuid ) {
 			$uuid = wp_generate_uuid4();
 		}
 
 		$map = array(
 			$uuid => array(
-				'id'        => (int) $this->get_id(),
+				'id'        => $id,
 				'parent_id' => (int) $this->get_parent_id(),
 				'children'  => array(),
 			),
@@ -747,7 +761,19 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		}
 
 		foreach ( $this->get_children() as $child ) {
-			$map = array_replace( $map, $child->to_tree_map() );
+			$child_map = $child->to_tree_map( $visited );
+
+			if ( empty( $child_map ) ) {
+				continue;
+			}
+
+			$child_uuid = array_key_first( $child_map );
+
+			if ( $child_uuid ) {
+				$map[ $uuid ]['children'][] = $child_uuid;
+			}
+
+			$map = array_replace( $map, $child_map );
 		}
 
 		return $map;
