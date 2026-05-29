@@ -37,6 +37,11 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$this->set_trigger_id( sanitize_text_field( $_GET['noptin-trigger'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->set_action_id( sanitize_text_field( $_GET['noptin-action'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
+			// Pre-fill the parent rule ID when branching from an existing rule.
+			if ( ! empty( $_GET['noptin-parent-id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->set_parent_id( absint( $_GET['noptin-parent-id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			}
+
 			// Set default action and trigger settings.
 			$this->set_trigger_settings( array( 'conditional_logic' => noptin_get_default_conditional_logic() ) );
 			$this->set_action_settings( array() );
@@ -243,6 +248,63 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	public function set_delay( $value ) {
 		$value = empty( $value ) ? null : absint( $value );
 		$this->set_prop( 'delay', $value );
+	}
+
+	/**
+	 * Gets the workflow name.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_workflow_name( $context = 'view' ) {
+		return $this->get_prop( 'workflow_name', $context );
+	}
+
+	/**
+	 * Sets the workflow name.
+	 *
+	 * @param string $value Workflow name.
+	 */
+	public function set_workflow_name( $value ) {
+		$this->set_prop( 'workflow_name', sanitize_text_field( $value ) );
+	}
+
+	/**
+	 * Gets the parent rule ID.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return int
+	 */
+	public function get_parent_id( $context = 'view' ) {
+		return absint( $this->get_prop( 'parent_id', $context ) );
+	}
+
+	/**
+	 * Sets the parent rule ID.
+	 *
+	 * @param int $value Parent rule ID.
+	 */
+	public function set_parent_id( $value ) {
+		$this->set_prop( 'parent_id', absint( $value ) );
+	}
+
+	/**
+	 * Gets the rule priority.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return int
+	 */
+	public function get_priority( $context = 'view' ) {
+		return absint( $this->get_prop( 'priority', $context ) );
+	}
+
+	/**
+	 * Sets the rule priority.
+	 *
+	 * @param int $value Rule priority. Lower values run first.
+	 */
+	public function set_priority( $value ) {
+		$this->set_prop( 'priority', absint( $value ) );
 	}
 
 	/**
@@ -637,5 +699,57 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		$prepared['settings'] = $settings;
 
 		return $prepared;
+	}
+
+	/**
+	 * Returns the rule's children.
+	 *
+	 * @return Automation_Rule[]
+	 */
+	public function get_children() {
+		$children = noptin_get_automation_rules(
+			array(
+				'parent_id' => $this->get_id(),
+				'orderby'   => array(
+					'priority' => 'ASC',
+					'id'       => 'ASC',
+				),
+			)
+		);
+
+		if ( empty( $children ) || is_wp_error( $children ) ) {
+			return array();
+		}
+
+		return $children;
+	}
+
+	/**
+	 * Recursively adds an automation rule and its children to a tree map.
+	 */
+	public function to_tree_map() {
+		// Get or generate a UUID for the rule.
+		$uuid = $this->get_meta( 'uuid' );
+		if ( ! $uuid ) {
+			$uuid = wp_generate_uuid4();
+		}
+
+		$map = array(
+			$uuid => array(
+				'id'        => (int) $this->get_id(),
+				'parent_id' => (int) $this->get_parent_id(),
+				'children'  => array(),
+			),
+		);
+
+		if ( ! $this->exists() ) {
+			return $map;
+		}
+
+		foreach ( $this->get_children() as $child ) {
+			$map = array_replace( $map, $child->to_tree_map() );
+		}
+
+		return $map;
 	}
 }
