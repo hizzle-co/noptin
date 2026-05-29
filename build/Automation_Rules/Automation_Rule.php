@@ -729,7 +729,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 *
 	 * @param array<int, bool> $visited Visited rule IDs.
 	 *
-	 * @return array<string, array{id: int, parent_id: int, children: string[]}>
+	 * @return array<string, array{id: int, parent_id: int, children: string[], data?: array}> Tree map of the rule and its children.
 	 */
 	public function to_tree_map( $visited = array() ) {
 		$id = (int) $this->get_id();
@@ -757,6 +757,13 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		);
 
 		if ( ! $this->exists() ) {
+			// Provide a way for the frontend to tell the current trigger_id and action_id
+			// since the rule doesn't exist yet and won't have them saved in the database.
+			$map[ $uuid ]['data'] = array(
+				'trigger_id' => $this->get_trigger_id(),
+				'action_id'  => $this->get_action_id(),
+			);
+
 			return $map;
 		}
 
