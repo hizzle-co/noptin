@@ -366,6 +366,41 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Ensure the status, trigger_id, and trigger settings (minus conditional logic) mirror that of the parent rule.
+	 *
+	 * @param Automation_Rule $rule The rule to mirror to parent.
+	 * @param Automation_Rule $parent_rule The parent rule to mirror from.
+	 */
+	private static function mirror_to_parent( &$rule, $parent_rule ) {
+		// Abort if no parent.
+		if ( ! is_a( $parent_rule, 'Automation_Rule' ) || ! $parent_rule->exists() ) {
+			return false;
+		}
+
+		// Abort if no child.
+		// Here we don't check for exists.
+		if ( ! is_a( $rule, 'Automation_Rule' ) ) {
+			return false;
+		}
+
+		// Abort if child rule === parent rule to prevent self-reference and circular parent chains.
+		if ( $rule->get_id() === $parent_rule->get_id() ) {
+			return false;
+		}
+
+		$rule->set_status( $parent_rule->get_status() );
+		$rule->set_trigger_id( $parent_rule->get_trigger_id() );
+
+		$parent_trigger_settings = $parent_rule->get_trigger_settings();
+
+		$parent_trigger_settings['conditional_logic'] = $rule->get_conditional_logic();
+
+		$rule->set_trigger_settings( $parent_trigger_settings );
+
+		return true;
+	}
+
+	/**
 	 * Saves the rule.
 	 *
 	 * @return int|\WP_Error
@@ -375,6 +410,19 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 		if ( ! $this->get_id() ) {
 			$this->set_created_at( time() );
+		}
+
+		// If we have a parent rule, ensure the status, trigger_id, and trigger settings (minus conditional logic) mirror that of the parent rule.
+		if ( $this->get_parent_id() ) {
+			$parent_rule = noptin_get_automation_rule( $this->get_parent_id() );
+			self::mirror_to_parent( $this, $parent_rule );
+		}
+
+		// And vice versa.
+		foreach ( $this->get_children() as $child_rule ) {
+			if ( self::mirror_to_parent( $child_rule, $this ) ) {
+				$child_rule->save();
+			}
 		}
 
 		return parent::save();
@@ -629,7 +677,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 					$map_fields[ $key ] = $data;
 					unset( $action_settings[ $key ] );
 				} elseif ( ! empty( $data['settings'] ) && empty( $data['el'] ) ) {
-					$data['prop'] = $data['prop'] ?? 'action_settings';
+					$data['prop']           = $data['prop'] ?? 'action_settings';
 					$other_sections[ $key ] = $data;
 					unset( $action_settings[ $key ] );
 					unset( $original_action_settings[ $key ] );
@@ -728,10 +776,11 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * Converts the rule and its children into a flat tree map.
 	 *
 	 * @param array<int, bool> $visited Visited rule IDs.
+	 * @param string|int       $parent_uuid Parent rule UUID, or 0 for a true root.
 	 *
-	 * @return array<string, array{id: int, parent_id: int, children: string[], data?: array}> Tree map of the rule and its children.
+	 * @return array<string, array{id: int, parent_id: string|int, children: string[], data?: array}> Tree map of the rule and its children.
 	 */
-	public function to_tree_map( $visited = array() ) {
+	public function to_tree_map( $visited = array(), $parent_uuid = 0 ) {
 		$id = (int) $this->get_id();
 
 		if ( $id && isset( $visited[ $id ] ) ) {
@@ -748,27 +797,39 @@ class Automation_Rule extends \Hizzle\Store\Record {
 			$uuid = wp_generate_uuid4();
 		}
 
+		$resolved_parent_uuid = $parent_uuid;
+
+		if ( empty( $resolved_parent_uuid ) && $this->get_parent_id() > 0 ) {
+			$parent = noptin_get_automation_rule( $this->get_parent_id() );
+
+			if ( $parent && ! is_wp_error( $parent ) && $parent->exists() ) {
+				$resolved_parent_uuid = $parent->get_meta( 'uuid' );
+
+				if ( ! $resolved_parent_uuid ) {
+					$resolved_parent_uuid = wp_generate_uuid4();
+				}
+			}
+		}
+
 		$map = array(
 			$uuid => array(
 				'id'        => $id,
-				'parent_id' => (int) $this->get_parent_id(),
+				'parent_id' => $resolved_parent_uuid,
 				'children'  => array(),
 			),
 		);
 
 		if ( ! $this->exists() ) {
-			// Provide a way for the frontend to tell the current trigger_id and action_id
-			// since the rule doesn't exist yet and won't have them saved in the database.
-			$map[ $uuid ]['data'] = array(
-				'trigger_id' => $this->get_trigger_id(),
-				'action_id'  => $this->get_action_id(),
-			);
+			// Provide the unsaved rule data inline so the editor can bootstrap
+			// directly from treeMap without needing a separate automationRule payload.
+			$map[ $uuid ]['data'] = $this->get_data();
+			unset( $map[ $uuid ]['data']['smartTags'], $map[ $uuid ]['data']['settings'] );
 
 			return $map;
 		}
 
 		foreach ( $this->get_children() as $child ) {
-			$child_map = $child->to_tree_map( $visited );
+			$child_map = $child->to_tree_map( $visited, $uuid );
 
 			if ( empty( $child_map ) ) {
 				continue;
