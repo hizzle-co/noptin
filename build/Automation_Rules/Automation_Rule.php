@@ -594,7 +594,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	public function maybe_run( $subject, $trigger, $action, $args ) {
 
 		// Check if the rule is valid.
-		if ( ! $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
+		if ( ! $this->get_status() || ! $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
 			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
 
 			return false;
