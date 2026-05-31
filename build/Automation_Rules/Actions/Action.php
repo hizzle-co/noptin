@@ -118,6 +118,15 @@ abstract class Action extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	abstract public function run( $subject, $rule, $args );
 
 	/**
+	 * Checks if we should auto-run child rules.
+	 *
+	 * @return bool
+	 */
+	public function should_auto_run_child_rules() {
+		return true;
+	}
+
+	/**
 	 * The prefix used for the action's conditional logic.
 	 *
 	 * @return string

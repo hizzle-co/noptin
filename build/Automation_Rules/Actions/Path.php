@@ -94,4 +94,13 @@ class Path extends Action {
 			}
 		}
 	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public function should_auto_run_child_rules() {
+		// We don't want to auto-run child rules for the path action because the path branches are the only child rules of the path action,
+		// and they will be run based on the selected path_execution_mode.
+		return false;
+	}
 }
