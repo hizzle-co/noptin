@@ -8,6 +8,9 @@
 	 * @var array $query_args
 	 */
 
+	// We want to only include parents.
+	$_GET['parent_id'] = 0;
+
 	// Prepare items.
 	$table = new Table();
 	$table->prepare_items();

@@ -37,10 +37,12 @@ class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 		add_action( 'init', array( $this, 'register' ), 0 );
 		add_filter( 'noptin_parse_email_subject_tags', array( $this, 'replace_in_subject' ), 10, 2 );
 		add_filter( 'noptin_parse_email_content_tags', array( $this, 'replace_in_body' ), 10, 2 );
+
+		$this->default_attributes = array( 'return' => 'display' );
 	}
 
 	/**
-	 * @param string $string The string containing dynamic content tags.
+	 * @param string $content The string containing dynamic content tags.
 	 * @param string $escape_function Escape mode for the replacement value. Leave empty for no escaping.
 	 * @return string
 	 */
@@ -61,9 +63,12 @@ class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
 
 		foreach ( $smart_tags as $smart_tag ) {
 			if ( is_object( $smart_tag ) && is_callable( array( $smart_tag, $method ) ) ) {
-				$smart_tag->is_partial = $is_partial;
-				$content               = $smart_tag->$method( $content );
-				$smart_tag->is_partial = false;
+				$original_default_atts         = $smart_tag->default_attributes;
+				$smart_tag->default_attributes = array_merge( $smart_tag->default_attributes, $this->default_attributes );
+				$smart_tag->is_partial         = $is_partial;
+				$content                       = $smart_tag->$method( $content );
+				$smart_tag->is_partial         = false;
+				$smart_tag->default_attributes = $original_default_atts;
 			}
 		}
 

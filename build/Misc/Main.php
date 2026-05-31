@@ -99,6 +99,12 @@ class Main {
 						'type'        => array( 'string', 'array' ),
 						'required'    => false,
 					),
+					'noptin_raw' => array(
+						'description'       => 'Whether to return raw trigger merge tags without normalization.',
+						'type'              => 'boolean',
+						'required'          => false,
+						'sanitize_callback' => 'rest_sanitize_boolean',
+					),
 				),
 			)
 		);
@@ -292,6 +298,7 @@ class Main {
 
 		$trigger_id = $request->get_param( 'trigger_id' );
 		$action_id  = $request->get_param( 'action_id' );
+		$raw_tags   = rest_sanitize_boolean( $request->get_param( 'noptin_raw' ) );
 
 		$triggers = array();
 		$actions  = array();
@@ -301,15 +308,20 @@ class Main {
 				$trigger = \Hizzle\Noptin\Automation_Rules\Triggers\Main::get( $trigger_id );
 
 				if ( ! $trigger ) {
-					$triggers[ $trigger_id ] = new \WP_Error( 'noptin_rest_automation_settings_invalid_trigger', 'Invalid automation trigger.', array( 'status' => 404 ) );
+					$triggers[ $trigger_id ] = array(
+						'code'    => 'noptin_rest_automation_settings_invalid_trigger',
+						'message' => 'Invalid automation trigger.',
+					);
 					continue;
 				}
 
 				$triggers[ $trigger->get_id() ] = array(
 					'label'       => $trigger->get_name(),
 					'description' => $trigger->get_description(),
-					'settings'    => $trigger->get_settings(),
-					'merge_tags'  => self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() ),
+					'settings'    => (object) $trigger->get_settings(),
+					'merge_tags'  => $raw_tags
+						? $trigger->get_known_smart_tags_for_js()
+						: self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() ),
 				);
 			}
 		}
@@ -319,14 +331,18 @@ class Main {
 				$action = \Hizzle\Noptin\Automation_Rules\Actions\Main::get( $action_id );
 
 				if ( ! $action ) {
-					$actions[ $action_id ] = new \WP_Error( 'noptin_rest_automation_settings_invalid_action', 'Invalid automation action.', array( 'status' => 404 ) );
+					$actions[ $action_id ] = array(
+						'code'    => 'noptin_rest_automation_settings_invalid_action',
+						'message' => 'Invalid automation action.',
+					);
 					continue;
 				}
 
 				$actions[ $action->get_id() ] = array(
-					'label'       => $action->get_name(),
-					'description' => $action->get_description(),
-					'settings'    => $action->get_settings(),
+					'label'                    => $action->get_name(),
+					'description'              => $action->get_description(),
+					'map_fields_section_title' => $action->get_map_fields_section_title(),
+					'settings'                 => (object) $action->get_settings(),
 				);
 			}
 		}
