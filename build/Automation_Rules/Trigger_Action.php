@@ -35,7 +35,7 @@ abstract class Trigger_Action {
 	/**
 	 * @var string
 	 */
-	public $category = 'General';
+	public $category = 'Featured';
 
 	/**
 	 * @var string
@@ -213,6 +213,9 @@ abstract class Trigger_Action {
 				array(
 					$this->is_action_or_trigger . '_id' => empty( $this->alias ) ? $this->get_id() : array( $this->get_id(), $this->alias ),
 					'status'                            => $status,
+					// Root rules are trigger entry points. Child rules are scheduled
+					// by the parent workflow runner.
+					'parent_id'                         => 0,
 				)
 			);
 		}
