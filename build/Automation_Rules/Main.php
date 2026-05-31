@@ -36,6 +36,9 @@ class Main {
 		// Hooks.
 		add_action( 'noptin_run_automation_rule', array( __CLASS__, 'handle_automation_rule_task' ), 10, 2 );
 		add_action( 'noptin_run_delayed_automation_rule', array( __CLASS__, 'run_delayed_automation_rule' ), 10, 2 );
+
+		// Init default actions.
+		Actions\Main::init();
 	}
 
 	/**
@@ -55,6 +58,70 @@ class Main {
 		if ( ! $rule->exists() ) {
 			throw new \Exception( 'Automation rule not found' );
 		}
+
+		$run_next  = true;
+		$to_return = true;
+		try {
+			$to_return = self::handle_run_automation_rule( $rule, $args );
+
+			// Returns false if conditional logic fails.
+			if ( false === $to_return ) {
+				$run_next = false;
+				throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
+			}
+
+			// Rethrow if the action returned a WP_Error.
+			if ( is_wp_error( $to_return ) ) {
+				throw new \Exception( esc_html( $to_return->get_error_message() ) );
+			}
+		} catch ( \Exception $e ) {
+			log_noptin_message( 'Error running automation rule ID ' . $rule_id . ': ' . $e->getMessage(), 'error' );
+
+			// Stop running child rules if the rule has stop_on_failure set.
+			if ( $run_next && $rule->get_action_setting( '_noptin_stop_on_failure' ) ) {
+				$run_next = false;
+			}
+
+			$to_return = $e;
+		}
+
+		// If we're running child rules, schedule now.
+		$action       = $rule->get_action();
+		$can_run_next = $action ? $action->should_auto_run_child_rules() : true;
+		if ( $run_next && apply_filters( 'noptin_can_run_child_rules', $can_run_next, $rule, $args ) ) {
+			foreach ( $rule->get_children() as $child_rule ) {
+				if ( $child_rule->get_status() ) {
+					try {
+						$child_rule->maybe_run(
+							$args['subject'],
+							$rule->get_trigger(),
+							$rule->get_action(),
+							$args
+						);
+					} catch ( \Exception $e ) {
+						log_noptin_message( 'Error running child rules for automation rule ID ' . $rule_id . ': ' . $e->getMessage(), 'error' );
+					}
+				}
+			}
+		}
+
+		// Rethrow the exception if there was one.
+		if ( $to_return instanceof \Exception ) {
+			throw $to_return;
+		}
+
+		return $to_return;
+	}
+
+	/**
+	 * Does the actual running of the automation rule.
+	 *
+	 * @param Automation_Rule $rule
+	 * @param array $args
+	 * @return bool
+	 * @throws \Exception
+	 */
+	private static function handle_run_automation_rule( $rule, $args ) {
 
 		// Fetch the trigger.
 		$trigger = $rule->get_trigger();
@@ -83,9 +150,13 @@ class Main {
 			if ( false === $action->maybe_run( $args['subject'], $rule, $args ) ) {
 				throw new \Exception( 'Failed to run automation rule' );
 			}
-		} else {
-			throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
+
+			return true;
 		}
+
+		// We want to return false here so that the runner does not attempt
+		// to auto-run child rules for a rule that is no longer valid for the provided arguments.
+		return false;
 	}
 
 	/**

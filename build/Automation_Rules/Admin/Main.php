@@ -256,8 +256,7 @@ class Main {
 		}
 
 		return array(
-			'automationRule' => $rule->get_data(),
-			'treeMap'        => $rule->to_tree_map(),
+			'treeMap' => $rule->to_tree_map(),
 		);
 	}
 

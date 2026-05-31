@@ -593,6 +593,12 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
 
+		// todo: Find a way to continue even if there's no action.
+		// This allows us to run child rules even if the parent rule has no action or an invalid action.
+		if ( empty( $trigger ) || empty( $action ) ) {
+			return false;
+		}
+
 		// Check if the rule is valid.
 		if ( ! $this->get_status() || ! $trigger->is_rule_valid_for_args( $this, $args, $subject, $action ) ) {
 			log_noptin_message( 'Automation rule trigger "' . $trigger->get_name() . '" not valid for args.' );
