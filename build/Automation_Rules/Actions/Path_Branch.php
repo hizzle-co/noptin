@@ -54,6 +54,6 @@ class Path_Branch extends Action {
 	 * @inheritdoc
 	 */
 	public function run( $subject, $rule, $args ) {
-		\Hizzle\Noptin\Automation_Rules\Main::run_child_rules( $rule, $args, $rule->get_trigger() );
+		// Do nothing. The rule runner will auto-run the first action in the path branch.
 	}
 }
