@@ -131,6 +131,13 @@ class Schema {
 							'description' => 'The execution priority. Lower values run first.',
 						),
 
+						'workflow_tree'    => array(
+							'type'        => 'TEXT',
+							'description' => "The rule\'s workflow tree.",
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
 						'metadata'         => array(
 							'type'        => 'TEXT',
 							'description' => 'A key value array of additional metadata about this rule',

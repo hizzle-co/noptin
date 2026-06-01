@@ -40,6 +40,11 @@ class ScriptManager {
 	private static $collections = array();
 
 	/**
+	 * Request UUID.
+	 */
+	private static $request_uuid = '';
+
+	/**
 	 * Initializes the script manager.
 	 *
 	 * @var array
@@ -49,6 +54,7 @@ class ScriptManager {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_collection' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'preload_settings' ), 1000 );
+		self::$request_uuid = wp_generate_uuid4();
 		do_action( 'hizzlewp_scripts_init' );
 	}
 
@@ -79,6 +85,16 @@ class ScriptManager {
 						$config_file['version'],
 						true
 					);
+
+					if ( 'store' === $folder ) {
+						wp_localize_script(
+							'hizzlewp-store-ui',
+							'hizzleWPStore',
+							array(
+								'requestUUID' => self::$request_uuid,
+							)
+						);
+					}
 				}
 
 				// Style.

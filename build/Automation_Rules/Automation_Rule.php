@@ -251,6 +251,29 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Gets the workflow display name.
+	 *
+	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
+	 * @return string
+	 */
+	public function get_formatted_workflow_name() {
+		$name = $this->get_prop( 'workflow_name' );
+
+		if ( ! empty( $name ) ) {
+			return $name;
+		}
+
+		$trigger = $this->get_trigger();
+		$action  = $this->get_action();
+
+		$trigger_name = $trigger ? $trigger->get_name() : $this->get_trigger_id();
+		$action_name  = $action ? $action->get_name() : $this->get_action_id();
+
+		$names = array_filter( array( $trigger_name, $action_name ) );
+		return implode( ' → ', $names );
+	}
+
+	/**
 	 * Gets the workflow name.
 	 *
 	 * @param string $context What the value is for. Valid values are 'view' and 'edit'.
@@ -761,6 +784,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return Automation_Rule[]
 	 */
 	public function get_children() {
+		if ( ! $this->exists() ) {
+			return array();
+		}
+
 		$children = noptin_get_automation_rules(
 			array(
 				'parent_id' => $this->get_id(),
@@ -776,6 +803,19 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		}
 
 		return $children;
+	}
+
+	/**
+	 * Returns the tree map, but only if this is a root rule (i.e. has no parent).
+	 *
+	 * @return string
+	 */
+	public function get_workflow_tree() {
+		if ( $this->get_parent_id() > 0 ) {
+			return false;
+		}
+
+		return $this->to_tree_map();
 	}
 
 	/**
@@ -822,14 +862,19 @@ class Automation_Rule extends \Hizzle\Store\Record {
 				'id'        => $id,
 				'parent_id' => $resolved_parent_uuid,
 				'children'  => array(),
+				'action_id' => $this->get_action_id(),
 			),
 		);
 
 		if ( ! $this->exists() ) {
 			// Provide the unsaved rule data inline so the editor can bootstrap
 			// directly from treeMap without needing a separate automationRule payload.
-			$map[ $uuid ]['data'] = $this->get_data();
-			unset( $map[ $uuid ]['data']['smartTags'], $map[ $uuid ]['data']['settings'] );
+			$map[ $uuid ]['data'] = array(
+				'trigger_id'       => $this->get_trigger_id(),
+				'trigger_settings' => $this->get_trigger_settings(),
+				'action_id'        => $this->get_action_id(),
+				'action_settings'  => $this->get_action_settings(),
+			);
 
 			return $map;
 		}

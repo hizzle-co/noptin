@@ -176,6 +176,31 @@ class Noptin_White_Label {
             }
 
             $menu[ $key ]['className'] = apply_filters( "noptin_nav_menu_{$key}_class", 'noptin-menu-' . $key );
+
+            $submenu = apply_filters( "noptin_{$key}_submenu", array() );
+            if ( ! empty( $submenu ) ) {
+
+                // If an inner submenu is pressed, ensure this one is not.
+                $pressed = array_filter(
+                    $submenu,
+                    function ( $child ) {
+                    return ! empty( $child['isPressed'] );
+                    }
+                );
+
+                if ( $pressed ) {
+                    $item['isPressed'] = false;
+                }
+
+                $menu[ $key ]['items'] = array_values(
+                    array_merge(
+                        array(
+                            $key => $item,
+                        ),
+                        $submenu
+                    )
+                );
+            }
         }
 
         return apply_filters( 'noptin_white_label_menu', array_values( $menu ) );

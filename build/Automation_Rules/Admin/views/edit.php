@@ -16,18 +16,9 @@ if ( is_wp_error( $rule ) ) {
 	return;
 }
 
-if ( ! $rule->exists() && ! $rule->is_creating ) {
-	printf(
-		'<div class="notice notice-error"><p>%s</p></div>',
-		'Rule not found. It might have been deleted.'
-	);
-	return;
-}
-
 ?>
 <div class="noptin-edit-automation-rule-page" id="noptin-wrapper">
 	<div id="noptin-automation-rule__editor-app">
-		<?php esc_html_e( 'Loading...', 'newsletter-optin-box' ); ?>
 		<span class="spinner" style="visibility: visible; float: none;"></span>
 	</div>
 </div>
