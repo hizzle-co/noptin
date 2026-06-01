@@ -250,6 +250,10 @@ class Main {
 		$custom_templates  = get_option( 'noptin_templates' );
 		$inbuilt_templates = include plugin_dir_path( __FILE__ ) . 'optin-templates.php';
 
+		if ( is_rtl() ) {
+			$inbuilt_templates = array_map( __CLASS__ . '::make_template_rtl', $inbuilt_templates );
+		}
+
 		if ( ! is_array( $custom_templates ) ) {
 			$custom_templates = array();
 		}
@@ -285,6 +289,87 @@ class Main {
 		}
 
 		return array_merge( $custom_templates, $inbuilt_templates );
+	}
+
+	/**
+	 * Makes the template RTL.
+	 *
+	 * @param array $template The template data.
+	 *
+	 * @return array The modified template data.
+	 */
+	public static function make_template_rtl( $template ) {
+
+		if ( ! isset( $template['data'] ) || ! is_array( $template['data'] ) ) {
+			return $template;
+		}
+
+		$template['data'] = self::handle_make_template_rtl( $template['data'] );
+		return $template;
+	}
+
+	/**
+	 * @param array $settings The template settings.
+	 */
+	private static function handle_make_template_rtl( $settings ) {
+
+		if ( ! is_array( $settings ) ) {
+			return $settings;
+		}
+
+		// Mirror keyed border arrays such as: array( 'left' => ..., 'right' => ... ).
+		if ( array_key_exists( 'left', $settings ) || array_key_exists( 'right', $settings ) ) {
+			$left              = isset( $settings['left'] ) ? $settings['left'] : null;
+			$right             = isset( $settings['right'] ) ? $settings['right'] : null;
+			$settings['left']  = $right;
+			$settings['right'] = $left;
+		}
+
+		foreach ( $settings as $key => $value ) {
+			if ( in_array( $key, array( 'imagePos', 'imageMainPos', 'buttonPosition' ), true ) ) {
+				if ( 'left' === $value ) {
+					$settings[ $key ] = 'right';
+				} elseif ( 'right' === $value ) {
+					$settings[ $key ] = 'left';
+				}
+				continue;
+			}
+
+			if ( in_array( $key, array( 'CSS', 'generated' ), true ) && is_string( $value ) ) {
+				$settings[ $key ] = self::mirror_directional_css( $value );
+				continue;
+			}
+
+			if ( is_array( $value ) ) {
+				$settings[ $key ] = self::handle_make_template_rtl( $value );
+			}
+		}
+
+		return $settings;
+	}
+
+	/**
+	 * Mirrors directional CSS properties in a CSS string.
+	 *
+	 * @param string $css The CSS string to mirror.
+	 *
+	 * @return string The modified CSS string with mirrored directional properties.
+	 */
+	private static function mirror_directional_css( $css ) {
+		return preg_replace_callback(
+			'/(\s|:|^)(left|right|ltr|rtl)(\s|:|;|$)/i',
+			static function ( $matches ) {
+				$map = array(
+					'left'  => 'right',
+					'right' => 'left',
+					'ltr'   => 'rtl',
+					'rtl'   => 'ltr',
+				);
+				$word = strtolower( $matches[2] );
+				return $matches[1] . ( $map[ $word ] ?? $matches[2] ) . $matches[3];
+			},
+			$css
+		);
 	}
 
 	/**

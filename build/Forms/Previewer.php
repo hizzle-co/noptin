@@ -130,7 +130,7 @@ class Previewer {
 				}
 			</style>
 		</head>
-		<body class="page-template-default page">
+		<body class="page-template-default page <?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
 			<div id="noptin-form-preview" class="page type-page status-publish hentry post post-content">
 				<p class="description"><?php esc_html_e( 'The form may look slightly different than this when shown in a post, page or widget area.', 'newsletter-optin-box' ); ?></p>
 				<div style="max-width: 720px; margin: 0 auto;">
