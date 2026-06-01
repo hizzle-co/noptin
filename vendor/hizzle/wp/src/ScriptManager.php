@@ -88,7 +88,7 @@ class ScriptManager {
 
 					if ( 'store' === $folder ) {
 						wp_localize_script(
-							'hizzlewp-store-ui',
+							'hizzlewp-store',
 							'hizzleWPStore',
 							array(
 								'requestUUID' => self::$request_uuid,
@@ -219,7 +219,7 @@ class ScriptManager {
 		// Localize the script.
 		wp_localize_script(
 			'hizzlewp-store-ui',
-			'hizzleWPStore',
+			'hizzleWPStoreUi',
 			array(
 				'data' => array_merge(
 					array(
