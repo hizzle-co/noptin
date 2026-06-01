@@ -1374,7 +1374,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 
 			$routes[ "noptin/subscribers/{$merge_tag}_manager" ] = array(
 				'title' => empty( $field['label'] ) ? $merge_tag : $field['label'],
-				'href'  => add_query_arg( 'noptin_cf', $merge_tag ),
+				'href'  => add_query_arg(
+					array(
+						'noptin_cf' => $merge_tag,
+						'page'      => 'noptin-subscribers',
+					),
+					admin_url( 'admin.php' )
+				),
 			);
 		}
 

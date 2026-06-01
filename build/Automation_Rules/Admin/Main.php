@@ -149,6 +149,8 @@ class Main {
 			// Preload the automation rule being edited into wp.apiFetch cache.
 			if ( 'automation-rule-editor' === $script ) {
 				self::preload_current_rule_rest_api( $map['treeMap'] ?? array() );
+			} else {
+				self::preload_overview_api();
 			}
 		}
 
@@ -180,13 +182,19 @@ class Main {
 		);
 
 		if ( ! is_wp_error( $rule ) ) {
-			if ( $rule->exists() ) {
+			$unique_id = \Hizzle\WordPress\ScriptManager::$request_uuid;
+
+			if ( $rule->exists() && ! empty( $unique_id ) ) {
 				foreach ( $tree_map as $tree_rule ) {
 					if ( empty( $tree_rule['id'] ) ) {
 						continue;
 					}
 
-					$preload_paths[] = sprintf( '/noptin/v1/automation_rules/%d?context=view', $tree_rule['id'] );
+					$preload_paths[] = sprintf(
+						'/noptin/v1/automation_rules/%d?context=view&uniqid=%s',
+						$tree_rule['id'],
+						$unique_id
+					);
 				}
 			}
 
@@ -194,13 +202,46 @@ class Main {
 				$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?trigger_id=%s&noptin_raw=true', $rule->get_trigger_id() );
 			}
 
-			if ( ! empty( $rule->get_action_id() ) ) {
-				$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?action_id=%s&noptin_raw=true', $rule->get_action_id() );
+			// Each step has their own action.
+			foreach ( $tree_map as $tree_rule ) {
+				if ( empty( $tree_rule['action_id'] ) ) {
+					continue;
+				}
+
+				$preload_paths[] = sprintf(
+					'/noptin/v1/automation-rule-settings?action_id=%s&noptin_raw=true',
+					$tree_rule['action_id']
+				);
 			}
 		}
 
 		$preload_data = array_reduce(
-			$preload_paths,
+			array_unique( $preload_paths ),
+			'rest_preload_api_request',
+			array()
+		);
+
+		wp_add_inline_script(
+			'wp-api-fetch',
+			sprintf(
+				'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+				wp_json_encode( $preload_data )
+			),
+			'after'
+		);
+	}
+
+	/**
+	 * Preloads the overview api routes.
+	 */
+	private static function preload_overview_api() {
+		// Preload paths.
+		$preload_paths = array(
+			'/noptin/v1/automation_rules/collection_schema',
+		);
+
+		$preload_data = array_reduce(
+			array_unique( $preload_paths ),
 			'rest_preload_api_request',
 			array()
 		);

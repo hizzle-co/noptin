@@ -42,7 +42,7 @@ class ScriptManager {
 	/**
 	 * Request UUID.
 	 */
-	private static $request_uuid = '';
+	public static $request_uuid = '';
 
 	/**
 	 * Initializes the script manager.

@@ -806,6 +806,36 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns the action info.
+	 *
+	 * @return string
+	 */
+	public function get_trigger_info() {
+		$trigger = $this->get_trigger();
+
+		if ( $trigger ) {
+			return wp_kses_post( $trigger->get_rule_table_description( $this ) );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Returns the action info.
+	 *
+	 * @return string
+	 */
+	public function get_action_info() {
+		$trigger = $this->get_trigger();
+
+		if ( $trigger ) {
+			return wp_kses_post( $trigger->get_rule_table_description( $this ) );
+		}
+
+		return '';
+	}
+
+	/**
 	 * Returns the tree map, but only if this is a root rule (i.e. has no parent).
 	 *
 	 * @return string

@@ -138,6 +138,20 @@ class Schema {
 							'readonly'    => true,
 						),
 
+						'trigger_info'     => array(
+							'type'        => 'TEXT',
+							'description' => "The rule\'s trigger info.",
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
+						'action_info'      => array(
+							'type'        => 'TEXT',
+							'description' => "The rule\'s action info.",
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
 						'metadata'         => array(
 							'type'        => 'TEXT',
 							'description' => 'A key value array of additional metadata about this rule',

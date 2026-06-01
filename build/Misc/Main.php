@@ -140,7 +140,7 @@ class Main {
 			$trigger = \Hizzle\Noptin\Automation_Rules\Triggers\Main::get( $source_id );
 
 			if ( ! $trigger ) {
-				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Invalid automation trigger.', array( 'status' => 404 ) );
+				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Your site does not support this trigger.', array( 'status' => 404 ) );
 			}
 
 			$merge_tags = self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() );
@@ -310,7 +310,7 @@ class Main {
 				if ( ! $trigger ) {
 					$triggers[ $trigger_id ] = array(
 						'code'    => 'noptin_rest_automation_settings_invalid_trigger',
-						'message' => 'Invalid automation trigger.',
+						'message' => 'Your site does not support this trigger.',
 					);
 					continue;
 				}
@@ -333,7 +333,7 @@ class Main {
 				if ( ! $action ) {
 					$actions[ $action_id ] = array(
 						'code'    => 'noptin_rest_automation_settings_invalid_action',
-						'message' => 'Invalid automation action.',
+						'message' => 'Your site does not support this action.',
 					);
 					continue;
 				}
