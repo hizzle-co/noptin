@@ -40,6 +40,7 @@ class Main {
 
 		add_action( 'admin_init', array( __CLASS__, 'maybe_do_action' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'email_campaigns_menu' ), 35 );
+		add_filter( 'noptin_emails_submenu', array( __CLASS__, 'filter_emails_nav_submenus' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_split_menu_body_class' ) );
 
@@ -300,6 +301,38 @@ class Main {
 
 		// Show success info.
 		self::redirect_from_action_with_success( __( 'The campaign has been restored.', 'newsletter-optin-box' ) );
+	}
+
+	/**
+	 * Filters the email collection submenus.
+	 *
+	 * @param array $submenus
+	 * @return array
+	 */
+	public static function filter_emails_nav_submenus( $submenus ) {
+		$email_types = array_values( \Hizzle\Noptin\Emails\Main::get_email_types() );
+		$current_cf  = isset( $_GET['noptin_email_type'] ) ? sanitize_text_field( wp_unslash( $_GET['noptin_email_type'] ) ) : '';
+		$is_emails   = 'noptin-email-campaigns' === ( $_GET['page'] ?? '' );
+
+		foreach ( $email_types as $index => $type ) {
+			if ( 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+				continue;
+			}
+
+			$submenus[ $type->type ] = array(
+				'text'      => $type->plural_label,
+				'href'      => add_query_arg(
+					array(
+						'page'              => 'noptin-email-campaigns',
+						'noptin_email_type' => rawurlencode( $type->type ),
+					),
+					admin_url( '/admin.php' )
+				),
+				'isPressed' => $current_cf === $type->type || ( empty( $current_cf ) && 0 === $index ),
+			);
+		}
+
+		return $submenus;
 	}
 
 	/**
