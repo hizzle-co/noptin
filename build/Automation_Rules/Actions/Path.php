@@ -70,19 +70,15 @@ class Path extends Action {
 	public function run( $subject, $rule, $args ) {
 
 		$path_execution_mode = $rule->get_action_setting( 'path_execution_mode' );
-		$paths               = noptin_get_automation_rules(
-			array(
-				'parent_id' => $rule->get_id(),
-				'action_id' => 'path_branch',
-				'orderby'   => 'priority',
-				'order'     => 'asc',
-			)
-		);
+		$paths               = $rule->get_children();
 
 		$action = Main::get( 'path_branch' );
 
 		foreach ( $paths as $path ) {
-			/** @var \Hizzle\Noptin\Automation_Rules\Automation_Rule $path */
+			if ( 'path_branch' !== $path->get_action_id() || ! $path->get_status() ) {
+				continue;
+			}
+
 			$trigger = $path->get_trigger();
 
 			if ( $trigger && $trigger->is_rule_valid_for_args( $path, $args, $subject, $action ) ) {

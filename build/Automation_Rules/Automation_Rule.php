@@ -397,13 +397,13 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	private static function mirror_to_parent( &$rule, $parent_rule ) {
 		// Abort if no parent.
-		if ( ! is_a( $parent_rule, 'Automation_Rule' ) || ! $parent_rule->exists() ) {
+		if ( ! is_a( $parent_rule, self::class ) || ! $parent_rule->exists() ) {
 			return false;
 		}
 
 		// Abort if no child.
 		// Here we don't check for exists.
-		if ( ! is_a( $rule, 'Automation_Rule' ) ) {
+		if ( ! is_a( $rule, self::class ) ) {
 			return false;
 		}
 
@@ -434,6 +434,11 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 		if ( ! $this->get_id() ) {
 			$this->set_created_at( time() );
+		}
+
+		// If we have no uuid, generate one.
+		if ( ! $this->get_meta( 'uuid' ) ) {
+			$this->update_meta( 'uuid', wp_generate_uuid4() );
 		}
 
 		// If we have a parent rule, ensure the status, trigger_id, and trigger settings (minus conditional logic) mirror that of the parent rule.
@@ -827,10 +832,10 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return string
 	 */
 	public function get_action_info() {
-		$trigger = $this->get_trigger();
+		$action = $this->get_action();
 
-		if ( $trigger ) {
-			return wp_kses_post( $trigger->get_rule_table_description( $this ) );
+		if ( $action ) {
+			return wp_kses_post( $action->get_rule_table_description( $this ) );
 		}
 
 		return '';

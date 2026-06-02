@@ -69,11 +69,6 @@ class Main {
 				$run_next = false;
 				throw new \Exception( 'Automation rule is no longer valid for the provided arguments' );
 			}
-
-			// Rethrow if the action returned a WP_Error.
-			if ( is_wp_error( $to_return ) ) {
-				throw new \Exception( esc_html( $to_return->get_error_message() ) );
-			}
 		} catch ( \Exception $e ) {
 			log_noptin_message( 'Error running automation rule ID ' . $rule_id . ': ' . $e->getMessage(), 'error' );
 
@@ -93,9 +88,9 @@ class Main {
 				if ( $child_rule->get_status() ) {
 					try {
 						$child_rule->maybe_run(
-							$args['subject'],
+							$args['subject'] ?? '',
 							$rule->get_trigger(),
-							$rule->get_action(),
+							$child_rule->get_action(),
 							$args
 						);
 					} catch ( \Exception $e ) {
@@ -146,9 +141,15 @@ class Main {
 		}
 
 		// Ensure that the rule is valid for the provided args.
-		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'], $action ) ) {
-			if ( false === $action->maybe_run( $args['subject'], $rule, $args ) ) {
+		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'] ?? '', $action ) ) {
+			$result = $action->maybe_run( $args['subject'] ?? '', $rule, $args );
+
+			if ( false === $result ) {
 				throw new \Exception( 'Failed to run automation rule' );
+			}
+
+			if ( is_wp_error( $result ) ) {
+				throw new \Exception( esc_html( $result->get_error_message() ) );
 			}
 
 			return true;
