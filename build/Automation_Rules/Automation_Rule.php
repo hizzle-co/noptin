@@ -463,6 +463,16 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 * @return int|\WP_Error
 	 */
 	public function delete( $fire_actions = true ) {
+		// Abort if rule doesn't exist.
+		if ( ! $this->exists() ) {
+			return new \WP_Error( 'noptin_automation_rule_not_found', 'Automation rule not found.' );
+		}
+
+		// Delete child rules first.
+		foreach ( $this->get_children() as $child_rule ) {
+			$child_rule->delete( $fire_actions );
+		}
+
 		$action = $this->get_action();
 
 		if ( ! empty( $action ) && $fire_actions ) {
