@@ -19,7 +19,7 @@ use Symfony\Component\CssSelector\XPath\XPathExpr;
  * XPath expression translator node extension.
  *
  * This component is a port of the Python cssselect library,
- * which is copyright Ian Bicking, @see https://github.com/SimonSapin/cssselect.
+ * which is copyright Ian Bicking, @see https://github.com/scrapy/cssselect.
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  *
@@ -31,17 +31,15 @@ class NodeExtension extends AbstractExtension
     public const ATTRIBUTE_NAME_IN_LOWER_CASE = 2;
     public const ATTRIBUTE_VALUE_IN_LOWER_CASE = 4;
 
-    private $flags;
-
-    public function __construct(int $flags = 0)
-    {
-        $this->flags = $flags;
+    public function __construct(
+        private int $flags = 0,
+    ) {
     }
 
     /**
      * @return $this
      */
-    public function setFlag(int $flag, bool $on): self
+    public function setFlag(int $flag, bool $on): static
     {
         if ($on && !$this->hasFlag($flag)) {
             $this->flags += $flag;
@@ -59,21 +57,21 @@ class NodeExtension extends AbstractExtension
         return (bool) ($this->flags & $flag);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getNodeTranslators(): array
     {
         return [
-            'Selector' => [$this, 'translateSelector'],
-            'CombinedSelector' => [$this, 'translateCombinedSelector'],
-            'Negation' => [$this, 'translateNegation'],
-            'Function' => [$this, 'translateFunction'],
-            'Pseudo' => [$this, 'translatePseudo'],
-            'Attribute' => [$this, 'translateAttribute'],
-            'Class' => [$this, 'translateClass'],
-            'Hash' => [$this, 'translateHash'],
-            'Element' => [$this, 'translateElement'],
+            'Selector' => $this->translateSelector(...),
+            'CombinedSelector' => $this->translateCombinedSelector(...),
+            'Negation' => $this->translateNegation(...),
+            'Matching' => $this->translateMatching(...),
+            'SpecificityAdjustment' => $this->translateSpecificityAdjustment(...),
+            'Function' => $this->translateFunction(...),
+            'Pseudo' => $this->translatePseudo(...),
+            'Attribute' => $this->translateAttribute(...),
+            'Class' => $this->translateClass(...),
+            'Hash' => $this->translateHash(...),
+            'Element' => $this->translateElement(...),
+            'Relation' => $this->translateRelation(...),
         ];
     }
 
@@ -94,10 +92,43 @@ class NodeExtension extends AbstractExtension
         $subXpath->addNameTest();
 
         if ($subXpath->getCondition()) {
-            return $xpath->addCondition(sprintf('not(%s)', $subXpath->getCondition()));
+            return $xpath->addCondition(\sprintf('not(%s)', $subXpath->getCondition()));
         }
 
         return $xpath->addCondition('0');
+    }
+
+    public function translateMatching(Node\MatchingNode $node, Translator $translator): XPathExpr
+    {
+        return $this->translateMatchingOrSpecificityAdjustment($node->selector, $node->arguments, $translator);
+    }
+
+    public function translateSpecificityAdjustment(Node\SpecificityAdjustmentNode $node, Translator $translator): XPathExpr
+    {
+        return $this->translateMatchingOrSpecificityAdjustment($node->selector, $node->arguments, $translator);
+    }
+
+    /**
+     * @param array<Node\NodeInterface> $arguments
+     */
+    private function translateMatchingOrSpecificityAdjustment(Node\NodeInterface $selector, array $arguments, Translator $translator): XPathExpr
+    {
+        $xpath = $translator->nodeToXPath($selector);
+
+        $conditions = [];
+        foreach ($arguments as $argument) {
+            $expr = $translator->nodeToXPath($argument);
+            $expr->addNameTest();
+            if ('' !== $condition = $expr->getCondition()) {
+                $conditions[] = $condition;
+            }
+        }
+
+        if ($conditions) {
+            $xpath->addCondition(1 === \count($conditions) ? $conditions[0] : '('.implode(') or (', $conditions).')');
+        }
+
+        return $xpath;
     }
 
     public function translateFunction(Node\FunctionNode $node, Translator $translator): XPathExpr
@@ -124,11 +155,11 @@ class NodeExtension extends AbstractExtension
         }
 
         if ($node->getNamespace()) {
-            $name = sprintf('%s:%s', $node->getNamespace(), $name);
+            $name = \sprintf('%s:%s', $node->getNamespace(), $name);
             $safe = $safe && $this->isSafeName($node->getNamespace());
         }
 
-        $attribute = $safe ? '@'.$name : sprintf('attribute::*[name() = %s]', Translator::getXpathLiteral($name));
+        $attribute = $safe ? '@'.$name : \sprintf('attribute::*[name() = %s]', Translator::getXpathLiteral($name));
         $value = $node->getValue();
         $xpath = $translator->nodeToXPath($node->getSelector());
 
@@ -169,7 +200,7 @@ class NodeExtension extends AbstractExtension
         }
 
         if ($node->getNamespace()) {
-            $element = sprintf('%s:%s', $node->getNamespace(), $element);
+            $element = \sprintf('%s:%s', $node->getNamespace(), $element);
             $safe = $safe && $this->isSafeName($node->getNamespace());
         }
 
@@ -182,9 +213,27 @@ class NodeExtension extends AbstractExtension
         return $xpath;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function translateRelation(Node\RelationNode $node, Translator $translator): XPathExpr
+    {
+        $arguments = $node->getArguments();
+        if (1 === \count($arguments)) {
+            [$combinator, $subSelector] = $arguments[0];
+
+            return $translator->addRelativeCombination($combinator, $node->getSelector(), $subSelector);
+        }
+
+        $conditions = [];
+        foreach ($arguments as [$combinator, $subSelector]) {
+            $relativeXpath = (string) $translator->addRelativeCombination($combinator, new Node\ElementNode(), $subSelector);
+            $conditions[] = substr($relativeXpath, 2, -1);
+        }
+
+        $xpath = $translator->nodeToXPath($node->getSelector());
+        $xpath->addCondition('('.implode(') or (', $conditions).')');
+
+        return $xpath;
+    }
+
     public function getName(): string
     {
         return 'node';

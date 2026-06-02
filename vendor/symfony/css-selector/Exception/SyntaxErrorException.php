@@ -17,48 +17,43 @@ use Symfony\Component\CssSelector\Parser\Token;
  * ParseException is thrown when a CSS selector syntax is not valid.
  *
  * This component is a port of the Python cssselect library,
- * which is copyright Ian Bicking, @see https://github.com/SimonSapin/cssselect.
+ * which is copyright Ian Bicking, @see https://github.com/scrapy/cssselect.
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  */
 class SyntaxErrorException extends ParseException
 {
-    /**
-     * @return self
-     */
-    public static function unexpectedToken(string $expectedValue, Token $foundToken)
+    public static function unexpectedToken(string $expectedValue, Token $foundToken): self
     {
-        return new self(sprintf('Expected %s, but %s found.', $expectedValue, $foundToken));
+        return new self(\sprintf('Expected %s, but %s found.', $expectedValue, $foundToken));
     }
 
-    /**
-     * @return self
-     */
-    public static function pseudoElementFound(string $pseudoElement, string $unexpectedLocation)
+    public static function pseudoElementFound(string $pseudoElement, string $unexpectedLocation): self
     {
-        return new self(sprintf('Unexpected pseudo-element "::%s" found %s.', $pseudoElement, $unexpectedLocation));
+        return new self(\sprintf('Unexpected pseudo-element "::%s" found %s.', $pseudoElement, $unexpectedLocation));
     }
 
-    /**
-     * @return self
-     */
-    public static function unclosedString(int $position)
+    public static function unclosedString(int $position): self
     {
-        return new self(sprintf('Unclosed/invalid string at %s.', $position));
+        return new self(\sprintf('Unclosed/invalid string at %s.', $position));
     }
 
-    /**
-     * @return self
-     */
-    public static function nestedNot()
+    public static function nestedNot(): self
     {
-        return new self('Got nested ::not().');
+        return new self('Got nested :not().');
     }
 
-    /**
-     * @return self
-     */
-    public static function stringAsFunctionArgument()
+    public static function nestedHas(): self
+    {
+        return new self('Got too deeply nested :has().');
+    }
+
+    public static function notAtTheStartOfASelector(string $pseudoElement): self
+    {
+        return new self(\sprintf('Got immediate child pseudo-element ":%s" not at the start of a selector', $pseudoElement));
+    }
+
+    public static function stringAsFunctionArgument(): self
     {
         return new self('String not allowed as function argument.');
     }
