@@ -179,8 +179,9 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function get_conditional_logic() {
 		$conditional_logic = $this->get_trigger_setting( 'conditional_logic' );
+		$conditional_logic = is_array( $conditional_logic ) ? $conditional_logic : array();
 
-		return is_array( $conditional_logic ) ? $conditional_logic : array();
+		return array_merge( noptin_get_default_conditional_logic(), $conditional_logic );
 	}
 
 	/**
