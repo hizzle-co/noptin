@@ -621,6 +621,7 @@ abstract class Collection {
 			'merge_tags'     => noptin_prepare_merge_tags_for_js( Store::smart_tags( $this->type, $this->singular_label ) ),
 			'template'       => (object) $this->get_list_shortcode_template(),
 			'provides'       => $this->provides,
+			'can_list'       => $this->can_list,
 			'is_stand_alone' => $this->is_stand_alone,
 			'query_defaults' => (object) $this->get_query_defaults(),
 		);

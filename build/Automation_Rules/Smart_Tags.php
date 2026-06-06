@@ -28,7 +28,7 @@ class Smart_Tags extends \Noptin_Dynamic_Content_Tags {
 	/**
 	 * Called when a trigger is fired.
 	 *
-	 * @param \Noptin_Abstract_Trigger $trigger
+	 * @param Triggers\Trigger $trigger
 	 * @param mixed $subject
 	 * @param array $extra_args
 	 */

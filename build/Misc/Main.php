@@ -41,7 +41,7 @@ class Main {
 					'type' => array(
 						'description'       => 'The merge tag source type.',
 						'type'              => 'string',
-						'enum'              => array( 'automation_trigger', 'automated_email' ),
+						'enum'              => array( 'automation_trigger', 'automated_email', 'collection' ),
 						'required'          => true,
 						'sanitize_callback' => 'sanitize_key',
 					),
@@ -131,6 +131,7 @@ class Main {
 
 		$source_type = $request->get_param( 'type' );
 		$source_id   = $request->get_param( 'id' );
+		$raw_tags    = rest_sanitize_boolean( $request->get_param( 'noptin_raw' ) );
 
 		if ( empty( $source_type ) || empty( $source_id ) ) {
 			return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Please provide both type and id.', array( 'status' => 400 ) );
@@ -143,7 +144,9 @@ class Main {
 				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Your site does not support this trigger.', array( 'status' => 404 ) );
 			}
 
-			$merge_tags = self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() );
+			$merge_tags = $raw_tags
+				? $trigger->get_known_smart_tags_for_js()
+				: self::normalize_merge_tags_for_response( $trigger->get_known_smart_tags_for_js() );
 
 			return rest_ensure_response( $merge_tags );
 		}
@@ -156,9 +159,28 @@ class Main {
 				)
 			);
 
-			return rest_ensure_response(
-				self::normalize_merge_tags_for_response( $email->get_merge_tags() )
-			);
+			$merge_tags = $raw_tags
+				? $email->get_merge_tags()
+				: self::normalize_merge_tags_for_response( $email->get_merge_tags() );
+
+			return rest_ensure_response( $merge_tags );
+		}
+
+		if ( 'collection' === $source_type ) {
+			if ( ! class_exists( '\Hizzle\Noptin\Objects\Store' ) ) {
+				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Your site does not support collections.', array( 'status' => 404 ) );
+			}
+
+			$collection = \Hizzle\Noptin\Objects\Store::get( $source_id );
+
+			if ( ! $collection || empty( $collection->can_list ) ) {
+				return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Your site does not support this collection.', array( 'status' => 404 ) );
+			}
+
+			$merge_tags = $raw_tags
+				? \Hizzle\Noptin\Objects\Store::smart_tags( $collection->type, true )
+				: self::normalize_merge_tags_for_response( \Hizzle\Noptin\Objects\Store::smart_tags( $collection->type, true ) );
+			return rest_ensure_response( $merge_tags );
 		}
 
 		return new \WP_Error( 'noptin_rest_merge_tags_invalid', 'Invalid merge tag type.', array( 'status' => 400 ) );

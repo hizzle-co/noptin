@@ -605,16 +605,22 @@ class Main {
 			$delay  = 0;
 		}
 
+		$serialized_args = $trigger->serialize_trigger_args( $args );
+
+		if ( isset( $args['provided_collections'] ) && ! isset( $serialized_args['provided_collections'] ) ) {
+			$serialized_args['provided_collections'] = $args['provided_collections'];
+		}
+
 		// Create the task.
 		$task = self::create(
 			array(
 				'hook'           => 'noptin_run_automation_rule',
-				'args'           => $trigger->serialize_trigger_args( $args ),
+				'args'           => $serialized_args,
 				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
 				'subject'        => $trigger->get_subject_email( $subject, $rule, $args ),
 				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
-				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
+				'secondary_id'   => $args['automation_rule_secondary_id'] ?? $rule->get_action_id(),
 				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
 			)
 		);

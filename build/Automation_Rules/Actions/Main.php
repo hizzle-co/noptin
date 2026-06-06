@@ -28,6 +28,8 @@ class Main {
 		// Init default actions.
 		self::add( new Path() );
 		self::add( new Path_Branch() );
+		self::add( new Loop() );
+		self::add( new Loop_End() );
 	}
 
 	/**
@@ -77,6 +79,8 @@ class Main {
 
 	/**
 	 * Checks if an action is registered.
+	 *
+	 * @param string $action_id The action's unique id.
 	 */
 	public static function exists( $action_id ) {
 		return self::get( $action_id ) !== null;

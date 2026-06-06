@@ -684,7 +684,7 @@ class Email {
 			}
 
 			if ( ! $can_send ) {
-				return new \WP_Error( 'noptin_email_cannot_send', __( 'The email cannot be sent.', 'newsletter-optin-box' ) );
+				return new \WP_Error( 'noptin_email_cannot_send', 'The email cannot be sent.' );
 			}
 		}
 
@@ -696,7 +696,7 @@ class Email {
 		}
 
 		if ( ! is_array( $recipient ) || empty( $recipient['email'] ) ) {
-			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_invalid_recipient', 'Invalid recipient' );
 		}
 
 		if ( ! isset( $recipient['track'] ) ) {
@@ -718,7 +718,7 @@ class Email {
 
 		// Check if the email is valid.
 		if ( ! is_email( Main::$current_email_recipient['email'] ) ) {
-			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'Invalid recipient', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_invalid_recipient', 'Invalid recipient' );
 		}
 
 		// Check if the email is unsubscribed.
@@ -732,7 +732,7 @@ class Email {
 		);
 
 		if ( ! $is_pending_email && noptin_is_email_unsubscribed( Main::$current_email_recipient['email'] ) ) {
-			return new \WP_Error( 'noptin_email_invalid_recipient', __( 'The email is unsubscribed', 'newsletter-optin-box' ) );
+			return new \WP_Error( 'noptin_email_invalid_recipient', 'The email is unsubscribed' );
 		}
 
 		// Generate the subject and body.
