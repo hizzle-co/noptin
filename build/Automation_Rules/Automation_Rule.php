@@ -491,8 +491,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 
 		$edit_url = add_query_arg(
 			array(
-				'page'                        => 'noptin-automation-rules',
-				'noptin_edit_automation_rule' => $this->get_id(),
+				'page'          => 'noptin-automation-rules',
+				'hizzlewp_path' => '/edit/' . $this->get_id(),
 			),
 			admin_url( 'admin.php' )
 		);

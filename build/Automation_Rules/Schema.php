@@ -131,6 +131,13 @@ class Schema {
 							'description' => 'The execution priority. Lower values run first.',
 						),
 
+						'edit_url'    => array(
+							'type'        => 'TEXT',
+							'description' => "The rule\'s edit URL.",
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
 						'workflow_tree'    => array(
 							'type'        => 'TEXT',
 							'description' => "The rule\'s workflow tree.",

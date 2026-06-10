@@ -43,11 +43,7 @@ class Main {
 	 */
 	public static function automation_rules_menu() {
 
-		if ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
-			$title = __( 'Edit Automation Rule', 'newsletter-optin-box' );
-		} else {
-			$title = __( 'Automation Rules', 'newsletter-optin-box' );
-		}
+		$title = __( 'Automation Rules', 'newsletter-optin-box' );
 
 		self::$hook_suffix = add_submenu_page(
 			'noptin',
@@ -64,14 +60,14 @@ class Main {
 	 */
 	public static function render_admin_page() {
 
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			return;
-		}
-
-		if ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
-			include plugin_dir_path( __FILE__ ) . 'views/edit.php';
-		} else {
-			include plugin_dir_path( __FILE__ ) . 'views/list.php';
+		if ( current_user_can( get_noptin_capability() ) ) {
+			?>
+			<div id="noptin-wrapper">
+				<div id="noptin-automation-rules__app">
+					<span class="spinner" style="visibility: visible; float: none;"></span>
+				</div>
+			</div>
+			<?php
 		}
 	}
 
@@ -87,11 +83,9 @@ class Main {
 			return;
 		}
 
-		if ( isset( $_GET['noptin_edit_automation_rule'] ) ) {
-			$script = 'automation-rule-editor';
-		} else {
-			$script = 'automation-rules';
-		}
+		$script            = 'automation-rules';
+		$edited_rule_id    = self::get_edited_rule_id();
+		$is_editor_context = null !== $edited_rule_id;
 
 		$disable_ai = get_noptin_option( 'disable_ai', false );
 
@@ -113,7 +107,7 @@ class Main {
 			);
 
 			// Localize the script.
-			$map = 'automation-rule-editor' === $script ? self::prepare_app() : array();
+			$map = $is_editor_context ? self::prepare_app( $edited_rule_id ) : array();
 			wp_localize_script(
 				'noptin-' . $script,
 				'noptinEmailSettingsMisc',
@@ -128,14 +122,14 @@ class Main {
 						'data'         => array(
 							'add_new'  => add_query_arg(
 								array(
-									'page' => 'noptin-automation-rules',
-									'noptin_edit_automation_rule' => 0,
+									'page'          => 'noptin-automation-rules',
+									'hizzlewp_path' => '/edit/0',
 								),
 								admin_url( 'admin.php' )
 							),
 							'triggers' => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
 							'actions'  => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
-							'app'      => 'automation-rule-editor' === $script ? $map : array(),
+							'app'      => $map,
 						),
 						'brand'        => noptin()->white_label->get_details(),
 						'comparisons'  => noptin_get_conditional_logic_comparisons(),
@@ -147,34 +141,52 @@ class Main {
 			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
 			// Preload the automation rule being edited into wp.apiFetch cache.
-			if ( 'automation-rule-editor' === $script ) {
-				self::preload_current_rule_rest_api( $map['treeMap'] ?? array() );
-			} else {
-				self::preload_overview_api();
+			if ( $is_editor_context ) {
+				self::preload_current_rule_rest_api( $edited_rule_id, $map['treeMap'] ?? array() );
 			}
+
+			self::preload_overview_api();
 		}
 
 		// Load the css.
 		wp_enqueue_style( 'wp-components' );
 
-		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $script . '.css' ) ) {
-			$version = empty( $config ) ? filemtime( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $script . '.css' ) : $config['version'];
-			wp_enqueue_style(
-				'noptin-' . $script,
-				plugins_url( 'assets/css/style-' . $script . '.css', __DIR__ ),
-				array(),
-				$version
-			);
+		foreach ( array_unique( array( $script ) ) as $style ) {
+			if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $style . '.css' ) ) {
+				$version = empty( $config ) ? filemtime( plugin_dir_path( __DIR__ ) . 'assets/css/style-' . $style . '.css' ) : $config['version'];
+				wp_enqueue_style(
+					'noptin-' . $style,
+					plugins_url( 'assets/css/style-' . $style . '.css', __DIR__ ),
+					array(),
+					$version
+				);
+			}
 		}
+	}
+
+	/**
+	 * Fetches the rule id being edited from the current HizzleWP path.
+	 *
+	 * @return int|null
+	 */
+	private static function get_edited_rule_id() {
+		$path = isset( $_GET['hizzlewp_path'] ) ? sanitize_text_field( wp_unslash( $_GET['hizzlewp_path'] ) ) : '';
+
+		if ( ! preg_match( '#^/edit/(\d+)$#', $path, $matches ) ) {
+			return null;
+		}
+
+		return absint( $matches[1] );
 	}
 
 	/**
 	 * Preloads the current automation rule being edited into wp.apiFetch cache to speed up loading in the editor.
 	 *
+	 * @param int   $rule_id  The current rule id.
 	 * @param array $tree_map The tree map of the current rule, used to preload all rules in the workflow.
 	 */
-	private static function preload_current_rule_rest_api( $tree_map = array() ) {
-		$rule = noptin_get_current_automation_rule();
+	private static function preload_current_rule_rest_api( $rule_id, $tree_map = array() ) {
+		$rule = noptin_get_automation_rule( $rule_id );
 
 		// Preload paths.
 		$preload_paths = array(
@@ -289,8 +301,8 @@ class Main {
 	 *
 	 * @since 3.1.0
 	 */
-	private static function prepare_app() {
-		$rule = noptin_get_current_automation_rule();
+	private static function prepare_app( $rule_id ) {
+		$rule = noptin_get_automation_rule( $rule_id );
 
 		if ( is_wp_error( $rule ) ) {
 			return array();
