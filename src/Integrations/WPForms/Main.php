@@ -110,10 +110,16 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 				continue;
 			}
 
-			$key = sanitize_title( $wpforms_field['label'] );
+			$label = ! empty( $wpforms_field['label'] ) ? $wpforms_field['label'] : '';
+
+			if ( '' === $label && isset( $wpforms_field['id'] ) ) {
+				$label = sprintf( __( 'Field #%d', 'newsletter-optin-box' ), $wpforms_field['id'] );
+			}
+
+			$key = sanitize_title( $label );
 
 			$prepared_fields[ $key ] = array(
-				'description'       => $wpforms_field['label'],
+				'description'       => $label,
 				'conditional_logic' => 'number' === $wpforms_field['type'] ? 'number' : 'string',
 			);
 
