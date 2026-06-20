@@ -449,6 +449,49 @@ class Generator {
 		return $content;
 	}
 
+	public static function get_charset() {
+		$charset = get_bloginfo( 'charset' );
+
+		if ( empty( $charset ) ) {
+			$charset = 'UTF-8';
+		}
+
+		return $charset;
+	}
+
+	/**
+	 * Loads the HTML into a DOMDocument object.
+	 *
+	 * @param string $html The HTML content to load.
+	 * @return \DOMDocument The loaded DOMDocument object.
+	 */
+	public static function load_html_document( $html ) {
+		$charset = self::get_charset();
+		$doc     = new \DOMDocument( '1.0', $charset );
+
+		if ( function_exists( 'mb_encode_numericentity' ) ) {
+			$html = mb_encode_numericentity( $html, array( 0x80, 0x10FFFF, 0, 0x1FFFFF ), $charset );
+		}
+
+		$flags = 0;
+
+		if ( defined( 'LIBXML_HTML_NOIMPLIED' ) ) {
+			$flags |= LIBXML_HTML_NOIMPLIED;
+		}
+
+		if ( defined( 'LIBXML_HTML_NODEFDTD' ) ) {
+			$flags |= LIBXML_HTML_NODEFDTD;
+		}
+
+		$previous = libxml_use_internal_errors( true );
+		$doc->loadHTML( $html, $flags );
+		libxml_clear_errors();
+		libxml_use_internal_errors( $previous );
+		$doc->formatOutput = true;
+
+		return $doc;
+	}
+
 	public function clean_html( $html ) {
 
 		// Check if DOMDocument is available.
@@ -466,8 +509,7 @@ class Generator {
 		$ids            = array_flip( $ids[1] );
 
 		// Load the HTML.
-		$doc = new \DOMDocument();
-		@$doc->loadHTML( $html );
+		$doc = $this->load_html_document( $html );
 
 		// Iterate over all elements.
 		$xpath    = new \DOMXPath( $doc );
@@ -786,8 +828,7 @@ class Generator {
 			return $html;
 		}
 
-		$doc = new \DOMDocument();
-		@$doc->loadHTML( $html );
+		$doc = $this->load_html_document( $html );
 
 		$xpath    = new \DOMXPath( $doc );
 		$elements = $xpath->query( '//*[@href]' );

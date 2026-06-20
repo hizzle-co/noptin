@@ -104,13 +104,7 @@ class CssToInlineStyles {
 	 * @return \DOMDocument
 	 */
 	protected function createDomDocumentFromHtml( $html ) {
-		$document       = new \DOMDocument( '1.0', 'UTF-8' );
-		$internalErrors = libxml_use_internal_errors( true );
-		$document->loadHTML( mb_encode_numericentity( $html, array( 0x80, 0x10FFFF, 0, 0x1FFFFF ), 'UTF-8' ) );
-		libxml_use_internal_errors( $internalErrors );
-		$document->formatOutput = true;
-
-		return $document;
+		return \Hizzle\Noptin\Emails\Generate\Generator::load_html_document( $html );
 	}
 
 	/**
