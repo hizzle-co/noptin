@@ -50,6 +50,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		if ( function_exists( 'add_noptin_subscriber' ) ) {
 			add_filter( 'wpforms_builder_settings_sections', array( $this, 'settings_section' ) );
 			add_action( 'wpforms_form_settings_panel_content', array( $this, 'settings_section_content' ), 20 );
+			add_action( 'wpforms_process_validate_email', array( $this, 'validate_email' ), 10, 3 );
 		}
 	}
 
@@ -109,10 +110,16 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 				continue;
 			}
 
-			$key = sanitize_title( $wpforms_field['label'] );
+			$label = ! empty( $wpforms_field['label'] ) ? $wpforms_field['label'] : '';
+
+			if ( '' === $label && isset( $wpforms_field['id'] ) ) {
+				$label = sprintf( __( 'Field #%d', 'newsletter-optin-box' ), $wpforms_field['id'] );
+			}
+
+			$key = sanitize_title( $label );
 
 			$prepared_fields[ $key ] = array(
-				'description'       => $wpforms_field['label'],
+				'description'       => $label,
 				'conditional_logic' => 'number' === $wpforms_field['type'] ? 'number' : 'string',
 			);
 
@@ -369,5 +376,46 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 		// Add subscriber.
 		add_noptin_subscriber( $prepared );
+	}
+
+	/**
+	 * Validate email address submitted via WPForms.
+	 *
+	 * @param int   $field_id     Field ID.
+	 * @param mixed $field_submit Field submit value.
+	 * @param array $form_data    Form data and settings.
+	 */
+	public function validate_email( $field_id, $field_submit, $form_data ) {
+		// Check that the form was configured for email subscriptions.
+		if ( ! function_exists( 'noptin_get_subscriber' ) || empty( $form_data['settings']['enable_noptin'] ) || '1' !== $form_data['settings']['enable_noptin'] ) {
+			return;
+		}
+
+		// Check if this is the mapped email field.
+		$mapped_email_field_id = isset( $form_data['settings']['noptin_field_email'] ) ? $form_data['settings']['noptin_field_email'] : '';
+		if ( '' === $mapped_email_field_id || (int) $field_id !== (int) $mapped_email_field_id ) {
+			return;
+		}
+
+		// Retrieve the email address.
+		$email = is_array( $field_submit ) ? ( isset( $field_submit['value'] ) ? $field_submit['value'] : '' ) : $field_submit;
+		$email = sanitize_email( $email );
+
+		if ( empty( $email ) || ! is_email( $email ) ) {
+			return;
+		}
+
+		// Check if duplicate submission prevention is enabled.
+		$prevent_duplicate = apply_filters( 'noptin_prevent_duplicate_submission', true, $email, $form_data, $field_id );
+		if ( ! $prevent_duplicate ) {
+			return;
+		}
+
+		// Check if the user is already subscribed.
+		$subscriber = noptin_get_subscriber( $email );
+		if ( $subscriber->is_active() ) {
+			$error_message = apply_filters( 'noptin_wpforms_duplicate_email_error_message', __( 'This email address is already subscribed.', 'newsletter-optin-box' ), $email, $form_data );
+			wpforms()->process->errors[ $form_data['id'] ][ $field_id ] = $error_message;
+		}
 	}
 }
