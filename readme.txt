@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.3.1 =
+* Fix: Newsletter editor not loading when Kubio is active.
+
 = 4.3.0 =
 * Change: Add a modern automation rule editor.
 

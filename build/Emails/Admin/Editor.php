@@ -258,10 +258,13 @@ JS;
 		);
 
 		// Add 'block-editor-page' to body class.
-		add_filter( 'admin_body_class', array( __CLASS__, 'add_block_editor_body_class' ) );
+		add_filter( 'admin_body_class', 'noptin_add_block_editor_body_class' );
 
 		// Load block library translations.
 		Main::load_script_translations( 'wp-block-library' );
+
+		// Isolate the email editor from generic block editor integrations.
+		self::isolate_email_editor_from_block_editor_integrations();
 	}
 
 	public static function merge_tag_to_block_name( $merge_tag ) {
@@ -283,11 +286,6 @@ JS;
 
 	public static function sanitize_block_name( $block_name ) {
 		return preg_replace( '/[^a-z0-9\-]/', '-', strtolower( $block_name ) );
-	}
-
-	public static function add_block_editor_body_class( $classes ) {
-		$classes .= ' block-editor-page is-fullscreen-mode';
-		return $classes;
 	}
 
 	/**
@@ -638,5 +636,238 @@ JS;
 		$css = preg_replace( '/\s+/', ' ', $css );
 
 		return trim( $css );
+	}
+
+	/**
+	 * Isolate the email editor from generic block editor integrations.
+	 *
+	 * The email editor owns its editor surface and assets. Third-party plugins
+	 * that hook into the post/site editor can assume settings that do not exist
+	 * here, so keep this screen limited to WordPress core and Noptin assets.
+	 *
+	 * @since 1.12.2
+	 */
+	private static function isolate_email_editor_from_block_editor_integrations() {
+
+		add_filter( 'print_scripts_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
+		add_filter( 'print_styles_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
+		add_filter( 'script_loader_tag', array( __CLASS__, 'filter_email_editor_script_tag' ), PHP_INT_MAX, 3 );
+		add_filter( 'style_loader_tag', array( __CLASS__, 'filter_email_editor_style_tag' ), PHP_INT_MAX, 4 );
+
+		add_action( 'admin_print_scripts', array( __CLASS__, 'dequeue_third_party_email_editor_assets' ), PHP_INT_MAX );
+		add_action( 'admin_print_styles', array( __CLASS__, 'dequeue_third_party_email_editor_assets' ), PHP_INT_MAX );
+	}
+
+	/**
+	 * Dequeue third-party assets that were enqueued after editor isolation.
+	 */
+	public static function dequeue_third_party_email_editor_assets() {
+		foreach ( array( wp_scripts(), wp_styles() ) as $registry ) {
+			if ( empty( $registry->queue ) || ! is_array( $registry->queue ) ) {
+				continue;
+			}
+
+			foreach ( $registry->queue as $handle ) {
+				if ( ! self::is_allowed_email_editor_asset( $handle ) ) {
+					$registry->dequeue( $handle );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Remove third-party handles immediately before WordPress prints assets.
+	 *
+	 * @param array $handles The queued script/style handles.
+	 * @return array
+	 */
+	public static function filter_email_editor_asset_handles( $handles ) {
+		return array_values(
+			array_filter(
+				(array) $handles,
+				function ( $handle ) {
+					return self::is_allowed_email_editor_asset( $handle );
+				}
+			)
+		);
+	}
+
+	/**
+	 * Remove third-party script tags from the email editor.
+	 *
+	 * @param string $tag    The script tag.
+	 * @param string $handle The script handle.
+	 * @param string $src    The script source.
+	 * @return string
+	 */
+	public static function filter_email_editor_script_tag( $tag, $handle, $src ) {
+		return self::is_allowed_email_editor_asset( $handle, $src ) ? $tag : '';
+	}
+
+	/**
+	 * Remove third-party style tags from the email editor.
+	 *
+	 * @param string $tag    The style tag.
+	 * @param string $handle The style handle.
+	 * @param string $href   The style source.
+	 * @return string
+	 */
+	public static function filter_email_editor_style_tag( $tag, $handle, $href ) {
+		return self::is_allowed_email_editor_asset( $handle, $href ) ? $tag : '';
+	}
+
+	/**
+	 * Checks if an asset belongs to WordPress core or Noptin.
+	 *
+	 * @param string $handle The asset handle.
+	 * @param string $src    Optional asset source.
+	 * @return bool
+	 */
+	private static function is_allowed_email_editor_asset( $handle, $src = '' ) {
+		return (bool) apply_filters(
+			'noptin_is_allowed_email_editor_asset',
+			self::check_is_allowed_email_editor_asset( $handle, $src ),
+			$handle,
+			$src
+		);
+	}
+
+	/**
+	 * Checks if an asset belongs to WordPress core or Noptin.
+	 *
+	 * @param string $handle The asset handle.
+	 * @param string $src    Optional asset source.
+	 * @return bool
+	 */
+	private static function check_is_allowed_email_editor_asset( $handle, $src = '' ) {
+		$trusted_prefixes = apply_filters(
+			'noptin_email_editor_trusted_asset_handle_prefixes',
+			array( 'noptin-', 'hizzlewp-', 'wp-', 'jquery' )
+		);
+
+		foreach ( $trusted_prefixes as $prefix ) {
+			if ( 0 === strpos( (string) $handle, $prefix ) ) {
+				return true;
+			}
+		}
+
+		if ( '' === $src ) {
+			$src = self::get_registered_asset_src( $handle );
+		}
+
+		if ( empty( $src ) ) {
+			return self::is_allowed_registered_dependency_alias( $handle );
+		}
+
+		$src_path = self::get_asset_url_path( $src );
+
+		if ( false !== strpos( $src_path, '/wp-includes/' ) || false !== strpos( $src_path, '/wp-admin/' ) ) {
+			return true;
+		}
+
+		foreach ( self::get_trusted_email_editor_asset_paths() as $trusted_path ) {
+			if ( 0 === strpos( $src_path, $trusted_path ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static function is_allowed_registered_dependency_alias( $handle ) {
+		foreach ( array( wp_scripts(), wp_styles() ) as $registry ) {
+			if ( empty( $registry->registered[ $handle ] ) ) {
+				continue;
+			}
+
+			$asset = $registry->registered[ $handle ];
+
+			if ( ! empty( $asset->src ) ) {
+				return false;
+			}
+
+			if ( empty( $asset->deps ) ) {
+				return 0 === strpos( (string) $handle, 'wp-' );
+			}
+
+			foreach ( $asset->deps as $dep ) {
+				if ( ! self::is_allowed_email_editor_asset( $dep ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		return empty( $handle );
+	}
+
+	/**
+	 * Returns the path part of an asset URL.
+	 *
+	 * @param string $src Asset source.
+	 * @return string
+	 */
+	private static function get_asset_url_path( $src ) {
+		$src  = wp_normalize_path( (string) $src );
+		$path = wp_parse_url( $src, PHP_URL_PATH );
+
+		if ( is_string( $path ) && '' !== $path ) {
+			return wp_normalize_path( $path );
+		}
+
+		return $src;
+	}
+
+	/**
+	 * Returns trusted plugin asset URL paths for the email editor.
+	 *
+	 * @return array
+	 */
+	private static function get_trusted_email_editor_asset_paths() {
+		$paths = array();
+		$urls  = array();
+
+		if ( function_exists( 'noptin' ) && ! empty( noptin()->plugin_url ) ) {
+			$urls[] = noptin()->plugin_url;
+		}
+
+		if ( defined( 'NOPTIN_PREMIUM_FILE' ) ) {
+			$urls[] = plugins_url( '/', NOPTIN_PREMIUM_FILE );
+		}
+
+		foreach ( array( wp_scripts(), wp_styles() ) as $registry ) {
+			foreach ( $registry->registered as $handle => $asset ) {
+				if ( 0 === strpos( (string) $handle, 'hizzlewp-' ) && ! empty( $asset->src ) ) {
+					$urls[] = $asset->src;
+				}
+			}
+		}
+
+		foreach ( $urls as $url ) {
+			$path = trailingslashit( dirname( self::get_asset_url_path( $url . 'index.js' ) ) );
+
+			if ( './' !== $path && '/' !== $path ) {
+				$paths[] = $path;
+			}
+		}
+
+		return array_values( array_unique( $paths ) );
+	}
+
+	/**
+	 * Returns a registered script or style source.
+	 *
+	 * @param string $handle The asset handle.
+	 * @return string
+	 */
+	private static function get_registered_asset_src( $handle ) {
+		foreach ( array( wp_scripts(), wp_styles() ) as $registry ) {
+			if ( isset( $registry->registered[ $handle ] ) ) {
+				return (string) $registry->registered[ $handle ]->src;
+			}
+		}
+
+		return '';
 	}
 }
