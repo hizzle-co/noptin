@@ -195,7 +195,7 @@ class Main {
 	 * Renders the fields admin page.
 	 */
 	public static function render_field_page() {
-		if ( ! current_user_can( get_noptin_capability() ) ) {
+		if ( ! current_user_can_manage_noptin() ) {
 			return;
 		}
 
@@ -307,7 +307,7 @@ class Main {
 	public static function send_confirmation_emails() {
 
 		// Only admins should be able to do this.
-		if ( ! current_user_can( get_noptin_capability() ) || empty( $_GET['_wpnonce'] ) ) {
+		if ( ! current_user_can_manage_noptin() || empty( $_GET['_wpnonce'] ) ) {
 			return;
 		}
 

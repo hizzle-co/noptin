@@ -143,7 +143,7 @@ class Menu {
 	public static function render_admin_page() {
 
 		// Check permission.
-		if ( current_user_can( get_noptin_capability() ) ) {
+		if ( current_user_can_manage_noptin() ) {
 			echo '<div id="noptin-setup-wizard-app" class="noptin-setup-wizard"></div>';
 		}
 	}

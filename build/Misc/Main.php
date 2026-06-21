@@ -36,7 +36,7 @@ class Main {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( __CLASS__, 'get_merge_tags' ),
-				'permission_callback' => array( __CLASS__, 'can_view_tags' ),
+				'permission_callback' => 'current_user_can_manage_noptin',
 				'args'                => array(
 					'type' => array(
 						'description'       => 'The merge tag source type.',
@@ -62,7 +62,7 @@ class Main {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( __CLASS__, 'get_recipients' ),
-				'permission_callback' => array( __CLASS__, 'can_view_tags' ),
+				'permission_callback' => 'current_user_can_manage_noptin',
 				'args'                => array(
 					'type'     => array(
 						'description'       => 'The campaign type.',
@@ -87,7 +87,7 @@ class Main {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( __CLASS__, 'trigger_action_config' ),
-				'permission_callback' => array( __CLASS__, 'can_view_tags' ),
+				'permission_callback' => 'current_user_can_manage_noptin',
 				'args'                => array(
 					'trigger_id' => array(
 						'description' => 'The automation trigger id.',
@@ -118,7 +118,7 @@ class Main {
 	 * @return true|\WP_Error True if the request has access to update the item, WP_Error object otherwise.
 	 */
 	public static function can_view_tags() {
-		return current_user_can( get_noptin_capability() );
+		return current_user_can_manage_noptin();
 	}
 
 	/**

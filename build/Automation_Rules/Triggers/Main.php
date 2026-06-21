@@ -22,6 +22,14 @@ class Main {
 	public static $triggers = array();
 
 	/**
+	 * Registers default triggers.
+	 */
+	public static function init() {
+		// Init default actions.
+		self::add( new Date() );
+	}
+
+	/**
 	 * Registers a trigger.
 	 *
 	 * @param Trigger $trigger The trigger to register.

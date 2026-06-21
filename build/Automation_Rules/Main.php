@@ -39,6 +39,9 @@ class Main {
 
 		// Init default actions.
 		Actions\Main::init();
+
+		// Init default triggers.
+		Triggers\Main::init();
 	}
 
 	/**

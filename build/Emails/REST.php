@@ -32,9 +32,7 @@ class REST extends \WP_REST_Posts_Controller {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_template_content' ),
-				'permission_callback' => function () {
-					return current_user_can( get_noptin_capability() );
-				},
+				'permission_callback' => 'current_user_can_manage_noptin',
 				'args'                => array(
 					'noptin_template' => array(
 						'description' => 'The template ID.',
@@ -100,7 +98,7 @@ class REST extends \WP_REST_Posts_Controller {
 	 * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
 	 */
 	public function update_item_permissions_check( $request ) {
-		if ( current_user_can( get_noptin_capability() ) ) {
+		if ( current_user_can_manage_noptin() ) {
 			add_filter( 'is_protected_meta', '__return_false', PHP_INT_MAX );
 		}
 

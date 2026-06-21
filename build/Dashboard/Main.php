@@ -48,7 +48,7 @@ class Main {
 	 * Displays the dashboard page.
 	 */
 	public static function render_dashboard_page() {
-		if ( ! current_user_can( get_noptin_capability() ) ) {
+		if ( ! current_user_can_manage_noptin() ) {
 			return;
 		}
 

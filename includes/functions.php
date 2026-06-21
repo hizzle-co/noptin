@@ -298,6 +298,13 @@ function get_noptin_capability( $capalibilty = 'manage_noptin' ) {
 }
 
 /**
+ * Checks if current user can manage noptin.
+ */
+function current_user_can_manage_noptin() {
+	return current_user_can( get_noptin_capability() );
+}
+
+/**
  * Gets and includes template files.
  *
  * @since 1.2.2

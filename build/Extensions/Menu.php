@@ -62,8 +62,8 @@ class Menu {
 	public static function render_admin_page() {
 
 		// Check permission.
-		if ( ! current_user_can( get_noptin_capability() ) ) {
-			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'newsletter-optin-box' ) );
+		if ( ! current_user_can_manage_noptin() ) {
+			wp_die( 'You do not have sufficient permissions to access this page.' );
 		}
 
 		// Include the settings view.

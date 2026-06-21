@@ -67,9 +67,7 @@ class Main {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( __CLASS__, 'get_settings_section' ),
-				'permission_callback' => function () {
-					return current_user_can( get_noptin_capability() );
-				},
+				'permission_callback' => 'current_user_can_manage_noptin',
 			)
 		);
 	}

@@ -29,7 +29,7 @@ class Previewer {
 	}
 
 	public static function listen() {
-		if ( empty( $_GET['noptin_preview_form'] ) || ! current_user_can( get_noptin_capability() ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( empty( $_GET['noptin_preview_form'] ) || ! current_user_can_manage_noptin() ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return;
 		}
 

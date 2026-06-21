@@ -60,7 +60,7 @@ class Main {
 	 */
 	public static function render_admin_page() {
 
-		if ( current_user_can( get_noptin_capability() ) ) {
+		if ( current_user_can_manage_noptin() ) {
 			?>
 			<div id="noptin-wrapper">
 				<div id="noptin-automation-rules__app">
