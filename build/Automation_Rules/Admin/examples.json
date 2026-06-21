@@ -1,0 +1,56 @@
+[
+  {
+    "id": "welcome-new-subscriber",
+    "category": "Quickstart",
+    "title": "Welcome new subscribers",
+    "description": "Start a simple welcome workflow when a subscriber becomes active, and tag them for follow-up segmentation.",
+    "image": {
+      "icon": "admin-users",
+      "fill": "#0f766e"
+    },
+    "keywords": [ "welcome", "subscriber", "onboarding", "tag", "new subscriber" ],
+    "workflow_name": "Welcome new subscribers",
+    "trigger_id": "noptin_subscriber_status_set_to_subscribed",
+    "action_id": "add_to_tags",
+    "action_settings": {
+      "email": "[[email]]",
+      "tags": "welcome-series"
+    }
+  },
+  {
+    "id": "tag-engaged-clickers",
+    "category": "Quickstart",
+    "title": "Tag engaged subscribers",
+    "description": "When a subscriber clicks a link in an email, mark them as engaged so future campaigns can target your most active audience.",
+    "image": {
+      "icon": "email",
+      "fill": "#2563eb"
+    },
+    "keywords": [ "engagement", "click", "email", "tag", "segmentation" ],
+    "workflow_name": "Tag engaged subscribers",
+    "trigger_id": "link_click",
+    "action_id": "add_to_tags",
+    "action_settings": {
+      "email": "[[email]]",
+      "tags": "engaged"
+    }
+  },
+  {
+    "id": "organize-imported-subscribers",
+    "category": "Quickstart",
+    "title": "Organize imported subscribers",
+    "description": "Automatically label subscribers added through imports so you can review, segment, or follow up with them later.",
+    "image": {
+      "icon": "database-import",
+      "fill": "#7c3aed"
+    },
+    "keywords": [ "import", "subscriber", "csv", "tag", "segment" ],
+    "workflow_name": "Organize imported subscribers",
+    "trigger_id": "noptin_subscribers_import_item",
+    "action_id": "add_to_tags",
+    "action_settings": {
+      "email": "[[email]]",
+      "tags": "imported"
+    }
+  }
+]

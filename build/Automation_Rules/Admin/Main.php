@@ -119,17 +119,19 @@ class Main {
 						'ai'           => array(
 							'disabled' => (bool) $disable_ai,
 						),
+						'license'      => self::prepare_license_for_editor(),
 						'data'         => array(
-							'add_new'  => add_query_arg(
+							'add_new'       => add_query_arg(
 								array(
 									'page'          => 'noptin-automation-rules',
 									'hizzlewp_path' => '/edit/0',
 								),
 								admin_url( 'admin.php' )
 							),
-							'triggers' => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
-							'actions'  => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
-							'app'      => $map,
+							'triggers'      => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
+							'actions'       => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
+							'add_new_cards' => self::prepare_add_new_cards( ! $disable_ai ),
+							'app'           => $map,
 						),
 						'brand'        => noptin()->white_label->get_details(),
 						'comparisons'  => noptin_get_conditional_logic_comparisons(),
@@ -177,6 +179,168 @@ class Main {
 		}
 
 		return absint( $matches[1] );
+	}
+
+	/**
+	 * Prepares add-new wizard cards.
+	 *
+	 * @param bool $ai_enabled Whether AI is enabled.
+	 * @return array
+	 */
+	private static function prepare_add_new_cards( $ai_enabled ) {
+		$cards = array();
+
+		if ( $ai_enabled ) {
+			$cards[] = array(
+				'id'          => 'ai',
+				'step'        => 'ai',
+				'category'    => __( 'Create', 'newsletter-optin-box' ),
+				'image'       => 'superhero',
+				'title'       => __( 'Generate with AI', 'newsletter-optin-box' ),
+				'description' => __( 'Describe the automation you want and let Noptin draft the first version.', 'newsletter-optin-box' ),
+				'keywords'    => array( 'ai', 'generate', 'assistant' ),
+			);
+		}
+
+		$cards[] = array(
+			'id'          => 'manual',
+			'step'        => 'manual',
+			'category'    => __( 'Create', 'newsletter-optin-box' ),
+			'image'       => 'admin-tools',
+			'title'       => __( 'Start from scratch', 'newsletter-optin-box' ),
+			'description' => __( 'Choose what starts the rule, then choose what Noptin should do.', 'newsletter-optin-box' ),
+			'keywords'    => array( 'manual', 'custom', 'blank' ),
+		);
+
+		$cards = array_merge( $cards, self::prepare_example_cards() );
+
+		/**
+		 * Filters add-new automation rule wizard cards.
+		 *
+		 * Cards support:
+		 * - step: ai|manual|example
+		 * - image: ImageOrIcon-compatible image config
+		 * - title
+		 * - description
+		 * - tree: required when step is example
+		 * - keywords: optional search keywords
+		 *
+		 * @param array $cards Add-new cards.
+		 */
+		return apply_filters( 'noptin_automation_rules_add_new_cards', $cards );
+	}
+
+	/**
+	 * Prepares example automation rule cards.
+	 *
+	 * @return array
+	 */
+	private static function prepare_example_cards() {
+		$file = __DIR__ . '/examples.json';
+
+		if ( ! file_exists( $file ) || ! is_readable( $file ) ) {
+			return array();
+		}
+
+		$examples = wp_json_file_decode( $file, array( 'associative' => true ) );
+
+		if ( ! is_array( $examples ) ) {
+			return array();
+		}
+
+		$cards = array();
+
+		foreach ( $examples as $example ) {
+			$card = self::prepare_example_card( $example );
+
+			if ( $card ) {
+				$cards[] = $card;
+			}
+		}
+
+		return $cards;
+	}
+
+	/**
+	 * Prepares a single example automation rule card.
+	 *
+	 * @param array $example Example data.
+	 * @return array|null
+	 */
+	private static function prepare_example_card( $example ) {
+		if ( ! is_array( $example ) || empty( $example['trigger_id'] ) || empty( $example['action_id'] ) ) {
+			return null;
+		}
+
+		$trigger_id = sanitize_key( $example['trigger_id'] );
+		$action_id  = sanitize_key( $example['action_id'] );
+
+		if (
+			! \Hizzle\Noptin\Automation_Rules\Triggers\Main::exists( $trigger_id ) ||
+			! \Hizzle\Noptin\Automation_Rules\Actions\Main::exists( $action_id )
+		) {
+			return null;
+		}
+
+		$title = empty( $example['title'] ) ? '' : sanitize_text_field( $example['title'] );
+
+		if ( '' === $title ) {
+			return null;
+		}
+
+		$uuid = wp_generate_uuid4();
+		$rule = array(
+			'id'               => 0,
+			'action_id'        => $action_id,
+			'trigger_id'       => $trigger_id,
+			'action_settings'  => empty( $example['action_settings'] ) || ! is_array( $example['action_settings'] ) ? array() : $example['action_settings'],
+			'status'           => true,
+			'trigger_settings' => empty( $example['trigger_settings'] ) || ! is_array( $example['trigger_settings'] ) ? array() : $example['trigger_settings'],
+			'times_run'        => 0,
+			'created_at'       => '',
+			'updated_at'       => '',
+			'delay'            => isset( $example['delay'] ) ? absint( $example['delay'] ) : 0,
+			'workflow_name'    => empty( $example['workflow_name'] ) ? $title : sanitize_text_field( $example['workflow_name'] ),
+			'parent_id'        => 0,
+			'priority'         => 0,
+			'metadata'         => array(
+				'permanent_key' => $uuid,
+				'parent_key'    => '',
+			),
+		);
+
+		return array(
+			'id'          => empty( $example['id'] ) ? $uuid : sanitize_key( $example['id'] ),
+			'step'        => 'example',
+			'category'    => empty( $example['category'] ) ? __( 'Quickstart examples', 'newsletter-optin-box' ) : sanitize_text_field( $example['category'] ),
+			'image'       => isset( $example['image'] ) ? $example['image'] : 'welcome-widgets-menus',
+			'title'       => $title,
+			'description' => empty( $example['description'] ) ? '' : sanitize_text_field( $example['description'] ),
+			'keywords'    => empty( $example['keywords'] ) || ! is_array( $example['keywords'] ) ? array() : array_values( array_map( 'sanitize_text_field', $example['keywords'] ) ),
+			'tree'        => array(
+				$uuid => array(
+					'id'        => 0,
+					'uuid'      => $uuid,
+					'parent_id' => 0,
+					'children'  => array(),
+					'action_id' => $action_id,
+					'data'      => $rule,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Prepares license details for the editor.
+	 *
+	 * @return array
+	 */
+	private static function prepare_license_for_editor() {
+		return array(
+			'key'          => class_exists( '\Noptin_COM' ) ? \Noptin_COM::get_active_license_key() : '',
+			'activate_url' => admin_url( 'admin.php?page=noptin-addons' ),
+			'upgrade_url'  => function_exists( 'noptin_get_upsell_url' ) ? noptin_get_upsell_url( 'pricing', 'license', 'automationrules' ) : 'https://noptin.com/pricing/',
+		);
 	}
 
 	/**
