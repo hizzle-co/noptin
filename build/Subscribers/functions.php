@@ -254,6 +254,44 @@ function get_noptin_subscribers_count( $args = array() ) {
 }
 
 /**
+ * Returns all known subscriber tags.
+ *
+ * Includes tags assigned to subscribers and custom tags created in the field manager.
+ *
+ * @return string[]
+ */
+function get_noptin_subscriber_tags() {
+	$tags = array();
+
+	if ( is_callable( array( noptin()->db(), 'get_all_meta_by_key' ) ) ) {
+		$tags = noptin()->db()->get_all_meta_by_key( 'tags' );
+	}
+
+	$custom_tags = get_option( 'noptin_subscriber_tags', array() );
+
+	if ( is_array( $custom_tags ) ) {
+		$tags = array_merge( $tags, $custom_tags );
+	}
+
+	$prepared = array();
+
+	foreach ( $tags as $tag ) {
+		foreach ( noptin_parse_list( $tag, true ) as $_tag ) {
+			$_tag = sanitize_text_field( $_tag );
+
+			if ( '' !== $_tag ) {
+				$prepared[] = $_tag;
+			}
+		}
+	}
+
+	$prepared = array_values( array_unique( $prepared ) );
+	natcasesort( $prepared );
+
+	return array_values( $prepared );
+}
+
+/**
  * Prepares subscriber source fields.
  *
  * @access public

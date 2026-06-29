@@ -275,7 +275,7 @@ class Date extends Trigger {
 
 		return rest_ensure_response(
 			array(
-				'message' => 'Automation rule ran successfully.',
+				'message' => 'Automation rule added to the queue for running.',
 			)
 		);
 	}

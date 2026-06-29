@@ -197,14 +197,8 @@ class Fields_REST_API {
 
 		$all_options = $field_details['options'] ?? array();
 		if ( self::TAGS_FIELD === $field ) {
-			$all_options = array_keys( $counts );
-			$unassigned  = get_option( 'noptin_subscriber_tags', array() );
-
-			if ( is_array( $unassigned ) ) {
-				$all_options = array_unique( array_merge( $all_options, $unassigned ) );
-			}
-
-			$all_options = array_combine( $all_options, $all_options );
+			$all_options = get_noptin_subscriber_tags();
+			$all_options = empty( $all_options ) ? array() : array_combine( $all_options, $all_options );
 		}
 
 		ksort( $all_options );

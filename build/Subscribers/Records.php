@@ -95,10 +95,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		static $tags = null;
 
 		if ( null === $tags ) {
-			$tags = noptin()->db()->get_all_meta_by_key( 'tags' );
+			$tags = get_noptin_subscriber_tags();
 		}
 
-		return array_combine( $tags, $tags );
+		return empty( $tags ) ? array() : array_combine( $tags, $tags );
 	}
 
 	public static function subscriber_fields( $partial = false ) {
@@ -818,11 +818,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			}
 		}
 
-		$all_tags = array();
-
-		if ( is_callable( array( noptin()->db(), 'get_all_meta_by_key' ) ) ) {
-			$all_tags = noptin()->db()->get_all_meta_by_key( 'tags' );
-		}
+		$all_tags = get_noptin_subscriber_tags();
 
 		$fields['tags'] = array(
 			'label'       => __( 'Tags', 'newsletter-optin-box' ),
