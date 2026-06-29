@@ -956,6 +956,10 @@ class Main {
 	public static function get_phpmailer_last_error() {
 		global $phpmailer;
 
+		if ( ! empty( $GLOBALS['noptin_email_sender_last_error'] ) ) {
+			return $GLOBALS['noptin_email_sender_last_error'];
+		}
+
 		/** @var \PHPMailer\PHPMailer\PHPMailer $phpmailer */
 		if ( $phpmailer && ! empty( $phpmailer->ErrorInfo ) ) {
 			return $phpmailer->ErrorInfo;

@@ -39,9 +39,11 @@ class Sender {
 	 * @return bool Whether the email was sent successfully.
 	 */
 	public static function send( $args ) {
+		$GLOBALS['noptin_email_sender_last_error'] = '';
 
 		// Validate recipients before processing
 		if ( empty( $args['recipients'] ) ) {
+			$GLOBALS['noptin_email_sender_last_error'] = 'No email recipients provided.';
 			return false;
 		}
 
@@ -50,7 +52,8 @@ class Sender {
 		$valid_recipients = array_filter( $recipients, 'is_email' );
 
 		if ( empty( $valid_recipients ) ) {
-			log_noptin_message( 'No valid email addresses provided for sending.' );
+			$GLOBALS['noptin_email_sender_last_error'] = 'No valid email addresses provided for sending.';
+			log_noptin_message( $GLOBALS['noptin_email_sender_last_error'] );
 			return false;
 		}
 
@@ -91,6 +94,7 @@ class Sender {
 			)
 		);
 
+		$error = '';
 		try {
 			// Attach our own hooks.
 			self::before_sending();
@@ -115,7 +119,10 @@ class Sender {
 					$e->getMessage()
 				)
 			);
+			$error  = $e->getMessage();
 			$result = false;
+
+			$GLOBALS['noptin_email_sender_last_error'] = $error;
 		} finally {
 			// Always remove hooks, even if an exception occurs
 			self::after_sending();
@@ -123,12 +130,17 @@ class Sender {
 
 		// If the email was not sent, log the error.
 		if ( empty( $result ) ) {
+			if ( empty( $error ) ) {
+				$error = \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error();
+			}
+
+			$GLOBALS['noptin_email_sender_last_error'] = $error;
+
 			log_noptin_message(
 				sprintf(
-					/* Translators: %1$s Email address, %2$s Email subject & error. */
-					__( 'Failed sending an email to %1$s with the subject %2$s', 'newsletter-optin-box' ),
+					'Failed sending an email to %1$s with the subject %2$s',
 					implode( ', ', self::$args['recipients'] ),
-					wp_specialchars_decode( self::$args['subject'] ) . '<code>' . esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() ) . '</code>'
+					wp_specialchars_decode( self::$args['subject'] ) . '<code>' . esc_html( $error ) . '</code>'
 				)
 			);
 		}
@@ -146,7 +158,7 @@ class Sender {
 								// We'll use it when handling customer support.
 								'Failed sending an email to %1$s with the subject %2$s',
 								sanitize_email( $recipient ),
-								wp_specialchars_decode( self::$args['subject'] ) . '<code>' . esc_html( \Hizzle\Noptin\Emails\Main::get_phpmailer_last_error() ) . '</code>'
+								wp_specialchars_decode( self::$args['subject'] ) . '<code>' . esc_html( $error ) . '</code>'
 							)
 						);
 					} else {

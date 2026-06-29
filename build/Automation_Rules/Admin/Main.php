@@ -145,9 +145,9 @@ class Main {
 			// Preload the automation rule being edited into wp.apiFetch cache.
 			if ( $is_editor_context ) {
 				self::preload_current_rule_rest_api( $edited_rule_id, $map['treeMap'] ?? array() );
+			} else {
+				self::preload_overview_api();
 			}
-
-			self::preload_overview_api();
 		}
 
 		// Load the css.
@@ -197,7 +197,7 @@ class Main {
 				'category'    => __( 'Create', 'newsletter-optin-box' ),
 				'image'       => 'superhero',
 				'title'       => __( 'Generate with AI', 'newsletter-optin-box' ),
-				'description' => __( 'Describe the automation you want and let Noptin draft the first version.', 'newsletter-optin-box' ),
+				'description' => __( 'Describe the automation you want, and let Noptin build it for you instantly.', 'newsletter-optin-box' ),
 				'keywords'    => array( 'ai', 'generate', 'assistant' ),
 			);
 		}
@@ -416,6 +416,14 @@ class Main {
 			'/noptin/v1/automation_rules/collection_schema',
 		);
 
+		foreach ( self::get_top_rule_column_values( 'trigger_id' ) as $trigger_id ) {
+			$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?trigger_id=%s&noptin_raw=true', $trigger_id );
+		}
+
+		foreach ( self::get_top_rule_column_values( 'action_id' ) as $action_id ) {
+			$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?action_id=%s&noptin_raw=true', $action_id );
+		}
+
 		$preload_data = array_reduce(
 			array_unique( $preload_paths ),
 			'rest_preload_api_request',
@@ -430,6 +438,50 @@ class Main {
 			),
 			'after'
 		);
+	}
+
+	/**
+	 * Fetches the most used automation rule values for a given column.
+	 *
+	 * @param string $column The column to query.
+	 * @param int    $limit  The maximum number of values to return.
+	 * @return string[]
+	 */
+	private static function get_top_rule_column_values( $column, $limit = 10 ) {
+		if ( ! in_array( $column, array( 'trigger_id', 'action_id' ), true ) || ! did_action( 'noptin_db_init' ) ) {
+			return array();
+		}
+
+		$limit = absint( $limit );
+
+		if ( empty( $limit ) ) {
+			return array();
+		}
+
+		$values = noptin()->db()->query(
+			'automation_rules',
+			array(
+				'aggregate' => array(
+					'id' => array( 'COUNT' ),
+				),
+				'groupby'   => array( $column ),
+				'orderby'   => array(
+					'count_id' => 'DESC',
+					$column    => 'ASC',
+				),
+				'per_page'  => $limit * 2,
+			),
+			'aggregate'
+		);
+
+		if ( is_wp_error( $values ) || empty( $values ) ) {
+			return array();
+		}
+
+		$values = wp_list_pluck( $values, $column );
+		$values = array_filter( array_unique( array_map( 'sanitize_text_field', (array) $values ) ) );
+
+		return array_slice( array_values( $values ), 0, $limit );
 	}
 
 	/**

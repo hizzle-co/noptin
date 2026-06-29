@@ -582,7 +582,6 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		$prepared_options = array();
 
 		foreach ( $settings as $key => $args ) {
-
 			$default  = isset( $args['default'] ) ? $args['default'] : '';
 			$is_array = is_array( $default );
 			$value    = isset( $options[ $key ] ) ? $options[ $key ] : $default;
