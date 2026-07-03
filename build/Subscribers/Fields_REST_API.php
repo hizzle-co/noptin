@@ -36,6 +36,44 @@ class Fields_REST_API {
 	 */
 	public static function register_routes() {
 
+		// Create custom segment fields.
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/' . self::REST_BASE,
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( __CLASS__, 'create_custom_field' ),
+				'permission_callback' => 'current_user_can_manage_noptin',
+				'args'                => array(
+					'label'     => array(
+						'description'       => 'The field label.',
+						'type'              => 'string',
+						'required'          => true,
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'merge_tag' => array(
+						'description'       => 'The field merge tag.',
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_key',
+					),
+					'type'      => array(
+						'description'       => 'The field type.',
+						'type'              => 'string',
+						'required'          => true,
+						'enum'              => array( 'dropdown', 'multi_checkbox' ),
+						'sanitize_callback' => 'sanitize_key',
+					),
+					'options'   => array(
+						'description'       => 'The field options.',
+						'type'              => 'string',
+						'required'          => false,
+						'sanitize_callback' => 'sanitize_textarea_field',
+					),
+				),
+			)
+		);
+
 		// Field options endpoint.
 		register_rest_route(
 			self::REST_NAMESPACE,
@@ -131,6 +169,71 @@ class Fields_REST_API {
 	 */
 	public static function check_permission() {
 		return current_user_can_manage_noptin();
+	}
+
+	/**
+	 * Creates a custom field for subscriber segments.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public static function create_custom_field( $request ) {
+		$label = trim( (string) $request->get_param( 'label' ) );
+		$type  = sanitize_key( $request->get_param( 'type' ) );
+
+		if ( '' === $label ) {
+			return new \WP_Error( 'noptin_empty_field_label', 'Field label cannot be empty.', array( 'status' => 400 ) );
+		}
+
+		if ( ! in_array( $type, array( 'dropdown', 'multi_checkbox' ), true ) ) {
+			return new \WP_Error( 'noptin_invalid_field_type', 'Invalid field type.', array( 'status' => 400 ) );
+		}
+
+		$merge_tag = sanitize_key( $request->get_param( 'merge_tag' ) );
+
+		if ( '' === $merge_tag ) {
+			$merge_tag = sanitize_key( preg_replace( '/[^a-z0-9_]/', '_', strtolower( $label ) ) );
+		}
+
+		$merge_tag = substr( $merge_tag, 0, 64 );
+
+		if ( '' === $merge_tag ) {
+			return new \WP_Error( 'noptin_empty_merge_tag', 'Field merge tag cannot be empty.', array( 'status' => 400 ) );
+		}
+
+		if ( isset( Records::subscriber_fields( true )[ $merge_tag ] ) ) {
+			return new \WP_Error( 'noptin_field_exists', 'A field with this merge tag already exists.', array( 'status' => 400 ) );
+		}
+
+		$custom_fields = get_noptin_option(
+			'custom_fields',
+			\Hizzle\Noptin\Fields\Main::default_fields()
+		);
+
+		foreach ( $custom_fields as $custom_field ) {
+			if ( is_array( $custom_field ) && ! empty( $custom_field['merge_tag'] ) && sanitize_key( $custom_field['merge_tag'] ) === $merge_tag ) {
+				return new \WP_Error( 'noptin_field_exists', 'A field with this merge tag already exists.', array( 'status' => 400 ) );
+			}
+		}
+
+		$field = array(
+			'type'       => $type,
+			'merge_tag'  => $merge_tag,
+			'label'      => $label,
+			'options'    => (string) $request->get_param( 'options' ),
+			'visible'    => true,
+			'required'   => false,
+			'predefined' => false,
+		);
+
+		$custom_fields[] = $field;
+		update_noptin_option( 'custom_fields', $custom_fields );
+
+		return rest_ensure_response(
+			array(
+				'field' => $field,
+			)
+		);
 	}
 
 	/**
