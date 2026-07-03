@@ -420,7 +420,7 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 		}
 
 		// Retrieve and sanitize the submitted email address.
-		$email = is_array( $field_submit ) ? ( isset( $field_submit['value'] ) ? $field_submit['value'] : '' ) : $field_submit;
+		$email = is_array( $field_submit ) ? ( $field_submit['value'] ?? '' ) : $field_submit;
 		$email = sanitize_email( $email );
 
 		if ( empty( $email ) || ! is_email( $email ) ) {
