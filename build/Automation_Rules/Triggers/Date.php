@@ -164,7 +164,7 @@ class Date extends Trigger {
 					array(
 						'value'    => 'manual',
 						'key'      => 'frequency',
-						'operator' => '!=',
+						'operator' => '!==',
 					),
 				),
 				'default'     => '07:00',
@@ -192,7 +192,7 @@ class Date extends Trigger {
 					array(
 						'value'    => 'manual',
 						'key'      => 'frequency',
-						'operator' => '!=',
+						'operator' => '!==',
 					),
 				),
 			),
@@ -213,7 +213,7 @@ class Date extends Trigger {
 
 		$next_run = self::get_next_scheduled_timestamp( $rule );
 
-		if ( $next_run ) {
+		if ( $next_run && $rule->get_status() ) {
 			$meta[ __( 'Next run', 'newsletter-optin-box' ) ] = wp_date(
 				get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
 				$next_run,
