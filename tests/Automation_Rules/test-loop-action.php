@@ -69,6 +69,8 @@ class Test_Loop_Action extends Actions_Test_Case {
 			)
 		);
 
+		$this->assertSame( 'subscribers', $loop->get_action_setting( 'loop_over' ) );
+
 		$this->run_rule( $loop );
 		$this->drain_pending_automation_tasks();
 

@@ -25,9 +25,11 @@ abstract class Actions_Test_Case extends WP_UnitTestCase {
 		Test_Spy_Action::reset();
 		$this->register_test_action();
 		$this->register_subscribers_collection_if_missing();
+		add_filter( 'noptin_email_editor_objects', array( $this, 'register_subscribers_editor_object' ), 100 );
 	}
 
 	public function tear_down() {
+		remove_filter( 'noptin_email_editor_objects', array( $this, 'register_subscribers_editor_object' ), 100 );
 		Test_Spy_Action::reset();
 		noptin()->db()->delete_all( 'automation_rules' );
 		noptin()->db()->delete_all( 'subscribers' );
@@ -48,6 +50,22 @@ abstract class Actions_Test_Case extends WP_UnitTestCase {
 		if ( class_exists( Store::class ) && ( ! $collection || empty( $collection->can_list ) ) ) {
 			Store::add( new Test_Subscribers_Collection() );
 		}
+	}
+
+	public function register_subscribers_editor_object( $objects ) {
+		$objects['subscribers'] = array_merge(
+			$objects['subscribers'] ?? array(),
+			array(
+				'type'           => 'subscribers',
+				'name'           => 'subscribers',
+				'label'          => 'Subscribers',
+				'singular_label' => 'Subscriber',
+				'filters'        => array(),
+				'can_list'       => true,
+			)
+		);
+
+		return $objects;
 	}
 
 	protected function create_rule( $action_id, $action_settings = array(), $parent_id = 0, $priority = 0, $status = true ) {
