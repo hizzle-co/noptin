@@ -1380,6 +1380,17 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			);
 		}
 
+		$routes['noptin/subscribers/add_segment'] = array(
+			'title' => __( 'Add New Segment', 'newsletter-optin-box' ),
+			'href'  => add_query_arg(
+				array(
+					'noptin_cf' => 'add-new',
+					'page'      => 'noptin-subscribers',
+				),
+				admin_url( 'admin.php' )
+			),
+		);
+
 		return $routes;
 	}
 
