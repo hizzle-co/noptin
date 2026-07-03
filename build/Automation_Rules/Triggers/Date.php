@@ -214,9 +214,10 @@ class Date extends Trigger {
 		$next_run = self::get_next_scheduled_timestamp( $rule );
 
 		if ( $next_run ) {
-			$meta[ __( 'Next run', 'newsletter-optin-box' ) ] = date_i18n(
+			$meta[ __( 'Next run', 'newsletter-optin-box' ) ] = wp_date(
 				get_option( 'date_format' ) . ' ' . get_option( 'time_format' ),
-				$next_run + ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS )
+				$next_run,
+				wp_timezone()
 			);
 		} else {
 			$meta[ __( 'Next run', 'newsletter-optin-box' ) ] = __( 'Not scheduled', 'newsletter-optin-box' );
@@ -407,7 +408,7 @@ class Date extends Trigger {
 			return;
 		}
 
-		$scheduled_run  = $next_run - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		$scheduled_run  = self::local_timestamp_to_gmt( $next_run );
 		$scheduled_run += MINUTE_IN_SECONDS;
 
 		\Hizzle\Noptin\Tasks\Main::create(
@@ -456,6 +457,60 @@ class Date extends Trigger {
 	}
 
 	/**
+	 * Returns the current site-local wall-clock time as a timestamp-like value.
+	 *
+	 * This is not a Unix timestamp for the current instant. It encodes the site's
+	 * current date and time as UTC so it can be used with gmdate() and strtotime()
+	 * while calculating future local run dates.
+	 *
+	 * @return int
+	 */
+	private static function current_local_wall_timestamp() {
+		return noptin_string_to_timestamp( current_datetime()->format( 'Y-m-d H:i:s' ) );
+	}
+
+	/**
+	 * Converts a local wall-clock timestamp to a GMT timestamp.
+	 *
+	 * @param int $timestamp The local wall-clock timestamp.
+	 * @return int
+	 */
+	private static function local_timestamp_to_gmt( $timestamp ) {
+		$date = \DateTimeImmutable::createFromFormat( '!Y-m-d H:i:s', gmdate( 'Y-m-d H:i:s', $timestamp ), wp_timezone() );
+
+		if ( ! $date ) {
+			return $timestamp - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		}
+
+		return $date->getTimestamp();
+	}
+
+	/**
+	 * Checks whether a local wall-clock timestamp has passed.
+	 *
+	 * @param int $timestamp The local wall-clock timestamp.
+	 * @return bool
+	 */
+	private static function has_local_timestamp_passed( $timestamp ) {
+		return self::local_timestamp_to_gmt( $timestamp ) <= time();
+	}
+
+	/**
+	 * Returns a yearly run timestamp, clamping the configured day to the year.
+	 *
+	 * @param int    $year The run year.
+	 * @param int    $year_day The configured day of the year.
+	 * @param string $time The local run time.
+	 * @return int
+	 */
+	private static function get_yearly_run_timestamp( $year, $year_day, $time ) {
+		$days_in_year = (int) gmdate( 'z', noptin_string_to_timestamp( "$year-12-31 $time" ) ) + 1;
+		$year_day     = min( $year_day, $days_in_year );
+
+		return noptin_string_to_timestamp( "$year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
+	}
+
+	/**
 	 * Calculates the next valid run date for a rule.
 	 *
 	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule The rule.
@@ -485,24 +540,51 @@ class Date extends Trigger {
 			$time = '07:00';
 		}
 
-		$next_run = false;
+		$next_run      = false;
+		$current_local = self::current_local_wall_timestamp();
 
 		switch ( $frequency ) {
 			case 'daily':
-				$next_run = noptin_string_to_timestamp( "+1 day $time", $last_checked_date );
+				if ( $last_checked_date ) {
+					$next_run = noptin_string_to_timestamp( "+1 day $time", $last_checked_date );
+				} else {
+					$next_run = noptin_string_to_timestamp( gmdate( 'Y-m-d', $current_local ) . " $time" );
+
+					if ( self::has_local_timestamp_passed( $next_run ) ) {
+						$next_run = noptin_string_to_timestamp( "+1 day $time", $current_local );
+					}
+				}
 				break;
 
 			case 'weekly':
 				$days     = array( 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday' );
 				$day      = is_numeric( $day ) ? $day : 0;
-				$day      = $days[ (int) $day ] ?? 'sunday';
-				$next_run = noptin_string_to_timestamp( "next $day $time", $last_checked_date );
+				$day      = (int) $day;
+
+				if ( ! isset( $days[ $day ] ) ) {
+					$day = 0;
+				}
+
+				$day_name = $days[ $day ] ?? 'sunday';
+
+				if ( $last_checked_date ) {
+					$next_run = noptin_string_to_timestamp( "next $day_name $time", $last_checked_date );
+				} else {
+					$current_day = (int) gmdate( 'w', $current_local );
+					$days_until  = ( $day - $current_day + 7 ) % 7;
+					$next_run    = noptin_string_to_timestamp( gmdate( 'Y-m-d', $current_local + ( $days_until * DAY_IN_SECONDS ) ) . " $time" );
+
+					if ( self::has_local_timestamp_passed( $next_run ) ) {
+						$next_run = noptin_string_to_timestamp( "next $day_name $time", $current_local );
+					}
+				}
 				break;
 
 			case 'monthly':
-				$date       = is_numeric( $date ) ? (int) $date : (int) 1;
-				$next_month = (int) gmdate( 'n', $last_checked_date ?? time() );
-				$next_year  = (int) gmdate( 'Y', $last_checked_date ?? time() );
+				$date       = is_numeric( $date ) ? max( 1, (int) $date ) : (int) 1;
+				$base_date  = $last_checked_date ?? $current_local;
+				$next_month = (int) gmdate( 'n', $base_date );
+				$next_year  = (int) gmdate( 'Y', $base_date );
 
 				$last_day_of_month = (int) gmdate( 't', noptin_string_to_timestamp( "$next_year-$next_month-1" ) );
 
@@ -513,7 +595,7 @@ class Date extends Trigger {
 				if ( $is_rescheduling && ! $last_checked_date ) {
 					$next_run = noptin_string_to_timestamp( "$next_year-$next_month-$date $time" );
 
-					if ( $next_run < time() ) {
+					if ( self::has_local_timestamp_passed( $next_run ) ) {
 						++$next_month;
 						if ( $next_month > 12 ) {
 							$next_month = 1;
@@ -540,24 +622,29 @@ class Date extends Trigger {
 			case 'yearly':
 				$year_day = empty( $year_day ) ? 1 : (int) $year_day;
 				$year_day = max( 1, min( 366, $year_day ) );
-				$run_year = (int) gmdate( 'Y', $last_checked_date ?? time() );
+				$run_year = (int) gmdate( 'Y', $last_checked_date ?? $current_local );
 
 				if ( $tries ) {
 					++$run_year;
 				} else {
-					$run_year         = (int) gmdate( 'Y', time() );
-					$current_year_day = (int) gmdate( 'z', time() ) + 1;
+					$run_year         = (int) gmdate( 'Y', $current_local );
+					$current_year_day = (int) gmdate( 'z', $current_local ) + 1;
 
 					if ( $year_day < $current_year_day ) {
 						++$run_year;
 					}
 				}
 
-				$next_run = noptin_string_to_timestamp( "$run_year-01-01 $time" ) + ( $year_day - 1 ) * DAY_IN_SECONDS;
+				$next_run = self::get_yearly_run_timestamp( $run_year, $year_day, $time );
+
+				if ( ! $tries && self::has_local_timestamp_passed( $next_run ) ) {
+					++$run_year;
+					$next_run = self::get_yearly_run_timestamp( $run_year, $year_day, $time );
+				}
 				break;
 
 			case 'x_days':
-				$x_days = empty( $x_days ) ? 30 : (int) $x_days;
+				$x_days = empty( $x_days ) ? 30 : max( 1, min( 366, (int) $x_days ) );
 
 				if ( $tries ) {
 					$next_run = noptin_string_to_timestamp( "+$x_days days $time", $last_checked_date );
@@ -566,11 +653,11 @@ class Date extends Trigger {
 
 					if ( ! empty( $next_run ) ) {
 						$next_run     = noptin_string_to_timestamp( $next_run );
-						$next_run_gmt = $next_run - ( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+						$next_run_gmt = self::local_timestamp_to_gmt( $next_run );
 					}
 
 					if ( empty( $next_run ) || empty( $next_run_gmt ) || $next_run_gmt <= time() ) {
-						$next_run = noptin_string_to_timestamp( "+$x_days days $time" );
+						$next_run = noptin_string_to_timestamp( "+$x_days days $time", $current_local );
 					}
 				}
 				break;
