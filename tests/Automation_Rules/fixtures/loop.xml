@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items>
+	<item>
+		<email>marie@example.com</email>
+		<name>Marie Curie</name>
+	</item>
+	<item>
+		<email>rosalind@example.com</email>
+		<name>Rosalind Franklin</name>
+	</item>
+</items>
