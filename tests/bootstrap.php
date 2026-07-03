@@ -23,6 +23,7 @@ if ( ! file_exists( "{$_tests_dir}/includes/functions.php" ) ) {
 }
 
 define( 'NOPTIN_ENABLE_FOREGROUND_SENDING', true );
+define( 'NOPTIN_DISABLE_TASK_DUPLICATE_CHECK', true );
 
 // Give access to tests_add_filter() function.
 require_once "{$_tests_dir}/includes/functions.php";

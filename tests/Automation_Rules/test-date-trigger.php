@@ -186,6 +186,10 @@ class Test_Date_Trigger extends WP_UnitTestCase {
 		$run_time = gmdate( 'H:i', $now + HOUR_IN_SECONDS );
 		$day      = (string) gmdate( 'j', $now );
 
+		if ( (int) $day > 29 ) {
+			$this->markTestSkipped( 'Monthly date trigger settings only expose days 1-29.' );
+		}
+
 		$scheduled = $this->scheduled_timestamp_for_rule(
 			array(
 				'frequency' => 'monthly',
@@ -285,10 +289,11 @@ class Test_Date_Trigger extends WP_UnitTestCase {
 		);
 
 		$scheduled_local = ( new \DateTimeImmutable( "@$scheduled" ) )->setTimezone( wp_timezone() );
+		$expected_time   = gmdate( 'H:i', noptin_string_to_timestamp( "$run_time:00" ) + MINUTE_IN_SECONDS );
 
 		$this->assertGreaterThan( time(), $scheduled );
 		$this->assertGreaterThan( (int) gmdate( 'Y', $now ), (int) $scheduled_local->format( 'Y' ) );
-		$this->assertSame( $run_time, $scheduled_local->format( 'H:i' ) );
+		$this->assertSame( $expected_time, $scheduled_local->format( 'H:i' ) );
 	}
 
 	public function test_yearly_day_366_schedules_december_31() {

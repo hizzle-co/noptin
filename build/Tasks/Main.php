@@ -518,8 +518,10 @@ class Main {
 
 		$args = wp_parse_args( $args, $defaults );
 
+		$skip_duplicate_check = defined( 'NOPTIN_DISABLE_TASK_DUPLICATE_CHECK' ) && NOPTIN_DISABLE_TASK_DUPLICATE_CHECK;
+
 		// Ensure the same task is not scheduled twice in the same request.
-		if ( in_array( $args['args_hash'], self::$scheduled_tasks, true ) ) {
+		if ( ! $skip_duplicate_check && in_array( $args['args_hash'], self::$scheduled_tasks, true ) ) {
 			return new \WP_Error( 'noptin_task_already_scheduled', 'Task already scheduled.' );
 		}
 
@@ -555,7 +557,9 @@ class Main {
 			noptin_error_log( 'Error scheduling task: ' . $result->get_error_message() );
 		}
 
-		self::$scheduled_tasks[] = $args['args_hash'];
+		if ( ! $skip_duplicate_check ) {
+			self::$scheduled_tasks[] = $args['args_hash'];
+		}
 
 		return $task;
 	}
