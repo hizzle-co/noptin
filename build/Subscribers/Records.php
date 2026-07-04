@@ -542,7 +542,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 */
 	public function on_field_change( $subscriber, $from, $to ) {
 
-		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
+		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -568,7 +568,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 */
 	public function on_field_add( $subscriber, $value ) {
 
-		if ( ! noptin_has_alk() || empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
+		if ( empty( $subscriber ) || ! is_a( $subscriber, '\Hizzle\Noptin\Subscribers\Subscriber' ) ) {
 			return;
 		}
 
@@ -1101,6 +1101,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $this->singular_label )
 					),
 					'callback'       => __CLASS__ . '::update_subscriber_field',
+					'callback_args'  => array( 'settings', 'action_id' ),
 					'extra_settings' => array(
 						'email'       => array(
 							'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
@@ -1152,6 +1153,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'fill' => '#008000',
 						),
 						'callback'       => __CLASS__ . '::update_subscriber_field',
+						'callback_args'  => array( 'settings', 'action_id' ),
 						'extra_settings' => array(
 							'email'    => array(
 								'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
@@ -1187,6 +1189,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'fill' => '#008000',
 						),
 						'callback'       => __CLASS__ . '::add_to_subscriber_field',
+						'callback_args'  => array( 'settings', 'action_id' ),
 						'extra_settings' => array(
 							'email'    => array(
 								'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
@@ -1222,6 +1225,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'fill' => '#008000',
 						),
 						'callback'       => __CLASS__ . '::remove_from_subscriber_field',
+						'callback_args'  => array( 'settings', 'action_id' ),
 						'extra_settings' => array(
 							'email'    => array(
 								'label'    => __( 'Subscriber ID or email address', 'newsletter-optin-box' ),
@@ -1275,11 +1279,13 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			return new \WP_Error( 'noptin_invalid_email', 'Invalid email address or subscriber ID.' );
 		}
 
+		$field_name  = '';
 		$action_args = array();
 
 		if ( 'custom-field' === $action_id ) {
+			$field_name  = isset( $args['field_name'] ) ? $args['field_name'] : '';
 			$action_args = array(
-				$args['field_name'] => isset( $args['field_value'] ) ? $args['field_value'] : '',
+				$field_name => isset( $args['field_value'] ) ? $args['field_value'] : '',
 			);
 		}
 
@@ -1288,6 +1294,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			$action_args = array(
 				$field_name => isset( $args[ $field_name ] ) ? $args[ $field_name ] : '',
 			);
+		}
+
+		if ( empty( $field_name ) ) {
+			return new \WP_Error( 'noptin_invalid_field', 'Invalid subscriber field.' );
 		}
 
 		if ( 'status' === $field_name ) {
