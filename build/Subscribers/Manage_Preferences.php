@@ -237,6 +237,8 @@ class Manage_Preferences {
 			return;
 		}
 
+		$posted['email'] = sanitize_email( $posted['email'] );
+
 		$prepared = array();
 
 		foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
@@ -250,21 +252,38 @@ class Manage_Preferences {
 			$prepared['status'] = $posted['status'];
 		}
 
+		$subscriber = false;
+
 		// Retrieve subscriber by key.
 		if ( ! empty( $_POST['noptin-subscriber-key'] ) ) {
-			$subscriber = noptin_get_subscriber( $_POST['noptin-subscriber-key'] );
+			$subscriber_key = sanitize_text_field( wp_unslash( $_POST['noptin-subscriber-key'] ) );
+			$subscriber     = noptin_get_subscriber( $subscriber_key );
 
-			if ( ! $subscriber->exists() || $subscriber->get( 'confirm_key' ) !== $_POST['noptin-subscriber-key'] ) {
+			if (
+				! $subscriber->exists() ||
+				! hash_equals( (string) $subscriber->get( 'confirm_key' ), $subscriber_key )
+			) {
 				$subscriber = false;
 			}
 		}
 
-		// Retrieve subscriber by email.
+		// Do not update existing subscribers unless the request has a valid subscriber key,
+		// or the logged-in user owns the subscriber email.
 		if ( empty( $subscriber ) ) {
-			$subscriber = noptin_get_subscriber( $prepared['email'] );
+			$existing       = noptin_get_subscriber( $prepared['email'] );
+			$prepared_email = strtolower( $prepared['email'] );
+			$existing_email = strtolower( (string) $existing->get( 'email' ) );
 
-			if ( ! $subscriber->exists() || $subscriber->get( 'email' ) !== $prepared['email'] ) {
-				$subscriber = false;
+			if ( $existing->exists() && $existing_email === $prepared_email ) {
+				$user       = wp_get_current_user();
+				$user_email = strtolower( sanitize_email( $user->user_email ) );
+
+				if ( ! empty( $user_email ) && $user_email === $prepared_email ) {
+					$subscriber = $existing;
+				} else {
+					self::$error_message = 'Please try again with a different email address.';
+					return;
+				}
 			}
 		}
 
