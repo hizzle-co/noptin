@@ -1,20 +1,20 @@
 [
   {
-    "id": "welcome-new-subscriber",
+    "id": "tag-new-subscriber",
     "category": "Quickstart",
-    "title": "Welcome new subscribers",
-    "description": "Start a simple welcome workflow when a subscriber becomes active, and tag them for follow-up segmentation.",
+    "title": "Tag new subscribers",
+    "description": "Automatically tag new subscribers when they join your list so you can easily segment and target them in future campaigns.",
     "image": {
       "icon": "admin-users",
       "fill": "#0f766e"
     },
     "keywords": [ "welcome", "subscriber", "onboarding", "tag", "new subscriber" ],
-    "workflow_name": "Welcome new subscribers",
+    "workflow_name": "Tag new subscribers",
     "trigger_id": "noptin_subscriber_status_set_to_subscribed",
     "action_id": "add_to_tags",
     "action_settings": {
       "email": "[[email]]",
-      "tags": "welcome-series"
+      "tags": "new-subscriber"
     }
   },
   {

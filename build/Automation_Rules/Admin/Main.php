@@ -411,9 +411,14 @@ class Main {
 	 * Preloads the overview api routes.
 	 */
 	private static function preload_overview_api() {
+		$unique_id = \Hizzle\WordPress\ScriptManager::$request_uuid;
+
 		// Preload paths.
 		$preload_paths = array(
 			'/noptin/v1/automation_rules/collection_schema',
+			sprintf( '/noptin/v1/automation_rules?context=view&uniqid=%s&per_page=1&parent_id=0&action_id_not=email', $unique_id ),
+			sprintf( '/noptin/v1/automation_rules?context=view&uniqid=%s&per_page=1&parent_id=0&action_id_not=email&status=true', $unique_id ),
+			sprintf( '/noptin/v1/automation_rules?context=view&uniqid=%s&per_page=1&parent_id=0&action_id_not=email&status=false', $unique_id ),
 		);
 
 		foreach ( self::get_top_rule_column_values( 'trigger_id' ) as $trigger_id ) {
