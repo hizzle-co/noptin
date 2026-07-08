@@ -46,7 +46,7 @@ class Main {
 		}
 
 		// Register email type.
-		if ( class_exists( 'Noptin_Automated_Email_Type' ) ) {
+		if ( class_exists( 'Noptin_Automated_Email_Type' ) && $trigger->get_id() !== Date::LOOKUP_KEY ) {
 			$email_type = 'automation_rule_' . $trigger->get_id();
 
 			noptin()->emails->automated_email_types->register_automated_email_type(

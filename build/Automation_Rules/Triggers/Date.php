@@ -39,7 +39,7 @@ class Date extends Trigger {
 	 * @inheritdoc
 	 */
 	public function get_id() {
-		return 'date';
+		return self::LOOKUP_KEY;
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Date extends Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Runs this automation rule on a schedule.', 'newsletter-optin-box' );
+		return __( 'On a given date.', 'newsletter-optin-box' );
 	}
 
 	/**
