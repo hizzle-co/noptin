@@ -60,16 +60,19 @@ class Order_Items extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'number',
 			),
 			'subtotal'     => array(
-				'label' => __( 'Subtotal', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Subtotal', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'total'        => array(
-				'label' => __( 'Total', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Total', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'total_tax'    => array(
-				'label' => __( 'Total tax', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Total tax', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'attribute'    => array(
 				'label'          => __( 'Attribute', 'newsletter-optin-box' ),

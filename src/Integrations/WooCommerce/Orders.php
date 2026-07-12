@@ -474,24 +474,29 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'string',
 			),
 			'subtotal'             => array(
-				'label' => __( 'Subtotal', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Subtotal', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'total_tax'            => array(
-				'label' => __( 'Total tax', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Total tax', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'shipping_total'       => array(
-				'label' => __( 'Shipping total', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Shipping total', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'discount_total'       => array(
-				'label' => __( 'Discount total', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Discount total', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'total'                => array(
-				'label' => __( 'Total', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Total', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'item_count'           => array(
 				'label' => __( 'Item count', 'newsletter-optin-box' ),
@@ -779,20 +784,24 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'number',
 			),
 			'date_created'         => array(
-				'description' => __( 'Date created', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'description'    => __( 'Date created', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'date_modified'        => array(
-				'description' => __( 'Date modified', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'description'    => __( 'Date modified', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'date_paid'            => array(
-				'description' => __( 'Date paid', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'description'    => __( 'Date paid', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'date_completed'       => array(
-				'description' => __( 'Date completed', 'newsletter-optin-box' ),
-				'type'        => 'string',
+				'description'    => __( 'Date completed', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'status'               => array(
 				'description' => __( 'Status', 'newsletter-optin-box' ),
@@ -1048,5 +1057,178 @@ class Orders extends \Hizzle\Noptin\Objects\Collection {
 		}
 
 		return $order;
+	}
+
+	/**
+	 * Returns a list of available actions.
+	 *
+	 * @return array $actions The actions.
+	 */
+	public function get_actions() {
+		return array(
+			'wc_order_change_status' => array(
+				'id'             => 'wc_order_change_status',
+				'label'          => sprintf(
+					// translators: %s: Object type label.
+					__( '%s > Change Status', 'newsletter-optin-box' ),
+					$this->singular_label
+				),
+				'description'    => __( 'Change the status of a WooCommerce order.', 'newsletter-optin-box' ),
+				'callback'       => __CLASS__ . '::action_change_order_status',
+				'extra_settings' => array(
+					'order_id' => array(
+						'label'       => __( 'Order ID', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'default'     => '[[order.id]]',
+						'required'    => true,
+						'description' => __( 'The ID of the order to update. Defaults to the current order.', 'newsletter-optin-box' ),
+					),
+					'status'   => array(
+						'label'       => __( 'New Status', 'newsletter-optin-box' ),
+						'el'          => 'select',
+						'options'     => $this->wc_order_statuses(),
+						'required'    => true,
+						'description' => __( 'The new order status.', 'newsletter-optin-box' ),
+					),
+				),
+			),
+			'wc_order_update_meta'   => array(
+				'id'             => 'wc_order_update_meta',
+				'label'          => sprintf(
+					// translators: %s: Object type label.
+					__( '%s > Update Custom Field', 'newsletter-optin-box' ),
+					$this->singular_label
+				),
+				'description'    => __( 'Add or update a custom field (meta) on a WooCommerce order.', 'newsletter-optin-box' ),
+				'callback'       => __CLASS__ . '::action_update_order_meta',
+				'extra_settings' => array(
+					'order_id'   => array(
+						'label'       => __( 'Order ID', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'default'     => '[[order.id]]',
+						'required'    => true,
+						'description' => __( 'The ID of the order to update. Defaults to the current order.', 'newsletter-optin-box' ),
+					),
+					'meta_key'   => array(
+						'label'       => __( 'Meta Key', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'required'    => true,
+						'description' => __( 'The meta key to add or update.', 'newsletter-optin-box' ),
+					),
+					'meta_value' => array(
+						'label'       => __( 'Meta Value', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'required'    => true,
+						'description' => __( 'The value to set for the meta key.', 'newsletter-optin-box' ),
+					),
+				),
+			),
+			'wc_order_add_note'      => array(
+				'id'             => 'wc_order_add_note',
+				'label'          => __( 'Order > Add Note', 'newsletter-optin-box' ),
+				'description'    => __( 'Add a note to a WooCommerce order.', 'newsletter-optin-box' ),
+				'callback'       => __CLASS__ . '::action_add_order_note',
+				'extra_settings' => array(
+					'order_id'      => array(
+						'label'       => __( 'Order ID', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'default'     => '[[order.id]]',
+						'required'    => true,
+						'description' => __( 'The ID of the order to add a note to. Defaults to the current order.', 'newsletter-optin-box' ),
+					),
+					'note'          => array(
+						'label'       => __( 'Note', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'text',
+						'required'    => true,
+						'description' => __( 'The note text to add to the order.', 'newsletter-optin-box' ),
+					),
+					'customer_note' => array(
+						'label'       => __( 'Notify customer?', 'newsletter-optin-box' ),
+						'el'          => 'input',
+						'type'        => 'checkbox',
+						'default'     => false,
+						'description' => __( 'Check to send this note to the customer via email.', 'newsletter-optin-box' ),
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Changes an order's status.
+	 *
+	 * @param array $settings Action settings.
+	 * @throws \Exception When the order is not found.
+	 */
+	public static function action_change_order_status( $settings ) {
+		$order_id = absint( $settings['order_id'] );
+		$status   = sanitize_key( $settings['status'] );
+
+		if ( ! $order_id || ! $status ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			throw new \Exception( sprintf( 'Order #%d not found.', (int) $order_id ) );
+		}
+
+		$order->update_status( $status, 'Status changed by Noptin automation.' );
+	}
+
+	/**
+	 * Adds or updates a meta field on an order.
+	 *
+	 * @param array $settings Action settings.
+	 * @throws \Exception When the order is not found.
+	 */
+	public static function action_update_order_meta( $settings ) {
+		$order_id   = absint( $settings['order_id'] );
+		$meta_key   = isset( $settings['meta_key'] ) ? trim( $settings['meta_key'] ) : '';
+		$meta_value = isset( $settings['meta_value'] ) ? $settings['meta_value'] : '';
+
+		if ( ! $order_id || ! $meta_key ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			throw new \Exception( sprintf( 'Order #%d not found.', (int) $order_id ) );
+		}
+
+		$order->update_meta_data( $meta_key, $meta_value );
+		$order->save();
+	}
+
+	/**
+	 * Adds a note to an order.
+	 *
+	 * @param array $settings Action settings.
+	 * @throws \Exception When the order is not found.
+	 */
+	public static function action_add_order_note( $settings ) {
+		$order_id      = absint( $settings['order_id'] );
+		$note          = isset( $settings['note'] ) ? trim( $settings['note'] ) : '';
+		$customer_note = ! empty( $settings['customer_note'] );
+
+		if ( ! $order_id || ! $note ) {
+			return;
+		}
+
+		$order = wc_get_order( $order_id );
+
+		if ( ! $order ) {
+			throw new \Exception( sprintf( 'Order #%d not found.', (int) $order_id ) );
+		}
+
+		$order->add_order_note( $note, $customer_note, false );
 	}
 }

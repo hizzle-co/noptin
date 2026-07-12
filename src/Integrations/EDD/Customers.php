@@ -96,8 +96,9 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'type'  => 'number',
 			),
 			'purchase_value'      => array(
-				'label'   => __( 'Lifetime value', 'newsletter-optin-box' ),
-				'type'    => 'number',
+				'label'          => __( 'Lifetime value', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'email'               => array(
 				'label' => __( 'Primary email address', 'newsletter-optin-box' ),
@@ -140,8 +141,9 @@ class Customers extends \Hizzle\Noptin\Objects\People {
 				'type'  => 'string',
 			),
 			'date_created'        => array(
-				'label'   => __( 'Registration date', 'newsletter-optin-box' ),
-				'type'    => 'date',
+				'label'          => __( 'Registration date', 'newsletter-optin-box' ),
+				'type'           => 'date',
+				'display_format' => 'datetime',
 			),
 			'order_ids'           => array(
 				'label' => __( 'Payment IDs', 'newsletter-optin-box' ),

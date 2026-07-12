@@ -461,9 +461,10 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'price'                   => array(
-				'label'        => __( 'Price', 'newsletter-optin-box' ),
-				'type'         => 'number',
-				'show_in_meta' => true,
+				'label'          => __( 'Price', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
+				'show_in_meta'   => true,
 			),
 			'price_html'              => array(
 				'label' => __( 'Price HTML', 'newsletter-optin-box' ),
@@ -576,12 +577,14 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				'show_in_meta' => true,
 			),
 			'date_created'            => array(
-				'label' => __( 'Date created', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'          => __( 'Date created', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'date_modified'           => array(
-				'label' => __( 'Date modified', 'newsletter-optin-box' ),
-				'type'  => 'string',
+				'label'          => __( 'Date modified', 'newsletter-optin-box' ),
+				'type'           => 'string',
+				'display_format' => 'datetime',
 			),
 			'status'                  => array(
 				'label'   => __( 'Status', 'newsletter-optin-box' ),
@@ -621,14 +624,16 @@ class Products extends \Hizzle\Noptin\Objects\Generic_Post_Type {
 				),
 			),
 			'regular_price'           => array(
-				'label'   => __( 'Regular price', 'newsletter-optin-box' ),
-				'type'    => 'number',
-				'actions' => array( $action ),
+				'label'          => __( 'Regular price', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
+				'actions'        => array( $action ),
 			),
 			'sale_price'              => array(
-				'label'   => __( 'Sale price', 'newsletter-optin-box' ),
-				'type'    => 'number',
-				'actions' => array( $action ),
+				'label'          => __( 'Sale price', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
+				'actions'        => array( $action ),
 			),
 			'date_on_sale_from'       => array(
 				'label'   => __( 'Date on sale from', 'newsletter-optin-box' ),

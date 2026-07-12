@@ -57,12 +57,14 @@ class Membership_Levels extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'string',
 			),
 			'initial_payment'   => array(
-				'label' => __( 'Initial Payment', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Initial Payment', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'billing_amount'    => array(
-				'label' => __( 'Billing Amount', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Billing Amount', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'cycle_number'      => array(
 				'label' => __( 'Cycle Number', 'newsletter-optin-box' ),
@@ -83,8 +85,9 @@ class Membership_Levels extends \Hizzle\Noptin\Objects\Collection {
 				'type'  => 'number',
 			),
 			'trial_amount'      => array(
-				'label' => __( 'Trial Amount', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'          => __( 'Trial Amount', 'newsletter-optin-box' ),
+				'type'           => 'number',
+				'display_format' => 'price',
 			),
 			'trial_limit'       => array(
 				'label' => __( 'Trial Limit', 'newsletter-optin-box' ),
