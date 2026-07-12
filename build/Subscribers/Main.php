@@ -252,10 +252,35 @@ class Main {
 					'window.noptinFieldManager = ' . wp_json_encode( $data ) . ';',
 					'before'
 				);
+
+				self::preload_current_field_options();
 			}
 
 			wp_set_script_translations( $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 		}
+	}
+
+	/**
+	 * Preloads the options for the field being managed into wp.apiFetch cache.
+	 */
+	private static function preload_current_field_options() {
+		$field = sanitize_text_field( wp_unslash( $_GET['noptin_cf'] ) );
+
+		if ( empty( $field ) || 'add-new' === $field ) {
+			return;
+		}
+
+		$path         = sprintf( '/noptin/v1/subscribers/fields/%s', rawurlencode( $field ) );
+		$preload_data = rest_preload_api_request( array(), $path );
+
+		wp_add_inline_script(
+			'wp-api-fetch',
+			sprintf(
+				'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+				wp_json_encode( $preload_data )
+			),
+			'after'
+		);
 	}
 
 	/**
