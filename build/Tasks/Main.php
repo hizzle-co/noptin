@@ -23,6 +23,13 @@ class Main {
 	private const DEFERRED_CONFIRMATION_ACTION_IDS = array( 'email', 'add_to_sequence' );
 
 	/**
+	 * Trigger ID used by custom double opt-in emails.
+	 *
+	 * @var string
+	 */
+	private const CONFIRMATION_EMAIL_TRIGGER_ID = 'noptin_subscriber_status_set_to_pending';
+
+	/**
 	 * The cron hook.
 	 */
 	public $cron_hook = 'noptin_run_tasks';
@@ -604,7 +611,7 @@ class Main {
 		$status = 'pending';
 		$email  = $trigger->get_subject_email( $subject, $rule, $args );
 
-		if ( self::should_defer_automation_rule_until_confirmation( $email, $rule->get_action_id() ) ) {
+		if ( self::should_defer_automation_rule_until_confirmation( $email, $rule->get_action_id(), $rule->get_trigger_id() ) ) {
 			$status = 'manual';
 			$delay  = 0;
 		}
@@ -642,9 +649,14 @@ class Main {
 	 *
 	 * @param string $email The email in question.
 	 * @param string $action_id The automation rule action ID.
+	 * @param string $trigger_id The automation rule trigger ID.
 	 * @return bool
 	 */
-	private static function should_defer_automation_rule_until_confirmation( $email, $action_id ) {
+	private static function should_defer_automation_rule_until_confirmation( $email, $action_id, $trigger_id ) {
+		if ( self::CONFIRMATION_EMAIL_TRIGGER_ID === $trigger_id ) {
+			return false;
+		}
+
 		// Only defer if the action is in the deferred confirmation list, we have an email, and the subscriber is not confirmed.
 		if ( ! function_exists( 'noptin_get_subscriber' ) || ! $email || ! in_array( $action_id, self::DEFERRED_CONFIRMATION_ACTION_IDS, true ) ) {
 			return false;

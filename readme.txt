@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.3.2 =
+* Fix: Custom double opt-in email not being sent when a user subscribes to the newsletter.
+
 = 4.3.1 =
 * Fix: Newsletter editor not loading when Kubio is active.
 

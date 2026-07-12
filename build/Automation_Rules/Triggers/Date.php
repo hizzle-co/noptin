@@ -53,7 +53,7 @@ class Date extends Trigger {
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'On a given date.', 'newsletter-optin-box' );
+		return __( 'Runs this automation rule on a schedule.', 'newsletter-optin-box' );
 	}
 
 	/**
