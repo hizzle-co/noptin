@@ -691,6 +691,7 @@ class Fields_REST_API {
 
 		if ( self::TAGS_FIELD === $field ) {
 			update_option( 'noptin_subscriber_tags', array_unique( array_values( $prepared ) ), false );
+			wp_cache_delete( 'noptin_subscriber_tags', 'options' );
 			return true;
 		}
 
