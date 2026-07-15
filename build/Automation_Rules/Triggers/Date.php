@@ -202,6 +202,13 @@ class Date extends Trigger {
 	/**
 	 * @inheritdoc
 	 */
+	public function has_wizard_settings() {
+		return true;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function get_rule_table_description( $rule ) {
 		$settings = $rule->get_trigger_settings();
 		$meta     = array();

@@ -259,6 +259,23 @@ class Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function has_wizard_settings() {
+		if ( isset( $this->trigger_args['has_wizard_settings'] ) ) {
+			return $this->trigger_args['has_wizard_settings'];
+		}
+
+		if ( ! empty( $this->trigger_args['extra_settings'] ) ) {
+			return true;
+		}
+
+		// Let's not check for self::get_settings() because we don't want
+		// to load all settings which will slow down the site.
+		return parent::has_wizard_settings();
+	}
+
+	/**
 	 * Checks if the rule is valid for the given args.
 	 *
 	 * @since 1.2.8

@@ -75,6 +75,10 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	/**
 	 * Returns an array of known smart tags with callbacks removed.
 	 *
+	 * Merge tags can set `primary` to true, or to a custom field label, to have
+	 * the add-new wizard request their value and create initial conditional
+	 * logic for triggers whose has_wizard_settings() method returns true.
+	 *
 	 * @since 1.12.0
 	 * @return array
 	 */

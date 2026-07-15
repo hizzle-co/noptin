@@ -200,6 +200,16 @@ abstract class Trigger_Action {
 	}
 
 	/**
+	 * Checks whether this trigger or action has settings for the add-new wizard.
+	 *
+	 * @since 3.4.6
+	 * @return bool
+	 */
+	public function has_wizard_settings() {
+		return false;
+	}
+
+	/**
 	 * Returns all active rules attached to this action.
 	 *
 	 * @param bool|string $status Can be any, true, or false;

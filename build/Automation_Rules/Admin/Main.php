@@ -505,12 +505,13 @@ class Main {
 			}
 
 			$triggers_data[ $trigger->get_id() ] = array(
-				'name'        => $trigger->get_id(),
-				'label'       => $trigger->get_name(),
-				'description' => $trigger->get_description(),
-				'image'       => $trigger->get_image(),
-				'category'    => $trigger->depricated ? '' : $trigger->category,
-				'featured'    => $trigger->featured,
+				'name'                => $trigger->get_id(),
+				'label'               => $trigger->get_name(),
+				'description'         => $trigger->get_description(),
+				'image'               => $trigger->get_image(),
+				'category'            => $trigger->depricated ? '' : $trigger->category,
+				'featured'            => $trigger->featured,
+				'has_wizard_settings' => $trigger->has_wizard_settings(),
 			);
 		}
 

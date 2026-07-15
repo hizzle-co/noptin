@@ -88,6 +88,23 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 	}
 
 	/**
+	 * @inheritdoc
+	 */
+	public function has_wizard_settings() {
+		if ( isset( $this->action_args['has_wizard_settings'] ) ) {
+			return $this->action_args['has_wizard_settings'];
+		}
+
+		if ( ! empty( $this->action_args['extra_settings'] ) || ! empty( $this->action_args['action_fields'] ) ) {
+			return true;
+		}
+
+		// Let's not check for self::get_action_fields() because we don't want
+		// to load all fields which will slow down the site.
+		return parent::has_wizard_settings();
+	}
+
+	/**
 	 * Returns the fields needed for this action.
 	 *
 	 * @return array

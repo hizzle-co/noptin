@@ -213,6 +213,13 @@ class Loop extends Action {
 	/**
 	 * @inheritdoc
 	 */
+	public function has_wizard_settings() {
+		return true;
+	}
+
+	/**
+	 * @inheritdoc
+	 */
 	public function run( $subject, $rule, $args ) {
 		$children = $rule->get_children();
 		$body     = null;
