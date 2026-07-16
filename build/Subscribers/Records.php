@@ -253,6 +253,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'new_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
+							'primary'    => sprintf(
+								// translators: %s: field label
+								__( 'New %s', 'newsletter-optin-box' ),
+								strtolower( $field['label'] )
+							),
 						),
 						'old_value' => array(
 							'label'      => __( 'Old value', 'newsletter-optin-box' ),
@@ -260,6 +265,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'old_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
+							'primary'    => sprintf(
+								// translators: %s: field label
+								__( 'Old %s', 'newsletter-optin-box' ),
+								strtolower( $field['label'] )
+							),
 						),
 					),
 					'icon'          => array(
@@ -291,6 +301,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
+							'primary'    => sprintf(
+								// translators: %s: field label
+								__( 'New %s', 'newsletter-optin-box' ),
+								strtolower( $field['label'] )
+							),
 						),
 					),
 					'icon'          => array(
@@ -322,6 +337,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
+							'primary'    => sprintf(
+								// translators: %s: field label
+								__( 'Removed %s', 'newsletter-optin-box' ),
+								strtolower( $field['label'] )
+							),
 						),
 					),
 					'icon'          => array(
@@ -427,43 +447,45 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			// Email interactions.
 			array(
 				'open_email' => array(
-					'label'       => sprintf(
+					'label'               => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Open Email', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => __( 'When a subscriber opens an email campaign', 'newsletter-optin-box' ),
-					'subject'     => 'subscriber',
-					'provides'    => array( 'noptin-campaign' ),
-					'icon'        => array(
+					'description'         => __( 'When a subscriber opens an email campaign', 'newsletter-optin-box' ),
+					'subject'             => 'subscriber',
+					'provides'            => array( 'noptin-campaign' ),
+					'icon'                => array(
 						'icon' => 'email',
 						'fill' => '#008000',
 					),
+					'has_wizard_settings' => true,
 				),
 				'link_click' => array(
-					'label'       => sprintf(
+					'label'               => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Link Click', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => sprintf(
+					'description'         => sprintf(
 						/* translators: %s: Object type label. */
 						__( 'When a %s clicks on a link in an email', 'newsletter-optin-box' ),
 						strtolower( $this->singular_label )
 					),
-					'subject'     => 'subscriber',
-					'provides'    => array( 'noptin-campaign' ),
-					'extra_args'  => array(
+					'subject'             => 'subscriber',
+					'provides'            => array( 'noptin-campaign' ),
+					'extra_args'          => array(
 						'url' => array(
 							'label'      => __( 'Clicked URL', 'newsletter-optin-box' ),
 							'type'       => 'string',
 							'deprecated' => 'url',
 						),
 					),
-					'icon'        => array(
+					'icon'                => array(
 						'icon' => 'email',
 						'fill' => '#008000',
 					),
+					'has_wizard_settings' => true,
 				),
 			)
 		);

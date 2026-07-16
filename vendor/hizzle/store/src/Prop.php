@@ -303,7 +303,7 @@ class Prop {
 		} elseif ( $this->is_meta_key ) {
 			$schema['type'] = $this->is_meta_key_multiple ? 'array' : 'string';
 		} elseif ( $this->is_boolean() ) {
-			$schema['type'] = array( 'boolean', 'int' );
+			$schema['type'] = array( 'boolean', 'number' );
 		} elseif ( $this->is_numeric() ) {
 			$schema['type'] = 'integer';
 

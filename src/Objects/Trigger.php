@@ -270,6 +270,14 @@ class Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 			return true;
 		}
 
+		if ( ! empty( $this->trigger_args['extra_args'] ) ) {
+			foreach ( $this->trigger_args['extra_args'] as $arg ) {
+				if ( ! empty( $arg['primary'] ) ) {
+					return true;
+				}
+			}
+		}
+
 		// Let's not check for self::get_settings() because we don't want
 		// to load all settings which will slow down the site.
 		return parent::has_wizard_settings();
