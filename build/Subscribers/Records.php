@@ -209,6 +209,11 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							array( 'new' => __( 'New', 'newsletter-optin-box' ) ),
 							noptin_get_subscriber_statuses()
 						),
+						'primary'     => array(
+							'label'       => __( 'Previous status', 'newsletter-optin-box' ),
+							'description' => __( 'Only run when the subscriber changes from this status. Leave blank to match any previous status.', 'newsletter-optin-box' ),
+							'placeholder' => __( 'Any previous status', 'newsletter-optin-box' ),
+						),
 					),
 				);
 			}
@@ -253,10 +258,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'new_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
-							'primary'    => sprintf(
-								// translators: %s: field label
-								__( 'New %s', 'newsletter-optin-box' ),
-								strtolower( $field['label'] )
+							'primary'    => array(
+								'label'       => sprintf(
+									// translators: %s: field label
+									__( 'New %s', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'description' => sprintf(
+									// translators: %s: field label
+									__( 'Only run when %s changes to this value. Leave blank to match any new value.', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'placeholder' => __( 'Any new value', 'newsletter-optin-box' ),
 							),
 						),
 						'old_value' => array(
@@ -265,10 +278,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'old_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
-							'primary'    => sprintf(
-								// translators: %s: field label
-								__( 'Old %s', 'newsletter-optin-box' ),
-								strtolower( $field['label'] )
+							'primary'    => array(
+								'label'       => sprintf(
+									// translators: %s: field label
+									__( 'Previous %s', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'description' => sprintf(
+									// translators: %s: field label
+									__( 'Only run when %s changes from this value. Leave blank to match any previous value.', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'placeholder' => __( 'Any previous value', 'newsletter-optin-box' ),
 							),
 						),
 					),
@@ -301,10 +322,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
-							'primary'    => sprintf(
-								// translators: %s: field label
-								__( 'New %s', 'newsletter-optin-box' ),
-								strtolower( $field['label'] )
+							'primary'    => array(
+								'label'       => sprintf(
+									// translators: %s: field label
+									__( 'Filter by %s', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'description' => sprintf(
+									// translators: %s: field label
+									__( 'Only run when the subscriber is added to this value. Leave blank to match any value in %s.', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'placeholder' => __( 'Any value', 'newsletter-optin-box' ),
 							),
 						),
 					),
@@ -337,10 +366,18 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
 							'options'    => $field['options'],
-							'primary'    => sprintf(
-								// translators: %s: field label
-								__( 'Removed %s', 'newsletter-optin-box' ),
-								strtolower( $field['label'] )
+							'primary'    => array(
+								'label'       => sprintf(
+									// translators: %s: field label
+									__( 'Filter by %s', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'description' => sprintf(
+									// translators: %s: field label
+									__( 'Only run when the subscriber is removed from this value. Leave blank to match any value in %s.', 'newsletter-optin-box' ),
+									strtolower( $field['label'] )
+								),
+								'placeholder' => __( 'Any value', 'newsletter-optin-box' ),
 							),
 						),
 					),
