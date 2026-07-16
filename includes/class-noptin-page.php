@@ -160,13 +160,6 @@ class Noptin_Page {
 			return $decoded;
 		}
 
-		// Backwards compatibility (Users).
-		if ( is_email( $recipient ) ) {
-			return array(
-				'email' => $recipient,
-			);
-		}
-
 		// Old format (subscribers).
 		// Fetch the subscriber.
 		$subscriber_id = get_noptin_subscriber_id_by_confirm_key( $recipient );

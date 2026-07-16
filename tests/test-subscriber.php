@@ -307,6 +307,43 @@ class SubscriberTest extends WP_UnitTestCase {
         $this->assertStringContainsString('noptin_ns=confirm', $confirm_url);
     }
 
+    public function testActionPageRecipientRequiresToken() {
+        $old_get             = $_GET;
+        $old_request         = $_REQUEST;
+        $old_current_user_id = get_current_user_id();
+        $email               = 'action-page-recipient@example.com';
+
+        try {
+            wp_set_current_user( 0 );
+
+            // A raw email address must not identify an action-page recipient.
+            $_GET['nv']     = $email;
+            $_REQUEST['nv'] = $email;
+            $this->assertArrayNotHasKey( 'email', noptin()->actions_page->get_request_recipient() );
+
+            // The current encrypted recipient format must continue to work.
+            $recipient      = array( 'email' => $email );
+            $encrypted      = noptin_encrypt( wp_json_encode( $recipient ) );
+            $_GET['nv']     = $encrypted;
+            $_REQUEST['nv'] = $encrypted;
+            $this->assertSame( $recipient, noptin()->actions_page->get_request_recipient() );
+
+            // The legacy subscriber confirmation-key format must continue to work.
+            $subscriber     = noptin_get_subscriber( self::$subscriber_id );
+            $confirm_key    = $subscriber->get_confirm_key();
+            $_GET['nv']     = $confirm_key;
+            $_REQUEST['nv'] = $confirm_key;
+            $this->assertSame(
+                array( 'subscriber' => $subscriber->get_id() ),
+                noptin()->actions_page->get_request_recipient()
+            );
+        } finally {
+            $_GET     = $old_get;
+            $_REQUEST = $old_request;
+            wp_set_current_user( $old_current_user_id );
+        }
+    }
+
     public function testSubscriberOverview() {
         $subscriber = noptin_get_subscriber( self::$subscriber_id );
 
