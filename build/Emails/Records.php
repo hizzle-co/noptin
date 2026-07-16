@@ -55,8 +55,9 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 
 		return array(
 			'id'                  => array(
-				'label' => __( 'ID', 'newsletter-optin-box' ),
-				'type'  => 'number',
+				'label'   => __( 'ID', 'newsletter-optin-box' ),
+				'type'    => 'number',
+				'primary' => __( 'Campaign ID', 'newsletter-optin-box' ),
 			),
 			'parent_id'           => array(
 				'label' => __( 'Parent ID', 'newsletter-optin-box' ),
