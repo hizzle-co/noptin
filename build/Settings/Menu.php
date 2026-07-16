@@ -314,14 +314,7 @@ class Menu {
 						'type'        => 'checkbox_alt',
 						'label'       => __( 'Always Show to Admin', 'newsletter-optin-box' ),
 						'default'     => true,
-						'description' => __( 'Always show opt-in forms and methods to administrators even if they are already subscribed.', 'newsletter-optin-box' ),
-						'conditions'  => array(
-							array(
-								'key'      => 'hide_from_subscribers',
-								'operator' => '==',
-								'value'    => true,
-							),
-						),
+						'description' => __( 'Always show opt-in forms and methods to administrators, even if they are already subscribed or previously dismissed a form.', 'newsletter-optin-box' ),
 					),
 					'subscribers_cookie'     => array(
 						'el'          => 'input',

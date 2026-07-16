@@ -1360,6 +1360,7 @@ function noptin_get_subscription_sources() {
 
 	// Add other known sources.
 	$sources['manual']     = __( 'Manually Added', 'newsletter-optin-box' );
+	$sources['block']      = __( 'Subscription Block', 'newsletter-optin-box' );
 	$sources['shortcode']  = __( 'Subscription Shortcode', 'newsletter-optin-box' );
 	$sources['users_sync'] = __( 'Users Sync', 'newsletter-optin-box' );
 	$sources['import']     = __( 'Imported', 'newsletter-optin-box' );

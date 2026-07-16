@@ -40,7 +40,7 @@ class Export {
 	 * @return string|false Job ID on success, false on failure.
 	 */
 	public static function queue( $store_namespace, $collection, $query_args, $email = '' ) {
-		$job_id     = uniqid( time() );
+		$job_id     = wp_generate_uuid4();
 		$query_args = self::sanitize_query_args( (array) $query_args );
 		$uploads    = wp_upload_dir( null, false );
 		$path       = trailingslashit( $uploads['basedir'] ) . trailingslashit( sanitize_key( $store_namespace ) ) . sanitize_key( $collection );
@@ -51,6 +51,7 @@ class Export {
 
 		$job = array(
 			'id'              => $job_id,
+			'user_id'         => get_current_user_id(),
 			'store_namespace' => $store_namespace,
 			'collection'      => $collection,
 			'query_args'      => self::sanitize_query_args( (array) $query_args ),
@@ -411,6 +412,10 @@ class Export {
 			wp_die( 'Export not found.', 404 );
 		}
 
+		if ( ! self::current_user_can_download( $job, $job_id ) ) {
+			wp_die( 'Sorry, you are not allowed to download this export.', 403 );
+		}
+
 		$file_path = $job['file_path'];
 		if ( ! file_exists( $file_path ) ) {
 			wp_die( 'Export file missing.', 404 );
@@ -423,6 +428,38 @@ class Export {
 
 		readfile( $file_path );
 		exit;
+	}
+
+	/**
+	 * Checks whether the current user can download an export.
+	 *
+	 * New jobs are restricted to the user who queued them. Legacy jobs that do
+	 * not contain an owner are restricted to administrators.
+	 *
+	 * @param array  $job Job data.
+	 * @param string $job_id Job ID.
+	 * @return bool
+	 */
+	private static function current_user_can_download( $job, $job_id ) {
+		$current_user_id = get_current_user_id();
+		$owner_id        = isset( $job['user_id'] ) ? absint( $job['user_id'] ) : 0;
+		$can_download     = $owner_id ? $current_user_id === $owner_id : current_user_can( 'manage_options' );
+
+		/**
+		 * Filters whether the current user can download an export.
+		 *
+		 * @param bool   $can_download Whether the user can download the export.
+		 * @param array  $job Job data.
+		 * @param string $job_id Job ID.
+		 * @param int    $current_user_id Current user ID.
+		 */
+		return (bool) apply_filters(
+			'hizzle_store_background_export_download_permission',
+			$can_download,
+			$job,
+			$job_id,
+			$current_user_id
+		);
 	}
 
 	/**

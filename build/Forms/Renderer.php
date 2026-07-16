@@ -846,6 +846,10 @@ class Renderer {
 			$atts['data-trigger']      = $trigger;
 			$atts['data-hide-seconds'] = apply_filters( 'noptin_display_form_every_x_seconds', $form->hideSeconds );
 
+			if ( get_noptin_option( 'always_show_to_admin', true ) && current_user_can_manage_noptin() ) {
+				$atts['data-always-show-to-admin'] = 'true';
+			}
+
 			if ( 'after_click' === $trigger ) {
 				$atts['data-value'] = $form->cssClassOfClick;
 			}
