@@ -211,7 +211,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 						'primary'     => array(
 							'label'       => __( 'Previous status', 'newsletter-optin-box' ),
-							'description' => __( 'Only run when the subscriber changes from this status. Leave blank to match any previous status.', 'newsletter-optin-box' ),
+							'description' => __( 'Only run when the subscriber changes from this status.', 'newsletter-optin-box' ),
 							'placeholder' => __( 'Any previous status', 'newsletter-optin-box' ),
 						),
 					),
@@ -235,6 +235,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 
 		// Custom fields.
 		foreach ( $this->subscriber_fields() as $merge_tag => $field ) {
+			$field_options = 'tags' === $merge_tag
+				? array( __CLASS__, 'get_all_tags_as_options' )
+				: $field['options'];
+
 			if ( empty( $field['multiple'] ) ) {
 				$triggers[ "noptin_subscriber_{$merge_tag}_changed" ] = array(
 					'label'         => sprintf(
@@ -257,7 +261,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'type'       => 'string',
 							'deprecated' => 'new_value',
 							'group'      => $field['label'],
-							'options'    => $field['options'],
+							'options'    => $field_options,
 							'primary'    => array(
 								'label'       => sprintf(
 									// translators: %s: field label
@@ -266,7 +270,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								),
 								'description' => sprintf(
 									// translators: %s: field label
-									__( 'Only run when %s changes to this value. Leave blank to match any new value.', 'newsletter-optin-box' ),
+									__( 'Only run when %s changes to this value.', 'newsletter-optin-box' ),
 									strtolower( $field['label'] )
 								),
 								'placeholder' => __( 'Any new value', 'newsletter-optin-box' ),
@@ -277,7 +281,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'type'       => 'string',
 							'deprecated' => 'old_value',
 							'group'      => $field['label'],
-							'options'    => $field['options'],
+							'options'    => $field_options,
 							'primary'    => array(
 								'label'       => sprintf(
 									// translators: %s: field label
@@ -286,7 +290,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								),
 								'description' => sprintf(
 									// translators: %s: field label
-									__( 'Only run when %s changes from this value. Leave blank to match any previous value.', 'newsletter-optin-box' ),
+									__( 'Only run when %s changes from this value.', 'newsletter-optin-box' ),
 									strtolower( $field['label'] )
 								),
 								'placeholder' => __( 'Any previous value', 'newsletter-optin-box' ),
@@ -321,7 +325,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'type'       => 'string',
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
-							'options'    => $field['options'],
+							'options'    => $field_options,
 							'primary'    => array(
 								'label'       => sprintf(
 									// translators: %s: field label
@@ -365,7 +369,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'type'       => 'string',
 							'deprecated' => 'field_value',
 							'group'      => $field['label'],
-							'options'    => $field['options'],
+							'options'    => $field_options,
 							'primary'    => array(
 								'label'       => sprintf(
 									// translators: %s: field label

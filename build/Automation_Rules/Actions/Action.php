@@ -20,6 +20,16 @@ abstract class Action extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	public $is_action_or_trigger = 'action';
 
 	/**
+	 * Checks whether this trigger or action has settings for the add-new wizard.
+	 *
+	 * @since 3.4.6
+	 * @return bool
+	 */
+	public function has_wizard_settings() {
+		return true;
+	}
+
+	/**
 	 * Groups rule action into a single string.
 	 *
 	 * @since 1.11.9
