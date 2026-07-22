@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since 1.10.1
  */
-class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
+class Noptin_Form_Submit_Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 
 	/**
 	 * @var string The form provider slug.
@@ -206,6 +206,16 @@ class Noptin_Form_Submit_Trigger extends Noptin_Abstract_Trigger {
 		);
 
 		return $settings;
+	}
+
+	/**
+	 * Checks whether this trigger or action has settings for the add-new wizard.
+	 *
+	 * @since 3.4.6
+	 * @return bool
+	 */
+	public function has_wizard_settings() {
+		return true;
 	}
 
 	/**
