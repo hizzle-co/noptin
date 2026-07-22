@@ -54,6 +54,7 @@ class Main {
 
 		add_action( self::HEALTH_CHECK_HOOK, array( __CLASS__, 'send_pending' ) );
 		add_action( self::TASK_HOOK, array( __CLASS__, 'run' ) );
+		add_action( 'noptin_tasks_cleanup', array( __CLASS__, 'cleanup_tasks' ) );
 		add_action( 'wp_ajax_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
 		add_action( 'wp_ajax_nopriv_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
 	}
@@ -219,16 +220,22 @@ class Main {
 				wp_clear_scheduled_hook( $hook );
 			}
 
-			/** @var \Hizzle\Noptin\Tasks\Task[] $tasks */
-			$tasks = \Hizzle\Noptin\Tasks\Main::query(
+			$task_count = (int) \Hizzle\Noptin\Tasks\Main::query(
 				array(
 					'hook'   => $hook,
 					'status' => 'pending',
-				)
+				),
+				'count'
 			);
 
+			// Collapse duplicates in one query instead of loading and deleting each task.
+			if ( $task_count > 1 ) {
+				\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( $hook, array(), -1 );
+				$task_count = 0;
+			}
+
 			// If we don't have a scheduled task, schedule one now.
-			if ( empty( $tasks ) ) {
+			if ( 0 === $task_count ) {
 				$interval = ( self::TASK_HOOK === $hook ) ? self::TASK_INTERVAL : self::HEALTH_CHECK_INTERVAL;
 				create_noptin_background_task(
 					array(
@@ -240,13 +247,6 @@ class Main {
 						'date_scheduled' => time() + $interval,
 					)
 				);
-			} else {
-				// Keep the first scheduled task.
-				foreach ( $tasks as $index => $task ) {
-					if ( $index > 0 ) {
-						$task->delete();
-					}
-				}
 			}
 		}
 
@@ -257,8 +257,30 @@ class Main {
 	 * Clear scheduled tasks.
 	 */
 	public static function clear_scheduled_tasks() {
-		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::TASK_HOOK );
-		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::HEALTH_CHECK_HOOK );
+		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::TASK_HOOK, array(), -1 );
+		\Hizzle\Noptin\Tasks\Main::delete_scheduled_task( self::HEALTH_CHECK_HOOK, array(), -1 );
+	}
+
+	/**
+	 * Deletes completed bulk sender tasks after seven days.
+	 */
+	public static function cleanup_tasks() {
+		$tasks = \Hizzle\Noptin\Tasks\Main::query(
+			array(
+				'hook'                 => array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ),
+				'status'               => array( 'complete', 'canceled' ),
+				'number'               => 20,
+				'date_modified_before' => gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - WEEK_IN_SECONDS ),
+			)
+		);
+
+		if ( is_wp_error( $tasks ) ) {
+			return;
+		}
+
+		foreach ( $tasks as $task ) {
+			$task->delete();
+		}
 	}
 
 	/**

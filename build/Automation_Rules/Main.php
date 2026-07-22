@@ -143,24 +143,36 @@ class Main {
 			throw new \Exception( 'Trigger does not support scheduling' );
 		}
 
-		// Ensure that the rule is valid for the provided args.
-		if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'] ?? '', $action ) ) {
-			$result = $action->maybe_run( $args['subject'] ?? '', $rule, $args );
+		$had_email_meta_data      = array_key_exists( 'noptin_email_meta_data', $GLOBALS );
+		$previous_email_meta_data = $GLOBALS['noptin_email_meta_data'] ?? null;
+		$GLOBALS['noptin_email_meta_data'] = is_array( $args['email_meta_data'] ?? null ) ? $args['email_meta_data'] : array();
 
-			if ( false === $result ) {
-				throw new \Exception( 'Failed to run automation rule' );
+		try {
+			// Ensure that the rule is valid for the provided args.
+			if ( $trigger->is_rule_valid_for_args( $rule, $args, $args['subject'] ?? '', $action ) ) {
+				$result = $action->maybe_run( $args['subject'] ?? '', $rule, $args );
+
+				if ( false === $result ) {
+					throw new \Exception( 'Failed to run automation rule' );
+				}
+
+				if ( is_wp_error( $result ) ) {
+					throw new \Exception( esc_html( $result->get_error_message() ) );
+				}
+
+				return true;
 			}
 
-			if ( is_wp_error( $result ) ) {
-				throw new \Exception( esc_html( $result->get_error_message() ) );
+			// We want to return false here so that the runner does not attempt
+			// to auto-run child rules for a rule that is no longer valid for the provided arguments.
+			return false;
+		} finally {
+			if ( $had_email_meta_data ) {
+				$GLOBALS['noptin_email_meta_data'] = $previous_email_meta_data;
+			} else {
+				unset( $GLOBALS['noptin_email_meta_data'] );
 			}
-
-			return true;
 		}
-
-		// We want to return false here so that the runner does not attempt
-		// to auto-run child rules for a rule that is no longer valid for the provided arguments.
-		return false;
 	}
 
 	/**

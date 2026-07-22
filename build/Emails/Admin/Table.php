@@ -399,17 +399,41 @@ class Table extends \WP_List_Table {
 			);
 		}
 
-		// Parent newsletter.
-		if ( 'newsletter' === $this->email_type->type && $item->parent_id ) {
-			$parent = new Email( $item->parent_id );
+		if ( 'newsletter' === $this->email_type->type ) {
+			// Parent newsletter.
+			if ( $item->parent_id ) {
+				$parent = new Email( $item->parent_id );
 
-			if ( $parent->exists() ) {
-				$title .= sprintf(
-					'<div><span class="noptin-strong">%s</span>: <a href="%s">%s</a></div>',
-					esc_html__( 'Source', 'newsletter-optin-box' ),
-					esc_url( $parent->get_edit_url() ),
-					esc_html( $parent->name )
-				);
+				if ( $parent->exists() ) {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <a href="%s">%s</a></div>',
+						esc_html__( 'Source', 'newsletter-optin-box' ),
+						esc_url( $parent->get_edit_url() ),
+						esc_html( $parent->name )
+					);
+				}
+			}
+
+			// Post that generated the newsletter.
+			$source_post_id = absint( $item->get( 'source_post_id' ) );
+			$source_post    = $source_post_id ? get_post( $source_post_id ) : false;
+
+			if ( $source_post ) {
+				$post_title = get_the_title( $source_post );
+				$post_url   = get_edit_post_link( $source_post );
+
+				if ( empty( $post_title ) ) {
+					$post_title = '(no title)';
+				}
+
+				if ( $post_url ) {
+					$title .= sprintf(
+						'<div><span class="noptin-strong">%s</span>: <a href="%s" target="_blank" rel="noopener noreferrer">%s</a></div>',
+						esc_html__( 'Source post', 'newsletter-optin-box' ),
+						esc_url( $post_url ),
+						esc_html( $post_title )
+					);
+				}
 			}
 		}
 

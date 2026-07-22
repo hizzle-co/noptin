@@ -243,12 +243,15 @@ abstract class Post_Type extends Collection {
 		$this->trigger(
 			$event,
 			array(
-				'email'      => $user->user_email,
-				'object_id'  => $post_id,
-				'subject_id' => $user->ID,
-				'url'        => get_edit_post_link( $post_id ),
-				'activity'   => get_the_title( $post_id ),
-				'post_meta'  => array(
+				'email'           => $user->user_email,
+				'object_id'       => $post_id,
+				'subject_id'      => $user->ID,
+				'url'             => get_edit_post_link( $post_id ),
+				'activity'        => get_the_title( $post_id ),
+				'email_meta_data' => array(
+					'source_post_id' => $post_id,
+				),
+				'post_meta'       => array(
 					'id'  => $post_id,
 					'key' => $this->type . '_published' === $event ? 'noptin_sent_notification_campaign' : '',
 				),

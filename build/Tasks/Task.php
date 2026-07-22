@@ -407,7 +407,7 @@ class Task extends \Hizzle\Store\Record {
 		// Is this a recurring task?
 		$interval = $this->get_interval();
 
-		if ( empty( $interval ) || ! is_numeric( $interval ) ) {
+		if ( 'running' !== $this->get_status() || $this->get_meta( 'rescheduled' ) || empty( $interval ) || ! is_numeric( $interval ) ) {
 			return;
 		}
 
@@ -421,6 +421,9 @@ class Task extends \Hizzle\Store\Record {
 
 		if ( is_wp_error( $result ) ) {
 			$this->add_log( 'Failed to reschedule task: ' . $result->get_error_message() );
+		} else {
+			$this->update_meta( 'rescheduled', $new_task->get_id() );
+			$this->save();
 		}
 	}
 
@@ -596,6 +599,9 @@ class Task extends \Hizzle\Store\Record {
 		$metadata = $this->get_metadata();
 		if ( isset( $metadata['logs'] ) ) {
 			unset( $metadata['logs'] );
+		}
+		if ( isset( $metadata['rescheduled'] ) ) {
+			unset( $metadata['rescheduled'] );
 		}
 
 		$data['metadata'] = $metadata;

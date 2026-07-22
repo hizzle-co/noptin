@@ -518,10 +518,13 @@ class Email {
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
 			// Prepare campaign args.
-			$type   = $this->get_email_type();
-			$suffix = empty( $GLOBALS['noptin_current_title_tag'] ) ? date_i18n( get_option( 'date_format' ) ) : noptin_parse_email_subject_tags( $GLOBALS['noptin_current_title_tag'] );
-			$args   = array_merge(
+			$type            = $this->get_email_type();
+			$suffix          = empty( $GLOBALS['noptin_current_title_tag'] ) ? date_i18n( get_option( 'date_format' ) ) : noptin_parse_email_subject_tags( $GLOBALS['noptin_current_title_tag'] );
+			$email_meta_data = $GLOBALS['noptin_email_meta_data'] ?? array();
+			$email_meta_data = is_array( $email_meta_data ) ? $email_meta_data : array();
+			$args            = array_merge(
 				$this->options,
+				$email_meta_data,
 				array(
 					'parent_id'    => $this->id,
 					'status'       => 'publish',

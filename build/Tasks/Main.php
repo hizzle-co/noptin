@@ -53,6 +53,9 @@ class Main {
 	 */
 	public $processed_tasks = 0;
 
+	/** @var string Token identifying the lock owned by this runner. */
+	private $process_lock_token = '';
+
 	/**
 	 * Current task.
 	 *
@@ -192,7 +195,6 @@ class Main {
 	public function before_run() {
 
 		$this->start_time = time();
-		$this->lock_process();
 		wp_raise_memory_limit();
 		noptin_raise_time_limit( $this->get_time_limit() + 10 );
 		$this->start_cron_healthcheck();
@@ -206,7 +208,7 @@ class Main {
 	 */
 	public function run() {
 
-		if ( $this->is_process_running() ) {
+		if ( ! $this->lock_process() ) {
 			return;
 		}
 
@@ -240,14 +242,50 @@ class Main {
 	 */
 	protected function lock_process() {
 		$lock_duration = apply_filters( $this->cron_hook . '_queue_lock_time', 60 );
-		set_transient( $this->cron_hook . '_process_lock', microtime(), $lock_duration );
+		$option_name   = $this->cron_hook . '_process_lock';
+		$token         = wp_generate_uuid4();
+		$lock          = array(
+			'token'   => $token,
+			'expires' => time() + max( 1, (int) $lock_duration ),
+		);
+
+		// add_option() is atomic because option names are unique.
+		if ( ! add_option( $option_name, $lock, '', false ) ) {
+			$existing_lock = get_option( $option_name );
+			if ( ! is_array( $existing_lock ) || empty( $existing_lock['expires'] ) || (int) $existing_lock['expires'] <= time() ) {
+				global $wpdb;
+				$wpdb->query(
+					$wpdb->prepare(
+						"DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value = %s",
+						$option_name,
+						maybe_serialize( $existing_lock )
+					)
+				);
+				wp_cache_delete( $option_name, 'options' );
+				if ( ! add_option( $option_name, $lock, '', false ) ) {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+
+		$this->process_lock_token = $token;
+		return true;
 	}
 
 	/**
 	 * Unlock the process.
 	 */
 	protected function unlock_process() {
-		delete_transient( $this->cron_hook . '_process_lock' );
+		$option_name = $this->cron_hook . '_process_lock';
+		$lock        = get_option( $option_name );
+
+		if ( is_array( $lock ) && ! empty( $lock['token'] ) && ! empty( $this->process_lock_token ) && hash_equals( (string) $lock['token'], $this->process_lock_token ) ) {
+			delete_option( $option_name );
+		}
+
+		$this->process_lock_token = '';
 	}
 
 	/**
@@ -622,6 +660,11 @@ class Main {
 			$serialized_args['provided_collections'] = $args['provided_collections'];
 		}
 
+		// Preserve metadata that actions can attach to generated emails.
+		if ( isset( $args['email_meta_data'] ) && is_array( $args['email_meta_data'] ) ) {
+			$serialized_args['email_meta_data'] = $args['email_meta_data'];
+		}
+
 		// Create the task.
 		$task = self::create(
 			array(
@@ -800,6 +843,7 @@ class Main {
 	public static function clean( $time_limit = 300 ) {
 		static::delete_old_tasks();
 		static::mark_failures( $time_limit );
+		do_action( 'noptin_tasks_cleanup' );
 	}
 
 	/**
@@ -1094,11 +1138,7 @@ class Main {
 	 * in a background process.
 	 */
 	public function is_process_running() {
-		if ( ! wp_doing_ajax() && get_transient( $this->cron_hook . '_process_lock' ) ) {
-			// Process already running.
-			return true;
-		}
-
-		return false;
+		$lock = get_option( $this->cron_hook . '_process_lock' );
+		return is_array( $lock ) && ! empty( $lock['expires'] ) && (int) $lock['expires'] > time();
 	}
 }
