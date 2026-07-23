@@ -248,6 +248,8 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 				'placeholder' => $field['placeholder'] ?? '',
 				'description' => $field['description'] ?? '',
 				'advanced'    => $field['advanced'] ?? false,
+				'primary'     => $field['primary'] ?? false,
+				'show_in_meta' => $field['show_in_meta'] ?? false,
 			);
 
 			if ( isset( $field['default'] ) ) {

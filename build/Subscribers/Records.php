@@ -1180,12 +1180,14 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'placeholder' => __( 'Select Field', 'newsletter-optin-box' ),
 							'options'     => wp_list_pluck( get_editable_noptin_subscriber_fields(), 'label' ),
 							'required'    => true,
+							'primary'     => true,
 						),
 						'field_value' => array(
 							'type'         => 'string',
 							'label'        => __( 'Field Value', 'newsletter-optin-box' ),
 							'description'  => __( 'Enter a value to assign the field', 'newsletter-optin-box' ),
 							'show_in_meta' => true,
+							'primary'      => true,
 						),
 					),
 				),
@@ -1232,6 +1234,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required'  => true,
 								'map_field' => true,
 								'default'   => '',
+								'primary'   => true,
 							),
 						),
 					);
@@ -1268,6 +1271,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required'  => true,
 								'map_field' => true,
 								'default'   => 'tags' === $merge_tag ? '' : array(),
+								'primary'   => true,
 							),
 						),
 					);
@@ -1304,6 +1308,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 								'required'  => true,
 								'default'   => 'tags' === $merge_tag ? '' : array(),
 								'map_field' => true,
+								'primary'   => true,
 							),
 						),
 					);
