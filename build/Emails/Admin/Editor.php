@@ -649,11 +649,18 @@ JS;
 	 */
 	private static function isolate_email_editor_from_block_editor_integrations() {
 
-		add_filter( 'print_scripts_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
-		add_filter( 'print_styles_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
-		add_filter( 'script_loader_tag', array( __CLASS__, 'filter_email_editor_script_tag' ), PHP_INT_MAX, 3 );
-		add_filter( 'style_loader_tag', array( __CLASS__, 'filter_email_editor_style_tag' ), PHP_INT_MAX, 4 );
+		// add_filter( 'print_scripts_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
+		// add_filter( 'print_styles_array', array( __CLASS__, 'filter_email_editor_asset_handles' ), PHP_INT_MAX );
+		// add_filter( 'script_loader_tag', array( __CLASS__, 'filter_email_editor_script_tag' ), PHP_INT_MAX, 3 );
+		// add_filter( 'style_loader_tag', array( __CLASS__, 'filter_email_editor_style_tag' ), PHP_INT_MAX, 4 );
 
+		/*
+		 * Only filter the top-level queues. Filtering `print_scripts_array`,
+		 * `print_styles_array`, or individual loader tags happens after
+		 * WordPress has resolved dependencies. Removing a dependency at that
+		 * stage leaves its dependents in the print list and can load packages
+		 * such as wp-element and wp-data without their React runtime.
+		 */
 		add_action( 'admin_print_scripts', array( __CLASS__, 'dequeue_third_party_email_editor_assets' ), PHP_INT_MAX );
 		add_action( 'admin_print_styles', array( __CLASS__, 'dequeue_third_party_email_editor_assets' ), PHP_INT_MAX );
 	}
