@@ -520,6 +520,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'label'      => __( 'Clicked URL', 'newsletter-optin-box' ),
 							'type'       => 'string',
 							'deprecated' => 'url',
+							'primary'    => true,
 						),
 					),
 					'icon'                => array(
