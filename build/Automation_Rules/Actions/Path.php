@@ -15,10 +15,17 @@ defined( 'ABSPATH' ) || exit;
 class Path extends Action {
 
 	/**
+	 * The task lookup key.
+	 *
+	 * @var string
+	 */
+	const LOOKUP_KEY = 'path';
+
+	/**
 	 * @inheritdoc
 	 */
 	public function get_id() {
-		return 'path';
+		return self::LOOKUP_KEY;
 	}
 
 	/**
