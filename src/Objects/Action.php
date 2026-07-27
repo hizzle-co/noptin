@@ -167,11 +167,13 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 				$value = isset( $settings[ $key ] ) ? $settings[ $key ] : '';
 
 				if ( $value && ! empty( $args['options'] ) ) {
+					$options   = is_callable( $args['options'] ) ? call_user_func( $args['options'] ) : $args['options'];
+					$options   = is_array( $options ) ? $options : array();
 					$new_value = array();
 
 					foreach ( (array) $value as $v ) {
-						if ( isset( $args['options'][ $v ] ) ) {
-							$new_value[] = $args['options'][ $v ];
+						if ( isset( $options[ $v ] ) ) {
+							$new_value[] = $options[ $v ];
 						} else {
 							$new_value[] = $v;
 						}
@@ -227,6 +229,10 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 			if ( empty( $field['label'] ) && ! empty( $field['description'] ) ) {
 				$field['label'] = $field['description'];
 				unset( $field['description'] );
+			}
+
+			if ( isset( $field['options'] ) && is_callable( $field['options'] ) ) {
+				$field['options'] = call_user_func( $field['options'] );
 			}
 
 			if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
