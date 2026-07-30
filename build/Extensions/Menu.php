@@ -35,6 +35,54 @@ class Menu {
 
 		add_action( 'admin_menu', array( __CLASS__, 'register_menu' ), 70 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
+		add_action( 'wp_ajax_noptin_save_agency_settings', array( __CLASS__, 'save_agency_settings' ) );
+	}
+
+	/**
+	 * Saves the agency settings via AJAX.
+	 */
+	public static function save_agency_settings() {
+		check_ajax_referer( 'noptin_save_agency_settings' );
+
+		if ( ! current_user_can_manage_noptin() ) {
+			wp_send_json_error( array( 'message' => 'You are not authorized to do this.' ), 403 );
+		}
+
+		$submitted = isset( $_POST['settings'] ) ? json_decode( wp_unslash( $_POST['settings'] ), true ) : null;
+		$settings  = get_option( 'noptin_options', array() );
+
+		if ( ! is_array( $submitted ) ) {
+			wp_send_json_error( array( 'message' => 'Invalid agency settings.' ), 400 );
+		}
+
+		$boolean_fields = array(
+			'visibility' => array( 'hide_license', 'hide_workspace', 'split_email_menu' ),
+			'templates'  => array( 'hide_cloud', 'hide_custom' ),
+		);
+
+		foreach ( $boolean_fields as $section => $fields ) {
+			foreach ( $fields as $field ) {
+				if ( isset( $submitted[ $section ] ) && array_key_exists( $field, $submitted[ $section ] ) ) {
+					$settings[ $section ][ $field ] = rest_sanitize_boolean( $submitted[ $section ][ $field ] );
+				}
+			}
+		}
+
+		$text_fields = array( 'name', 'icon', 'logo', 'support_url' );
+		foreach ( $text_fields as $field ) {
+			if ( isset( $submitted['white_label'] ) && array_key_exists( $field, $submitted['white_label'] ) ) {
+				$value = is_scalar( $submitted['white_label'][ $field ] ) ? (string) $submitted['white_label'][ $field ] : '';
+
+				$settings['white_label'][ $field ] = in_array( $field, array( 'logo', 'support_url' ), true )
+					? esc_url_raw( $value )
+					: sanitize_text_field( $value );
+			}
+		}
+
+		$settings['visibility']['last_edited_by'] = get_current_user_id();
+		update_option( 'noptin_options', $settings );
+
+		wp_send_json_success( array( 'noptin_options' => $settings ) );
 	}
 
 	/**
@@ -97,6 +145,7 @@ class Menu {
 		$data = array(
 			'home_url'     => home_url(),
 			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+			'agencyNonce'  => wp_create_nonce( 'noptin_save_agency_settings' ),
 			'updatesNonce' => wp_create_nonce( 'updates' ),
 			'plugins'      => \Hizzle\Noptin\Onboarding\Menu::get_installed_plugins(),
 			'integrations' => \Hizzle\Noptin\Onboarding\Main::get_detected_integrations(),
