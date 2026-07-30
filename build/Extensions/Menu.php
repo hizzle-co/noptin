@@ -49,7 +49,7 @@ class Menu {
 		}
 
 		$submitted = isset( $_POST['settings'] ) ? json_decode( wp_unslash( $_POST['settings'] ), true ) : null;
-		$settings  = get_option( 'noptin_options', array() );
+		$settings  = get_noptin_options();
 
 		if ( ! is_array( $submitted ) ) {
 			wp_send_json_error( array( 'message' => 'Invalid agency settings.' ), 400 );
@@ -74,7 +74,7 @@ class Menu {
 				$value = is_scalar( $submitted['white_label'][ $field ] ) ? (string) $submitted['white_label'][ $field ] : '';
 
 				$settings['white_label'][ $field ] = in_array( $field, array( 'logo', 'support_url' ), true )
-					? esc_url_raw( $value )
+					? ( 'none' === $value ? 'none' : esc_url_raw( $value ) )
 					: sanitize_text_field( $value );
 			}
 		}

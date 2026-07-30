@@ -24,6 +24,13 @@ class Manage_Preferences {
 	protected static $success_message;
 
 	/**
+	 * Subscriber updated during the current request.
+	 *
+	 * @var false|\Hizzle\Noptin\Subscribers\Subscriber
+	 */
+	protected static $updated_subscriber = false;
+
+	/**
 	 * Init variables.
 	 *
 	 * @since       1.0.0
@@ -66,8 +73,9 @@ class Manage_Preferences {
 		}
 
 		// Prepare subscriber details.
-		$subscriber = noptin_get_subscriber( get_current_noptin_subscriber_id() );
-		$subscribed = 'subscribed' === $subscriber->get_status();
+		$subscriber = self::$updated_subscriber
+			? self::$updated_subscriber
+			: noptin_get_subscriber( get_current_noptin_subscriber_id() );
 		$defaults   = array();
 
 		if ( get_current_user_id() && ! $subscriber->exists() ) {
@@ -75,7 +83,6 @@ class Manage_Preferences {
 
 			if ( ! $subscriber->exists() ) {
 				$subscriber = noptin_get_subscriber( $user->user_email );
-				$subscribed = 'subscribed' === $subscriber->get_status();
 			}
 
 			$defaults = array(
@@ -89,6 +96,8 @@ class Manage_Preferences {
 		if ( ! $subscriber->exists() ) {
 			$subscriber = false;
 		}
+
+		$subscribed = $subscriber && 'subscribed' === $subscriber->get_status();
 
 		?>
 			<style>
@@ -244,6 +253,9 @@ class Manage_Preferences {
 		foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
 			if ( isset( $posted[ $custom_field['merge_tag'] ] ) ) {
 				$prepared[ $custom_field['merge_tag'] ] = $posted[ $custom_field['merge_tag'] ];
+			} elseif ( empty( $custom_field['dynamic'] ) && 'multi_checkbox' === $custom_field['type'] ) {
+				// Browsers omit multi-checkbox fields when all options are unchecked.
+				$prepared[ $custom_field['merge_tag'] ] = array();
 			}
 		}
 
@@ -306,7 +318,8 @@ class Manage_Preferences {
 		} elseif ( is_wp_error( $result ) ) {
 			self::$error_message = $result->get_error_message();
 		} else {
-			self::$success_message = __( 'Your changes have been saved', 'newsletter-optin-box' );
+			self::$updated_subscriber = noptin_get_subscriber( $result );
+			self::$success_message    = __( 'Your changes have been saved', 'newsletter-optin-box' );
 		}
 	}
 }
