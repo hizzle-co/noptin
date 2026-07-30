@@ -211,6 +211,10 @@ class Test_Date_Trigger extends WP_UnitTestCase {
 		$run_time = gmdate( 'H:i', $now - HOUR_IN_SECONDS );
 		$day      = (int) gmdate( 'j', $now );
 
+		if ( $day > 29 ) {
+			$this->markTestSkipped( 'Monthly date trigger settings only expose days 1-29.' );
+		}
+
 		$scheduled = $this->scheduled_timestamp_for_rule(
 			array(
 				'frequency' => 'monthly',
