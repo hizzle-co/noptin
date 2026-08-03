@@ -43,12 +43,17 @@ class Subscriber extends \Hizzle\Store\Record {
 		$this->set_prop( 'name', sanitize_text_field( $value ) );
 
 		// Also, split the name into first and last name.
-		$parts = is_array( $value ) ? $value : explode( ' ', $value, 2 );
+		$parts      = is_array( $value ) ? $value : explode( ' ', $value, 2 );
+		$first_name = array_shift( $parts );
+		$last_name  = empty( $parts ) ? '' : array_pop( $parts );
+		$changes    = $this->get_changes();
 
-		$this->set_first_name( array_shift( $parts ) );
+		if ( empty( $changes['first_name'] ) ) {
+			$this->set_first_name( $first_name );
+		}
 
-		if ( ! empty( $parts ) ) {
-			$this->set_last_name( array_pop( $parts ) );
+		if ( empty( $changes['last_name'] ) && ! empty( $last_name ) ) {
+			$this->set_last_name( $last_name );
 		}
 	}
 
