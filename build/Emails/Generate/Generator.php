@@ -388,6 +388,12 @@ class Generator {
 		);
 
 		foreach ( $processors as $priority => $processor ) {
+			// Not removed from the above array for backwards
+			// compatibility.
+			if ( 'make_clickable' === $processor ) {
+				continue;
+			}
+
 			add_filter(
 				'noptin_post_process_email_content',
 				$processor,
