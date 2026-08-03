@@ -336,11 +336,12 @@ class Table extends \WP_List_Table {
 			);
 		}
 
-		$item_name = $item->name;
-		$sub_type  = $this->email_type->get_sub_type( $item->get_sub_type() );
+		$is_template = 'email_template' === $item->type;
+		$item_name   = $is_template ? $item->subject : $item->name;
+		$sub_type    = $this->email_type->get_sub_type( $item->get_sub_type() );
 
 		if ( empty( $item_name ) ) {
-			$item_name = $item->subject;
+			$item_name = $is_template ? $item->name : $item->subject;
 		}
 
 		if ( empty( $item_name ) && ! empty( $sub_type ) ) {
@@ -383,8 +384,18 @@ class Table extends \WP_List_Table {
 			}
 		}
 
-		// If name  is different from the subject, show the subject.
-		if ( $item_name !== $item->subject && ! empty( $item->subject ) && ! empty( $preview_url ) ) {
+		// Templates use the subject as their display name and show their slug underneath.
+		if ( $is_template ) {
+			$template_slug = get_post_field( 'post_name', $item->id );
+
+			if ( ! empty( $template_slug ) ) {
+				$title .= sprintf(
+					'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+					esc_html__( 'Slug', 'newsletter-optin-box' ),
+					esc_html( $template_slug )
+				);
+			}
+		} elseif ( $item_name !== $item->subject && ! empty( $item->subject ) && ! empty( $preview_url ) ) {
 			$title .= sprintf(
 				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
 				esc_html__( 'Subject', 'newsletter-optin-box' ),
