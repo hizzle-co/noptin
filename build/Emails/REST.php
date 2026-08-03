@@ -326,6 +326,93 @@ class REST extends \WP_REST_Posts_Controller {
 			$data->post_content = str_replace( '{{DEFAULT_FOOTER_TEXT}}', get_default_noptin_footer_text(), $data->post_content );
 		}
 
+		if ( ! is_wp_error( $data ) && $this->is_email_template_request( $request, $data ) ) {
+			$post_id        = (int) $request->get_param( 'id' );
+			$requested_slug = isset( $data->post_name ) ? $data->post_name : '';
+
+			if ( empty( $requested_slug ) && isset( $data->post_title ) ) {
+				$requested_slug = $data->post_title;
+			}
+
+			if ( empty( $requested_slug ) && $post_id ) {
+				$requested_slug = get_post_field( 'post_name', $post_id );
+			}
+
+			$data->post_name = $this->get_unique_template_slug(
+				$requested_slug,
+				$post_id
+			);
+		}
+
 		return $data;
+	}
+
+	/**
+	 * Checks whether the request creates or updates an email template.
+	 *
+	 * @param \WP_REST_Request $request Full details about the request.
+	 * @param \stdClass        $data    Prepared post data.
+	 * @return bool
+	 */
+	private function is_email_template_request( $request, $data ) {
+		$campaign_type = $request->get_param( 'campaign_type' );
+		$meta          = $request->get_param( 'meta' );
+
+		if ( is_object( $meta ) ) {
+			$meta = (array) $meta;
+		}
+
+		if ( empty( $campaign_type ) && is_array( $meta ) ) {
+			$campaign_type = isset( $meta['campaign_type'] ) ? $meta['campaign_type'] : '';
+		}
+
+		if ( empty( $campaign_type ) && isset( $data->meta_input['campaign_type'] ) ) {
+			$campaign_type = $data->meta_input['campaign_type'];
+		}
+
+		$post_id = (int) $request->get_param( 'id' );
+		if ( empty( $campaign_type ) && $post_id ) {
+			$campaign_type = get_post_meta( $post_id, 'campaign_type', true );
+		}
+
+		return 'email_template' === $campaign_type;
+	}
+
+	/**
+	 * Returns the first available template slug, starting suffixes at 1.
+	 *
+	 * @param string $requested_slug Requested template slug or title.
+	 * @param int    $post_id        Current post ID when updating.
+	 * @return string
+	 */
+	private function get_unique_template_slug( $requested_slug, $post_id = 0 ) {
+		global $wpdb;
+
+		$base_slug = sanitize_title( $requested_slug );
+		if ( empty( $base_slug ) ) {
+			return '';
+		}
+
+		$suffix    = 0;
+		$candidate = $base_slug;
+
+		do {
+			$slug_exists = $wpdb->get_var(
+				$wpdb->prepare(
+					"SELECT ID FROM {$wpdb->posts} WHERE post_name = %s AND post_type = %s AND ID != %d LIMIT 1",
+					$candidate,
+					$this->post_type,
+					$post_id
+				)
+			);
+
+			if ( ! $slug_exists ) {
+				return $candidate;
+			}
+
+			++$suffix;
+			$suffix_text = '-' . $suffix;
+			$candidate   = rtrim( substr( $base_slug, 0, 200 - strlen( $suffix_text ) ), '-' ) . $suffix_text;
+		} while ( true );
 	}
 }
