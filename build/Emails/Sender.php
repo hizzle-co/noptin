@@ -199,8 +199,12 @@ class Sender {
 		$headers[] = "Content-Type:$content";
 
 		if ( ! empty( self::$args['unsubscribe_url'] ) ) {
-			$url       = add_query_arg( 'noptin-autosubmit', '1', self::$args['unsubscribe_url'] );
+			$url       = self::$args['unsubscribe_url'];
 			$headers[] = "List-Unsubscribe:<$url>";
+
+			if ( 'https' === wp_parse_url( $url, PHP_URL_SCHEME ) ) {
+				$headers[] = 'List-Unsubscribe-Post: List-Unsubscribe=One-Click';
+			}
 		}
 
 		$headers = implode( "\r\n", $headers );

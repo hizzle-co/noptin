@@ -184,8 +184,24 @@ class Noptin_Page {
 		return noptin_parse_email_content_tags( $content );
 	}
 
+	/**
+	 * Checks whether the current request is an RFC 8058 one-click unsubscribe.
+	 *
+	 * @return bool
+	 */
+	public function is_one_click_unsubscribe() {
+		if ( 'POST' !== strtoupper( $_SERVER['REQUEST_METHOD'] ?? '' ) || 'unsubscribe' !== $this->get_request_action() ) {
+			return false;
+		}
+
+		// RFC 8058 requests originate from mail providers and cannot include a WordPress nonce.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$one_click = isset( $_POST['List-Unsubscribe'] ) ? sanitize_text_field( wp_unslash( $_POST['List-Unsubscribe'] ) ) : '';
+		return 'One-Click' === $one_click;
+	}
+
 	public function maybe_autosubmit_form( $action, $action_info ) {
-		if ( empty( $_GET['noptin-autosubmit'] ) ) {
+		if ( empty( $_GET['noptin-autosubmit'] ) && ! $this->is_one_click_unsubscribe() ) {
 			get_noptin_template(
 				'actions-page-confirm.php',
 				array(
@@ -236,6 +252,11 @@ class Noptin_Page {
 
 		// Provide a way to filter the page.
 		$custom_page = apply_filters( 'noptin_action_page_redirect', $custom_page, $action, $this );
+
+		// RFC 8058 POST requests must not redirect.
+		if ( $this->is_one_click_unsubscribe() ) {
+			$custom_page = false;
+		}
 
 		// Deprecated.
 		do_action( "noptin_pre_page_$action", $custom_page, $this->get_request_recipient(), $this );
