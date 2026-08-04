@@ -648,10 +648,13 @@ class Main {
 		$delay  = ! is_numeric( $delay ) ? 0 : (int) $delay;
 		$status = 'pending';
 		$email  = $trigger->get_subject_email( $subject, $rule, $args );
+		$task_subject = $email;
 
-		if ( self::should_defer_automation_rule_until_confirmation( $email, $rule->get_action_id(), $rule->get_trigger_id() ) ) {
+		$deferred_recipient = self::get_deferred_automation_rule_recipient( $email, $rule, $args );
+		if ( $deferred_recipient ) {
 			$status = 'manual';
 			$delay  = 0;
+			$task_subject = $deferred_recipient;
 		}
 
 		$serialized_args = $trigger->serialize_trigger_args( $args );
@@ -671,7 +674,7 @@ class Main {
 				'hook'           => 'noptin_run_automation_rule',
 				'args'           => $serialized_args,
 				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
-				'subject'        => $trigger->get_subject_email( $subject, $rule, $args ),
+				'subject'        => $task_subject,
 				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
 				'secondary_id'   => $args['automation_rule_secondary_id'] ?? $rule->get_action_id(),
@@ -688,25 +691,50 @@ class Main {
 	}
 
 	/**
-	 * Checks whether an automation rule task should wait for subscriber confirmation.
+	 * Gets the pending recipient an automation rule task should wait for.
 	 *
-	 * @param string $email The email in question.
-	 * @param string $action_id The automation rule action ID.
-	 * @param string $trigger_id The automation rule trigger ID.
-	 * @return bool
+	 * @param string                                               $email The subject email.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule  The automation rule.
+	 * @param array                                                $args  The trigger arguments.
+	 * @return string|false
 	 */
-	private static function should_defer_automation_rule_until_confirmation( $email, $action_id, $trigger_id ) {
-		if ( self::CONFIRMATION_EMAIL_TRIGGER_ID === $trigger_id ) {
+	private static function get_deferred_automation_rule_recipient( $email, $rule, $args ) {
+		if ( self::CONFIRMATION_EMAIL_TRIGGER_ID === $rule->get_trigger_id() ) {
 			return false;
 		}
 
-		// Only defer if the action is in the deferred confirmation list, we have an email, and the subscriber is not confirmed.
-		if ( ! function_exists( 'noptin_get_subscriber' ) || ! $email || ! in_array( $action_id, self::DEFERRED_CONFIRMATION_ACTION_IDS, true ) ) {
+		$action_id = $rule->get_action_id();
+
+		if ( ! function_exists( 'noptin_get_subscriber' ) || ! in_array( $action_id, self::DEFERRED_CONFIRMATION_ACTION_IDS, true ) ) {
 			return false;
 		}
 
-		$subscriber = noptin_get_subscriber( $email );
-		return $subscriber && $subscriber->exists() && 'pending' === $subscriber->get_status();
+		// Sequence actions always run for the subject subscriber.
+		if ( 'add_to_sequence' === $action_id ) {
+			$subscriber = $email ? noptin_get_subscriber( $email ) : false;
+			return $subscriber && $subscriber->exists() && 'pending' === $subscriber->get_status() ? $email : false;
+		}
+
+		// Bulk email senders handle recipient eligibility themselves. Only defer
+		// direct-recipient emails when one of their actual recipients is pending.
+		$campaign = noptin_get_email_campaign_object( $rule->get_action_setting( 'automated_email_id' ) );
+		if ( ! $campaign->exists() || 'manual_recipients' !== $campaign->get_sender() ) {
+			return false;
+		}
+
+		$recipients = noptin_prepare_email_recipients( $campaign->get_recipients() );
+		foreach ( array_keys( $recipients ) as $recipient ) {
+			if ( ! empty( $args['smart_tags'] ) && is_callable( array( $args['smart_tags'], 'replace_in_text_field' ) ) ) {
+				$recipient = $args['smart_tags']->replace_in_text_field( $recipient );
+			}
+
+			$subscriber = noptin_get_subscriber( $recipient );
+			if ( $subscriber && $subscriber->exists() && 'pending' === $subscriber->get_status() ) {
+				return $subscriber->get_email();
+			}
+		}
+
+		return false;
 	}
 
 	/**
