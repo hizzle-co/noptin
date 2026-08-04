@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.3.5 =
+* Fix: Polylang defaults to the default language when new post notifications are set to display posts in any language.
+
 = 4.3.4 =
 * Fix: Unchecking every list now saves an empty array instead of leaving the old subscriber lists unchanged.
 
