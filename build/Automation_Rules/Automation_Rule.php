@@ -638,7 +638,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		// Missing actions can act as pass-through steps when there are child rules.
 		if ( empty( $action ) ) {
 			if ( empty( $this->get_children() ) ) {
-				return false;
+				return new \WP_Error( 'invalid_action', 'Invalid or unregistered action' );
 			}
 
 			$action = new Actions\Pass_Through( $this->get_action_id() );

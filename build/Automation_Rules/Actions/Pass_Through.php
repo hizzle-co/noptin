@@ -36,14 +36,14 @@ class Pass_Through extends Action {
 	 * @inheritdoc
 	 */
 	public function get_name() {
-		return __( 'Continue workflow', 'newsletter-optin-box' );
+		return 'Continue workflow';
 	}
 
 	/**
 	 * @inheritdoc
 	 */
 	public function get_description() {
-		return __( 'Continues to child rules when the configured action is unavailable.', 'newsletter-optin-box' );
+		return 'Continues to child rules when the configured action is unavailable.';
 	}
 
 	/**

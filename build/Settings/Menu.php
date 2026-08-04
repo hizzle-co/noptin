@@ -113,7 +113,14 @@ class Menu {
 					'saved'       => array_merge(
 						get_noptin_options(),
 						array(
-							'custom_fields' => array_values( get_noptin_custom_fields() ),
+							'custom_fields' => array_values(
+								array_filter(
+									get_noptin_custom_fields(),
+									static function ( $field ) {
+										return empty( $field['dynamic'] );
+									}
+								)
+							),
 						)
 					),
 					'brand'       => noptin()->white_label->get_details(),
