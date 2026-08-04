@@ -26,6 +26,7 @@ class Main {
 		add_filter( 'noptin_convert_language_locale_to_slug', array( __CLASS__, 'convert_language_locale_to_slug' ) );
 		add_filter( 'noptin_action_url_home_url', array( __CLASS__, 'filter_home_url' ) );
 		add_filter( 'noptin_woocommerce_order_locale', array( __CLASS__, 'filter_order_locale' ), 10, 2 );
+		add_filter( 'noptin_post_type_get_all_filters', array( __CLASS__, 'post_type_get_all_filters' ) );
 	}
 
 	/**
@@ -156,5 +157,22 @@ class Main {
 		}
 
 		return $locale;
+	}
+
+	/**
+	 * Filters the query arguments for a post type.
+	 *
+	 * An empty language filter means all languages in Noptin, while Polylang
+	 * otherwise defaults secondary queries to the current language.
+	 *
+	 * @param array $filters Query arguments.
+	 * @return array
+	 */
+	public static function post_type_get_all_filters( $filters ) {
+		if ( empty( $filters['lang'] ) ) {
+			$filters['lang'] = 'all';
+		}
+
+		return $filters;
 	}
 }
