@@ -101,6 +101,7 @@ class Generic_Post_Type extends Post_Type {
 					'options'              => noptin_get_available_languages(),
 					'canSelectPlaceholder' => true,
 					'placeholder'          => __( 'Any', 'newsletter-optin-box' ),
+					'show_by_default'      => true,
 				),
 				'author'        => array(
 					'label'       => __( 'Author', 'newsletter-optin-box' ),
