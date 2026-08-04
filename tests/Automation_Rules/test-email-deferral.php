@@ -66,27 +66,32 @@ class Test_Email_Deferral extends Actions_Test_Case {
 		$campaign = new Email(
 			array(
 				'author'  => 1,
-				'type'    => 'newsletter',
+				'type'    => 'automation',
 				'status'  => 'publish',
 				'name'    => 'Automation email deferral test',
 				'subject' => 'Test subject',
 				'content' => 'Test content',
 				'options' => array(
-					'email_sender'   => $sender,
-					'recipients'     => $recipients,
-					'email_type'     => 'normal',
-					'content_normal' => 'Test content',
-					'template'       => 'paste',
+					'automation_type' => 'post_notifications',
+					'email_sender'    => $sender,
+					'recipients'      => $recipients,
+					'email_type'      => 'normal',
+					'content_normal'  => 'Test content',
+					'template'        => 'paste',
 				),
 			)
 		);
 		$campaign->save();
 		$this->campaign_ids[] = $campaign->id;
 
-		return $this->create_rule(
+		$rule = $this->create_rule(
 			'email',
 			array( 'automated_email_id' => $campaign->id )
 		);
+		$rule->set_delay( HOUR_IN_SECONDS );
+		$rule->save();
+
+		return $rule;
 	}
 
 	private function create_pending_subscriber( $email ) {
