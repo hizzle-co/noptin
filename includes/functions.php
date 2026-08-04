@@ -732,7 +732,7 @@ function noptin_has_alk() {
  *
  * @since 1.2.3
  * @see log_noptin_message
- * @return array.
+ * @return array
  */
 function get_logged_noptin_messages() {
 

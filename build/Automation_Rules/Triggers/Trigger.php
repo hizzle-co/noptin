@@ -556,14 +556,10 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 				continue;
 			}
 
-			// Retrieve the action.
-			$action = $rule->get_action();
-			if ( ! empty( $action ) ) {
-				$result = $rule->maybe_run( $subject, $this, $action, $args );
+			$result = $rule->maybe_run( $subject, $this, $rule->get_action(), $args );
 
-				if ( is_wp_error( $result ) ) {
-					log_noptin_message( $result->get_error_message(), 'error' );
-				}
+			if ( is_wp_error( $result ) ) {
+				log_noptin_message( $result->get_error_message(), 'error' );
 			}
 		}
 	}

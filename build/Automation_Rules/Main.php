@@ -132,7 +132,11 @@ class Main {
 		$action = $rule->get_action();
 
 		if ( empty( $action ) ) {
-			throw new \Exception( 'Invalid or unregistered action' );
+			if ( empty( $rule->get_children() ) ) {
+				throw new \Exception( 'Invalid or unregistered action' );
+			}
+
+			$action = new Actions\Pass_Through( $rule->get_action_id() );
 		}
 
 		// Unserialize the trigger arguments.

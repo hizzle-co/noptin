@@ -631,10 +631,17 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	 */
 	public function maybe_run( $subject, $trigger, $action, $args ) {
 
-		// todo: Find a way to continue even if there's no action.
-		// This allows us to run child rules even if the parent rule has no action or an invalid action.
-		if ( empty( $trigger ) || empty( $action ) ) {
+		if ( empty( $trigger ) ) {
 			return false;
+		}
+
+		// Missing actions can act as pass-through steps when there are child rules.
+		if ( empty( $action ) ) {
+			if ( empty( $this->get_children() ) ) {
+				return false;
+			}
+
+			$action = new Actions\Pass_Through( $this->get_action_id() );
 		}
 
 		// Check if the rule is valid.
