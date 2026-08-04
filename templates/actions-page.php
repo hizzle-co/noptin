@@ -153,10 +153,12 @@
 					font-size: 14px;
 				}
 			}
+
+			<?php echo strip_tags( get_noptin_option( 'actions_page_css', '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
         </style>
     </head>
 
-    <body>
+    <body id="noptin-actions-body">
 		<div class="container">
 		    <?php echo do_shortcode( '[noptin_action_page]' ); ?>
 		</div>

@@ -277,6 +277,12 @@ class Menu {
 						'default'     => '#1a82e2',
 						'description' => __( 'Used as the link color and button background.', 'newsletter-optin-box' ),
 					),
+					'actions_page_css' => array(
+						'el'          => 'textarea',
+						'label'       => __( 'Actions Page CSS', 'newsletter-optin-box' ),
+						'placeholder' => '#noptin-actions-body { color: #1a202c; }',
+						'description' => __( 'Custom CSS for subscription confirmation, unsubscribe, and other action pages.', 'newsletter-optin-box' ),
+					),
 				),
 			),
 

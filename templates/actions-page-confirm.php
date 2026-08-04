@@ -97,10 +97,12 @@
 					font-size: 14px;
 				}
 			}
+
+			<?php echo strip_tags( get_noptin_option( 'actions_page_css', '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
         </style>
     </head>
 
-    <body>
+    <body id="noptin-actions-body">
 		<div class="container">
 		    <div class="icon">✓</div>
 			<h1><?php echo esc_html( $action_label ); ?></h1>
