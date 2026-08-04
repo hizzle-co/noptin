@@ -648,13 +648,11 @@ class Main {
 		$delay  = ! is_numeric( $delay ) ? 0 : (int) $delay;
 		$status = 'pending';
 		$email  = $trigger->get_subject_email( $subject, $rule, $args );
-		$task_subject = $email;
 
 		$deferred_recipient = self::get_deferred_automation_rule_recipient( $email, $rule, $args );
 		if ( $deferred_recipient ) {
 			$status = 'manual';
 			$delay  = 0;
-			$task_subject = $deferred_recipient;
 		}
 
 		$serialized_args = $trigger->serialize_trigger_args( $args );
@@ -674,11 +672,12 @@ class Main {
 				'hook'           => 'noptin_run_automation_rule',
 				'args'           => $serialized_args,
 				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
-				'subject'        => $task_subject,
+				'subject'        => $email,
 				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
 				'secondary_id'   => $args['automation_rule_secondary_id'] ?? $rule->get_action_id(),
 				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
+				'metadata'       => $deferred_recipient ? array( 'deferred_recipient' => $deferred_recipient ) : array(),
 			)
 		);
 
@@ -694,8 +693,8 @@ class Main {
 	 * Gets the pending recipient an automation rule task should wait for.
 	 *
 	 * @param string                                               $email The subject email.
-	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule  The automation rule.
-	 * @param array                                                $args  The trigger arguments.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $rule The automation rule.
+	 * @param array                                                $args The trigger arguments.
 	 * @return string|false
 	 */
 	private static function get_deferred_automation_rule_recipient( $email, $rule, $args ) {

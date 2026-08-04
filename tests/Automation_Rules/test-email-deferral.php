@@ -52,7 +52,8 @@ class Test_Email_Deferral extends Actions_Test_Case {
 		$task = $this->schedule_rule( $rule, 'author@example.com' );
 
 		$this->assertSame( 'manual', $task->get_status() );
-		$this->assertSame( 'subscriber@example.com', $task->get_subject() );
+		$this->assertSame( 'author@example.com', $task->get_subject() );
+		$this->assertSame( 'subscriber@example.com', $task->get_meta( 'deferred_recipient' ) );
 
 		$subscriber = noptin_get_subscriber( 'subscriber@example.com' );
 		$subscriber->set_status( 'subscribed' );

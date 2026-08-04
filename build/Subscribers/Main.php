@@ -400,9 +400,11 @@ class Main {
 
 		$tasks = \Hizzle\Noptin\Tasks\Main::query(
 			array(
-				'hook'    => 'noptin_run_automation_rule',
-				'status'  => 'manual',
-				'subject' => $subscriber->get_email(),
+				'hook'           => 'noptin_run_automation_rule',
+				'status'         => 'manual',
+				'search'         => $subscriber->get_email(),
+				'search_columns' => array( 'subject', 'metadata' ),
+				'number'         => -1,
 			)
 		);
 
@@ -412,6 +414,13 @@ class Main {
 
 		/** @var \Hizzle\Noptin\Tasks\Task $task */
 		foreach ( $tasks as $task ) {
+			$deferred_recipient = $task->get_meta( 'deferred_recipient' );
+			$task_recipient     = $deferred_recipient ? $deferred_recipient : $task->get_subject();
+
+			if ( strtolower( (string) $task_recipient ) !== strtolower( $subscriber->get_email() ) ) {
+				continue;
+			}
+
 			$rule = noptin_get_automation_rule( $task->get_primary_id() );
 
 			if ( is_wp_error( $rule ) || ! $rule->exists() ) {
