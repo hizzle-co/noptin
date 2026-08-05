@@ -410,6 +410,15 @@ class Table extends \WP_List_Table {
 			);
 		}
 
+		// Display the campaign ID for automated emails.
+		if ( 'automation' === $this->email_type->type ) {
+			$title .= sprintf(
+				'<div><span class="noptin-strong">%s</span>: <span>%s</span></div>',
+				esc_html__( 'Campaign ID', 'newsletter-optin-box' ),
+				esc_html( $item->id )
+			);
+		}
+
 		if ( 'newsletter' === $this->email_type->type ) {
 			// Parent newsletter.
 			if ( $item->parent_id ) {

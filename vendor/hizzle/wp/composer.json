@@ -1,6 +1,6 @@
 {
 	"name": "hizzle/wp",
-	"version": "1.4.14",
+	"version": "1.4.15",
 	"description": "WordPress compatibility layer for Hizzle JS packages",
 	"keywords": [
 		"wordpress",
