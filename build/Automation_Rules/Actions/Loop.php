@@ -9,6 +9,7 @@ namespace Hizzle\Noptin\Automation_Rules\Actions;
 
 defined( 'ABSPATH' ) || exit;
 
+use Hizzle\Noptin\Objects\People;
 use Hizzle\Noptin\Objects\Store;
 
 /**
@@ -165,13 +166,26 @@ class Loop extends Action {
 			}
 
 			$settings['loop_over']['options'][ $collection ] = $config['label'];
+			$collection_object                              = $this->get_collection( $collection );
+			$filters                                        = $config['filters'] ?? array();
+			$uses_sender_filters                             = $this->uses_email_sender_filters( $collection_object );
+
+			// People collections already define their filters for their email sender.
+			if ( $uses_sender_filters ) {
+				/** @var People $collection_object */
+				$filters = $collection_object->get_sender_settings();
+			}
 
 			// Add general filters.
-			if ( ! empty( $config['filters'] ) ) {
-				foreach ( (array) $config['filters'] as $key => $filter ) {
+			if ( ! empty( $filters ) ) {
+				foreach ( (array) $filters as $key => $filter ) {
 					// This only makes sense for emails.
 					if ( 'since_last_send' === $key ) {
 						continue;
+					}
+
+					if ( $uses_sender_filters ) {
+						$filter = $this->prepare_sender_filter_setting( $filter );
 					}
 
 					$settings[ $collection . '.' . $key ] = array_merge(
@@ -208,6 +222,39 @@ class Loop extends Action {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Converts an email sender field into an automation action setting.
+	 *
+	 * Email sender fields use `type` as their control name, whereas the action
+	 * editor uses `el` to distinguish individual settings from sections.
+	 *
+	 * @param array $setting Email sender setting.
+	 * @return array
+	 */
+	private function prepare_sender_filter_setting( $setting ) {
+		if ( ! is_array( $setting ) || ! empty( $setting['el'] ) || empty( $setting['type'] ) ) {
+			return $setting;
+		}
+
+		$input_types   = array(
+			'toggle',
+			'switch',
+			'checkbox',
+			'checkbox_alt',
+			'checkbox_real',
+			'text',
+			'number',
+			'email',
+			'tel',
+			'date',
+			'color',
+			'image',
+		);
+		$setting['el'] = in_array( $setting['type'], $input_types, true ) ? 'input' : $setting['type'];
+
+		return $setting;
 	}
 
 	/**
@@ -336,6 +383,11 @@ class Loop extends Action {
 		$max     = max( 0, (int) $rule->get_action_setting( 'max_iterations' ) );
 		$filters = $this->prepare_collection_filters( $rule->get_action_setting( $collection->type ), $args );
 
+		if ( $this->uses_email_sender_filters( $collection ) ) {
+			$this->loop_people_collection( $subject, $trigger, $body, $rule, $args, $collection, $filters, $max );
+			return;
+		}
+
 		// Each collection can have its own pagination/limit query key,
 		// so we set the common ones.
 		if ( $max > 0 ) {
@@ -402,6 +454,126 @@ class Loop extends Action {
 
 			++$processed;
 		}
+	}
+
+	/**
+	 * Checks whether a collection should use its email sender filters.
+	 *
+	 * @param mixed $collection Collection object.
+	 * @return bool
+	 */
+	private function uses_email_sender_filters( $collection ) {
+		return $collection instanceof People && 'person' === $collection->object_type && ! empty( $collection->email_sender_options );
+	}
+
+	/**
+	 * Runs the loop body over a collection of people in batches.
+	 *
+	 * @param mixed                                            $subject The subject.
+	 * @param \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger The trigger.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule  $body Body rule.
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule  $rule Loop rule.
+	 * @param array                                            $args Trigger args.
+	 * @param People                                           $collection People collection.
+	 * @param array                                            $filters Sender filters.
+	 * @param int                                              $max Maximum iterations.
+	 */
+	private function loop_people_collection( $subject, $trigger, $body, $rule, $args, $collection, $filters, $max ) {
+		$campaign   = new \Hizzle\Noptin\Emails\Email( 0 );
+		$batch_size = max( 1, (int) apply_filters( 'noptin_bulk_email_batch_size', 100, $campaign ) );
+		$offset     = 0;
+		$processed  = 0;
+		$seen       = array();
+		$prefix     = $this->prepend_merge_tag_prefix( $rule, $collection->type );
+		$action     = $body->get_action();
+
+		while ( 0 === $max || $processed < $max ) {
+			$batch = $collection->get_batched_newsletter_recipients( $filters, $campaign, $batch_size, $offset );
+			$batch = apply_filters( 'noptin_' . $collection->type . '_newsletter_recipients', $batch, $campaign, $filters, $batch_size, $offset );
+
+			if ( ! is_array( $batch ) && ! $batch instanceof \Traversable ) {
+				throw new \Exception( sprintf( 'Failed to retrieve items for collection type: %s', esc_html( $collection->type ) ) );
+			}
+
+			$batch     = is_array( $batch ) ? $batch : iterator_to_array( $batch, false );
+			$batch     = array_values( array_unique( $batch, SORT_REGULAR ) );
+			$batch_len = count( $batch );
+			$new_items = 0;
+
+			if ( 0 === $batch_len ) {
+				break;
+			}
+
+			foreach ( $batch as $item_id ) {
+				$seen_key = is_scalar( $item_id ) ? (string) $item_id : md5( maybe_serialize( $item_id ) );
+
+				if ( isset( $seen[ $seen_key ] ) ) {
+					continue;
+				}
+
+				$seen[ $seen_key ] = true;
+				++$new_items;
+
+				$person = $collection->get( $item_id );
+				if ( ! $person || ! $person->exists() || ! $this->can_email_person( $campaign, $person, $filters, $collection->type ) ) {
+					continue;
+				}
+
+				$body->maybe_run(
+					$subject,
+					$trigger,
+					$action,
+					array_merge(
+						$args,
+						array(
+							'provided_collections' => array_merge(
+								$args['provided_collections'] ?? array(),
+								array( $prefix => $person )
+							),
+							'extra_args'           => array_merge(
+								$args['extra_args'] ?? array(),
+								array( $this->prepend_merge_tag_prefix( $rule, 'index' ) => $processed )
+							),
+						)
+					)
+				);
+
+				++$processed;
+				if ( $max > 0 && $processed >= $max ) {
+					break 2;
+				}
+			}
+
+			$offset += $batch_size;
+
+			// The base People implementation does not paginate; avoid repeating its results.
+			if ( $batch_len < $batch_size || 0 === $new_items ) {
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Checks whether a person matches the sender's per-recipient filters.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign Dummy campaign.
+	 * @param \Hizzle\Noptin\Objects\Person $person Person being checked.
+	 * @param array $options Sender options.
+	 * @param string $collection_type Collection type.
+	 * @return bool
+	 */
+	private function can_email_person( $campaign, $person, $options, $collection_type ) {
+		$locale = $options['locale'] ?? ( $options['user_locale'] ?? '' );
+
+		if ( ! empty( $locale ) && $person->get( 'locale' ) !== $locale ) {
+			return false;
+		}
+
+		if ( ! apply_filters( 'noptin_can_email_recipient_for_bulk_campaign', true, $person->get_email(), $options, $campaign ) ) {
+			return false;
+		}
+
+		return apply_filters( 'noptin_can_email_' . $collection_type . '_for_campaign', true, $options, $person->external, $campaign, $person );
 	}
 
 	/**

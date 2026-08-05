@@ -291,9 +291,10 @@ class Main {
 	private static function get_field_manager_fields() {
 		$fields   = array();
 		$existing = Records::subscriber_fields( true );
+		$skip     = Fields_REST_API::get_skip_fields();
 
 		foreach ( $existing as $merge_tag => $field ) {
-			if ( in_array( $merge_tag, Fields_REST_API::SKIP_FIELDS, true ) ) {
+			if ( in_array( $merge_tag, $skip, true ) ) {
 				continue;
 			}
 

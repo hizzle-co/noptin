@@ -25,6 +25,20 @@ class Fields_REST_API {
 	const SKIP_FIELDS    = array( 'status', 'language' );
 
 	/**
+	 * Returns fields that are not supported by the field manager.
+	 *
+	 * @return string[]
+	 */
+	public static function get_skip_fields() {
+		$checkbox_fields = wp_list_pluck(
+			wp_list_filter( get_noptin_custom_fields(), array( 'type' => 'checkbox' ) ),
+			'merge_tag'
+		);
+
+		return array_merge( self::SKIP_FIELDS, $checkbox_fields );
+	}
+
+	/**
 	 * Registers REST routes.
 	 */
 	public static function init() {
@@ -637,7 +651,7 @@ class Fields_REST_API {
 			return new \WP_Error( 'noptin_missing_field', 'Field is required', array( 'status' => 400 ) );
 		}
 
-		if ( in_array( $field, self::SKIP_FIELDS, true ) ) {
+		if ( in_array( $field, self::get_skip_fields(), true ) ) {
 			return new \WP_Error( 'noptin_invalid_field', 'Invalid field.', array( 'status' => 400 ) );
 		}
 

@@ -175,12 +175,13 @@ class Records extends \Hizzle\Noptin\Objects\Collection {
 			// Newsletter sent.
 			array(
 				'noptin_newsletter_sent' => array(
-					'label'       => sprintf(
+					'label'               => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Newsletter Sent', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => __( 'When a newsletter is sent', 'newsletter-optin-box' ),
+					'description'         => __( 'When a newsletter is sent', 'newsletter-optin-box' ),
+					'has_wizard_settings' => true,
 				),
 			)
 		);

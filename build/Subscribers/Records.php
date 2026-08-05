@@ -1442,8 +1442,10 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		);
 
 		// Field Manager.
+		$skip_fields = Fields_REST_API::get_skip_fields();
+
 		foreach ( self::subscriber_fields( true ) as $merge_tag => $field ) {
-			if ( in_array( $merge_tag, Fields_REST_API::SKIP_FIELDS, true ) ) {
+			if ( in_array( $merge_tag, $skip_fields, true ) ) {
 				continue;
 			}
 
