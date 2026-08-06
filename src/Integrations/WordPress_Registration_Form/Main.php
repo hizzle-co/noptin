@@ -73,8 +73,40 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 		// UsersWP
 		add_action( 'uwp_template_fields', array( $this, 'uwp_output_checkbox' ), $this->priority );
 
+		// ProfilePress.
+		add_filter( 'ppress_registration_form_field_structure', array( $this, 'ppress_output_checkbox' ), $this->priority );
+
 		// BuddyPress
 		add_action( 'bp_before_registration_submit_buttons', array( $this, 'output_checkbox' ), 1000 );
+	}
+
+	/**
+	 * Displays a subscription checkbox on ProfilePress registration forms.
+	 *
+	 * @param string $form The registration form fields.
+	 * @return string
+	 */
+	public function ppress_output_checkbox( $form ) {
+		$checkbox = $this->get_checkbox_markup();
+
+		if ( empty( $checkbox ) ) {
+			return $form;
+		}
+
+		$pattern = '/<div\b[^>]*class=(["\'])[^"\']*\bpp-form-submit-button-wrap\b[^"\']*\1[^>]*>/i';
+
+		if ( preg_match( $pattern, $form ) ) {
+			return preg_replace_callback(
+				$pattern,
+				static function ( $matches ) use ( $checkbox ) {
+					return $checkbox . PHP_EOL . $matches[0];
+				},
+				$form,
+				1
+			);
+		}
+
+		return $form . PHP_EOL . $checkbox;
 	}
 
 	/**
@@ -125,7 +157,9 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	 */
 	public function before_checkbox_wrapper() {
 
-		if ( did_action( 'uwp_template_fields' ) ) {
+		if ( doing_filter( 'ppress_registration_form_field_structure' ) ) {
+			echo '<div class="pp-checkbox-wrap pp-single-checkbox">';
+		} elseif ( did_action( 'uwp_template_fields' ) ) {
 			echo '<div class="uwp_form_checkbox_row uwp_clear">';
 		} elseif ( doing_action( 'woocommerce_register_form' ) ) {
 			echo "<p class='noptin_registration_form_optin_checkbox_wrapper woocommerce-form-row form-row'>";
@@ -140,8 +174,8 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	 */
 	public function after_checkbox_wrapper() {
 
-		// UWP.
-		if ( did_action( 'uwp_template_fields' ) ) {
+		// UWP and ProfilePress.
+		if ( did_action( 'uwp_template_fields' ) || doing_filter( 'ppress_registration_form_field_structure' ) ) {
 			echo '</div>';
 			return;
 		}
