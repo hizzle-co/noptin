@@ -70,6 +70,16 @@ class Main {
 			return;
 		}
 
+		/**
+		 * Fires before Noptin prepares and preloads the form editor.
+		 *
+		 * Integrations can initialize auto-drafts, copy translation data,
+		 * assign languages, or connect translation groups here.
+		 *
+		 * @param \WP_Post $post Form being edited.
+		 */
+		do_action( 'noptin_prepare_form_editor_post', $post );
+
 		add_filter( 'admin_body_class', 'noptin_add_block_editor_body_class' );
 
 		$config = include plugin_dir_path( __DIR__ ) . 'assets/js/form-editor.asset.php';
@@ -82,16 +92,20 @@ class Main {
 		);
 
 		// Localize the script.
+		$params = array(
+			'form'            => $post->ID,
+			'brand'           => noptin()->white_label->get_details(),
+			'settings'        => self::sidebar_fields(),
+			'templates'       => self::get_templates(),
+			'default_form'    => include plugin_dir_path( __FILE__ ) . 'default-form.php',
+			'preview_url'     => site_url( '/', 'admin' ),
+			'rest_query_args' => apply_filters( 'noptin_form_editor_rest_query_args', array(), $post ),
+		);
+
 		$params = apply_filters(
 			'noptin_form_editor_data',
-			array(
-				'form'         => $post->ID,
-				'brand'        => noptin()->white_label->get_details(),
-				'settings'     => self::sidebar_fields(),
-				'templates'    => self::get_templates(),
-				'default_form' => include plugin_dir_path( __FILE__ ) . 'default-form.php',
-				'preview_url'  => site_url( '/', 'admin' ),
-			)
+			$params,
+			$post
 		);
 
 		// Check if it was created by the legacy editor.
