@@ -27,6 +27,147 @@ class Main {
 		add_filter( 'noptin_action_url_home_url', array( __CLASS__, 'filter_home_url' ) );
 		add_filter( 'noptin_woocommerce_order_locale', array( __CLASS__, 'filter_order_locale' ), 10, 2 );
 		add_filter( 'noptin_post_type_get_all_filters', array( __CLASS__, 'post_type_get_all_filters' ) );
+		add_filter( 'noptin_form_editor_rest_query_args', array( __CLASS__, 'form_editor_rest_query_args' ) );
+
+		add_action( 'noptin_prepare_form_editor_post', array( __CLASS__, 'prepare_new_form_translation' ) );
+		add_action( 'rest_after_insert_noptin-form', array( __CLASS__, 'set_rest_api_language' ), 10, 3 );
+	}
+
+	/**
+	 * Prepare the auto-draft created by WordPress for a new form translation.
+	 *
+	 * Noptin uses its own editor, so Polylang's normal block-editor copy routine
+	 * does not copy the form state before Noptin bootstraps the editor.
+	 *
+	 * @param \WP_Post $post Form editor post.
+	 */
+	public static function prepare_new_form_translation( $post ) {
+		global $pagenow;
+
+		if (
+			'post-new.php' !== $pagenow ||
+			! $post instanceof \WP_Post ||
+			'noptin-form' !== $post->post_type ||
+			empty( $_GET['_wpnonce'] ) ||
+			empty( $_GET['from_post'] ) ||
+			empty( $_GET['new_lang'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'new-post-translation' )
+		) {
+			return;
+		}
+
+		$from_post = absint( $_GET['from_post'] );
+		$language  = sanitize_key( wp_unslash( $_GET['new_lang'] ) );
+		$source    = get_post( $from_post );
+
+		if (
+			! $source instanceof \WP_Post ||
+			'noptin-form' !== $source->post_type ||
+			! current_user_can( 'edit_post', $source->ID ) ||
+			! current_user_can( 'edit_post', $post->ID )
+		) {
+			return;
+		}
+
+		$source_form = new \Hizzle\Noptin\Forms\Form( $source->ID );
+		$state       = $source_form->get_all_data();
+		$form_type   = isset( $state['optinType'] ) ? $state['optinType'] : get_post_meta( $source->ID, '_noptin_optin_type', true );
+
+		unset( $state['id'], $state['optinType'], $state['optinStatus'] );
+
+		update_post_meta( $post->ID, '_noptin_state', $state );
+		update_post_meta( $post->ID, '_noptin_optin_type', $form_type );
+		wp_update_post(
+			array(
+				'ID'           => $post->ID,
+				'post_title'   => $source->post_title,
+				'post_content' => $source->post_content,
+				'post_status'  => 'draft',
+			)
+		);
+
+		// Keep the global post in sync. Noptin passes this object to its editor
+		// bootstrap, and its FormName component generates a new title whenever
+		// the post is still an auto-draft.
+		$post->post_title   = $source->post_title;
+		$post->post_content = $source->post_content;
+		$post->post_status  = 'draft';
+
+		self::connect_translation( $post->ID, $from_post, $language );
+	}
+
+	/**
+	 * Adds Polylang's translation context to form editor REST writes.
+	 *
+	 * @param array $args REST query arguments.
+	 * @return array
+	 */
+	public static function form_editor_rest_query_args( $args ) {
+		foreach ( array( 'new_lang', 'from_post' ) as $param ) {
+			if ( isset( $_GET[ $param ] ) ) {
+				$args[ 'noptin_' . $param ] = sanitize_text_field( wp_unslash( $_GET[ $param ] ) );
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Assign and connect a form translation created through the REST API.
+	 *
+	 * @param \WP_Post         $post     The inserted/updated post object.
+	 * @param \WP_REST_Request $request  The REST request.
+	 * @param bool             $creating True on insert, false on update.
+	 */
+	public static function set_rest_api_language( $post, $request, $creating ) {
+		$language  = sanitize_key( (string) $request->get_param( 'noptin_new_lang' ) );
+		$from_post = absint( $request->get_param( 'noptin_from_post' ) );
+
+		if (
+			empty( $language ) ||
+			empty( $from_post ) ||
+			'noptin-form' !== get_post_type( $from_post ) ||
+			! current_user_can( 'edit_post', $from_post )
+		) {
+			return;
+		}
+
+		self::connect_translation( $post->ID, $from_post, $language );
+	}
+
+	/**
+	 * Assign a language to a form and add it to a translation group.
+	 *
+	 * @param int    $post_id   Translated form ID.
+	 * @param int    $from_post Source form ID.
+	 * @param string $language  Target language slug.
+	 */
+	private static function connect_translation( $post_id, $from_post, $language ) {
+		if (
+			! function_exists( 'pll_set_post_language' ) ||
+			! function_exists( 'pll_get_post_language' ) ||
+			! function_exists( 'pll_get_post_translations' ) ||
+			! function_exists( 'pll_save_post_translations' )
+		) {
+			return;
+		}
+
+		pll_set_post_language( $post_id, $language );
+
+		if ( pll_get_post_language( $post_id ) !== $language ) {
+			return;
+		}
+
+		$source_language = pll_get_post_language( $from_post );
+
+		if ( empty( $source_language ) ) {
+			return;
+		}
+
+		$translations                     = pll_get_post_translations( $from_post );
+		$translations[ $source_language ] = $from_post;
+		$translations[ $language ]        = $post_id;
+		pll_save_post_translations( $translations );
 	}
 
 	/**
