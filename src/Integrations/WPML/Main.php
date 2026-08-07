@@ -26,57 +26,26 @@ class Main {
 		add_filter( 'noptin_convert_language_locale_to_slug', array( __CLASS__, 'convert_language_locale_to_slug' ) );
 		add_filter( 'noptin_woocommerce_order_locale', array( __CLASS__, 'filter_order_locale' ), 10, 2 );
 		add_filter( 'noptin_post_type_get_all_filters', array( __CLASS__, 'post_type_get_all_filters' ) );
+		add_filter( 'noptin_form_editor_rest_query_args', array( __CLASS__, 'form_editor_rest_query_args' ) );
 
-		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'add_form_editor_language_middleware' ), 100 );
 		add_action( 'admin_init', array( __CLASS__, 'maybe_save_post_language_data' ) );
 		add_action( 'rest_after_insert_noptin-form', array( __CLASS__, 'set_rest_api_language' ), 10, 3 );
 	}
 
 	/**
-	 * Registers an apiFetch middleware on the form editor so that WPML language
-	 * params (lang, trid, source_lang) present in the page URL are forwarded as
-	 * query-string params on every non-GET REST request for noptin-form posts.
-	 * This ensures WPML can read $_GET['lang'] / $_GET['source_lang'] during
-	 * save_post when the block editor saves via the REST API.
+	 * Adds WPML's translation context to form editor REST writes.
+	 *
+	 * @param array $args REST query arguments.
+	 * @return array
 	 */
-	public static function add_form_editor_language_middleware() {
-		if ( ! wp_script_is( 'noptin-form-editor', 'enqueued' ) ) {
-			return;
-		}
-
-		$args = array();
-
+	public static function form_editor_rest_query_args( $args ) {
 		foreach ( array( 'lang', 'trid', 'source_lang' ) as $param ) {
 			if ( isset( $_GET[ $param ] ) ) {
 				$args[ 'noptin_' . $param ] = sanitize_text_field( wp_unslash( urldecode( $_GET[ $param ] ) ) );
 			}
 		}
 
-		if ( empty( $args ) ) {
-			return;
-		}
-
-		wp_add_inline_script(
-			'noptin-form-editor',
-			sprintf(
-				"( function() {
-				var writeArgs = %s;
-				wp.apiFetch.use( function( options, next ) {
-					var method = ( options.method || 'GET' ).toUpperCase();
-					if (
-						options.path &&
-						options.path.indexOf( '/noptin-form' ) !== -1 &&
-						method !== 'GET'
-					) {
-						options = Object.assign( {}, options, { path: wp.url.addQueryArgs( options.path, writeArgs ) } );
-					}
-					return next( options );
-				} );
-				} )();",
-				wp_json_encode( $args )
-			),
-			'after'
-		);
+		return $args;
 	}
 
 	/**
