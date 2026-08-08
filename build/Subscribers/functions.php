@@ -811,9 +811,9 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 	}
 
 	$defaults = get_default_noptin_subscriber_double_optin_email();
-	$content  = get_noptin_option( 'double_optin_email_body', $defaults['email_body'] );
+	$content  = get_noptin_option( 'double_optin_email_body', $defaults['email_body'], true );
 	$content .= '<p>[[button url="[[confirmation_url]]" text="[[confirmation_text]]"]]</p>';
-	$content .= get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'] );
+	$content .= get_noptin_option( 'double_optin_after_cta_text', $defaults['after_cta_text'], true );
 
 	// Handle custom merge tags.
 	$url  = $subscriber->get_confirm_subscription_url();
@@ -822,7 +822,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 	$merge_tags = array(
 		'confirmation_link' => $link,
 		'confirmation_url'  => $url,
-		'confirmation_text' => get_noptin_option( 'double_optin_cta_text', $defaults['cta_text'] ),
+		'confirmation_text' => get_noptin_option( 'double_optin_cta_text', $defaults['cta_text'], true ),
 	);
 
 	foreach ( $merge_tags as $key => $value ) {
@@ -835,8 +835,8 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 		'type'        => 'normal',
 		'content'     => wpautop( trim( $content ) ),
 		'template'    => get_noptin_option( 'email_template', 'paste' ),
-		'heading'     => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'] ),
-		'footer_text' => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'] ),
+		'heading'     => get_noptin_option( 'double_optin_hero_text', $defaults['hero_text'], true ),
+		'footer_text' => get_noptin_option( 'double_optin_permission_text', $defaults['permission_text'], true ),
 	);
 
 	\Hizzle\Noptin\Emails\Main::init_current_email_recipient(
@@ -850,7 +850,7 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 
 	$generator     = new \Hizzle\Noptin\Emails\Generate\Generator();
 	$email_body    = $generator->generate( $args );
-	$email_subject = noptin_parse_email_subject_tags( get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'] ) );
+	$email_subject = noptin_parse_email_subject_tags( get_noptin_option( 'double_optin_email_subject', $defaults['email_subject'], true ) );
 
 	do_action( 'noptin_unregister_temporary_merge_tags' );
 
