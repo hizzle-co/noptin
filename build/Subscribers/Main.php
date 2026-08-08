@@ -317,11 +317,13 @@ class Main {
 	 */
 	public static function filter_admin_tools( $tools ) {
 		$tools['send_confirmation_emails'] = array(
-			'name'    => __( 'Send Confirmation Emails', 'newsletter-optin-box' ),
-			'button'  => __( 'Send', 'newsletter-optin-box' ),
-			'desc'    => __( 'Send confirmation emails to all unconfirmed subscribers.', 'newsletter-optin-box' ),
-			'url'     => wp_nonce_url( add_query_arg( 'noptin_admin_action', 'noptin_send_confirmation_emails' ), 'noptin-send-confirmation-emails' ),
-			'confirm' => __( 'Are you sure you want to send confirmation emails to all unconfirmed subscribers?', 'newsletter-optin-box' ),
+			'type'        => 'background',
+			'title'       => __( 'Send Confirmation Emails', 'newsletter-optin-box' ),
+			'description' => __( 'Send confirmation emails to all unconfirmed subscribers.', 'newsletter-optin-box' ),
+			'icon'        => 'email-alt',
+			'ajax_action' => 'noptin_send_confirmation_emails',
+			'button'      => array( 'text' => __( 'Send', 'newsletter-optin-box' ) ),
+			'confirm'     => __( 'Are you sure you want to send confirmation emails to all unconfirmed subscribers?', 'newsletter-optin-box' ),
 		);
 
 		return $tools;
@@ -331,16 +333,6 @@ class Main {
 	 * Sends confirmation emails to unconfirmed subscribers.
 	 */
 	public static function send_confirmation_emails() {
-
-		// Only admins should be able to do this.
-		if ( ! current_user_can_manage_noptin() || empty( $_GET['_wpnonce'] ) ) {
-			return;
-		}
-
-		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ), 'noptin-send-confirmation-emails' ) ) {
-			return;
-		}
-
 		// Fetch unconfirmed subscribers.
 		$subscribers = noptin_get_subscribers(
 			array(
@@ -351,8 +343,7 @@ class Main {
 		);
 
 		if ( empty( $subscribers ) ) {
-			\Hizzle\Noptin\Admin\Main::show_success( 'No unconfirmed subscribers found.' );
-			return;
+			\Hizzle\Noptin\Admin\Tools::send_response( true, 'No unconfirmed subscribers found.' );
 		}
 
 		// Schedule sending of confirmation emails.
@@ -365,12 +356,12 @@ class Main {
 			);
 		}
 
-		\Hizzle\Noptin\Admin\Main::show_success(
-			sprintf(
-				'Scheduled sending of confirmation emails to %s unconfirmed subscribers.',
-				count( $subscribers )
-			)
+		$message = sprintf(
+			'Scheduled sending of confirmation emails to %s unconfirmed subscribers.',
+			count( $subscribers )
 		);
+
+		\Hizzle\Noptin\Admin\Tools::send_response( true, $message );
 	}
 
 	/**
