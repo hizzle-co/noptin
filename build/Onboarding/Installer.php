@@ -26,25 +26,36 @@ class Installer {
 		add_action( 'wpmu_drop_tables', array( __CLASS__, 'wpmu_drop_tables' ) );
 
 		if ( is_admin() ) {
-			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'add_database_schema_tool' ) );
+			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'add_database_schema_tools' ) );
 			add_action( 'noptin_validate_database_schema', array( __CLASS__, 'validate_database_schema' ) );
+			add_action( 'noptin_repair_database_tables', array( __CLASS__, 'repair_database_tables' ) );
 		}
 	}
 
 	/**
-	 * Adds the database schema validation tool.
+	 * Adds the database schema tools.
 	 *
 	 * @param array $tools Registered admin tools.
 	 * @return array
 	 */
-	public static function add_database_schema_tool( $tools ) {
+	public static function add_database_schema_tools( $tools ) {
 		$tools['validate_database_schema'] = array(
 			'type'        => 'background',
 			'title'       => __( 'Validate Database Schema', 'newsletter-optin-box' ),
-			'description' => __( 'Check that all required Noptin database tables exist.', 'newsletter-optin-box' ),
+			'description' => __( 'Check required Noptin database tables, columns, and indexes.', 'newsletter-optin-box' ),
 			'icon'        => 'database',
 			'ajax_action' => 'noptin_validate_database_schema',
 			'button'      => array( 'text' => __( 'Validate schema', 'newsletter-optin-box' ) ),
+		);
+
+		$tools['repair_database_tables'] = array(
+			'type'        => 'background',
+			'title'       => __( 'Repair Database Tables', 'newsletter-optin-box' ),
+			'description' => __( 'Create missing Noptin tables, columns, and indexes, and update outdated column definitions.', 'newsletter-optin-box' ),
+			'icon'        => 'admin-tools',
+			'ajax_action' => 'noptin_repair_database_tables',
+			'button'      => array( 'text' => __( 'Repair tables', 'newsletter-optin-box' ) ),
+			'confirm'     => __( 'Repair the Noptin database schema now? Creating a database backup first is recommended.', 'newsletter-optin-box' ),
 		);
 
 		return $tools;
@@ -54,19 +65,35 @@ class Installer {
 	 * Validates the Noptin database schema without making repairs.
 	 */
 	public static function validate_database_schema() {
-		$missing_tables = self::verify_base_tables();
+		$issues = self::get_schema_issues();
 
-		if ( empty( $missing_tables ) ) {
+		if ( empty( $issues['tables'] ) && empty( $issues['columns'] ) && empty( $issues['indexes'] ) ) {
 			\Hizzle\Noptin\Admin\Tools::send_response( true, 'The Noptin database schema is valid.' );
 		}
 
-		\Hizzle\Noptin\Admin\Tools::send_response(
-			false,
-			sprintf(
-				'Missing database tables: %s',
-				implode( ', ', $missing_tables )
-			)
-		);
+		\Hizzle\Noptin\Admin\Tools::send_response( false, self::format_schema_issues( $issues ) );
+	}
+
+	/**
+	 * Repairs the Noptin database schema and verifies the result.
+	 */
+	public static function repair_database_tables() {
+		self::create_db_tables();
+
+		$issues = self::get_schema_issues();
+
+		if ( ! empty( $issues['tables'] ) ) {
+			update_option( 'noptin_schema_missing_tables', $issues['tables'] );
+		} else {
+			delete_option( 'noptin_schema_missing_tables' );
+		}
+
+		if ( empty( $issues['tables'] ) && empty( $issues['columns'] ) && empty( $issues['indexes'] ) ) {
+			update_option( 'noptin_db_schema', self::get_schema_hash() );
+			\Hizzle\Noptin\Admin\Tools::send_response( true, 'The Noptin database tables were repaired successfully.' );
+		}
+
+		\Hizzle\Noptin\Admin\Tools::send_response( false, 'Some database issues could not be repaired. ' . self::format_schema_issues( $issues ) );
 	}
 
 	/**
@@ -176,19 +203,12 @@ class Installer {
 	 * @return array List of queries.
 	 */
 	public static function verify_base_tables( $execute = false ) {
-		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-
 		if ( $execute ) {
 			self::create_db_tables();
 		}
 
-		$queries        = dbDelta( self::get_schema(), false );
-		$missing_tables = array();
-		foreach ( $queries as $table_name => $result ) {
-			if ( "Created table $table_name" === $result ) {
-				$missing_tables[] = $table_name;
-			}
-		}
+		$issues         = self::get_schema_issues();
+		$missing_tables = $issues['tables'];
 
 		if ( 0 < count( $missing_tables ) ) {
 			update_option( 'noptin_schema_missing_tables', $missing_tables );
@@ -197,6 +217,57 @@ class Installer {
 		}
 
 		return $missing_tables;
+	}
+
+	/**
+	 * Returns all changes required to bring the database schema up to date.
+	 *
+	 * @return array
+	 */
+	public static function get_schema_issues() {
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+
+		$issues = array(
+			'tables'  => array(),
+			'columns' => array(),
+			'indexes' => array(),
+		);
+
+		foreach ( dbDelta( self::get_schema(), false ) as $table_name => $result ) {
+			if ( 0 === strpos( $result, 'Created table ' ) ) {
+				$issues['tables'][] = is_string( $table_name ) ? $table_name : substr( $result, 14 );
+			} elseif ( 0 === strpos( $result, 'Added index ' ) ) {
+				$issues['indexes'][] = $result;
+			} else {
+				$issues['columns'][] = $result;
+			}
+		}
+
+		return $issues;
+	}
+
+	/**
+	 * Formats database schema issues for display.
+	 *
+	 * @param array $issues Grouped schema issues.
+	 * @return string
+	 */
+	private static function format_schema_issues( $issues ) {
+		$messages = array();
+
+		if ( ! empty( $issues['tables'] ) ) {
+			$messages[] = sprintf( 'Missing tables: %s.', implode( ', ', $issues['tables'] ) );
+		}
+
+		if ( ! empty( $issues['columns'] ) ) {
+			$messages[] = sprintf( 'Required column changes: %s.', implode( '; ', $issues['columns'] ) );
+		}
+
+		if ( ! empty( $issues['indexes'] ) ) {
+			$messages[] = sprintf( 'Missing indexes: %s.', implode( '; ', $issues['indexes'] ) );
+		}
+
+		return implode( ' ', $messages );
 	}
 
 	/**
