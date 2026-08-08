@@ -891,10 +891,12 @@ class Main {
 	public static function filter_admin_tools( $tools ) {
 
 		$tools['scheduled_tasks'] = array(
-			'name'   => __( 'Scheduled Tasks', 'newsletter-optin-box' ),
-			'button' => __( 'View', 'newsletter-optin-box' ),
-			'desc'   => __( 'View a list of scheduled tasks.', 'newsletter-optin-box' ),
-			'url'    => add_query_arg( 'page', 'noptin-tasks', admin_url( 'admin.php' ) ),
+			'type'        => 'link',
+			'title'       => __( 'Scheduled Tasks', 'newsletter-optin-box' ),
+			'description' => __( 'View a list of scheduled tasks.', 'newsletter-optin-box' ),
+			'icon'        => 'clock',
+			'button'      => array( 'text' => __( 'View', 'newsletter-optin-box' ) ),
+			'url'         => add_query_arg( 'page', 'noptin-tasks', admin_url( 'admin.php' ) ),
 		);
 
 		return $tools;
