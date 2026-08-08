@@ -24,6 +24,49 @@ class Installer {
 		add_action( 'init', array( __CLASS__, 'check_version' ), 1 );
 		add_action( 'init', array( __CLASS__, 'create_missing_tables' ), 1 );
 		add_action( 'wpmu_drop_tables', array( __CLASS__, 'wpmu_drop_tables' ) );
+
+		if ( is_admin() ) {
+			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'add_database_schema_tool' ) );
+			add_action( 'noptin_validate_database_schema', array( __CLASS__, 'validate_database_schema' ) );
+		}
+	}
+
+	/**
+	 * Adds the database schema validation tool.
+	 *
+	 * @param array $tools Registered admin tools.
+	 * @return array
+	 */
+	public static function add_database_schema_tool( $tools ) {
+		$tools['validate_database_schema'] = array(
+			'type'        => 'background',
+			'title'       => __( 'Validate Database Schema', 'newsletter-optin-box' ),
+			'description' => __( 'Check that all required Noptin database tables exist.', 'newsletter-optin-box' ),
+			'icon'        => 'database',
+			'ajax_action' => 'noptin_validate_database_schema',
+			'button'      => array( 'text' => __( 'Validate schema', 'newsletter-optin-box' ) ),
+		);
+
+		return $tools;
+	}
+
+	/**
+	 * Validates the Noptin database schema without making repairs.
+	 */
+	public static function validate_database_schema() {
+		$missing_tables = self::verify_base_tables();
+
+		if ( empty( $missing_tables ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( true, 'The Noptin database schema is valid.' );
+		}
+
+		\Hizzle\Noptin\Admin\Tools::send_response(
+			false,
+			sprintf(
+				'Missing database tables: %s',
+				implode( ', ', $missing_tables )
+			)
+		);
 	}
 
 	/**

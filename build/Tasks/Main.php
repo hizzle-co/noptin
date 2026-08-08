@@ -946,11 +946,11 @@ class Main {
 		$statuses = array_values( array_intersect( array_keys( self::get_terminal_statuses() ), $statuses ) );
 
 		if ( empty( $days ) ) {
-			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'Enter a valid number of days.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Tools::send_response( false, 'Enter a valid number of days.' );
 		}
 
 		if ( empty( $statuses ) ) {
-			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'Select at least one task status.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Tools::send_response( false, 'Select at least one task status.' );
 		}
 
 		$query = array(
@@ -964,11 +964,11 @@ class Main {
 		}
 
 		if ( empty( $count ) ) {
-			\Hizzle\Noptin\Admin\Tools::send_response( true, __( 'No matching tasks were found.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Tools::send_response( true, 'No matching tasks were found.' );
 		}
 
 		if ( ! noptin()->db()->delete_where( $query, 'tasks' ) ) {
-			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'The matching tasks could not be deleted.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Tools::send_response( false, 'The matching tasks could not be deleted.' );
 		}
 
 		\Hizzle\Noptin\Admin\Tools::send_response(
