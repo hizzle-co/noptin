@@ -50,16 +50,21 @@ function get_noptin_options() {
  *
  * @return  mixed|null   option or null
  * @param   string $key The option key.
- * @param   mixed  $default The default value for the option.
+ * @param   mixed  $default_value The default value for the option.
+ * @param   bool   $default_if_empty Whether to return the default for an empty string.
  * @access  public
  * @since   1.0.5
  */
-function get_noptin_option( $key, $default = null ) {
+function get_noptin_option( $key, $default_value = null, $default_if_empty = false ) {
 
 	$options = get_noptin_options();
-	$value   = $default;
+	$value   = $default_value;
 	if ( isset( $options[ $key ] ) ) {
 		$value = $options[ $key ];
+	}
+
+	if ( $default_if_empty && is_string( $value ) && '' === trim( $value ) ) {
+		$value = $default_value;
 	}
 
 	$value = map_deep( $value, 'noptin_sanitize_booleans' );
