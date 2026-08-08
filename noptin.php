@@ -142,7 +142,7 @@ class Noptin {
 	/**
 	 * The main admin class..
 	 *
-	 * @var Noptin_Admin
+	 * @var \Hizzle\Noptin\Admin\Main
 	 * @since       1.2.9
 	 */
 	public $admin;
@@ -329,10 +329,6 @@ class Noptin {
 		 */
 		do_action( 'before_noptin_init', $this );
 
-		// Init the admin.
-		$this->admin = Noptin_Admin::instance();
-		$this->admin->init();
-
 		// Actions page controller.
 		$this->actions_page = new Noptin_Page();
 
@@ -375,7 +371,6 @@ class Noptin {
 		// And an array of possible locations in order of importance;
 		$locations = array(
 			"$plugin_path/includes",
-			"$plugin_path/includes/admin",
 			"$plugin_path/includes/integrations",
 			"$plugin_path/includes/automation-rules",
 			"$plugin_path/includes/automation-rules/actions",

@@ -1,15 +1,17 @@
 <?php
 
-/**
- * Admin menus handler
- */
+namespace Hizzle\Noptin\Admin;
 
 defined( 'ABSPATH' ) || exit;
 
 /**
+ * Admin menus handler
+ */
+
+/**
  * Admin menus class.
  */
-class Noptin_Admin_Menus {
+class Menus {
 
 	/**
 	 * Hook in tabs.

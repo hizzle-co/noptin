@@ -1,8 +1,10 @@
 <?php
 
+namespace Hizzle\Noptin\Admin;
+
 defined( 'ABSPATH' ) || exit;
 
-class Noptin_Tools {
+class Tools {
 
 	// Class constructor.
 	public static function add_hooks() {
@@ -26,7 +28,7 @@ class Noptin_Tools {
 			esc_html__( 'Tools', 'newsletter-optin-box' ),
 			get_noptin_capability(),
 			'noptin-tools',
-			'Noptin_Tools::output'
+			array( __CLASS__, 'output' )
 		);
 	}
 
@@ -248,6 +250,6 @@ class Noptin_Tools {
 
 		do_action( 'noptin_force_trigger_new_post_notification', $post );
 
-		noptin()->admin->show_success( 'New post automations triggered successfully.' );
+		Main::show_success( 'New post automations triggered successfully.' );
 	}
 }

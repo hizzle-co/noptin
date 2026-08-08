@@ -1,4 +1,7 @@
 <?php
+
+namespace Hizzle\Noptin\Admin;
+
 /**
  * Admin section
  *
@@ -15,7 +18,7 @@ defined( 'ABSPATH' ) || exit;
  *
  * @since       1.0.0
  */
-class Noptin_Admin {
+class Main {
 
 	/**
 	 * Local path to this plugins admin directory
@@ -24,7 +27,7 @@ class Noptin_Admin {
 	 * @since       1.0.0
 	 * @var         string|null
 	 */
-	public $admin_path = null;
+	public static $admin_path = null;
 
 	/**
 	 * Web path to this plugins admin directory
@@ -33,13 +36,13 @@ class Noptin_Admin {
 	 * @since  1.0.0
 	 * @var    string|null
 	 */
-	public $admin_url = null;
+	public static $admin_url = null;
 
 	/**
 	 * The main admin class instance.
 	 *
 	 * @access      protected
-	 * @var         Noptin_Admin
+	 * @var         Main
 	 * @since       1.0.0
 	 */
 	protected static $_instance = null;
@@ -47,11 +50,27 @@ class Noptin_Admin {
 	/**
 	 * Admin menus.
 	 *
-	 * @var Noptin_Admin_Menus
+	 * @var Menus
 	 * @access public
 	 * @since  1.9.0
 	 */
 	public $admin_menus;
+
+	/**
+	 * Registers the admin component loader.
+	 */
+	public static function init() {
+		add_action( 'before_noptin_init', array( __CLASS__, 'load' ), 5 );
+	}
+
+	/**
+	 * Loads the admin component.
+	 */
+	public static function load() {
+		$admin          = self::instance();
+		noptin()->admin = $admin;
+		$admin->register();
+	}
 
 	/**
 	 * Get active instance
@@ -70,21 +89,21 @@ class Noptin_Admin {
 	/**
 	 * Initializes the admin instance.
 	 */
-	public function init() {
+	private function register() {
 
 		/**
 		 * Runs right before Noptin Admin loads.
 		 *
-		 * @param Noptin_Admin $admin The admin instance
+		 * @param Main $admin The admin instance
 		 * @since 1.0.1
 		 */
 		do_action( 'noptin_before_admin_load', $this );
 
 		// Set global variables.
-		$this->admin_path = plugin_dir_path( __FILE__ );
-		$this->admin_url  = plugins_url( '/', __FILE__ );
+		self::$admin_path = plugin_dir_path( __FILE__ );
+		self::$admin_url  = plugins_url( '/', __FILE__ );
 
-		$this->admin_menus = new Noptin_Admin_Menus();
+		$this->admin_menus = new Menus();
 
 		// initialize hooks.
 		$this->init_hooks();
@@ -92,7 +111,7 @@ class Noptin_Admin {
 		/**
 		 * Runs after Noptin Admin loads.
 		 *
-		 * @param Noptin_Admin $admin The admin instance
+		 * @param Main $admin The admin instance
 		 * @since 1.0.1
 		 */
 		do_action( 'noptin_admin_loaded', $this );
@@ -121,11 +140,11 @@ class Noptin_Admin {
 		add_action( 'admin_init', array( __CLASS__, 'maybe_create_scheduled_event' ) );
 
 		// Display notices.
-		add_action( 'admin_notices', array( $this, 'show_notices' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'show_notices' ) );
 
 		add_action( 'noptin_admin_reset_data', array( $this, 'reset_data' ) );
 
-		Noptin_Tools::add_hooks();
+		Tools::add_hooks();
 
 		/**
 		 * Runs right after registering admin hooks.
@@ -200,7 +219,7 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.2.9
 	 */
-	public function get_notices() {
+	public static function get_notices() {
 		$notices = get_option( 'noptin_notices' );
 
 		if ( ! is_array( $notices ) ) {
@@ -216,7 +235,7 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.2.9
 	 */
-	public function clear_notices() {
+	public static function clear_notices() {
 		delete_option( 'noptin_notices' );
 	}
 
@@ -226,8 +245,8 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.2.9
 	 */
-	public function save_notice( $type, $message ) {
-		$notices = $this->get_notices();
+	public static function save_notice( $type, $message ) {
+		$notices = self::get_notices();
 
 		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ] ) ) {
 			$notices[ $type ] = array();
@@ -245,8 +264,8 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.1.2
 	 */
-	public function show_success( $msg ) {
-		$this->save_notice( 'success', $msg );
+	public static function show_success( $msg ) {
+		self::save_notice( 'success', $msg );
 	}
 
 	/**
@@ -256,8 +275,8 @@ class Noptin_Admin {
 	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
-	public function show_error( $msg ) {
-		$this->save_notice( 'error', $msg );
+	public static function show_error( $msg ) {
+		self::save_notice( 'error', $msg );
 	}
 
 	/**
@@ -267,8 +286,8 @@ class Noptin_Admin {
 	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
-	public function show_warning( $msg ) {
-		$this->save_notice( 'warning', $msg );
+	public static function show_warning( $msg ) {
+		self::save_notice( 'warning', $msg );
 	}
 
 	/**
@@ -278,8 +297,8 @@ class Noptin_Admin {
 	 * @param       string $msg The message to queue.
 	 * @since       1.1.2
 	 */
-	public function show_info( $msg ) {
-		$this->save_notice( 'info', $msg );
+	public static function show_info( $msg ) {
+		self::save_notice( 'info', $msg );
 	}
 
 	/**
@@ -288,7 +307,7 @@ class Noptin_Admin {
 	 * @access      public
 	 * @since       1.1.2
 	 */
-	public function show_notices() {
+	public static function show_notices() {
 
 		if ( ! current_user_can( get_noptin_capability() ) ) {
 			return;
@@ -298,7 +317,7 @@ class Noptin_Admin {
 
 			// Warn addons pack if version is less than 2.0.0
 			if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
-				$this->print_notice(
+				self::print_notice(
 					'error',
 					sprintf(
 						// translators: %s: Update URL.
@@ -316,7 +335,7 @@ class Noptin_Admin {
 
 			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() && ! noptin_has_alk() ) {
 				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_black_friday_dismissed', time() + MONTH_IN_SECONDS ), 'noptin-black-friday-nag', 'noptin-black-friday-nonce' );
-				$this->print_notice(
+				self::print_notice(
 					'info',
 					sprintf(
 						'<p><strong>%s</strong></p><p>%s</p><p>%s&nbsp;&nbsp;%s</p>',
@@ -336,7 +355,7 @@ class Noptin_Admin {
 					$dismiss_url
 				);
 			} elseif ( ! empty( $review_nag ) && (int) $review_nag < time() ) {
-				$this->print_notice(
+				self::print_notice(
 					'info',
 					sprintf(
 						'%s %s <br><br> %s %s %s',
@@ -367,14 +386,14 @@ class Noptin_Admin {
 			}
 		}
 
-		$notices = $this->get_notices();
+		$notices = self::get_notices();
 
 		// Abort if we do not have any notices.
 		if ( empty( $notices ) || ! current_user_can( get_noptin_capability() ) ) {
 			return;
 		}
 
-		$this->clear_notices();
+		self::clear_notices();
 
 		foreach ( $notices as $type => $messages ) {
 			if ( ! is_array( $messages ) ) {
@@ -382,7 +401,7 @@ class Noptin_Admin {
 			}
 
 			foreach ( $messages as $message ) {
-				$this->print_notice( $type, $message );
+				self::print_notice( $type, $message );
 			}
 		}
 	}
@@ -394,7 +413,7 @@ class Noptin_Admin {
 	 * @param string $message
 	 * @since       1.5.5
 	 */
-	public function print_notice( $type, $message, $custom_dismiss_url = '' ) {
+	public static function print_notice( $type, $message, $custom_dismiss_url = '' ) {
 
 		if ( false === strpos( $message, '<p>' ) ) {
 			$message = '<p>' . $message . '</p>';

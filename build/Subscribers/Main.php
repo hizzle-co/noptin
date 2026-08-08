@@ -351,7 +351,7 @@ class Main {
 		);
 
 		if ( empty( $subscribers ) ) {
-			noptin()->admin->show_success( 'No unconfirmed subscribers found.' );
+			\Hizzle\Noptin\Admin\Main::show_success( 'No unconfirmed subscribers found.' );
 			return;
 		}
 
@@ -365,7 +365,7 @@ class Main {
 			);
 		}
 
-		noptin()->admin->show_success(
+		\Hizzle\Noptin\Admin\Main::show_success(
 			sprintf(
 				'Scheduled sending of confirmation emails to %s unconfirmed subscribers.',
 				count( $subscribers )

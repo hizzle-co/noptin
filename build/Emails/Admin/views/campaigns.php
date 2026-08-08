@@ -48,7 +48,7 @@ if ( $parent ) {
 	<?php
 
 		// Print pending notices.
-		noptin()->admin->show_notices();
+		\Hizzle\Noptin\Admin\Main::show_notices();
 
 		// Check if sending has been paused due to limits.
 		if ( noptin_email_sending_limit_reached() ) {
@@ -76,7 +76,7 @@ if ( $parent ) {
 					) . '</p>';
 			}
 
-			noptin()->admin->print_notice( 'error', $message );
+			\Hizzle\Noptin\Admin\Main::print_notice( 'error', $message );
 		}
 
 		// Check if external CRON is not being used.
@@ -95,7 +95,7 @@ if ( $parent ) {
 				noptin_get_guide_url( 'External CRON', 'sending-emails/how-to-set-up-an-external-cron-job-in-wordpress-and-speed-up-email-sending/' )
 			) . '</p>';
 
-			noptin()->admin->print_notice(
+				\Hizzle\Noptin\Admin\Main::print_notice(
 				'warning',
 				$message,
 				wp_nonce_url(

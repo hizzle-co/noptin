@@ -1076,7 +1076,7 @@ class Table extends \WP_List_Table {
 				}
 			}
 
-			noptin()->admin->show_info( __( 'All trash campaigns have been deleted.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Main::show_info( 'All trash campaigns have been deleted.' );
 			return;
 		}
 
@@ -1126,7 +1126,7 @@ class Table extends \WP_List_Table {
 		}
 
 		if ( ! empty( $notice ) ) {
-			noptin()->admin->show_info( $notice );
+			\Hizzle\Noptin\Admin\Main::show_info( $notice );
 		}
 	}
 

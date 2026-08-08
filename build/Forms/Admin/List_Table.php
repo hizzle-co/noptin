@@ -143,7 +143,7 @@ class List_Table {
 		update_post_meta( $_GET['form_id'], '_noptin_form_views', 0 );
 		update_post_meta( $_GET['form_id'], '_noptin_subscribers_count', 0 );
 
-		noptin()->admin->show_success( __( 'Form stats reset successfully', 'newsletter-optin-box' ) );
+		\Hizzle\Noptin\Admin\Main::show_success( __( 'Form stats reset successfully', 'newsletter-optin-box' ) );
 
 		wp_safe_redirect( remove_query_arg( array( 'noptin_admin_action', 'form_id', 'noptin-reset-nonce' ) ) );
 		exit;

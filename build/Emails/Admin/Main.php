@@ -94,7 +94,7 @@ class Main {
 	 * @since 3.0.0
 	 */
 	public static function redirect_from_action_with_error( $error ) {
-		noptin()->admin->show_error( $error );
+		\Hizzle\Noptin\Admin\Main::show_error( $error );
 		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign' ) ) );
 		exit;
 	}
@@ -105,7 +105,7 @@ class Main {
 	 * @since 3.0.0
 	 */
 	public static function redirect_from_action_with_success( $success ) {
-		noptin()->admin->show_success( $success );
+		\Hizzle\Noptin\Admin\Main::show_success( $success );
 		wp_safe_redirect( remove_query_arg( array( 'noptin_email_action', 'noptin_email_action_nonce', 'noptin_campaign', 'noptin_email_recipients' ) ) );
 		exit;
 	}
@@ -233,7 +233,7 @@ class Main {
 		$duplicate = $campaign->duplicate( $args );
 
 		if ( $duplicate instanceof \Hizzle\Noptin\Emails\Email && $duplicate->exists() ) {
-			noptin()->admin->show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
+			\Hizzle\Noptin\Admin\Main::show_info( 'The campaign has been duplicated.' );
 			wp_safe_redirect( $duplicate->get_edit_url() );
 			exit;
 		}
