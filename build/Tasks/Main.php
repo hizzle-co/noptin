@@ -96,6 +96,7 @@ class Main {
 
 		if ( is_admin() ) {
 			add_filter( 'get_noptin_admin_tools', array( __CLASS__, 'filter_admin_tools' ) );
+			add_action( 'noptin_purge_old_tasks', array( __CLASS__, 'purge_old_tasks' ) );
 			add_action( 'admin_menu', array( __CLASS__, 'tasks_menu' ), 100 );
 			add_action( 'admin_head', array( __CLASS__, 'hide_tasks_menu' ), 0 );
 		}
@@ -889,7 +890,6 @@ class Main {
 	 * @return array
 	 */
 	public static function filter_admin_tools( $tools ) {
-
 		$tools['scheduled_tasks'] = array(
 			'type'        => 'link',
 			'title'       => __( 'Scheduled Tasks', 'newsletter-optin-box' ),
@@ -899,7 +899,98 @@ class Main {
 			'url'         => add_query_arg( 'page', 'noptin-tasks', admin_url( 'admin.php' ) ),
 		);
 
+		$tools['purge_old_tasks'] = array(
+			'type'          => 'form',
+			'title'         => __( 'Purge Old Tasks', 'newsletter-optin-box' ),
+			'description'   => __( 'Permanently delete tasks older than a specified number of days.', 'newsletter-optin-box' ),
+			'icon'          => 'trash',
+			'ajax_action'   => 'noptin_purge_old_tasks',
+			'button'        => array( 'text' => __( 'Configure purge', 'newsletter-optin-box' ) ),
+			'submit_button' => array(
+				'text'          => __( 'Purge tasks', 'newsletter-optin-box' ),
+				'variant'       => 'primary',
+				'isDestructive' => true,
+			),
+			'confirm'       => __( 'Permanently delete all matching tasks? This cannot be undone.', 'newsletter-optin-box' ),
+			'form_fields'   => array(
+				'days'     => array(
+					'el'               => 'input',
+					'type'             => 'number',
+					'label'            => __( 'Older than', 'newsletter-optin-box' ),
+					'description'      => __( 'Delete tasks last modified more than this many days ago.', 'newsletter-optin-box' ),
+					'default'          => 30,
+					'customAttributes' => array( 'min' => 1, 'required' => true ),
+				),
+				'statuses' => array(
+					'el'          => 'select',
+					'label'       => __( 'Statuses', 'newsletter-optin-box' ),
+					'description' => __( 'Only tasks with the selected statuses will be deleted.', 'newsletter-optin-box' ),
+					'options'     => self::get_terminal_statuses(),
+					'multiple'    => true,
+					'default'     => array( 'complete', 'canceled' ),
+				),
+			),
+		);
+
 		return $tools;
+	}
+
+	/**
+	 * Permanently deletes old tasks with selected statuses.
+	 *
+	 * @param array $args Sanitized tool values.
+	 */
+	public static function purge_old_tasks( $args ) {
+		$days     = isset( $args['days'] ) ? absint( $args['days'] ) : 0;
+		$statuses = isset( $args['statuses'] ) ? (array) $args['statuses'] : array();
+		$statuses = array_values( array_intersect( array_keys( self::get_terminal_statuses() ), $statuses ) );
+
+		if ( empty( $days ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'Enter a valid number of days.', 'newsletter-optin-box' ) );
+		}
+
+		if ( empty( $statuses ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'Select at least one task status.', 'newsletter-optin-box' ) );
+		}
+
+		$query = array(
+			'status'               => $statuses,
+			'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - ( $days * DAY_IN_SECONDS ) ),
+		);
+		$count = self::query( $query, 'count' );
+
+		if ( is_wp_error( $count ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( false, $count->get_error_message() );
+		}
+
+		if ( empty( $count ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( true, __( 'No matching tasks were found.', 'newsletter-optin-box' ) );
+		}
+
+		if ( ! noptin()->db()->delete_where( $query, 'tasks' ) ) {
+			\Hizzle\Noptin\Admin\Tools::send_response( false, __( 'The matching tasks could not be deleted.', 'newsletter-optin-box' ) );
+		}
+
+		\Hizzle\Noptin\Admin\Tools::send_response(
+			true,
+			sprintf(
+				/* translators: %d: Number of deleted tasks. */
+				_n( 'Deleted %d task.', 'Deleted %d tasks.', $count, 'newsletter-optin-box' ),
+				$count
+			)
+		);
+	}
+
+	/**
+	 * Returns statuses for tasks that are no longer active.
+	 *
+	 * @return array
+	 */
+	private static function get_terminal_statuses() {
+		return array_intersect_key(
+			self::get_statuses(),
+			array_flip( array( 'complete', 'failed', 'canceled' ) )
+		);
 	}
 
 	/**

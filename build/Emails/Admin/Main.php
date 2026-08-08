@@ -233,7 +233,7 @@ class Main {
 		$duplicate = $campaign->duplicate( $args );
 
 		if ( $duplicate instanceof \Hizzle\Noptin\Emails\Email && $duplicate->exists() ) {
-			\Hizzle\Noptin\Admin\Main::show_info( 'The campaign has been duplicated.' );
+			\Hizzle\Noptin\Admin\Main::show_info( __( 'The campaign has been duplicated.', 'newsletter-optin-box' ) );
 			wp_safe_redirect( $duplicate->get_edit_url() );
 			exit;
 		}
