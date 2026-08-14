@@ -115,7 +115,7 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 			),
 			'cookie'           => array(
 				'description'       => __( 'Data from a cookie.', 'newsletter-optin-box' ),
-				'callback'          => 'Noptin_Dynamic_Content_Tags::get_cookie',
+				'callback'          => 'Hizzle\\Noptin\\Core\\Dynamic_Content_Tags::get_cookie',
 				'example'           => "cookie name='my_cookie' default='Default Value'",
 				'conditional_logic' => 'string',
 			),
@@ -138,7 +138,7 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 			),
 			'date'             => array(
 				'description'       => __( 'The current date', 'newsletter-optin-box' ),
-				'callback'          => 'Noptin_Dynamic_Content_Tags::get_date',
+				'callback'          => 'Hizzle\\Noptin\\Core\\Dynamic_Content_Tags::get_date',
 				'example'           => 'date format="j, F Y" localized=1',
 				'conditional_logic' => 'date',
 				'placeholder'       => current_time( 'Y-m-d' ),
@@ -181,7 +181,7 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 
 			'time'             => array(
 				'description' => __( 'The current time', 'newsletter-optin-box' ),
-				'callback'    => 'Noptin_Dynamic_Content_Tags::get_time',
+				'callback'    => 'Hizzle\\Noptin\\Core\\Dynamic_Content_Tags::get_time',
 				'example'     => 'time format="g:i a" localized=1',
 			),
 

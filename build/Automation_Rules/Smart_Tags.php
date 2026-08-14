@@ -23,7 +23,7 @@ use Hizzle\Noptin\Objects\Store;
  * @since 1.9.0
  * @ignore
  */
-class Smart_Tags extends \Noptin_Dynamic_Content_Tags {
+class Smart_Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 
 	/**
 	 * Called when a trigger is fired.

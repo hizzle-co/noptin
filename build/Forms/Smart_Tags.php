@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.6.2
  * @ignore
  */
-class Smart_Tags extends \Noptin_Dynamic_Content_Tags {
+class Smart_Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 
 	/**
 	 * Register core hooks.

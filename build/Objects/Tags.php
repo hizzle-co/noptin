@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 3.0.0
  * @ignore
  */
-class Tags extends \Noptin_Dynamic_Content_Tags {
+class Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 
 	/**
 	 * @var string $object_type The object type for the tags.

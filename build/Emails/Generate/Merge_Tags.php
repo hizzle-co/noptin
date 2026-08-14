@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.7.0
  * @ignore
  */
-class Merge_Tags extends \Noptin_Dynamic_Content_Tags {
+class Merge_Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 
 	/**
 	 * Filled if the email was triggered by an automation rule.

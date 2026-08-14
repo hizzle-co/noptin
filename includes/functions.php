@@ -1944,7 +1944,7 @@ function noptin_prepare_conditional_logic_for_display( $conditional_logic, $smar
 			continue;
 		}
 
-		$condition = Noptin_Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
+		$condition = \Hizzle\Noptin\Core\Dynamic_Content_Tags::search( $rule['type'], $smart_tags );
 
 		if ( empty( $condition ) ) {
 			$condition = array(

@@ -1,15 +1,17 @@
 <?php
 
+namespace Hizzle\Noptin\Core;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Class Noptin_Dynamic_Content_Tags
+ * Class Dynamic_Content_Tags
  *
  * @access private
  * @ignore
  */
-abstract class Noptin_Dynamic_Content_Tags {
+abstract class Dynamic_Content_Tags {
 
 	/**
 	 * @var string The escape function for replacement values.
@@ -83,7 +85,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 		$this->tags['date'] = array(
 			// translators: %s is the current date.
 			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
-			'callback'    => 'Noptin_Dynamic_Content_Tags::get_date',
+			'callback'    => array( __CLASS__, 'get_date' ),
 			'example'     => 'date format="j, F Y" localized=1',
 			'never_empty' => true,
 		);
