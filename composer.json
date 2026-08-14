@@ -23,7 +23,6 @@
             ]
         },
         "files": [
-            "includes/functions.php",
             "build/autoload.php"
         ]
     }
