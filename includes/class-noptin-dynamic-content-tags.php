@@ -85,12 +85,14 @@ abstract class Noptin_Dynamic_Content_Tags {
 			'description' => sprintf( __( 'The current date. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'date_format' ) ) . '</strong>' ),
 			'callback'    => 'Noptin_Dynamic_Content_Tags::get_date',
 			'example'     => 'date format="j, F Y" localized=1',
+			'never_empty' => true,
 		);
 
 		$this->tags['time'] = array(
 			// translators: %s is the current time.
 			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
 			'replacement' => date_i18n( get_option( 'time_format' ) ),
+			'never_empty' => true,
 		);
 
 		$this->tags['language'] = array(
@@ -98,6 +100,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			'description' => sprintf( __( 'The current language. Example: %s.', 'newsletter-optin-box' ), '<strong>' . get_locale() . '</strong>' ),
 			'callback'    => 'get_locale',
 			'no_args'     => true,
+			'never_empty' => true,
 		);
 
 		$this->tags['ip'] = array(
@@ -105,6 +108,7 @@ abstract class Noptin_Dynamic_Content_Tags {
 			'description' => sprintf( __( 'The visitor\'s IP address. Example: %s.', 'newsletter-optin-box' ), '<strong>' . noptin_get_user_ip() . '</strong>' ),
 			'callback'    => 'noptin_get_user_ip',
 			'no_args'     => true,
+			'never_empty' => true,
 		);
 
 		$this->tags['subscriber'] = array(
