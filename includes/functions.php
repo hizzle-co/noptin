@@ -2236,6 +2236,39 @@ function noptin_prepare_merge_tags_for_js( $merge_tags ) {
 
 	foreach ( $merge_tags as $key => $value ) {
 		$prepared[ $key ] = $value;
+		$block_settings   = is_array( $prepared[ $key ]['block']['settings'] ?? '' )
+			? $prepared[ $key ]['block']['settings']
+			: array();
+
+		// Existing block settings are also attributes that can be used in a merge tag.
+		$attributes = is_array( $prepared[ $key ]['attributes'] ?? '' )
+			? array_merge( $block_settings, $prepared[ $key ]['attributes'] )
+			: $block_settings;
+
+		// All merge tags that can be empty support a default replacement value.
+		if ( empty( $prepared[ $key ]['never_empty'] ) ) {
+			$attributes = array_merge(
+				array(
+					'default' => array(
+						'el'          => 'input',
+						'type'        => 'text',
+						'label'       => __( 'Default value', 'newsletter-optin-box' ),
+						'description' => __( 'The value to use when this merge tag returns no value.', 'newsletter-optin-box' ),
+						'default'     => '',
+					),
+				),
+				$attributes
+			);
+		} else {
+			unset( $attributes['default'] );
+		}
+
+		$prepared[ $key ]['attributes'] = $attributes;
+
+		// Blocks use the same normalized schema as merge tags.
+		if ( ! empty( $prepared[ $key ]['block'] ) && is_array( $prepared[ $key ]['block'] ) ) {
+			$prepared[ $key ]['block']['settings'] = $attributes;
+		}
 
 		if ( empty( $prepared[ $key ]['group'] ) ) {
 			$prepared[ $key ]['group'] = __( 'General', 'newsletter-optin-box' );
