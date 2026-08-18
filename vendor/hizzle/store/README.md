@@ -29,8 +29,8 @@ The `Main` class provides a simplified API for interacting with your store:
 ```php
 use Hizzle\Store\Main;
 
-// Get or create store instance
-$db = Main::instance('my_store');
+// Get or create a store instance with an optional default collection.
+$db = Main::instance('my_store', 'orders');
 
 // Initialize store with collections
 $db->init_store(
@@ -79,7 +79,7 @@ $db->init_store(
 );
 
 // Work with records
-$order = $db->get('orders', 123);
+$order = $db->get(123);
 $orders = $db->query('orders', array('status' => 'completed'));
 ```
 
@@ -189,7 +189,7 @@ $payment_id = $payment->get_id();
 $db = Main::instance('my_store');
 
 // Get a single record by ID
-$payment = $db->get('payments', $payment_id);
+$payment = $db->get($payment_id, 'payments');
 
 if ($payment && !is_wp_error($payment)) {
     echo $payment->get('amount'); // 99.99
@@ -215,7 +215,7 @@ if ($collection->exists($payment_id)) {
 ```php
 // Get the record using Main class
 $db = Main::instance('my_store');
-$payment = $db->get('payments', $payment_id);
+$payment = $db->get($payment_id, 'payments');
 
 if ($payment && !is_wp_error($payment)) {
     $payment->set('status', 'refunded');
@@ -251,7 +251,7 @@ $deleted = $db->delete_where(
 $db->delete_all('payments');
 
 // Or delete via record object
-$payment = $db->get('payments', $payment_id);
+$payment = $db->get($payment_id, 'payments');
 if ($payment && !is_wp_error($payment)) {
     $payment->delete();
 }
@@ -358,7 +358,7 @@ use Hizzle\Store\Main;
 
 // Main class automatically converts exceptions to WP_Error
 $db = Main::instance('my_store');
-$payment = $db->get('payments', $payment_id);
+$payment = $db->get($payment_id, 'payments');
 
 if (is_wp_error($payment)) {
     error_log($payment->get_error_message());

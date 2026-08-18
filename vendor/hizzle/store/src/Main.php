@@ -17,17 +17,31 @@ class Main {
 	private static $instances = array();
 
 	/**
-	 * @var string Contains the store name. Override in the implementing class.
+	 * The initialized store.
+	 *
+	 * @var Store|null
 	 */
-	private $store;
+	public $store;
+
+	/**
+	 * @var string Store name.
+	 */
+	protected $store_name;
+
+	/**
+	 * @var string Default collection name.
+	 */
+	protected $default_collection;
 
 	/**
 	 * Initializes the main store class.
 	 *
-	 * @param string $store_name The store name.
+	 * @param string $store_name         The store name.
+	 * @param string $default_collection The default collection name.
 	 */
-	protected function __construct( $store_name ) {
-		$this->store = $store_name;
+	protected function __construct( $store_name, $default_collection = '' ) {
+		$this->store_name         = $store_name;
+		$this->default_collection = $default_collection;
 	}
 
 	/**
@@ -37,9 +51,9 @@ class Main {
 	 * @since  1.0.0
 	 * @return Main The main db instance.
 	 */
-	public static function instance( $store_name ) {
+	public static function instance( $store_name, $default_collection = '' ) {
 		if ( ! isset( self::$instances[ $store_name ] ) ) {
-			self::$instances[ $store_name ] = new self( $store_name );
+			self::$instances[ $store_name ] = new static( $store_name, $default_collection );
 		}
 
 		return self::$instances[ $store_name ];
@@ -52,17 +66,68 @@ class Main {
 	 * @return Store The store instance.
 	 */
 	public function init_store( $collections ) {
-		return Store::init( $this->store, $collections );
+		$this->store = Store::init( $this->store_name, $collections );
+
+		if ( ! did_action( "{$this->store_name}_db_init" ) ) {
+			do_action( "{$this->store_name}_db_init" );
+		}
+
+		return $this->store;
+	}
+
+	/**
+	 * Resolves an omitted collection name.
+	 *
+	 * @param string $collection_name Collection name.
+	 * @return string
+	 */
+	protected function get_collection_name( $collection_name = '' ) {
+		return empty( $collection_name ) ? $this->default_collection : $collection_name;
+	}
+
+	/**
+	 * Checks whether the store is ready for use.
+	 *
+	 * @param string $method Calling method.
+	 * @return bool
+	 */
+	protected function is_initialized( $method ) {
+		if ( did_action( "{$this->store_name}_db_init" ) ) {
+			return true;
+		}
+
+		_doing_it_wrong(
+			esc_html( $method ),
+			sprintf( '%s database is not yet initialized. Ensure your code runs after the after_setup_theme hook', esc_html( $this->store_name ) ),
+			'1.8.4'
+		);
+
+		return false;
+	}
+
+	/**
+	 * Retrieves a collection.
+	 *
+	 * @param string $collection_name Collection name.
+	 * @param string $method          Calling method.
+	 * @return Collection|false
+	 */
+	protected function get_collection( $collection_name = '', $method = '' ) {
+		if ( ! $this->is_initialized( empty( $method ) ? __METHOD__ : $method ) ) {
+			return false;
+		}
+
+		return $this->store->get( $this->get_collection_name( $collection_name ) );
 	}
 
 	/**
 	 * Retrieves a record from the database.
 	 *
-	 * @param Record|int|array $record_id The record ID, object, or props. Leave blank to create a new record.
+	 * @param Record|\WP_Post|int|array $record_id The record ID, object, or props. Leave blank to create a new record.
 	 * @param string $collection_name The collection name.
 	 * @return Record|\WP_Error record object if found, error object if not found.
 	 */
-	public function get( $collection_name, $record_id = 0 ) {
+	public function get( $record_id = 0, $collection_name = '' ) {
 
 		// Abort if we already have an error.
 		if ( is_wp_error( $record_id ) ) {
@@ -70,13 +135,22 @@ class Main {
 		}
 
 		// No need to refetch the record if it's already an object.
-		if ( is_a( $record_id, 'Record' ) ) {
+		if ( $record_id instanceof Record ) {
 			return $record_id;
 		}
 
-		try {
+		// Convert posts to IDs.
+		if ( $record_id instanceof \WP_Post ) {
+			$record_id = $record_id->ID;
+		}
 
-			$collection = Store::instance( $this->store )->get( $collection_name );
+		if ( ! $this->is_initialized( __METHOD__ ) ) {
+			return false;
+		}
+
+		try {
+			$collection_name = $this->get_collection_name( $collection_name );
+			$collection      = $this->store->get( $collection_name );
 
 			if ( empty( $collection ) ) {
 				return new \WP_Error( 'invalid_collection', sprintf( 'Invalid collection: %s', $collection_name ) );
@@ -102,8 +176,8 @@ class Main {
 	 * @param string $collection_name The collection name.
 	 * @return int|false — The ID if found, false otherwise.
 	 */
-	public function get_id_by_prop( $prop, $value, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function get_id_by_prop( $prop, $value, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->get_id_by_prop( $prop, $value );
 	}
 
@@ -114,8 +188,8 @@ class Main {
 	 * @param string $collection_name The collection name.
 	 * @return int|false — The number of rows deleted, or false on error.
 	 */
-	public function delete_where( $where, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function delete_where( $where, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->delete_where( $where );
 	}
 
@@ -124,8 +198,8 @@ class Main {
 	 *
 	 * @param string $collection_name The collection name.
 	 */
-	public function delete_all( $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function delete_all( $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->delete_all();
 	}
 
@@ -140,8 +214,8 @@ class Main {
 	 * @access  public
 	 * @since   2.0.0
 	 */
-	public function get_record_meta( $record_id, $meta_key = '', $single = false, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function get_record_meta( $record_id, $meta_key = '', $single = false, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->get_record_meta( $record_id, $meta_key, $single );
 	}
 
@@ -157,8 +231,8 @@ class Main {
 	 * @access  public
 	 * @since   2.0.0
 	 */
-	public function add_record_meta( $record_id, $meta_key, $meta_value, $unique = false, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function add_record_meta( $record_id, $meta_key, $meta_value, $unique = false, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->add_record_meta( $record_id, $meta_key, $meta_value, $unique );
 	}
 
@@ -178,8 +252,8 @@ class Main {
 	 * @access  public
 	 * @since   1.0.0
 	 */
-	public function update_record_meta( $record_id, $meta_key, $meta_value, $prev_value = '', $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function update_record_meta( $record_id, $meta_key, $meta_value, $prev_value = '', $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->update_record_meta( $record_id, $meta_key, $meta_value, $prev_value );
 	}
 
@@ -196,8 +270,8 @@ class Main {
 	 * @access  public
 	 * @since   1.0.0
 	 */
-	public function delete_record_meta( $record_id, $meta_key, $meta_value = '', $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function delete_record_meta( $record_id, $meta_key, $meta_value = '', $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->delete_record_meta( $record_id, $meta_key, $meta_value );
 	}
 
@@ -209,8 +283,8 @@ class Main {
 	 * @access  public
 	 * @since   1.0.0
 	 */
-	public function delete_all_meta_by_key( $meta_key, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function delete_all_meta_by_key( $meta_key, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->delete_all_meta( $meta_key );
 	}
 
@@ -222,9 +296,21 @@ class Main {
 	 * @access  public
 	 * @since   1.0.0
 	 */
-	public function delete_all_record_meta( $record_id, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function delete_all_record_meta( $record_id, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->delete_all_record_meta( $record_id );
+	}
+
+	/**
+	 * Gets all meta values for a given key.
+	 *
+	 * @param string $meta_key        Meta key.
+	 * @param string $collection_name Collection name.
+	 * @return array
+	 */
+	public function get_all_meta_by_key( $meta_key, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
+		return empty( $collection ) ? array() : $collection->get_all_meta( $meta_key );
 	}
 
 	/**
@@ -235,8 +321,8 @@ class Main {
 	 * @param string $collection_name The collection name.
 	 *
 	 */
-	public function record_meta_exists( $record_id, $meta_key, $collection_name ) {
-		$collection = Store::instance( $this->store )->get( $collection_name );
+	public function record_meta_exists( $record_id, $meta_key, $collection_name = '' ) {
+		$collection = $this->get_collection( $collection_name, __METHOD__ );
 		return empty( $collection ) ? false : $collection->record_meta_exists( $record_id, $meta_key );
 	}
 
@@ -249,7 +335,11 @@ class Main {
 	 *
 	 * @return int|array|Record[]|\Hizzle\Store\Query|\WP_Error
 	 */
-	public function query( $collection_name, $args = array(), $to_return = 'results' ) {
+	public function query( $collection_name = '', $args = array(), $to_return = 'results' ) {
+
+		if ( ! $this->is_initialized( __METHOD__ ) ) {
+			return false;
+		}
 
 		// Do not retrieve any fields if we just want the count.
 		if ( 'count' === $to_return ) {
@@ -263,8 +353,8 @@ class Main {
 
 		// Run the query.
 		try {
-
-			$collection = Store::instance( $this->store )->get( $collection_name );
+			$collection_name = $this->get_collection_name( $collection_name );
+			$collection      = $this->store->get( $collection_name );
 
 			if ( empty( $collection ) ) {
 				return new \WP_Error( 'hizzle_invalid_collection', sprintf( 'Invalid collection: %s', $collection_name ) );
