@@ -7,6 +7,7 @@ defined( 'ABSPATH' ) || exit;
  * Base integration class.
  *
  * @since       1.2.6
+ * @deprecated  Extend a purpose-specific integration class instead.
  */
 abstract class Noptin_Abstract_Integration {
 

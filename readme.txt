@@ -2,7 +2,7 @@
 Contributors: picocodes, mutendebrian
 Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
 Version: 4.3.5
 Stable tag: 4.3.5

@@ -20,10 +20,6 @@ class Noptin_Automation_Rules {
 	 */
 	public function __construct() {
 
-		// Register core triggers.
-		Triggers::add( new Noptin_New_Comment_Trigger() );
-		Triggers::add( new Noptin_Comment_Reply_Trigger() );
-
 		// Handle admin rule CRUD requests.
 		do_action( 'noptin_automation_rules_load', $this );
 	}
