@@ -400,10 +400,10 @@ class Noptin {
 	/**
      * Returns the new DB manager.
      *
-     * @return \Hizzle\Noptin\DB\Main
+     * @return \Hizzle\Store\Main
      */
 	public function db() {
-		return \Hizzle\Noptin\DB\Main::instance();
+		return \Hizzle\Store\Main::instance( 'noptin', 'subscribers' );
 	}
 
 	/**
