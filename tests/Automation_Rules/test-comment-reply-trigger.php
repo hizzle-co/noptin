@@ -55,10 +55,6 @@ class Test_Comment_Reply_Trigger extends WP_UnitTestCase {
 				'email'      => 'reply@example.com',
 				'object_id'  => $reply_id,
 				'subject_id' => $reply_id,
-				'provides'   => array(
-					'comment.parent'   => $parent_id,
-					'commentor.parent' => $parent_id,
-				),
 			)
 		);
 		$tags = $prepared['smart_tags'];

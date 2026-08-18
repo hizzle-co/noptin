@@ -28,6 +28,7 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 		$this->title_field       = 'id';
 		$this->description_field = 'content';
 		$this->url_field         = 'url';
+		$this->provides          = array( 'comment_author', 'post_author' );
 		$this->icon              = array(
 			'icon' => 'admin-comments',
 			'fill' => '#23282d',
@@ -45,41 +46,11 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 	 * @return array
 	 */
 	public function get_triggers() {
-		$parent_fields         = array();
-		$legacy_fields         = $this->legacy_fields( 'comment' );
-		$fields                = $this->get_fields();
-		$current_author_fields = $this->legacy_author_fields( 'current' );
-		$parent_author_fields  = $this->legacy_author_fields( 'parent' );
-
-		foreach ( $legacy_fields as $key => $legacy_field ) {
-			$field             = $fields[ $key ];
-			$field['callback'] = array( '\\Hizzle\\Noptin\\Objects\\Store', 'handle_field_smart_tag' );
-
-			$field['deprecated'] = $legacy_field;
-
-			$parent_key                   = 'id' === $key ? 'parent_comment_id' : 'parent_' . $key;
-			$parent_fields[ $parent_key ] = $field;
-		}
-
 		return array(
-			'new_comment'       => array(
+			'new_comment' => array(
 				'label'       => __( 'Comment > Added', 'newsletter-optin-box' ),
 				'description' => __( 'When someone leaves a comment', 'newsletter-optin-box' ),
-				'subject'     => 'commentor',
-				'extra_args'  => $current_author_fields,
-				'featured'    => true,
-			),
-			'new_comment_reply' => array(
-				'label'         => __( 'Comment > Reply Added', 'newsletter-optin-box' ),
-				'description'   => __( "When someone replies to someone else's comment", 'newsletter-optin-box' ),
-				'subject'       => 'commentor',
-				'provides'      => array( 'comment.parent', 'commentor.parent' ),
-				'custom_labels' => array(
-					'comment.parent'   => __( 'Parent comment', 'newsletter-optin-box' ),
-					'commentor.parent' => __( 'Parent commentor', 'newsletter-optin-box' ),
-				),
-				'extra_args'    => array_merge( $parent_fields, $parent_author_fields ),
-				'featured'      => true,
+				'subject'     => 'comment_author',
 			),
 		);
 	}
@@ -134,21 +105,6 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'url'                => array(
 				'label' => __( 'URL', 'newsletter-optin-box' ),
 				'type'  => 'string',
-			),
-			'post_author_id'     => array(
-				'label'      => __( 'Post author ID', 'newsletter-optin-box' ),
-				'type'       => 'number',
-				'deprecated' => 'post_author_id',
-			),
-			'post_author_name'   => array(
-				'label'      => __( 'Post author name', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'post_author_name',
-			),
-			'post_author_email'  => array(
-				'label'      => __( 'Post author email', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'post_author_email',
 			),
 			'post_date'          => array(
 				'label'      => __( 'Post date', 'newsletter-optin-box' ),
@@ -210,7 +166,7 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'meta'               => $this->meta_key_tag_config(),
 		);
 
-		$legacy_fields = $this->legacy_fields( 'reply' );
+		$legacy_fields = $this->legacy_fields( 'comment' );
 
 		foreach ( $fields as $key => $field ) {
 			if ( isset( $legacy_fields[ $key ] ) ) {
@@ -218,13 +174,13 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			}
 		}
 
-		$fields['post_id']['deprecated'] = array( 'reply_post_id', 'post_id' );
+		$fields['post_id']['deprecated'] = array( 'comment_post_id', 'post_id' );
 
 		return $fields;
 	}
 
 	/**
-	 * Maps collection fields to legacy comment or reply merge tags.
+	 * Maps collection fields to legacy comment merge tags.
 	 *
 	 * @param string $prefix Legacy prefix.
 	 * @return array
@@ -241,43 +197,6 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'approved'  => $prefix . '_approved',
 			'agent'     => $prefix . '_agent',
 			'type'      => $prefix . '_type',
-		);
-	}
-
-	/**
-	 * Builds aliases for legacy comment-author merge tags.
-	 *
-	 * @param string $source Either current or parent.
-	 * @return array
-	 */
-	private function legacy_author_fields( $source ) {
-		$callback = array( '\\Hizzle\\Noptin\\Objects\\Store', 'handle_field_smart_tag' );
-
-		return array(
-			$source . '_author'       => array(
-				'label'      => __( 'Commentor name', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'comment_author',
-				'callback'   => $callback,
-			),
-			$source . '_author_email' => array(
-				'label'      => __( 'Commentor email', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'comment_author_email',
-				'callback'   => $callback,
-			),
-			$source . '_author_url'   => array(
-				'label'      => __( 'Commentor website', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'comment_author_url',
-				'callback'   => $callback,
-			),
-			$source . '_author_ip'    => array(
-				'label'      => __( 'Commentor IP address', 'newsletter-optin-box' ),
-				'type'       => 'string',
-				'deprecated' => 'comment_author_ip',
-				'callback'   => $callback,
-			),
 		);
 	}
 
@@ -319,7 +238,7 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 
 		$comment = get_comment( $comment_id );
 
-		if ( ! $comment ) {
+		if ( ! $comment || ! empty( $comment->comment_parent ) ) {
 			return;
 		}
 
@@ -331,23 +250,7 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'url'        => get_comment_link( $comment ),
 		);
 
-		if ( empty( $comment->comment_parent ) ) {
-			$this->trigger( 'new_comment', $args );
-			return;
-		}
-
-		$parent = get_comment( $comment->comment_parent );
-
-		if ( ! $parent || $comment->comment_author_email === $parent->comment_author_email ) {
-			return;
-		}
-
-		$args['provides'] = array(
-			'comment.parent'   => (int) $parent->comment_ID,
-			'commentor.parent' => (int) $parent->comment_ID,
-		);
-
-		$this->trigger( 'new_comment_reply', $args );
+		$this->trigger( 'new_comment', $args );
 	}
 
 	/**
@@ -365,11 +268,7 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'order'   => 'DESC',
 		);
 
-		if ( 'new_comment_reply' === $rule->get_trigger_id() ) {
-			$query['parent__not_in'] = array( 0 );
-		} else {
-			$query['parent'] = 0;
-		}
+		$query['parent'] = 0;
 
 		$comments = get_comments( $query );
 
@@ -384,13 +283,6 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 			'object_id'  => (int) $comment->comment_ID,
 			'subject_id' => (int) $comment->comment_ID,
 		);
-
-		if ( ! empty( $comment->comment_parent ) ) {
-			$args['provides'] = array(
-				'comment.parent'   => (int) $comment->comment_parent,
-				'commentor.parent' => (int) $comment->comment_parent,
-			);
-		}
 
 		return $args;
 	}

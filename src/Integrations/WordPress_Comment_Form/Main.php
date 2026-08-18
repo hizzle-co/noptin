@@ -39,8 +39,24 @@ class Main extends \Hizzle\Noptin\Integrations\Checkbox_Integration {
 	 * @since 3.0.0
 	 */
 	public static function register_objects() {
-		\Hizzle\Noptin\Objects\Store::add( new Commentors() );
+		\Hizzle\Noptin\Objects\Store::add(
+			new Commentors(
+				'comment_author',
+				__( 'Comment Authors', 'newsletter-optin-box' ),
+				__( 'Comment Author', 'newsletter-optin-box' ),
+				'comment'
+			)
+		);
+		\Hizzle\Noptin\Objects\Store::add(
+			new Commentors(
+				'reply_author',
+				__( 'Reply Authors', 'newsletter-optin-box' ),
+				__( 'Reply Author', 'newsletter-optin-box' ),
+				'reply'
+			)
+		);
 		\Hizzle\Noptin\Objects\Store::add( new Comments() );
+		\Hizzle\Noptin\Objects\Store::add( new Replies() );
 	}
 
 	/**

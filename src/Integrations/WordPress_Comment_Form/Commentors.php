@@ -10,14 +10,20 @@ defined( 'ABSPATH' ) || exit;
 class Commentors extends \Hizzle\Noptin\Objects\People {
 
 	/**
+	 * @var string Legacy merge-tag prefix.
+	 */
+	public $legacy_prefix;
+
+	/**
 	 * Class constructor.
 	 */
-	public function __construct() {
+	public function __construct( $type, $label, $singular_label, $legacy_prefix ) {
 		$this->record_class   = __NAMESPACE__ . '\\Commentor';
 		$this->integration    = 'wordpress-comments';
-		$this->type           = 'commentor';
-		$this->label          = __( 'Commentors', 'newsletter-optin-box' );
-		$this->singular_label = __( 'Commentor', 'newsletter-optin-box' );
+		$this->type           = $type;
+		$this->label          = $label;
+		$this->singular_label = $singular_label;
+		$this->legacy_prefix  = $legacy_prefix;
 		$this->is_stand_alone = false;
 		$this->icon           = array(
 			'icon' => 'admin-users',
@@ -74,22 +80,22 @@ class Commentors extends \Hizzle\Noptin\Objects\People {
 			'name'       => array(
 				'label'      => __( 'Name', 'newsletter-optin-box' ),
 				'type'       => 'string',
-				'deprecated' => 'reply_author',
+				'deprecated' => $this->legacy_prefix . '_author',
 			),
 			'email'      => array(
 				'label'      => __( 'Email', 'newsletter-optin-box' ),
 				'type'       => 'string',
-				'deprecated' => 'reply_author_email',
+				'deprecated' => $this->legacy_prefix . '_author_email',
 			),
 			'website'    => array(
 				'label'      => __( 'Website', 'newsletter-optin-box' ),
 				'type'       => 'string',
-				'deprecated' => 'reply_author_url',
+				'deprecated' => $this->legacy_prefix . '_author_url',
 			),
 			'ip_address' => array(
 				'label'      => __( 'IP address', 'newsletter-optin-box' ),
 				'type'       => 'string',
-				'deprecated' => 'reply_author_ip',
+				'deprecated' => $this->legacy_prefix . '_author_ip',
 			),
 			'user_id'    => array(
 				'label'      => __( 'WordPress user ID', 'newsletter-optin-box' ),

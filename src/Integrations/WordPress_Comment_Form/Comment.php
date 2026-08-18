@@ -113,23 +113,6 @@ class Comment extends \Hizzle\Noptin\Objects\Record {
 			return null;
 		}
 
-		if ( 0 === strpos( $field, 'post_author_' ) ) {
-			$author = get_userdata( $post->post_author );
-
-			if ( ! $author ) {
-				return null;
-			}
-
-			$author_field = substr( $field, 12 );
-			$author_map   = array(
-				'id'    => 'ID',
-				'name'  => 'display_name',
-				'email' => 'user_email',
-			);
-
-			return isset( $author_map[ $author_field ] ) ? $author->{$author_map[ $author_field ]} : null;
-		}
-
 		switch ( $field ) {
 			case 'post_url':
 				return get_permalink( $post );
@@ -142,4 +125,22 @@ class Comment extends \Hizzle\Noptin\Objects\Record {
 		}
 	}
 
+	/**
+	 * Provides the commented post's author.
+	 *
+	 * @param string $collection Collection type.
+	 * @return int
+	 */
+	public function provide( $collection ) {
+		if ( 'post_author' === $collection && $this->exists() ) {
+			$post = get_post( $this->external->comment_post_ID );
+			return $post ? (int) $post->post_author : 0;
+		}
+
+		if ( in_array( $collection, array( 'comment', 'comment_author' ), true ) && $this->exists() ) {
+			return (int) $this->external->comment_parent;
+		}
+
+		return parent::provide( $collection );
+	}
 }
