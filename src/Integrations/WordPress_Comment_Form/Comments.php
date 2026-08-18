@@ -52,7 +52,8 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 		$parent_author_fields  = $this->legacy_author_fields( 'parent' );
 
 		foreach ( $legacy_fields as $key => $legacy_field ) {
-			$field = $fields[ $key ];
+			$field             = $fields[ $key ];
+			$field['callback'] = array( '\\Hizzle\\Noptin\\Objects\\Store', 'handle_field_smart_tag' );
 
 			$field['deprecated'] = $legacy_field;
 
@@ -250,26 +251,32 @@ class Comments extends \Hizzle\Noptin\Objects\Collection {
 	 * @return array
 	 */
 	private function legacy_author_fields( $source ) {
+		$callback = array( '\\Hizzle\\Noptin\\Objects\\Store', 'handle_field_smart_tag' );
+
 		return array(
 			$source . '_author'       => array(
 				'label'      => __( 'Commentor name', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'comment_author',
+				'callback'   => $callback,
 			),
 			$source . '_author_email' => array(
 				'label'      => __( 'Commentor email', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'comment_author_email',
+				'callback'   => $callback,
 			),
 			$source . '_author_url'   => array(
 				'label'      => __( 'Commentor website', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'comment_author_url',
+				'callback'   => $callback,
 			),
 			$source . '_author_ip'    => array(
 				'label'      => __( 'Commentor IP address', 'newsletter-optin-box' ),
 				'type'       => 'string',
 				'deprecated' => 'comment_author_ip',
+				'callback'   => $callback,
 			),
 		);
 	}
