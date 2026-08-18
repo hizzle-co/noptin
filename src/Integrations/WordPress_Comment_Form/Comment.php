@@ -137,8 +137,12 @@ class Comment extends \Hizzle\Noptin\Objects\Record {
 			return $post ? (int) $post->post_author : 0;
 		}
 
-		if ( in_array( $collection, array( 'comment', 'comment_author' ), true ) && $this->exists() ) {
+		if ( 'comment' === $collection && $this->exists() ) {
 			return (int) $this->external->comment_parent;
+		}
+
+		if ( 'comment_author' === $collection && $this->exists() ) {
+			return (int) $this->external->comment_ID;
 		}
 
 		return parent::provide( $collection );
