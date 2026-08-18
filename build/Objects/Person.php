@@ -1,12 +1,12 @@
 <?php
 
-namespace Hizzle\Noptin\Objects;
-
 /**
  * Container for a single person.
  *
  * @since   1.0.0
  */
+
+namespace Hizzle\Noptin\Objects;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
 abstract class Person extends Record {
 
 	/**
-	 * @var Person[] Cached records.
+	 * @var array<string,array<string,Person>> Cached records.
 	 */
 	private static $related = array();
 

@@ -586,9 +586,9 @@ class Users extends People {
 		);
 
 		if ( 'post_author' === $this->type ) {
-			$fields['id']['deprecated']           = 'author_id';
-			$fields['email']['deprecated']        = 'author_email';
-			$fields['display_name']['deprecated'] = array( 'author_name', 'post_author' );
+			$fields['id']['deprecated']           = array( 'author_id', 'post_author_id' );
+			$fields['email']['deprecated']        = array( 'author_email', 'post_author_email' );
+			$fields['display_name']['deprecated'] = array( 'author_name', 'post_author', 'post_author_name' );
 			$fields['first_name']['deprecated']   = 'author_first_name';
 			$fields['last_name']['deprecated']    = 'author_last_name';
 			$fields['login']['deprecated']        = 'author_login';
