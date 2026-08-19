@@ -517,6 +517,11 @@ class Email {
 		if ( $this->is_mass_mail() && 'newsletter' !== $this->type ) {
 			do_action( 'noptin_before_send_email', $this, Main::$current_email_recipient );
 
+			// Track collection results for this email only. WordPress action counts are
+			// cumulative for the entire request, which can contain several scheduled emails.
+			$empty_collections_before_render     = did_action( 'noptin_collection_list_empty' );
+			$not_empty_collections_before_render = did_action( 'noptin_collection_list_not_empty' );
+
 			// Prepare campaign args.
 			$type            = $this->get_email_type();
 			$suffix          = empty( $GLOBALS['noptin_current_title_tag'] ) ? date_i18n( get_option( 'date_format' ) ) : noptin_parse_email_subject_tags( $GLOBALS['noptin_current_title_tag'] );
@@ -582,7 +587,10 @@ class Email {
 				return new \WP_Error( 'noptin_email_skipped', $GLOBALS['noptin_email_force_skip']['message'] );
 			}
 
-			if ( 1 < did_action( 'noptin_collection_list_empty' ) && ! did_action( 'noptin_collection_list_not_empty' ) ) {
+			$empty_collections     = did_action( 'noptin_collection_list_empty' ) - $empty_collections_before_render;
+			$not_empty_collections = did_action( 'noptin_collection_list_not_empty' ) - $not_empty_collections_before_render;
+
+			if ( 0 < $empty_collections && 0 === $not_empty_collections ) {
 				$should_break = apply_filters( 'noptin_email_skip_if_all_items_empty', (bool) $this->get( 'skip_if_all_items_empty' ), $this );
 
 				if ( $should_break ) {
