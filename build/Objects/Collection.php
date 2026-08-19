@@ -979,6 +979,7 @@ abstract class Collection {
 				'columns'                      => 1,
 				'skiponempty'                  => 'no',
 				'hide_parent_section_on_empty' => 'no',
+				'empty_message'                => '',
 				'responsive'                   => 'yes',
 				'table'                        => 'no',
 				'merge_tag'                    => '',
@@ -1021,11 +1022,12 @@ abstract class Collection {
 		}
 
 		if ( ! is_array( $items ) || empty( $items ) ) {
+			do_action( 'noptin_collection_list_empty', $this );
+
 			if ( 'yes' === $atts['skiponempty'] ) {
 				$GLOBALS['noptin_email_force_skip'] = array(
 					'message' => sprintf(
-						// translators: %s is the object type label, e.g. "orders".
-						__( 'No %s found.', 'newsletter-optin-box' ),
+						'No %s found.',
 						strtolower( $this->label )
 					),
 				);
@@ -1039,7 +1041,10 @@ abstract class Collection {
 				return '<div data-remove="wp-block-noptin-group"></div>';
 			}
 
-			do_action( 'noptin_collection_list_empty', $this );
+			if ( ! empty( $atts['empty_message'] ) ) {
+				return nl2br( esc_html( rawurldecode( $atts['empty_message'] ) ) );
+			}
+
 			return '';
 		}
 
