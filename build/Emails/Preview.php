@@ -153,8 +153,44 @@ class Preview {
 			wp_die( esc_html( $GLOBALS['noptin_email_force_skip']['message'] ) );
 		}
 
+		// Explain why since-last-send collections can contain older items in previews.
+		if ( 'preview' === self::$mode && self::uses_since_last_send() && 'plain_text' !== self::$campaign->get_email_type() ) {
+			$preview = self::add_since_last_send_notice( $preview );
+		}
+
 		echo $preview; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		exit;
+	}
+
+	/**
+	 * Checks whether the active email body enables the since-last-send filter.
+	 *
+	 * @return bool
+	 */
+	private static function uses_since_last_send() {
+		$content = self::$campaign->get_content( self::$campaign->get_email_type() );
+		return 1 === preg_match( '/since_last_send\s*=\s*(["\']?)\s*(?:yes|true|1)\s*\1/i', $content );
+	}
+
+	/**
+	 * Adds a floating warning to an admin campaign preview.
+	 *
+	 * @param string $preview Rendered email HTML.
+	 * @return string
+	 */
+	private static function add_since_last_send_notice( $preview ) {
+		$message = 'Preview and test emails may include older content because the last-send date is ignored during testing. Scheduled emails still use the campaign\'s saved last-send date.';
+		$notice  = sprintf(
+			'<div role="status" style="position:fixed;z-index:2147483647;top:16px;left:16px;width:min(420px,calc(100%% - 32px));box-sizing:border-box;padding:12px 16px;border:1px solid #dba617;border-left-width:4px;border-radius:3px;background:rgba(255,251,235,.94);box-shadow:0 2px 8px rgba(0,0,0,.16);color:#1e1e1e;font:14px/1.4 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;text-align:left;">%s</div>',
+			$message
+		);
+
+		if ( preg_match( '/<body\b[^>]*>/i', $preview, $matches, PREG_OFFSET_CAPTURE ) ) {
+			$offset = $matches[0][1] + strlen( $matches[0][0] );
+			return substr_replace( $preview, $notice, $offset, 0 );
+		}
+
+		return $notice . $preview;
 	}
 
 	private static function process_templates( $preview ) {
