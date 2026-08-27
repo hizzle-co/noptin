@@ -62,7 +62,14 @@ class Main extends \Hizzle\Noptin\Integrations\Form_Integration {
 
 		foreach ( $elementor_posts as $post_id ) {
 			$elements = get_post_meta( $post_id, '_elementor_data', true );
-			$forms    = array_merge( $forms, $this->get_all_inner_forms( json_decode( $elements ) ) );
+
+			// Elementor data can be stored as JSON or an already-unserialized array.
+			if ( is_array( $elements ) ) {
+				$elements = wp_json_encode( $elements );
+			}
+
+			$elements = is_string( $elements ) ? json_decode( $elements ) : array();
+			$forms    = array_merge( $forms, $this->get_all_inner_forms( $elements ) );
 		}
 
 		return $forms;
