@@ -1857,6 +1857,12 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 	$current_value   = trim( strtolower( (string) $current_value ) );
 	$condition_value = trim( strtolower( (string) $condition_value ) );
 
+	// Treat trailing path slashes as equivalent when comparing two HTTP URLs.
+	if ( preg_match( '#^https?://#', $current_value ) && preg_match( '#^https?://#', $condition_value ) ) {
+		$current_value   = preg_replace( '#/+(?=([?#]|$))#', '', $current_value );
+		$condition_value = preg_replace( '#/+(?=([?#]|$))#', '', $condition_value );
+	}
+
 	switch ( $comparison ) {
 		case 'is':
 			return $current_value === $condition_value || noptin_array_string_match( $current_value, $condition_value );
