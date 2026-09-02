@@ -1182,14 +1182,24 @@ class Generator {
 
 		// Only track if it is permitted.
 		if ( $this->can_track() ) {
-			return preg_replace_callback(
-				'/<\/body[^>]*>/',
-				function ( $matches ) {
-					return $this->get_tracker() . $matches[0];
+			$tracker = $this->get_tracker();
+			$count   = 0;
+			$tracked = preg_replace_callback(
+				'/<\/body[^>]*>/i',
+				function ( $matches ) use ( $tracker ) {
+					return $tracker . $matches[0];
 				},
 				$content,
-				1
+				1,
+				$count
 			);
+
+			// Raw HTML can be a fragment without a closing body tag.
+			if ( 0 === $count || null === $tracked ) {
+				return $content . $tracker;
+			}
+
+			return $tracked;
 		}
 
 		return $content;
