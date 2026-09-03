@@ -310,6 +310,39 @@ function current_user_can_manage_noptin() {
 }
 
 /**
+ * Returns the capability used to manage a CRUD collection.
+ *
+ * @param string $collection_name Collection name.
+ * @return string
+ */
+function get_noptin_collection_capability( $collection_name ) {
+	return 'manage_noptin_' . str_replace( '-', '_', sanitize_key( $collection_name ) );
+}
+
+/**
+ * Returns a capability that lets the current user open the Noptin menu.
+ *
+ * @return string
+ */
+function get_noptin_menu_capability() {
+	if ( function_exists( 'noptin' ) && isset( noptin()->db()->store ) ) {
+		foreach ( noptin()->db()->store->get_collections() as $collection ) {
+			$capability = get_noptin_collection_capability( $collection->get_name() );
+			if ( current_user_can( $capability ) ) {
+				return $capability;
+			}
+		}
+	}
+
+	$capability = false;
+	if ( function_exists( 'get_noptin_accessible_campaign_type_capability' ) ) {
+		$capability = get_noptin_accessible_campaign_type_capability();
+	}
+
+	return $capability ? $capability : get_noptin_capability();
+}
+
+/**
  * Gets and includes template files.
  *
  * @since 1.2.2
