@@ -32,7 +32,7 @@ class Menus {
 		add_menu_page(
 			noptin()->white_label->get( 'name', 'Noptin' ),
 			noptin()->white_label->get( 'name', 'Noptin' ),
-			get_noptin_capability(),
+			get_noptin_menu_capability(),
 			'noptin',
 			null,
 			noptin()->white_label->get( 'icon', 'dashicons-forms' ),
