@@ -57,7 +57,7 @@ class Fields_REST_API {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'create_custom_field' ),
-				'permission_callback' => 'current_user_can_manage_noptin',
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
 				'args'                => array(
 					'label'     => array(
 						'description'       => 'The field label.',
@@ -96,12 +96,12 @@ class Fields_REST_API {
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( __CLASS__, 'get_field_options' ),
-					'permission_callback' => 'current_user_can_manage_noptin',
+					'permission_callback' => array( __CLASS__, 'check_permission' ),
 				),
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( __CLASS__, 'create_field_option' ),
-					'permission_callback' => 'current_user_can_manage_noptin',
+					'permission_callback' => array( __CLASS__, 'check_permission' ),
 					'args'                => array(
 						'value' => array(
 							'description'       => 'The option value.',
@@ -129,7 +129,7 @@ class Fields_REST_API {
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE,
 					'callback'            => array( __CLASS__, 'update_field_option' ),
-					'permission_callback' => 'current_user_can_manage_noptin',
+					'permission_callback' => array( __CLASS__, 'check_permission' ),
 					'args'                => array(
 						'value' => array(
 							'description'       => 'The option value.',
@@ -148,7 +148,7 @@ class Fields_REST_API {
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,
 					'callback'            => array( __CLASS__, 'delete_field_option' ),
-					'permission_callback' => 'current_user_can_manage_noptin',
+					'permission_callback' => array( __CLASS__, 'check_permission' ),
 					'schema'              => '__return_empty_array',
 				),
 				'schema' => '__return_empty_array',
@@ -162,7 +162,7 @@ class Fields_REST_API {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'merge_field_options' ),
-				'permission_callback' => 'current_user_can_manage_noptin',
+				'permission_callback' => array( __CLASS__, 'check_permission' ),
 				'args'                => array(
 					'source_options' => array(
 						'description' => 'Array of option values to merge into the target value.',
@@ -182,7 +182,7 @@ class Fields_REST_API {
 	 * Checks if the current user has permission.
 	 */
 	public static function check_permission() {
-		return current_user_can_manage_noptin();
+		return current_user_can( get_noptin_collection_capability( 'subscribers' ) );
 	}
 
 	/**
