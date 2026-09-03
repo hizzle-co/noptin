@@ -16,7 +16,7 @@
 	<!--[if !mso]><!-->
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<!--<![endif]-->
-	<title><?php echo esc_html( $email_heading ); ?></title>
+	<title><?php echo esc_html( wp_strip_all_tags( $email_heading ) ); ?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
 	<meta name="x-apple-disable-message-reformatting">
 	<meta name="robots" content="noindex, nofollow" />
