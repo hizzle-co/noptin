@@ -131,7 +131,13 @@ class Table extends \WP_List_Table {
 		// Trash campaigns.
 		if ( 'trash' === $this->email_type->type ) {
 			$query_args['post_status'] = 'trash';
-			$query_args['meta_query']  = array();
+			$query_args['meta_query']  = array(
+				array(
+					'key'     => 'campaign_type',
+					'value'   => get_noptin_accessible_campaign_types(),
+					'compare' => 'IN',
+				),
+			);
 
 			// Filter by status (additional status filtering beyond post_status)
 		} elseif ( ! empty( $_GET['email_status_filter'] ) ) {
