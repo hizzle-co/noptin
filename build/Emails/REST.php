@@ -32,7 +32,9 @@ class REST extends \WP_REST_Posts_Controller {
 			array(
 				'methods'             => \WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'get_template_content' ),
-				'permission_callback' => 'current_user_can_manage_noptin',
+				'permission_callback' => function () {
+					return (bool) get_noptin_accessible_campaign_type_capability();
+				},
 				'args'                => array(
 					'noptin_template' => array(
 						'description' => 'The template ID.',
@@ -98,11 +100,74 @@ class REST extends \WP_REST_Posts_Controller {
 	 * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
 	 */
 	public function update_item_permissions_check( $request ) {
-		if ( current_user_can_manage_noptin() ) {
-			add_filter( 'is_protected_meta', '__return_false', PHP_INT_MAX );
+		$type = $this->get_request_campaign_type( $request );
+		if ( ! $type || ! current_user_can_manage_noptin_campaign_type( $type ) ) {
+			return false;
 		}
 
+		add_filter( 'is_protected_meta', '__return_false', PHP_INT_MAX );
+
 		return parent::update_item_permissions_check( $request );
+	}
+
+	/**
+	 * Checks if a request can create a campaign of the requested type.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool|\WP_Error
+	 */
+	public function create_item_permissions_check( $request ) {
+		$type = $this->get_request_campaign_type( $request );
+		if ( ! $type || ! current_user_can_manage_noptin_campaign_type( $type ) ) {
+			return false;
+		}
+
+		return parent::create_item_permissions_check( $request );
+	}
+
+	/**
+	 * Limits collection requests to campaign types available to the user.
+	 *
+	 * @param array            $prepared_args Prepared query arguments.
+	 * @param \WP_REST_Request $request       Request object.
+	 * @return array
+	 */
+	protected function prepare_items_query( $prepared_args = array(), $request = null ) {
+		$prepared_args = parent::prepare_items_query( $prepared_args, $request );
+		$allowed       = get_noptin_accessible_campaign_types();
+
+		$prepared_args['meta_query'][] = array(
+			'key'     => 'campaign_type',
+			'value'   => empty( $allowed ) ? array( '__none__' ) : $allowed,
+			'compare' => 'IN',
+		);
+
+		return $prepared_args;
+	}
+
+	/**
+	 * Gets a campaign type from a REST request or existing campaign.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return string
+	 */
+	private function get_request_campaign_type( $request ) {
+		$type = $request->get_param( 'campaign_type' );
+		$meta = $request->get_param( 'meta' );
+
+		if ( is_object( $meta ) ) {
+			$meta = (array) $meta;
+		}
+
+		if ( empty( $type ) && is_array( $meta ) ) {
+			$type = $meta['campaign_type'] ?? '';
+		}
+
+		if ( empty( $type ) && $request->get_param( 'id' ) ) {
+			$type = get_post_meta( (int) $request->get_param( 'id' ), 'campaign_type', true );
+		}
+
+		return sanitize_key( $type );
 	}
 
 	/**

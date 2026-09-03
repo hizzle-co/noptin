@@ -177,7 +177,7 @@ class Main {
 			'noptin',
 			esc_html__( 'Email Subscribers', 'newsletter-optin-box' ),
 			esc_html__( 'Subscribers', 'newsletter-optin-box' ),
-			get_noptin_capability(),
+			get_noptin_collection_capability( 'subscribers' ),
 			'noptin-subscribers',
 			$is_field_page ? __CLASS__ . '::render_field_page' : '\Hizzle\WordPress\ScriptManager::render_collection'
 		);
@@ -195,7 +195,7 @@ class Main {
 	 * Renders the fields admin page.
 	 */
 	public static function render_field_page() {
-		if ( ! current_user_can_manage_noptin() ) {
+		if ( ! current_user_can( get_noptin_collection_capability( 'subscribers' ) ) ) {
 			return;
 		}
 
