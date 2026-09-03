@@ -959,3 +959,74 @@ function noptin_should_split_emails_menu() {
 
 	return apply_filters( 'noptin_should_split_emails_menu', $split );
 }
+
+/**
+ * Returns the capability used to manage a campaign type.
+ *
+ * @param string $type Campaign type.
+ * @return string
+ */
+function get_noptin_campaign_type_capability( $type ) {
+	if ( class_exists( '\\Hizzle\\Noptin\\Emails\\Main' ) ) {
+		if ( empty( $type ) ) {
+			$type = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+		}
+
+		$email_type = \Hizzle\Noptin\Emails\Main::get_email_type( $type );
+		if ( $email_type && ! empty( $email_type->parent_type ) ) {
+			$type = $email_type->parent_type;
+		}
+	}
+
+	return 'manage_noptin_campaign_type_' . str_replace( '-', '_', sanitize_key( $type ) );
+}
+
+/**
+ * Checks whether the current user can manage a campaign type.
+ *
+ * @param string $type Campaign type.
+ * @return bool
+ */
+function current_user_can_manage_noptin_campaign_type( $type ) {
+	if ( 'trash' === $type ) {
+		return (bool) get_noptin_accessible_campaign_type_capability();
+	}
+
+	return current_user_can( get_noptin_campaign_type_capability( $type ) );
+}
+
+/**
+ * Returns the first campaign-type capability available to the current user.
+ *
+ * @param int|null $user_id Optional user ID. Defaults to the current user.
+ * @return string|false
+ */
+function get_noptin_accessible_campaign_type_capability( $user_id = null ) {
+	$types = get_noptin_accessible_campaign_types( $user_id );
+	return empty( $types ) ? false : get_noptin_campaign_type_capability( reset( $types ) );
+}
+
+/**
+ * Returns all campaign types available to a user, including child types.
+ *
+ * @param int|null $user_id Optional user ID. Defaults to the current user.
+ * @return string[]
+ */
+function get_noptin_accessible_campaign_types( $user_id = null ) {
+
+	$user_id = is_null( $user_id ) ? get_current_user_id() : (int) $user_id;
+	$allowed = array();
+
+	foreach ( \Hizzle\Noptin\Emails\Main::get_email_types() as $type ) {
+		if ( 'trash' === $type->type ) {
+			continue;
+		}
+
+		$capability = get_noptin_campaign_type_capability( $type->type );
+		if ( user_can( $user_id, $capability ) ) {
+			$allowed[] = $type->type;
+		}
+	}
+
+	return $allowed;
+}
