@@ -302,8 +302,21 @@ class Main {
 					'rest_controller_class' => __NAMESPACE__ . '\REST',
 					'map_meta_cap'          => true,
 					'capabilities'          => array(
-						'read'      => 'edit_posts',
-						'read_post' => 'edit_post',
+						'edit_post'              => 'edit_noptin_campaign',
+						'read_post'              => 'read_noptin_campaign',
+						'delete_post'            => 'delete_noptin_campaign',
+						'edit_posts'             => 'edit_noptin_campaigns',
+						'edit_others_posts'      => 'edit_others_noptin_campaigns',
+						'publish_posts'          => 'publish_noptin_campaigns',
+						'read_private_posts'     => 'read_private_noptin_campaigns',
+						'delete_posts'           => 'delete_noptin_campaigns',
+						'delete_others_posts'    => 'delete_others_noptin_campaigns',
+						'delete_private_posts'   => 'delete_noptin_campaigns',
+						'delete_published_posts' => 'delete_noptin_campaigns',
+						'edit_private_posts'     => 'edit_noptin_campaigns',
+						'edit_published_posts'   => 'edit_noptin_campaigns',
+						'create_posts'           => 'edit_noptin_campaigns',
+						'read'                   => 'edit_noptin_campaigns',
 					),
 					'exclude_from_search'   => true,
 					'publicly_queryable'    => true,
@@ -551,7 +564,11 @@ class Main {
 	 *
 	 * @return bool
 	 */
-	public static function current_user_can_create_new_campaign() {
+	public static function current_user_can_create_new_campaign( $type = '' ) {
+		if ( ! empty( $type ) ) {
+			return current_user_can_manage_noptin_campaign_type( $type );
+		}
+
 		$post_type = get_post_type_object( 'noptin-campaign' );
 
 		if ( empty( $post_type ) ) {
