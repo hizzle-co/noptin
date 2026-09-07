@@ -313,9 +313,10 @@ class Main {
 		$email_types = array_values( \Hizzle\Noptin\Emails\Main::get_email_types() );
 		$current_cf  = isset( $_GET['noptin_email_type'] ) ? sanitize_text_field( wp_unslash( $_GET['noptin_email_type'] ) ) : '';
 		$is_emails   = 'noptin-email-campaigns' === ( $_GET['page'] ?? '' );
+		$first       = true;
 
 		foreach ( $email_types as $index => $type ) {
-			if ( 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+			if ( 'trash' === $type->type || ! empty( $type->parent_type ) || ! current_user_can_manage_noptin_campaign_type( $type->type ) ) {
 				continue;
 			}
 
@@ -328,8 +329,9 @@ class Main {
 					),
 					admin_url( '/admin.php' )
 				),
-				'isPressed' => $current_cf === $type->type || ( empty( $current_cf ) && 0 === $index ),
+				'isPressed' => $current_cf === $type->type || ( empty( $current_cf ) && $first ),
 			);
+			$first = false;
 		}
 
 		return $submenus;
@@ -341,21 +343,24 @@ class Main {
 	public static function email_campaigns_menu() {
 		if ( noptin_should_split_emails_menu() ) {
 			$email_types = array_values( \Hizzle\Noptin\Emails\Main::get_email_types() );
+			$menu_added  = false;
 
-			foreach ( $email_types as $index => $type ) {
-				if ( 'trash' === $type->type || ! empty( $type->parent_type ) ) {
+			foreach ( $email_types as $type ) {
+				if ( 'trash' === $type->type || ! empty( $type->parent_type ) || ! current_user_can_manage_noptin_campaign_type( $type->type ) ) {
 					continue;
 				}
 
-				if ( empty( $index ) ) {
+				$capability = get_noptin_campaign_type_capability( $type->type );
+				if ( ! $menu_added ) {
 					self::$hook_suffix = add_submenu_page(
 						'noptin',
 						$type->plural_label,
 						$type->plural_label,
-						get_noptin_capability(),
+						$capability,
 						'noptin-email-campaigns',
 						array( __CLASS__, 'render_admin_page' )
 					);
+					$menu_added = true;
 
 					continue;
 				}
@@ -364,7 +369,7 @@ class Main {
 					'noptin',
 					$type->plural_label,
 					$type->plural_label,
-					get_noptin_capability(),
+					$capability,
 					add_query_arg(
 						array(
 							'page'              => 'noptin-email-campaigns',
@@ -376,11 +381,16 @@ class Main {
 				);
 			}
 		} else {
+			$capability = get_noptin_accessible_campaign_type_capability();
+			if ( ! $capability ) {
+				return;
+			}
+
 			self::$hook_suffix = add_submenu_page(
 				'noptin',
 				esc_html__( 'Email Campaigns', 'newsletter-optin-box' ),
 				esc_html__( 'Emails', 'newsletter-optin-box' ),
-				get_noptin_capability(),
+				$capability,
 				'noptin-email-campaigns',
 				array( __CLASS__, 'render_admin_page' )
 			);
@@ -400,6 +410,11 @@ class Main {
 				'<div class="wrap"><div class="notice notice-error"><p>%s</p></div></div>',
 				esc_html__( 'Unknown email type.', 'newsletter-optin-box' )
 			);
+			return;
+		}
+
+		if ( ! current_user_can_manage_noptin_campaign_type( $query_args['noptin_email_type'] ) ) {
+			include plugin_dir_path( __FILE__ ) . 'views/permission-denied.php';
 			return;
 		}
 
@@ -525,7 +540,7 @@ class Main {
 				array_map(
 					function ( $type ) {
 						// Skip email_templates and trash.
-						if ( 'email_template' === $type->type || 'trash' === $type->type ) {
+						if ( 'email_template' === $type->type || 'trash' === $type->type || ! current_user_can_manage_noptin_campaign_type( $type->type ) ) {
 							return null;
 						}
 
@@ -936,11 +951,26 @@ class Main {
 			if ( ! empty( $query_args['noptin_campaign'] ) ) {
 				$query_args['noptin_email_type'] = get_post_meta( intval( $query_args['noptin_campaign'] ), 'campaign_type', true );
 			} else {
-				$query_args['noptin_email_type'] = \Hizzle\Noptin\Emails\Main::get_default_email_type();
+				$query_args['noptin_email_type'] = self::get_default_accessible_email_type();
 			}
 		}
 
 		return $query_args;
+	}
+
+	/**
+	 * Returns the first top-level campaign type the current user can manage.
+	 *
+	 * @return string|false
+	 */
+	private static function get_default_accessible_email_type() {
+		foreach ( \Hizzle\Noptin\Emails\Main::get_email_types() as $type ) {
+			if ( 'trash' !== $type->type && empty( $type->parent_type ) && current_user_can_manage_noptin_campaign_type( $type->type ) ) {
+				return $type->type;
+			}
+		}
+
+		return false;
 	}
 
 	/**
