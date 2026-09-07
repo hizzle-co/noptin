@@ -258,19 +258,19 @@ class Menu {
 				'label'    => __( 'Brand Info', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'company'     => array(
+					'company'          => array(
 						'el'          => 'input',
 						'label'       => __( 'Company', 'newsletter-optin-box' ),
 						'placeholder' => get_option( 'blogname' ),
 						'tooltip'     => __( 'What is the name of your company or website?', 'newsletter-optin-box' ),
 					),
-					'logo_url'    => array(
+					'logo_url'         => array(
 						'el'      => 'input',
 						'type'    => 'image',
 						'label'   => __( 'Logo', 'newsletter-optin-box' ),
 						'tooltip' => __( 'Enter a full url to your logo. Works best with rectangular images.', 'newsletter-optin-box' ),
 					),
-					'brand_color' => array(
+					'brand_color'      => array(
 						'el'          => 'color',
 						'label'       => __( 'Brand Color', 'newsletter-optin-box' ),
 						'placeholder' => '#1a82e2',
@@ -315,12 +315,6 @@ class Menu {
 				'label'    => __( 'Email Subscribers', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
-					'blocked_email_domains'  => array(
-						'el'          => 'textarea',
-						'label'       => __( 'Blocked Email Domains', 'newsletter-optin-box' ),
-						'placeholder' => "example.com\n*.tld",
-						'description' => __( 'Prevent new subscriptions from these email domains or top-level domains. Enter one value per line; for example, example.com or *.tld. Subdomains are also blocked.', 'newsletter-optin-box' ),
-					),
 					'hide_from_subscribers'  => array(
 						'el'          => 'input',
 						'type'        => 'checkbox_alt',
@@ -349,6 +343,12 @@ class Menu {
 						'placeholder' => get_noptin_action_url( 'manage_preferences' ),
 						'default'     => get_noptin_action_url( 'manage_preferences' ),
 						'tooltip'     => __( 'Optional. Enter a custom URL to a page where subscribers can manage their subscriptions. Ensure the page has the [noptin_manage_subscription] shortcode.', 'newsletter-optin-box' ),
+					),
+					'blocked_email_domains'  => array(
+						'el'          => 'textarea',
+						'label'       => __( 'Blocked Email Domains', 'newsletter-optin-box' ),
+						'placeholder' => "example.com\n*.tld",
+						'description' => __( 'Prevent new subscriptions from these email domains or top-level domains. Enter one value per line; for example, example.com or *.tld. Subdomains are also blocked.', 'newsletter-optin-box' ),
 					),
 				),
 			),
