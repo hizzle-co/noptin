@@ -49,7 +49,7 @@ class Main {
 			'noptin',
 			$title,
 			esc_html__( 'Automation Rules', 'newsletter-optin-box' ),
-			get_noptin_capability(),
+			get_noptin_collection_capability( 'automation_rules' ),
 			'noptin-automation-rules',
 			array( __CLASS__, 'render_admin_page' )
 		);
@@ -60,7 +60,7 @@ class Main {
 	 */
 	public static function render_admin_page() {
 
-		if ( current_user_can_manage_noptin() ) {
+		if ( current_user_can( get_noptin_collection_capability( 'automation_rules' ) ) ) {
 			?>
 			<div id="noptin-wrapper">
 				<div id="noptin-automation-rules__app">

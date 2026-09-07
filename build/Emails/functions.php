@@ -992,7 +992,7 @@ function current_user_can_manage_noptin_campaign_type( $type ) {
 		return (bool) get_noptin_accessible_campaign_type_capability();
 	}
 
-	return current_user_can( get_noptin_campaign_type_capability( $type ) );
+	return current_user_can( 'manage_noptin_campaigns' ) || current_user_can( get_noptin_campaign_type_capability( $type ) );
 }
 
 /**

@@ -249,7 +249,9 @@ class Date extends Trigger {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'rest_run_automation_rule' ),
-				'permission_callback' => 'current_user_can_manage_noptin',
+				'permission_callback' => function () {
+					return current_user_can( get_noptin_collection_capability( 'automation_rules' ) );
+				},
 				'args'                => array(
 					'id' => array(
 						'description'       => 'The automation rule id.',

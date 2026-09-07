@@ -106,6 +106,10 @@ class Main {
 			return array( 'manage_noptin' );
 		}
 
+		if ( 0 === strpos( $cap, 'manage_noptin_campaign_type_' ) && ! empty( $user->allcaps['manage_noptin_campaigns'] ) ) {
+			return array( 'manage_noptin_campaigns' );
+		}
+
 		if ( get_noptin_option( 'allow_editors', false ) && ! empty( $user->allcaps['edit_others_posts'] ) ) {
 			return array( 'edit_others_posts' );
 		}
