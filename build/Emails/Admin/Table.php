@@ -130,14 +130,27 @@ class Table extends \WP_List_Table {
 
 		// Trash campaigns.
 		if ( 'trash' === $this->email_type->type ) {
-			$query_args['post_status'] = 'trash';
-			$query_args['meta_query']  = array(
-				array(
-					'key'     => 'campaign_type',
-					'value'   => get_noptin_accessible_campaign_types(),
-					'compare' => 'IN',
-				),
+			$allowed_types = get_noptin_accessible_campaign_types();
+			$type_query    = array(
+				'key'     => 'campaign_type',
+				'value'   => empty( $allowed_types ) ? array( '__none__' ) : $allowed_types,
+				'compare' => 'IN',
 			);
+
+			// Older campaigns without stored type metadata are newsletters.
+			if ( in_array( 'newsletter', $allowed_types, true ) ) {
+				$type_query = array(
+					'relation' => 'OR',
+					$type_query,
+					array(
+						'key'     => 'campaign_type',
+						'compare' => 'NOT EXISTS',
+					),
+				);
+			}
+
+			$query_args['post_status'] = 'trash';
+			$query_args['meta_query']  = array( $type_query );
 
 			// Filter by status (additional status filtering beyond post_status)
 		} elseif ( ! empty( $_GET['email_status_filter'] ) ) {
@@ -311,7 +324,7 @@ class Table extends \WP_List_Table {
 			unset( $row_actions['edit'] );
 			unset( $row_actions['duplicate'] );
 			unset( $row_actions['send'] );
-		} elseif ( ! current_user_can( 'publish_post', $item->id ) ) {
+		} elseif ( ! $item->current_user_can_publish() ) {
 			unset( $row_actions['send'] );
 		}
 
@@ -715,7 +728,7 @@ class Table extends \WP_List_Table {
 	 */
 	private function get_email_action( $item ) {
 
-		if ( 'publish' === $item->status && current_user_can( 'publish_post', $item->id ) && 'newsletter' === $item->type ) {
+		if ( 'publish' === $item->status && $item->current_user_can_publish() && 'newsletter' === $item->type ) {
 
 			// Resend the newsletter.
 			if ( '' !== get_post_meta( $item->id, 'completed', true ) ) {
@@ -1101,7 +1114,7 @@ class Table extends \WP_List_Table {
 
 			switch ( $action ) {
 				case 'publish':
-					if ( current_user_can( 'publish_post', $email->id ) ) {
+					if ( $email->current_user_can_publish() ) {
 						wp_publish_post( $email->id );
 					}
 

@@ -132,7 +132,7 @@ class Main {
 
 		// Set status to publish to allow sending.
 		if ( 'publish' !== $campaign->status ) {
-			if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+			if ( ! $campaign->current_user_can_publish() ) {
 				self::redirect_from_action_with_error( 'You do not have permission to send this campaign.' );
 			}
 
@@ -167,7 +167,7 @@ class Main {
 	public static function admin_resend_campaign( $campaign ) {
 
 		// Check if the user can publish the campaign.
-		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+		if ( ! $campaign->current_user_can_publish() ) {
 			self::redirect_from_action_with_error( 'You do not have permission to resend this campaign.' );
 		}
 
@@ -191,7 +191,7 @@ class Main {
 	public static function admin_pause_campaign( $campaign ) {
 
 		// Check if the user can publish the campaign.
-		if ( ! current_user_can( 'publish_post', $campaign->id ) ) {
+		if ( ! $campaign->current_user_can_publish() ) {
 			self::redirect_from_action_with_error( 'You do not have permission to pause this campaign.' );
 		}
 

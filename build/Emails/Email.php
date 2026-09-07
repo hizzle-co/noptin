@@ -1622,6 +1622,15 @@ class Email {
 	}
 
 	/**
+	 * Checks if the current user can publish this email.
+	 *
+	 * @return bool
+	 */
+	public function current_user_can_publish() {
+		return $this->exists() && $this->current_user_can_edit() && current_user_can( 'publish_post', $this->id );
+	}
+
+	/**
 	 * Returns a stats URL for the email.
 	 *
 	 * @return string

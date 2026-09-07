@@ -136,11 +136,25 @@ class REST extends \WP_REST_Posts_Controller {
 		$prepared_args = parent::prepare_items_query( $prepared_args, $request );
 		$allowed       = get_noptin_accessible_campaign_types();
 
-		$prepared_args['meta_query'][] = array(
+		$type_query = array(
 			'key'     => 'campaign_type',
 			'value'   => empty( $allowed ) ? array( '__none__' ) : $allowed,
 			'compare' => 'IN',
 		);
+
+		// Older campaigns without stored type metadata are newsletters.
+		if ( in_array( 'newsletter', $allowed, true ) ) {
+			$type_query = array(
+				'relation' => 'OR',
+				$type_query,
+				array(
+					'key'     => 'campaign_type',
+					'compare' => 'NOT EXISTS',
+				),
+			);
+		}
+
+		$prepared_args['meta_query'][] = $type_query;
 
 		return $prepared_args;
 	}
@@ -326,6 +340,14 @@ class REST extends \WP_REST_Posts_Controller {
 					'noptin_template_not_found',
 					'Template not found.',
 					array( 'status' => 404 )
+				);
+			}
+
+			if ( 'email_template' !== $email->type && ! $email->current_user_can_edit() ) {
+				return new \WP_Error(
+					'noptin_template_forbidden',
+					'You cannot access this email template.',
+					array( 'status' => 403 )
 				);
 			}
 
