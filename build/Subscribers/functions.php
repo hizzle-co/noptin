@@ -490,6 +490,48 @@ function add_noptin_subscriber( $fields ) {
 add_action( 'noptin_checkbox_integration_process_submission', 'add_noptin_subscriber' );
 
 /**
+ * Checks whether an email address uses a blocked domain or top-level domain.
+ *
+ * Domain rules (for example, example.com) also match subdomains. Rules that
+ * begin with a dot (for example, .invalid) match the end of the domain.
+ *
+ * @since 3.4.6
+ *
+ * @param string $email Email address to check.
+ * @return bool
+ */
+function noptin_is_email_domain_blocked( $email ) {
+	if ( ! is_string( $email ) || false === strpos( $email, '@' ) ) {
+		return false;
+	}
+
+	$domain  = strtolower( substr( strrchr( $email, '@' ), 1 ) );
+	$blocked = noptin_parse_list( get_noptin_option( 'blocked_email_domains', '' ) );
+
+	foreach ( $blocked as $rule ) {
+		$rule = strtolower( trim( $rule ) );
+
+		// Accept pasted domains in the common @example.com and *.example.com forms.
+		$rule = ltrim( $rule, '@' );
+		$rule = ltrim( $rule, '*' );
+
+		if ( empty( $rule ) ) {
+			continue;
+		}
+
+		if ( '.' === $rule[0] ) {
+			if ( strlen( $domain ) > strlen( $rule ) && substr( $domain, -strlen( $rule ) ) === $rule ) {
+				return true;
+			}
+		} elseif ( $domain === $rule || substr( $domain, -( strlen( $rule ) + 1 ) ) === '.' . $rule ) {
+			return true;
+		}
+	}
+
+	return (bool) apply_filters( 'noptin_is_email_domain_blocked', false, $email, $domain, $blocked );
+}
+
+/**
  * Updates a Noptin subscriber
  *
  * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber ID, email, confirm key, or object.

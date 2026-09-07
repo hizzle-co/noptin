@@ -315,6 +315,12 @@ class Menu {
 				'label'    => __( 'Email Subscribers', 'newsletter-optin-box' ),
 				'section'  => 'general',
 				'settings' => array(
+					'blocked_email_domains'  => array(
+						'el'          => 'textarea',
+						'label'       => __( 'Blocked Email Domains', 'newsletter-optin-box' ),
+						'placeholder' => "example.com\n*.tld",
+						'description' => __( 'Prevent new subscriptions from these email domains or top-level domains. Enter one value per line; for example, example.com or *.tld. Subdomains are also blocked.', 'newsletter-optin-box' ),
+					),
 					'hide_from_subscribers'  => array(
 						'el'          => 'input',
 						'type'        => 'checkbox_alt',

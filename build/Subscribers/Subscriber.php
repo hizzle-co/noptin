@@ -657,6 +657,11 @@ class Subscriber extends \Hizzle\Store\Record {
 			);
 		}
 
+		// Block new subscribers and email changes that use a denied domain.
+		if ( ( ! $this->get_id() || array_key_exists( 'email', $this->changes ) ) && noptin_is_email_domain_blocked( $this->get_email() ) ) {
+			return new \WP_Error( 'blocked_email_domain', 'This email address is not allowed.' );
+		}
+
 		// If we're creating, make sure the email doesn't already exist.
 		if ( ! $this->get_id() ) {
 			$subscriber = get_noptin_subscriber_id_by_email( $this->get_email() );
