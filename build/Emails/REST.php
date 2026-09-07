@@ -74,7 +74,7 @@ class REST extends \WP_REST_Posts_Controller {
 			array(
 				'methods'             => \WP_REST_Server::EDITABLE,
 				'callback'            => array( $this, 'reorder_emails' ),
-				'permission_callback' => array( $this, 'create_item_permissions_check' ),
+				'permission_callback' => 'is_user_logged_in',
 				'args'                => array(
 					'ids' => array(
 						'description' => 'The IDs of the emails to reorder.',
