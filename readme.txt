@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Version: 4.3.7
-Stable tag: 4.3.7
+Version: 4.3.8
+Stable tag: 4.3.8
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -198,6 +198,10 @@ There are a lot of ways to contribute to this newsletter plugin:-
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.3.8 =
+* Add: Support dynamic default values and hidden fields in subscription forms, including values from the current post.
+* Add: Detect stalled newsletter campaigns and let administrators continue sending them from their browser.
 
 = 4.3.7 =
 * Allow blocking newsletter subscribers using a certain email address domain or tld.
