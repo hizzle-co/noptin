@@ -295,6 +295,11 @@ class Renderer {
 			noptin_hidden_field( 'noptin_form_id', $form->id );
 		}
 
+		// Supply the current post context from WordPress.
+		$context_post    = is_admin() ? null : get_post();
+		$context_post_id = $context_post instanceof \WP_Post && 'noptin-form' !== $context_post->post_type ? $context_post->ID : 0;
+		noptin_hidden_field( 'conversion_page_id', $context_post_id );
+
 		echo '</form>';
 
 		// Closing wrapper.
@@ -492,6 +497,15 @@ class Renderer {
 
 			// For each form field...
 			foreach ( $fields as $custom_field ) {
+				// Hidden fields are resolved from the form context during submission.
+				if ( ! empty( $custom_field['hidden'] ) ) {
+					continue;
+				}
+
+				// Visible defaults are resolved while rendering so visitors can edit them.
+				if ( isset( $custom_field['default_value'] ) && '' !== $custom_field['default_value'] ) {
+					$custom_field['value'] = Main::$smart_tags->replace_for_render( $custom_field['default_value'] );
+				}
 
 				if ( $current_email && 'email' === $custom_field['merge_tag'] ) {
 					printf( '<input type="hidden" name="noptin_fields[email]" value="%s">', esc_attr( $current_email ) );

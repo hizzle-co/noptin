@@ -18,10 +18,11 @@ class Main {
 	/**
 	 * The task hook.
 	 */
-	const TASK_HOOK             = 'noptin_send_bulk_emails';
-	const TASK_INTERVAL         = 300; // Send every 5 minutes.
-	const HEALTH_CHECK_HOOK     = 'noptin_send_bulk_emails_health_check';
-	const HEALTH_CHECK_INTERVAL = 600; // 10 minutes
+	const TASK_HOOK              = 'noptin_send_bulk_emails';
+	const TASK_INTERVAL          = 300; // Send every 5 minutes.
+	const HEALTH_CHECK_HOOK      = 'noptin_send_bulk_emails_health_check';
+	const HEALTH_CHECK_INTERVAL  = 600; // 10 minutes
+	const FOREGROUND_AJAX_ACTION = 'noptin_send_bulk_emails_foreground';
 
 	/**
 	 * Locking constants
@@ -57,6 +58,7 @@ class Main {
 		add_action( 'noptin_tasks_cleanup', array( __CLASS__, 'cleanup_tasks' ) );
 		add_action( 'wp_ajax_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
 		add_action( 'wp_ajax_nopriv_' . self::TASK_HOOK, array( __CLASS__, 'maybe_handle_via_ajax' ) );
+		add_action( 'wp_ajax_' . self::FOREGROUND_AJAX_ACTION, array( __CLASS__, 'maybe_handle_in_foreground' ) );
 	}
 
 	/**
@@ -448,6 +450,82 @@ class Main {
 	}
 
 	/**
+	 * Runs a bulk-email batch requested by an administrator's browser.
+	 *
+	 * This uses the normal sender, but lets the browser request the next batch
+	 * instead of dispatching another server-side loopback request.
+	 */
+	public static function maybe_handle_in_foreground() {
+		check_ajax_referer( self::FOREGROUND_AJAX_ACTION );
+
+		if ( ! current_user_can_manage_noptin_campaign_type( 'newsletter' ) ) {
+			wp_send_json_error( array( 'message' => 'You do not have permission to send newsletters.' ), 403 );
+		}
+
+		if ( noptin_email_sending_limit_reached() ) {
+			wp_send_json_success(
+				array(
+					'state'   => 'limited',
+					'message' => 'Email sending is paused until the configured sending limit resets.',
+				)
+			);
+		}
+
+		$campaign = self::prepare_pending_campaign();
+		if ( ! $campaign ) {
+			wp_send_json_success(
+				array(
+					'state'   => 'complete',
+					'message' => 'There are no pending newsletter campaigns.',
+				)
+			);
+		}
+
+		if ( ! $campaign->current_user_can_publish() ) {
+			wp_send_json_error( array( 'message' => 'You do not have permission to send the pending newsletter.' ), 403 );
+		}
+
+		if ( self::is_process_running() ) {
+			wp_send_json_success(
+				array(
+					'state'   => 'busy',
+					'message' => 'Another email-sending process is currently running. Retrying shortly.',
+				)
+			);
+		}
+
+		$campaign_id = $campaign->id;
+		$sent_before = (int) get_post_meta( $campaign_id, '_noptin_sends', true );
+
+		add_filter( 'noptin_bulk_email_dispatch_next', '__return_false' );
+		try {
+			self::run();
+		} finally {
+			remove_filter( 'noptin_bulk_email_dispatch_next', '__return_false' );
+		}
+
+		$sent_after    = (int) get_post_meta( $campaign_id, '_noptin_sends', true );
+		$next_campaign = self::prepare_pending_campaign();
+		$last_error    = get_post_meta( $campaign_id, '_bulk_email_last_error', true );
+
+		wp_send_json_success(
+			array(
+				'state'      => $next_campaign ? 'pending' : 'complete',
+				'campaignId' => $campaign_id,
+				'campaign'   => $campaign->name,
+				'processed'  => max( 0, $sent_after - $sent_before ),
+				'totalSent'  => $sent_after,
+				'hasPending' => (bool) $next_campaign,
+				'wasPaused'  => '' !== get_post_meta( $campaign_id, 'paused', true ),
+				'error'      => is_array( $last_error ) ? ( $last_error['message'] ?? '' ) : '',
+				'message'    => $next_campaign
+					? 'The current batch finished. Continuing with the next batch.'
+					: 'All pending emails have finished sending.',
+			)
+		);
+	}
+
+	/**
 	 * Runs the queue.
 	 *
 	 * Pass each queue item to the task handler, while remaining
@@ -517,8 +595,15 @@ class Main {
 			// Release the lock.
 			self::release_lock();
 
-			// Trigger sending of pending emails.
-			self::send_pending();
+			// Trigger sending of pending emails unless the caller will dispatch the next batch.
+			/**
+			 * Filters whether the bulk sender should dispatch another background request.
+			 *
+			 * @param bool $dispatch_next Whether to dispatch the next batch.
+			 */
+			if ( apply_filters( 'noptin_bulk_email_dispatch_next', true ) ) {
+				self::send_pending();
+			}
 		}
 	}
 
@@ -669,6 +754,80 @@ class Main {
 		}
 
 		return add_option( self::LOCK_KEY, time(), '', 'no' );
+	}
+
+	/**
+	 * Checks whether the bulk email sender has a live process lock.
+	 */
+	public static function is_process_running() {
+		$lock = (int) get_option( self::LOCK_KEY );
+
+		if ( $lock && ( time() - $lock ) >= self::LOCK_TTL ) {
+			self::release_lock();
+			return false;
+		}
+
+		return ! empty( $lock );
+	}
+
+	/**
+	 * Prepares data for the browser-driven recovery prompt.
+	 *
+	 * Only the oldest sendable campaign is checked. Newer campaigns may be
+	 * legitimately waiting for it and must not be classified as stuck.
+	 *
+	 * @return array|false
+	 */
+	public static function get_foreground_recovery_data() {
+		if ( noptin_email_sending_limit_reached() || self::is_process_running() ) {
+			return false;
+		}
+
+		$campaign = self::prepare_pending_campaign();
+		if ( ! $campaign || ! $campaign->current_user_can_publish() ) {
+			return false;
+		}
+
+		$stuck_after   = max( MINUTE_IN_SECONDS, (int) apply_filters( 'noptin_bulk_email_stuck_after', 30 * MINUTE_IN_SECONDS, $campaign ) );
+		$last_activity = (int) get_post_meta( $campaign->id, '_noptin_last_activity', true );
+
+		if ( empty( $last_activity ) ) {
+			$last_activity = (int) get_post_time( 'U', true, $campaign->id );
+		}
+
+		if ( $last_activity > ( time() - $stuck_after ) ) {
+			return false;
+		}
+
+		$tasks_unhealthy = false;
+		foreach ( array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ) as $hook ) {
+			$task = \Hizzle\Noptin\Tasks\Main::get_next_scheduled_task( $hook );
+
+			if ( ! $task || ! $task->get_date_scheduled() || $task->get_date_scheduled()->getTimestamp() <= ( time() - $stuck_after ) ) {
+				$tasks_unhealthy = true;
+				break;
+			}
+		}
+
+		if ( ! $tasks_unhealthy ) {
+			return false;
+		}
+
+		return array(
+			'action'       => self::FOREGROUND_AJAX_ACTION,
+			'nonce'        => wp_create_nonce( self::FOREGROUND_AJAX_ACTION ),
+			'campaignId'   => $campaign->id,
+			'campaign'     => $campaign->name,
+			'totalSent'    => (int) get_post_meta( $campaign->id, '_noptin_sends', true ),
+			'lastActivity' => $last_activity,
+			'lastActive'   => $last_activity
+				? sprintf(
+					/* translators: %s: Human-readable time since email sending last progressed. */
+					__( '%s ago', 'newsletter-optin-box' ),
+					human_time_diff( $last_activity, time() )
+				)
+				: 'no sending activity has been recorded',
+		);
 	}
 
 	/**

@@ -22,7 +22,7 @@ class Main {
 	public static $listener;
 
 	/**
-	 * @var Listener Form smart tags.
+	 * @var Smart_Tags Form smart tags.
 	 */
 	public static $smart_tags;
 

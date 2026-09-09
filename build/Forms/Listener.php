@@ -63,6 +63,13 @@ class Listener {
 	public $cached = null;
 
 	/**
+	 * Fields prepared for the current request.
+	 *
+	 * @var array|null
+	 */
+	private $prepared_fields = null;
+
+	/**
 	 * Register relevant hooks.
 	 *
 	 * @since 1.6.2
@@ -232,6 +239,9 @@ class Listener {
 	 * @return array
 	 */
 	public function get_fields_for_request() {
+		if ( null !== $this->prepared_fields ) {
+			return $this->prepared_fields;
+		}
 
 		/**
 		 * Filters the fields to process for the current submission.
@@ -244,7 +254,25 @@ class Listener {
 		 * @param Listener $listener
 		 *
 		 */
-		return apply_filters( 'custom_noptin_fields_to_process', prepare_noptin_form_fields( $this->get_cached( 'fields' ) ), $this );
+		$fields = apply_filters( 'custom_noptin_fields_to_process', prepare_noptin_form_fields( $this->get_cached( 'fields' ) ), $this );
+
+		$submitted_fields = $this->get_submitted( 'noptin_fields', array() );
+		$submitted_fields = is_array( $submitted_fields ) ? $submitted_fields : array();
+
+		foreach ( $fields as $field ) {
+			$merge_tag = $field['merge_tag'];
+
+			// Hidden fields are absent from the markup, so resolve their configured
+			// value from the submitted page context at submission time.
+			if ( ! empty( $field['hidden'] ) && isset( $field['default_value'] ) && '' !== $field['default_value'] ) {
+				$submitted_fields[ $merge_tag ] = Main::$smart_tags->replace_for_submission( $field['default_value'], $this );
+			}
+		}
+
+		$this->submitted['noptin_fields'] = $submitted_fields;
+
+		$this->prepared_fields = $fields;
+		return $this->prepared_fields;
 	}
 
 	/**

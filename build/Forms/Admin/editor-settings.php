@@ -23,6 +23,7 @@ foreach ( get_default_noptin_form_messages() as $message_id => $message_details 
 	$confirmation_messages[ "{$message_id}Message" ] = array(
 		'type'        => 'text',
 		'el'          => 'input',
+		'can_map'     => true,
 		'label'       => $message_details['label'],
 		'tooltip'     => $message_details['description'],
 		'placeholder' => $message_details['default'],
@@ -91,6 +92,7 @@ $editor_settings = array(
 				'redirectUrl'     => array(
 					'type'        => 'text',
 					'el'          => 'input',
+					'can_map'     => true,
 					'label'       => __( 'Redirect url', 'newsletter-optin-box' ),
 					'placeholder' => 'http://example.com/success',
 					'conditions'  => array(
@@ -477,6 +479,30 @@ $editor_settings = array(
 								'label'       => __( 'Frontend Label', 'newsletter-optin-box' ),
 								'description' => __( 'Leave empty to use the default label.', 'newsletter-optin-box' ),
 							),
+							'type.default_value' => array(
+								'el'          => 'input',
+								'label'       => __( 'Default value', 'newsletter-optin-box' ),
+								'can_map'     => true,
+								'description' => __( 'Optional. You can insert dynamic values from the page where the form is submitted.', 'newsletter-optin-box' ),
+							),
+							'type.hidden' => array(
+								'el'          => 'input',
+								'type'        => 'checkbox_alt',
+								'label'       => __( 'Hidden', 'newsletter-optin-box' ),
+								'description' => __( 'Do not display this field. Its value will be calculated when the form is submitted.', 'newsletter-optin-box' ),
+								'default'     => false,
+								'conditions'  => array(
+									array(
+										'key'      => 'type.type',
+										'operator' => '!=',
+										'value'    => 'email',
+									),
+									array(
+										'key'      => 'type.default_value',
+										'operator' => '!empty',
+									),
+								),
+							),
 						),
 					),
 				),
@@ -691,6 +717,7 @@ $editor_settings = array(
 				'prefix'           => array(
 					'el'         => 'textarea',
 					'label'      => __( 'Prefix', 'newsletter-optin-box' ),
+					'can_map'    => true,
 					'conditions' => array(
 						array(
 							'key'   => 'hidePrefix',
@@ -741,6 +768,7 @@ $editor_settings = array(
 				'title'           => array(
 					'el'         => 'textarea',
 					'label'      => __( 'Heading', 'newsletter-optin-box' ),
+					'can_map'    => true,
 					'conditions' => array(
 						array(
 							'key'   => 'hideTitle',
@@ -791,6 +819,7 @@ $editor_settings = array(
 				'description'           => array(
 					'el'         => 'textarea',
 					'label'      => __( 'Sub-heading', 'newsletter-optin-box' ),
+					'can_map'    => true,
 					'conditions' => array(
 						array(
 							'key'   => 'hideDescription',
@@ -841,6 +870,7 @@ $editor_settings = array(
 				'note'           => array(
 					'el'         => 'textarea',
 					'label'      => __( 'Note', 'newsletter-optin-box' ),
+					'can_map'    => true,
 					'conditions' => array(
 						array(
 							'key'   => 'hideNote',

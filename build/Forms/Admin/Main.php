@@ -102,6 +102,13 @@ class Main {
 			'rest_query_args' => apply_filters( 'noptin_form_editor_rest_query_args', array(), $post ),
 		);
 
+		$params['smart_tags'] = noptin_prepare_merge_tags_for_js(
+			array_intersect_key(
+				\Hizzle\Noptin\Forms\Main::$smart_tags->all(),
+				array_flip( array( 'current_url', 'current_path', 'date', 'time', 'post', 'post_meta' ) )
+			)
+		);
+
 		$params = apply_filters(
 			'noptin_form_editor_data',
 			$params,

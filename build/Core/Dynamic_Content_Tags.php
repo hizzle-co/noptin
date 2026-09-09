@@ -64,6 +64,15 @@ abstract class Dynamic_Content_Tags {
 			'description' => __( 'Data from a cookie.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_cookie' ),
 			'example'     => "cookie name='my_cookie' default='Default Value'",
+			'attributes'  => array(
+				'name' => array(
+					'el'          => 'input',
+					'type'        => 'text',
+					'label'       => __( 'Cookie name', 'newsletter-optin-box' ),
+					'description' => __( 'The name of the cookie whose value should be returned.', 'newsletter-optin-box' ),
+					'default'     => '',
+				),
+			),
 		);
 
 		$this->tags['email'] = array(
@@ -88,13 +97,58 @@ abstract class Dynamic_Content_Tags {
 			'callback'    => array( __CLASS__, 'get_date' ),
 			'example'     => 'date format="j, F Y" localized=1',
 			'never_empty' => true,
+			'attributes'  => array(
+				'format' => array(
+					'el'          => 'input',
+					'type'        => 'text',
+					'label'       => __( 'Date format', 'newsletter-optin-box' ),
+					'description' => __( 'A PHP date format, for example Y-m-d or j, F Y.', 'newsletter-optin-box' ),
+					'default'     => 'Y-m-d',
+				),
+				'relative' => array(
+					'el'          => 'input',
+					'type'        => 'text',
+					'label'       => __( 'Relative date', 'newsletter-optin-box' ),
+					'description' => __( 'Optional relative date expression, for example +7 days.', 'newsletter-optin-box' ),
+					'default'     => '',
+				),
+				'localized' => array(
+					'el'      => 'input',
+					'type'    => 'checkbox_alt',
+					'label'   => __( 'Use localized date', 'newsletter-optin-box' ),
+					'default' => false,
+				),
+			),
 		);
 
 		$this->tags['time'] = array(
 			// translators: %s is the current time.
 			'description' => sprintf( __( 'The current time. Example: %s.', 'newsletter-optin-box' ), '<strong>' . date_i18n( get_option( 'time_format' ) ) . '</strong>' ),
-			'replacement' => date_i18n( get_option( 'time_format' ) ),
+			'callback'    => array( __CLASS__, 'get_time' ),
+			'example'     => 'time format="g:i a" localized=1',
 			'never_empty' => true,
+			'attributes'  => array(
+				'format' => array(
+					'el'          => 'input',
+					'type'        => 'text',
+					'label'       => __( 'Time format', 'newsletter-optin-box' ),
+					'description' => __( 'A PHP time format, for example H:i:s or g:i a.', 'newsletter-optin-box' ),
+					'default'     => get_option( 'time_format' ),
+				),
+				'relative' => array(
+					'el'          => 'input',
+					'type'        => 'text',
+					'label'       => __( 'Relative time', 'newsletter-optin-box' ),
+					'description' => __( 'Optional relative time expression, for example +2 hours.', 'newsletter-optin-box' ),
+					'default'     => '',
+				),
+				'localized' => array(
+					'el'      => 'input',
+					'type'    => 'checkbox_alt',
+					'label'   => __( 'Use localized time', 'newsletter-optin-box' ),
+					'default' => false,
+				),
+			),
 		);
 
 		$this->tags['language'] = array(
@@ -117,18 +171,60 @@ abstract class Dynamic_Content_Tags {
 			'description' => __( "A custom field's value of the current subscriber (if known).", 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_subscriber_field' ),
 			'example'     => "subscriber field='first_name' default='there'",
+			'attributes'  => array(
+				'field' => array(
+					'el'      => 'select',
+					'label'   => __( 'Subscriber field', 'newsletter-optin-box' ),
+					'options' => wp_list_pluck( get_noptin_custom_fields( true ), 'label', 'merge_tag' ),
+					'default' => 'first_name',
+				),
+			),
 		);
 
 		$this->tags['user'] = array(
 			'description' => __( 'The property of the currently logged-in user.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_user_property' ),
 			'example'     => "user property='user_email'",
+			'attributes'  => array(
+				'property' => array(
+					'el'      => 'select',
+					'label'   => __( 'User property', 'newsletter-optin-box' ),
+					'options' => array(
+						'ID'           => __( 'User ID', 'newsletter-optin-box' ),
+						'user_login'   => __( 'Username', 'newsletter-optin-box' ),
+						'user_email'   => __( 'Email address', 'newsletter-optin-box' ),
+						'display_name' => __( 'Display name', 'newsletter-optin-box' ),
+						'first_name'   => __( 'First name', 'newsletter-optin-box' ),
+						'last_name'    => __( 'Last name', 'newsletter-optin-box' ),
+					),
+					'default' => 'user_email',
+				),
+			),
 		);
 
 		$this->tags['post'] = array(
 			'description' => __( 'Property of the current page or post.', 'newsletter-optin-box' ),
 			'callback'    => array( $this, 'get_post_property' ),
 			'example'     => "post property='ID'",
+			'attributes'  => array(
+				'property' => array(
+					'el'      => 'select',
+					'label'   => __( 'Post property', 'newsletter-optin-box' ),
+					'options' => array(
+						'ID'            => __( 'Post ID', 'newsletter-optin-box' ),
+						'post_title'    => __( 'Post title', 'newsletter-optin-box' ),
+						'post_name'     => __( 'Post slug', 'newsletter-optin-box' ),
+						'post_excerpt'  => __( 'Post excerpt', 'newsletter-optin-box' ),
+						'post_content'  => __( 'Post content', 'newsletter-optin-box' ),
+						'post_date'     => __( 'Published date', 'newsletter-optin-box' ),
+						'post_modified' => __( 'Modified date', 'newsletter-optin-box' ),
+						'post_author'   => __( 'Author ID', 'newsletter-optin-box' ),
+						'post_type'     => __( 'Post type', 'newsletter-optin-box' ),
+						'post_status'   => __( 'Post status', 'newsletter-optin-box' ),
+					),
+					'default' => 'ID',
+				),
+			),
 		);
 
 		do_action( 'noptin_register_dynamic_content_tags', $this );
@@ -521,7 +617,7 @@ abstract class Dynamic_Content_Tags {
 		$default = isset( $args['default'] ) ? $args['default'] : '';
 
 		if ( isset( $_COOKIE[ $name ] ) ) {
-			return esc_html( wp_unslash( $_COOKIE[ $name ] ) );
+			return sanitize_text_field( wp_unslash( $_COOKIE[ $name ] ) );
 		}
 
 		return esc_html( $default );
@@ -555,7 +651,7 @@ abstract class Dynamic_Content_Tags {
 	public static function get_time( $args = array() ) {
 		$time      = ! empty( $args['relative'] ) ? strtotime( $args['relative'] ) : time();
 		$time      = $time + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
-		$format    = ! empty( $args['format'] ) ? $args['format'] : 'H:i:s';
+		$format    = ! empty( $args['format'] ) ? $args['format'] : get_option( 'time_format' );
 		$localized = ! empty( $args['localized'] );
 
 		if ( $localized ) {
@@ -611,7 +707,7 @@ abstract class Dynamic_Content_Tags {
 		$default  = isset( $args['default'] ) ? $args['default'] : '';
 		$user     = wp_get_current_user();
 
-		if ( $user instanceof WP_User && isset( $user->{$property} ) ) {
+		if ( $user instanceof \WP_User && isset( $user->{$property} ) ) {
 			return esc_html( $user->{$property} );
 		}
 
@@ -630,7 +726,7 @@ abstract class Dynamic_Content_Tags {
 		$property = empty( $args['property'] ) ? 'ID' : $args['property'];
 		$default  = isset( $args['default'] ) ? $args['default'] : '';
 
-		if ( $post instanceof WP_Post && isset( $post->{$property} ) ) {
+		if ( $post instanceof \WP_Post && isset( $post->{$property} ) ) {
 			return 'post_content' === $property ? wp_kses_post( $post->{$property} ) : esc_html( $post->{$property} );
 		}
 

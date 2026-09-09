@@ -49,6 +49,9 @@ if ( $parent ) {
 
 		// Print pending notices.
 		\Hizzle\Noptin\Admin\Main::show_notices();
+		?>
+		<div id="noptin-foreground-email-recovery"></div>
+		<?php
 
 		// Check if sending has been paused due to limits.
 		if ( noptin_email_sending_limit_reached() ) {

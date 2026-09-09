@@ -278,6 +278,15 @@ function prepare_noptin_form_fields( $fields ) {
 			if ( isset( $_custom_field['required'] ) ) {
 				$custom_field['required'] = $_custom_field['required'];
 			}
+
+			if ( array_key_exists( 'default_value', $_custom_field ) ) {
+				$custom_field['default_value'] = $_custom_field['default_value'];
+			}
+
+			if ( isset( $_custom_field['hidden'] ) && 'email' !== $custom_field['merge_tag'] ) {
+				$has_default_value      = isset( $_custom_field['default_value'] ) && '' !== trim( (string) $_custom_field['default_value'] );
+				$custom_field['hidden'] = ! empty( $_custom_field['hidden'] ) && $has_default_value;
+			}
 		}
 
 		if ( ! empty( $custom_field ) ) {

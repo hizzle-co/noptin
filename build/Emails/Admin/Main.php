@@ -835,6 +835,9 @@ class Main {
 					'ai'           => array(
 						'disabled' => (bool) $disable_ai,
 					),
+					'foregroundSending' => 'view-campaigns' === $script && $type && 'newsletter' === $type->type
+						? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data()
+						: false,
 					'senders'      => array_merge(
 						array(
 							'manual_recipients' => array(
