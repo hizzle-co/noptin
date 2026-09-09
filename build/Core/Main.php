@@ -76,23 +76,6 @@ class Main {
 			return $caps;
 		}
 
-		// Map campaign object operations to the capability for the saved type.
-		if ( function_exists( 'get_noptin_campaign_type_capability' ) ) {
-			if ( in_array( $cap, array( 'edit_post', 'delete_post', 'read_post', 'edit_noptin_campaign', 'delete_noptin_campaign', 'read_noptin_campaign' ), true ) && ! empty( $args[0] ) ) {
-				$post = get_post( $args[0] );
-				if ( $post && 'noptin-campaign' === $post->post_type ) {
-					$cap  = get_noptin_campaign_type_capability( get_post_meta( $post->ID, 'campaign_type', true ) );
-					$caps = array( $cap );
-				}
-			}
-
-			// The campaign post type's plural capabilities mean access to any type.
-			if ( in_array( $cap, array( 'edit_noptin_campaigns', 'publish_noptin_campaigns', 'delete_noptin_campaigns', 'delete_others_noptin_campaigns', 'edit_others_noptin_campaigns', 'read_private_noptin_campaigns' ), true ) ) {
-				$available = get_noptin_accessible_campaign_type_capability( $user_id );
-				return array( $available ? $available : $cap );
-			}
-		}
-
 		if ( 0 !== strpos( $cap, 'manage_noptin_' ) ) {
 			return $caps;
 		}

@@ -1603,7 +1603,7 @@ class Email {
 			return Main::current_user_can_create_new_campaign( $this->type );
 		}
 
-		return current_user_can_manage_noptin_campaign_type( $this->type );
+		return current_user_can( 'edit_post', $this->id );
 	}
 
 	/**
@@ -1618,7 +1618,7 @@ class Email {
 			return false;
 		}
 
-		return current_user_can_manage_noptin_campaign_type( $this->type );
+		return current_user_can( 'delete_post', $this->id );
 	}
 
 	/**
@@ -1627,7 +1627,9 @@ class Email {
 	 * @return bool
 	 */
 	public function current_user_can_publish() {
-		return $this->exists() && $this->current_user_can_edit() && current_user_can( 'publish_post', $this->id );
+		$post_type = get_post_type_object( 'noptin-campaign' );
+
+		return $this->exists() && $this->current_user_can_edit() && $post_type && current_user_can( $post_type->cap->publish_posts );
 	}
 
 	/**
