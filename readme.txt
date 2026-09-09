@@ -202,6 +202,7 @@ There are a lot of ways to contribute to this newsletter plugin:-
 = 4.3.8 =
 * Add: Support dynamic default values and hidden fields in subscription forms, including values from the current post.
 * Add: Detect stalled newsletter campaigns and let administrators continue sending them from their browser.
+* Fix: Newsletter editor shows "Submit for Review" button instead of "Publish" button.
 
 = 4.3.7 =
 * Allow blocking newsletter subscribers using a certain email address domain or tld.
