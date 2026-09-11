@@ -3,6 +3,8 @@
 namespace Hizzle\Noptin\Tests\Automation_Rules;
 
 use Hizzle\Noptin\Emails\Email;
+use Hizzle\Noptin\Objects\Store;
+use Hizzle\Noptin\Subscribers\Records;
 use WP_UnitTestCase;
 
 /**
@@ -84,14 +86,6 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 		$recipient_email = 'recipient@example.com';
 		$trigger_email   = 'new-subscriber@example.com';
 
-		add_noptin_subscriber(
-			array(
-				'email'  => $recipient_email,
-				'name'   => 'Fixed Recipient',
-				'status' => 'subscribed',
-			)
-		);
-
 		$campaign = new Email(
 			array(
 				'author'  => 1,
@@ -120,6 +114,23 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 		$this->assertSame( 'email', $rule->get_action_id() );
 		$this->assertSame( $campaign->id, (int) $rule->get_action_setting( 'automated_email_id' ) );
 
+		$subscriber_collection = Store::get( 'subscriber' );
+		$this->assertInstanceOf( Records::class, $subscriber_collection );
+
+		// The fixed recipient is test data, not the event that should run the automation.
+		remove_action( 'noptin_subscriber_status_set_to_subscribed', array( $subscriber_collection, 'subscriber_state_changed' ), 11 );
+		try {
+			add_noptin_subscriber(
+				array(
+					'email'  => $recipient_email,
+					'name'   => 'Fixed Recipient',
+					'status' => 'subscribed',
+				)
+			);
+		} finally {
+			add_action( 'noptin_subscriber_status_set_to_subscribed', array( $subscriber_collection, 'subscriber_state_changed' ), 11, 2 );
+		}
+
 		$subscriber_id = add_noptin_subscriber(
 			array(
 				'email'  => $trigger_email,
@@ -128,8 +139,18 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 			)
 		);
 		$subscriber    = noptin_get_subscriber( $subscriber_id );
-		$subscriber->set_status( 'subscribed' );
-		$subscriber->save();
+		$trigger_args  = function ( $args ) use ( $rule ) {
+			$args['rule_id'] = $rule->get_id();
+			return $args;
+		};
+
+		add_filter( 'noptin_subscriber_collection_trigger_args', $trigger_args );
+		try {
+			$subscriber->set_status( 'subscribed' );
+			$subscriber->save();
+		} finally {
+			remove_filter( 'noptin_subscriber_collection_trigger_args', $trigger_args );
+		}
 
 		$this->assertSame( array( $recipient_email ), \Noptin_Test_Email_Sender::$recipients );
 		$this->assertSame( 'Welcome ' . $trigger_email, \Noptin_Test_Email_Sender::$subject );
