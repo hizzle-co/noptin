@@ -682,6 +682,11 @@ class Main {
 			)
 		);
 
+		$run_in_foreground = defined( 'NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES' ) && NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES;
+		if ( $run_in_foreground && 0 === $delay && $task instanceof Task && 'pending' === $task->get_status() ) {
+			$task->process();
+		}
+
 		if ( $task instanceof Task && 'failed' === $task->get_status() ) {
 			$log = $task->get_last_log();
 			return new \WP_Error( 'noptin_task_failed', empty( $log ) ? 'Task failed to run.' : $log );
