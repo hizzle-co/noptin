@@ -20,7 +20,35 @@ defined( 'ABSPATH' ) || exit;
  * @internal
  * @ignore
  */
-class Email_Type extends \Noptin_Automated_Email_Type {
+class Email_Type {
+
+	/**
+	 * Email sub-type ID.
+	 *
+	 * @var string
+	 */
+	public $type;
+
+	/**
+	 * Email sub-type category.
+	 *
+	 * @var string
+	 */
+	public $category = 'General';
+
+	/**
+	 * Supported editor contexts.
+	 *
+	 * @var string[]
+	 */
+	public $contexts = array();
+
+	/**
+	 * Trigger-provided email configuration.
+	 *
+	 * @var array
+	 */
+	public $mail_config = array();
 
 	/**
 	 * @var string Trigger ID.
@@ -62,6 +90,147 @@ class Email_Type extends \Noptin_Automated_Email_Type {
 		}
 
 		$this->add_hooks();
+	}
+
+	/**
+	 * Registers the hooks used by automation-rule email sub-types.
+	 */
+	public function add_hooks() {
+		add_filter( 'noptin_automation_sub_types', array( $this, 'register_automation_type' ) );
+		add_filter( "noptin_automation_{$this->type}_merge_tags", array( $this, 'get_flattened_merge_tags' ), -1 );
+		add_filter( "noptin_automation_table_about_{$this->type}", array( $this, 'about_automation' ), 10, 2 );
+		add_action( "noptin_automation_{$this->type}_campaign_saved", array( $this, 'on_save_campaign' ) );
+		add_action( "noptin_automation_{$this->type}_campaign_deleted", array( $this, 'on_delete_campaign' ) );
+		add_action( 'noptin_prepare_email_preview', array( $this, 'prepare_preview' ) );
+		add_filter( 'noptin_get_email_prop', array( $this, 'maybe_set_default' ), 10, 3 );
+		add_filter( 'noptin_get_default_email_props', array( $this, 'get_default_props' ), 10, 2 );
+	}
+
+	/**
+	 * Registers this trigger as an automated email sub-type.
+	 *
+	 * @param array $types Existing automated email sub-types.
+	 * @return array
+	 */
+	public function register_automation_type( $types ) {
+		$defaults = array(
+			'label'                      => $this->get_name(),
+			'description'                => $this->get_description(),
+			'image'                      => $this->get_image(),
+			'category'                   => $this->category,
+			'is_mass_mail'               => 'Mass Mail' === $this->category,
+			'supports_timing'            => 'Mass Mail' !== $this->category,
+			'contexts'                   => $this->contexts,
+			'supports_general_templates' => empty( $this->mail_config['defaults']['blocks'] ),
+		);
+
+		$types[ $this->type ] = array_merge( $defaults, $this->mail_config );
+		return $types;
+	}
+
+	/**
+	 * Returns default email properties for this sub-type.
+	 *
+	 * @param array                        $props Existing defaults.
+	 * @param \Hizzle\Noptin\Emails\Email $email Email campaign.
+	 * @return array
+	 */
+	public function get_default_props( $props, $email ) {
+		if ( $email->type !== $this->type && $email->get_sub_type() !== $this->type ) {
+			return $props;
+		}
+
+		if ( ! empty( $this->mail_config['defaults'] ) ) {
+			$props = array_merge( $props, $this->mail_config['defaults'] );
+		}
+
+		foreach ( get_class_methods( $this ) as $method ) {
+			if ( 0 !== strpos( $method, 'default_' ) ) {
+				continue;
+			}
+
+			$props[ str_replace( 'default_', '', $method ) ] = call_user_func( array( $this, $method ), $email );
+		}
+
+		return $props;
+	}
+
+	/**
+	 * Filters an unsaved email property with this sub-type's default.
+	 *
+	 * @param mixed                        $value Current value.
+	 * @param string                       $prop Property name.
+	 * @param \Hizzle\Noptin\Emails\Email $email Email campaign.
+	 * @return mixed
+	 */
+	public function maybe_set_default( $value, $prop, $email ) {
+		if ( ! empty( $value ) || $email->exists() || $email->get_sub_type() !== $this->type ) {
+			return $value;
+		}
+
+		$method = sanitize_key( "default_$prop" );
+		if ( is_callable( array( $this, $method ) ) ) {
+			$value = $this->$method();
+		}
+
+		return apply_filters( "noptin_{$this->type}_default_$prop", $value );
+	}
+
+	/**
+	 * Returns the default campaign name.
+	 */
+	public function default_name() {
+		if ( ! empty( $this->mail_config['label'] ) ) {
+			return $this->mail_config['label'];
+		}
+
+		return $this->get_name();
+	}
+
+	/**
+	 * Returns the default normal email content.
+	 */
+	public function default_content_normal() {
+		$content = $this->mail_config['defaults']['content_normal'] ?? '';
+		return apply_filters( "noptin_default_{$this->type}_body", $content );
+	}
+
+	/**
+	 * Returns the default visual email content.
+	 */
+	public function default_content_visual() {
+		$blocks = $this->mail_config['defaults']['blocks'] ?? '';
+
+		if ( empty( $blocks ) ) {
+			$normal = $this->default_content_normal();
+			$blocks = empty( $normal ) ? '' : sprintf( '<!-- wp:html -->%s<!-- /wp:html -->', wpautop( $normal ) );
+		}
+
+		$content = noptin_email_wrap_blocks( $blocks, get_noptin_footer_text() );
+		return apply_filters( "noptin_default_{$this->type}_body_visual", $content );
+	}
+
+	/**
+	 * Flattens grouped merge tags for the email API and editor.
+	 *
+	 * @param array $existing Existing merge tags.
+	 * @return array
+	 */
+	public function get_flattened_merge_tags( $existing = array() ) {
+		$existing = is_array( $existing ) ? $existing : array();
+		$prepared = array();
+
+		foreach ( $this->get_merge_tags() as $group => $merge_tags ) {
+			foreach ( $merge_tags as $tag => $details ) {
+				if ( empty( $details['group'] ) ) {
+					$details['group'] = $group;
+				}
+
+				$prepared[ $tag ] = $details;
+			}
+		}
+
+		return array_merge( $prepared, $existing );
 	}
 
 	/**
@@ -130,7 +299,7 @@ class Email_Type extends \Noptin_Automated_Email_Type {
 			return $trigger->get_image();
 		}
 
-		return parent::get_image();
+		return 'email-alt';
 	}
 
 	/**
@@ -179,9 +348,7 @@ class Email_Type extends \Noptin_Automated_Email_Type {
 	 * @throws \Exception
 	 */
 	public function prepare_test_data( $campaign ) {
-
-		// Prepare user and subscriber.
-		parent::prepare_test_data( $campaign );
+		do_action( 'noptin_prepare_test_data', $this, $campaign );
 
 		// Prepare automation rule test data.
 		$trigger = $this->get_trigger();
@@ -197,6 +364,17 @@ class Email_Type extends \Noptin_Automated_Email_Type {
 		}
 
 		noptin()->emails->tags->smart_tags = $trigger->get_test_smart_tags( $rule );
+	}
+
+	/**
+	 * Prepares an email preview for this sub-type.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign Email campaign.
+	 */
+	public function prepare_preview( $campaign ) {
+		if ( $this->type === $campaign->type || $this->type === $campaign->get_sub_type() ) {
+			$this->prepare_test_data( $campaign );
+		}
 	}
 
 	/**

@@ -41,18 +41,10 @@ class Main {
 
 		self::$triggers[ $trigger->get_id() ] = $trigger;
 
-		if ( empty( noptin()->emails->automated_email_types ) ) {
-			return _doing_it_wrong( __METHOD__, 'Register triggers after noptin_email_manager_init action', '3.0.0' );
-		}
-
 		// Register email type.
-		if ( class_exists( 'Noptin_Automated_Email_Type' ) && $trigger->get_id() !== Date::LOOKUP_KEY ) {
+		if ( $trigger->get_id() !== Date::LOOKUP_KEY ) {
 			$email_type = 'automation_rule_' . $trigger->get_id();
-
-			noptin()->emails->automated_email_types->register_automated_email_type(
-				$email_type,
-				new Email_Type( $email_type, $trigger )
-			);
+			new Email_Type( $email_type, $trigger );
 		}
 	}
 
