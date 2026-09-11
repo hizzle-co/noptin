@@ -390,7 +390,7 @@ class Email {
 	 * @return string
 	 */
 	public function get_sub_type() {
-		$sub_type = $this->get( $this->type . '_type' );
+		$sub_type = $this->options[ $this->type . '_type' ] ?? '';
 
 		if ( ! empty( $sub_type ) ) {
 			$sub_type = apply_filters( 'noptin_' . $this->type . '_email_sub_type_' . $sub_type, $sub_type, $this );

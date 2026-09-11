@@ -42,6 +42,44 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 		parent::tear_down();
 	}
 
+	public function test_defaults_ignore_unsaved_email_without_matching_subtype() {
+		$email = new Email( array( 'type' => 'automation' ) );
+
+		$this->assertSame( '', $email->get( 'missing_property' ) );
+	}
+
+	public function test_get_sub_type_uses_only_the_sub_type_filter() {
+		$property_filter_calls = 0;
+		$property_filter       = function ( $value, $key ) use ( &$property_filter_calls ) {
+			if ( 'automation_type' === $key ) {
+				++$property_filter_calls;
+			}
+
+			return $value;
+		};
+		$sub_type_filter       = function () {
+			return 'filtered_sub_type';
+		};
+
+		add_filter( 'noptin_get_email_prop', $property_filter, 1000, 2 );
+		add_filter( 'noptin_automation_email_sub_type_original_sub_type', $sub_type_filter );
+
+		try {
+			$email = new Email(
+				array(
+					'type'            => 'automation',
+					'automation_type' => 'original_sub_type',
+				)
+			);
+
+			$this->assertSame( 'filtered_sub_type', $email->get_sub_type() );
+			$this->assertSame( 0, $property_filter_calls );
+		} finally {
+			remove_filter( 'noptin_get_email_prop', $property_filter, 1000 );
+			remove_filter( 'noptin_automation_email_sub_type_original_sub_type', $sub_type_filter );
+		}
+	}
+
 	public function test_subscriber_merge_tags_use_trigger_subscriber_for_specific_recipients() {
 		$recipient_email = 'recipient@example.com';
 		$trigger_email   = 'new-subscriber@example.com';
