@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.3.9 =
+* Add: Support merge tags in email attachment paths.
+
 = 4.3.8 =
 * Add: Support dynamic default values and hidden fields in subscription forms, including values from the current post.
 * Add: Detect stalled newsletter campaigns and let administrators continue sending them from their browser.

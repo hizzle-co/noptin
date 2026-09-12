@@ -868,7 +868,14 @@ class Email {
 
 		$prepared = array();
 		foreach ( $attachments as $attachment ) {
-			$attachment = $this->parse_attachment_file_path( trim( $attachment ) );
+			$attachment = trim( noptin_parse_email_subject_tags( trim( $attachment ) ) );
+
+			// Skip merge tags that resolve to an empty value.
+			if ( '' === $attachment ) {
+				continue;
+			}
+
+			$attachment = $this->parse_attachment_file_path( $attachment );
 
 			// Add if its not a remote file.
 			if ( ! $attachment['remote_file'] ) {
