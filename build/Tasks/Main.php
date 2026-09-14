@@ -682,7 +682,7 @@ class Main {
 			)
 		);
 
-		$run_in_foreground = defined( 'NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES' ) && NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES;
+		$run_in_foreground = defined( 'NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES' ) && NOPTIN_ENABLE_FOREGROUND_AUTOMATION_RULES && 'email' === $rule->get_action_id();
 		if ( $run_in_foreground && 0 === $delay && $task instanceof Task && 'pending' === $task->get_status() ) {
 			$task->process();
 		}
