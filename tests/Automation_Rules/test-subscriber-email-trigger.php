@@ -139,17 +139,20 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 			)
 		);
 		$subscriber    = noptin_get_subscriber( $subscriber_id );
-		$trigger_args  = function ( $args ) use ( $rule ) {
-			$args['rule_id'] = $rule->get_id();
+		$trigger_args  = function ( $args, $trigger ) use ( $rule, $subscriber_id ) {
+			// Other subscriber events (including send-stat updates) must not run this rule.
+			if ( $trigger->get_id() === $rule->get_trigger_id() && (int) ( $args['subject_id'] ?? 0 ) === (int) $subscriber_id ) {
+				$args['rule_id'] = $rule->get_id();
+			}
 			return $args;
 		};
 
-		add_filter( 'noptin_subscriber_collection_trigger_args', $trigger_args );
+		add_filter( 'noptin_automation_trigger_args', $trigger_args, 10, 2 );
 		try {
 			$subscriber->set_status( 'subscribed' );
 			$subscriber->save();
 		} finally {
-			remove_filter( 'noptin_subscriber_collection_trigger_args', $trigger_args );
+			remove_filter( 'noptin_automation_trigger_args', $trigger_args );
 		}
 
 		$this->assertSame( array( $recipient_email ), \Noptin_Test_Email_Sender::$recipients );
