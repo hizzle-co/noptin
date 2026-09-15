@@ -485,10 +485,10 @@ class Task extends \Hizzle\Store\Record {
 		$result = parent::save();
 
 		if ( $this->exists() && $this->get_status() === 'pending' && $this->has_expired() ) {
-			$is_deleted = $this->get_lookup_key() && strpos( $this->get_lookup_key(), 'delete' );
+			$is_deleted = false !== strpos( (string) $this->get_lookup_key(), 'delete' );
 
 			// Run delete actions right away to make use of the deleted data.
-			if ( ( ! $is_deleted && $this->get_subject() ) || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
+			if ( $is_deleted || $this->get_subject() || ! apply_filters( 'noptin_saved_task_background_run', true ) ) {
 				$this->process();
 			} elseif ( ! has_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ) ) ) {
 				add_action( 'shutdown', array( $GLOBALS['noptin_tasks'], 'run_pending' ), -1000 );
