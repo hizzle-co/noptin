@@ -113,7 +113,19 @@ class Main {
 			return $should_fire;
 		}
 
-		$ignore = array( 'activity', 'date_modified', 'date_created', 'confirm_key' );
+		$ignore = array(
+			'activity',
+			'date_modified',
+			'date_created',
+			'confirm_key',
+			'total_emails_sent',
+			'total_emails_opened',
+			'total_links_clicked',
+			'last_email_sent_date',
+			'last_email_opened_date',
+			'last_email_clicked_date',
+			'email_engagement_score',
+		);
 
 		// Abort if all keys in the changes are in the ignore list.
 		if ( empty( array_diff( $changed_keys, $ignore ) ) ) {
