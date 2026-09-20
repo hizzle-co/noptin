@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Version: 4.3.9
-Stable tag: 4.3.9
+Version: 4.3.10
+Stable tag: 4.3.10
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -198,6 +198,11 @@ There are a lot of ways to contribute to this newsletter plugin:-
 15. Viewing a list of all subscribers.
 
 == Changelog ==
+
+= 4.3.10 =
+Add: Atomic task claiming to prevent the same task from executing concurrently.
+Add: A new option that disables actual email delivery on staging sites.
+Fix: Prevent derived email-engagement updates from retriggering subscriber-update automations.
 
 = 4.3.9 =
 * Add: Support merge tags in email attachment paths.
