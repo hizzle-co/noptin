@@ -331,7 +331,7 @@ class Main {
 				),
 				'isPressed' => $current_cf === $type->type || ( empty( $current_cf ) && $first ),
 			);
-			$first = false;
+			$first                   = false;
 		}
 
 		return $submenus;
@@ -360,7 +360,7 @@ class Main {
 						'noptin-email-campaigns',
 						array( __CLASS__, 'render_admin_page' )
 					);
-					$menu_added = true;
+					$menu_added        = true;
 
 					continue;
 				}
@@ -639,6 +639,42 @@ class Main {
 			'default_footer_text' => get_noptin_footer_text(),
 		);
 
+		// When adding an email from a sequence page, give AI the parent sequence
+		// and its existing emails so it can create a coherent new child email.
+		$parent_id = isset( $_GET['noptin_parent_id'] ) ? absint( $_GET['noptin_parent_id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		if ( $parent_id && current_user_can( 'edit_post', $parent_id ) ) {
+			$parent = noptin_get_email_campaign_object( $parent_id );
+			if ( $parent->exists() && 'sequence' === $parent->type ) {
+				$sequence_emails = get_posts(
+					array(
+						'post_type'      => 'noptin-campaign',
+						'post_parent'    => $parent_id,
+						'post_status'    => array( 'publish', 'draft', 'pending', 'future', 'private' ),
+						'posts_per_page' => -1,
+						'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'ASC' ),
+						'order'          => 'ASC',
+					)
+				);
+
+				$ai_localization['current_sequence'] = array(
+					'id'     => $parent->id,
+					'name'   => $parent->name,
+					'emails' => array_map(
+						function ( $post ) {
+							$email = noptin_get_email_campaign_object( $post->ID );
+							return array(
+								'id'      => $email->id,
+								'name'    => $email->name,
+								'subject' => $email->get_subject(),
+								'content' => trim( wp_strip_all_tags( $email->content ) ),
+							);
+						},
+						$sequence_emails
+					),
+				);
+			}
+		}
+
 		$senders = array_merge(
 			array(
 				'manual_recipients' => array(
@@ -822,23 +858,23 @@ class Main {
 			$data = apply_filters(
 				'noptin_email_settings_misc',
 				array(
-					'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
-					'data'         => (object) ( empty( $type ) ? array() : $type->to_array() ),
-					'from_name'    => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
-					'from_email'   => get_noptin_option( 'from_email', '' ),
-					'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
-					'integrations' => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
-					'utm_enabled'  => get_noptin_option( 'add_utm_params', true ),
-					'utm_docs_url' => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
-					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
-					'brand'        => noptin()->white_label->get_details(),
-					'ai'           => array(
+					'isTest'            => defined( 'NOPTIN_IS_TESTING' ),
+					'data'              => (object) ( empty( $type ) ? array() : $type->to_array() ),
+					'from_name'         => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
+					'from_email'        => get_noptin_option( 'from_email', '' ),
+					'reply_to'          => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
+					'integrations'      => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
+					'utm_enabled'       => get_noptin_option( 'add_utm_params', true ),
+					'utm_docs_url'      => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
+					'assets_url'        => plugins_url( 'static/images/', __DIR__ ),
+					'brand'             => noptin()->white_label->get_details(),
+					'ai'                => array(
 						'disabled' => (bool) $disable_ai,
 					),
 					'foregroundSending' => 'view-campaigns' === $script && $type && 'newsletter' === $type->type
 						? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data()
 						: false,
-					'senders'      => array_merge(
+					'senders'           => array_merge(
 						array(
 							'manual_recipients' => array(
 								'label'        => __( 'Specific People', 'newsletter-optin-box' ),
@@ -1117,7 +1153,16 @@ class Main {
 					'label'    => __( 'General', 'newsletter-optin-box' ),
 					'section'  => 'emails',
 					'settings' => array(
-						'reply_to'         => array(
+						'disable_staging_emails' => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'section'     => 'emails',
+							'label'       => __( 'Disable emails on staging sites', 'newsletter-optin-box' ),
+							'description' => 'Prevent Noptin from delivering emails when the WordPress environment type is set to staging. Emails are recorded as sent so campaigns and automations can continue normally.',
+							'default'     => true,
+						),
+
+						'reply_to'               => array(
 							'el'      => 'input',
 							'section' => 'emails',
 							'type'    => 'email',
@@ -1126,7 +1171,7 @@ class Main {
 							'tooltip' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
 						),
 
-						'from_email'       => array(
+						'from_email'             => array(
 							'el'      => 'input',
 							'section' => 'emails',
 							'type'    => 'email',
@@ -1134,7 +1179,7 @@ class Main {
 							'tooltip' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 						),
 
-						'from_name'        => array(
+						'from_name'              => array(
 							'el'          => 'input',
 							'section'     => 'emails',
 							'label'       => __( '"From" Name', 'newsletter-optin-box' ),
@@ -1143,7 +1188,7 @@ class Main {
 							'tooltip'     => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 						),
 
-						'delete_campaigns' => array(
+						'delete_campaigns'       => array(
 							'el'               => 'input',
 							'type'             => 'number',
 							'section'          => 'emails',
