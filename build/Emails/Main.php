@@ -49,6 +49,7 @@ class Main {
 
 		// Fire hooks.
 		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );
+		add_filter( 'noptin_email_sending_function', array( __CLASS__, 'maybe_disable_staging_email' ), PHP_INT_MAX );
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
@@ -74,6 +75,43 @@ class Main {
 		if ( is_admin() ) {
 			Admin\Main::init();
 		}
+	}
+
+	/**
+	 * Replaces Noptin's email transport with a successful no-op on staging sites.
+	 *
+	 * Treating the email as sent lets staging sites exercise normal campaign and
+	 * automation flows without retrying or delivering the message externally.
+	 *
+	 * @param callable|string $sending_function Current sending function.
+	 * @return callable|string
+	 */
+	public static function maybe_disable_staging_email( $sending_function ) {
+		if ( self::is_staging_email_disabled() ) {
+			return array( __CLASS__, 'skip_staging_email' );
+		}
+
+		return $sending_function;
+	}
+
+	/**
+	 * Checks whether Noptin email delivery is disabled for this staging site.
+	 *
+	 * @return bool
+	 */
+	public static function is_staging_email_disabled() {
+		$environment_type = apply_filters( 'noptin_email_environment_type', wp_get_environment_type() );
+
+		return get_noptin_option( 'disable_staging_emails', true ) && 'staging' === $environment_type;
+	}
+
+	/**
+	 * Simulates a successful email submission without contacting a mail service.
+	 *
+	 * @return true
+	 */
+	public static function skip_staging_email() {
+		return true;
 	}
 
 	/**

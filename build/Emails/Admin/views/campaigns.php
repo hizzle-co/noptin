@@ -49,6 +49,25 @@ if ( $parent ) {
 
 		// Print pending notices.
 		\Hizzle\Noptin\Admin\Main::show_notices();
+
+		// Warn users when email delivery is disabled on a staging site.
+		if ( \Hizzle\Noptin\Emails\Main::is_staging_email_disabled() ) {
+			$message = 'Noptin email delivery is disabled because this site is marked as staging. Emails are recorded as sent so campaigns and automations can continue, but no messages are delivered.';
+
+			if ( current_user_can_manage_noptin() ) {
+				$message .= ' ' . sprintf(
+					'<a href="%1$s">%2$s</a>',
+					esc_url( admin_url( 'admin.php?page=noptin-settings&hizzlewp_path=%2Femails%2Fmain' ) ),
+					'Review email settings'
+				);
+			}
+
+			printf(
+				'<div class="notice notice-warning noptin-notice"><p><strong>%1$s</strong> %2$s</p></div>',
+				'Staging email delivery is disabled.',
+				wp_kses_post( $message )
+			);
+		}
 		?>
 		<div id="noptin-foreground-email-recovery"></div>
 		<?php
