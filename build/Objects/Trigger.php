@@ -147,7 +147,7 @@ class Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 
 		// Add subject smart tags.
 		if ( ! empty( $this->trigger_args['subject'] ) && $this->trigger_args['subject'] !== $this->object_type ) {
-			$args    = Store::smart_tags( $this->trigger_args['subject'], true );
+			$args    = array_merge( $args, Store::smart_tags( $this->trigger_args['subject'], true ) );
 			$added[] = $this->trigger_args['subject'];
 		}
 
