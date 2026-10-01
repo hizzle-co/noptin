@@ -199,6 +199,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 
 == Changelog ==
 
+= 4.3.11 =
+Fix: Unable to delete lists with spaces in their name.
+
 = 4.3.10 =
 Add: Atomic task claiming to prevent the same task from executing concurrently.
 Add: A new option that disables actual email delivery on staging sites.
