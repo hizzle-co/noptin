@@ -248,7 +248,7 @@ class Manage_Preferences {
 
 		$posted['email'] = sanitize_email( $posted['email'] );
 
-		$prepared = array();
+		$prepared = array( 'email' => $posted['email'] );
 
 		foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
 			if ( isset( $posted[ $custom_field['merge_tag'] ] ) ) {
@@ -279,6 +279,13 @@ class Manage_Preferences {
 			}
 		}
 
+		// A preferences key belongs to the current email address. Changing the
+		// address requires a fresh subscription and confirmation for that address.
+		if ( $subscriber && strcasecmp( $subscriber->get_email(), $prepared['email'] ) !== 0 ) {
+			self::$error_message = __( 'To use a different email address, subscribe with that address instead.', 'newsletter-optin-box' );
+			return;
+		}
+
 		// Do not update existing subscribers unless the request has a valid subscriber key,
 		// or the logged-in user owns the subscriber email.
 		if ( empty( $subscriber ) ) {
@@ -296,6 +303,14 @@ class Manage_Preferences {
 					self::$error_message = 'Please try again with a different email address.';
 					return;
 				}
+			}
+		}
+
+		$double_optin_enabled = noptin_has_enabled_double_optin() || (bool) get_noptin_option( 'double_optin', false );
+		if ( $double_optin_enabled && isset( $prepared['status'] ) && 'subscribed' === $prepared['status'] ) {
+			if ( ! $subscriber || ! $subscriber->get_confirmed() ) {
+				// A preferences submission is not an email confirmation.
+				$prepared['status'] = 'pending';
 			}
 		}
 
