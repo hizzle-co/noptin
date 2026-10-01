@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   php-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     services:
       mysql:
           image: mysql:26.7
