@@ -528,8 +528,8 @@ class Generator {
 		foreach ( $elements as $element ) {
 			/** @var \DOMElement $element */
 
-			// Escape attributes.
-			foreach ( $element->attributes ?? array() as $attribute ) {
+			// Snapshot attributes so removing one cannot skip the next attribute.
+			foreach ( iterator_to_array( $element->attributes ?? array() ) as $attribute ) {
 				$attr_name  = strtolower( $attribute->name );
 				$attr_value = $attribute->value;
 
