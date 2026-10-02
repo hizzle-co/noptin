@@ -105,12 +105,21 @@ class REST extends \WP_REST_Posts_Controller {
 			return false;
 		}
 
-		$type = get_post_meta( $post->ID, 'campaign_type', true );
-		if ( empty( $type ) ) {
-			$type = 'newsletter'; // Older campaigns have no stored type.
+		return current_user_can_manage_noptin_campaign_type( $this->get_stored_campaign_type( $post->ID ) );
+	}
+
+	/**
+	 * Checks if the current user can delete a campaign.
+	 *
+	 * @param \WP_Post $post Campaign post.
+	 * @return bool Whether the current user can delete the campaign.
+	 */
+	protected function check_delete_permission( $post ) {
+		if ( ! parent::check_delete_permission( $post ) ) {
+			return false;
 		}
 
-		return current_user_can_manage_noptin_campaign_type( $type );
+		return current_user_can_manage_noptin_campaign_type( $this->get_stored_campaign_type( $post->ID ) );
 	}
 
 	/**
@@ -204,6 +213,17 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 
 		return sanitize_key( $type );
+	}
+
+	/**
+	 * Gets the stored campaign type, including the legacy newsletter default.
+	 *
+	 * @param int $post_id Campaign post ID.
+	 * @return string Campaign type.
+	 */
+	private function get_stored_campaign_type( $post_id ) {
+		$type = get_post_meta( $post_id, 'campaign_type', true );
+		return empty( $type ) ? 'newsletter' : sanitize_key( $type );
 	}
 
 	/**
