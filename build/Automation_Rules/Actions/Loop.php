@@ -137,7 +137,7 @@ class Loop extends Action {
 				'label'       => __( 'File URL/Path', 'newsletter-optin-box' ),
 				'el'          => 'input',
 				'type'        => 'text',
-				'description' => __( 'Enter the URL, server path, or merge tag that resolves to file contents.', 'newsletter-optin-box' ),
+				'description' => __( 'Enter a URL, a path inside the WordPress installation, or a merge tag that resolves to file contents.', 'newsletter-optin-box' ),
 				'conditions'  => array(
 					array(
 						'key'      => 'action_settings.loop_over',
@@ -1289,10 +1289,23 @@ class Loop extends Action {
 
 		$candidates[] = trailingslashit( ABSPATH ) . ltrim( $path, '/' );
 
+		$outside_wordpress = false;
+
 		foreach ( array_unique( $candidates ) as $candidate ) {
 			$real_path = realpath( $candidate );
 
-			if ( ! $real_path || ! is_file( $real_path ) || ! is_readable( $real_path ) ) {
+			if ( ! $real_path || ! is_file( $real_path ) ) {
+				continue;
+			}
+
+			// Local loop files must remain inside the WordPress installation,
+			// including when a URL or symlink resolves to a filesystem path.
+			if ( ! $this->is_path_inside_directory( $real_path, ABSPATH ) ) {
+				$outside_wordpress = true;
+				continue;
+			}
+
+			if ( ! is_readable( $real_path ) ) {
 				continue;
 			}
 
@@ -1301,6 +1314,10 @@ class Loop extends Action {
 			}
 
 			return wp_normalize_path( $real_path );
+		}
+
+		if ( $outside_wordpress ) {
+			throw new \Exception( 'Local loop files must be inside the WordPress installation directory.' );
 		}
 
 		return '';
