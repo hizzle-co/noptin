@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "hizzle/store",
-            "version": "0.2.25",
+            "version": "0.2.26",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/datastore.git",
-                "reference": "bd8a5591dd30f185b19ae646e2ee6f2a07b859fc"
+                "reference": "bf5937fb58f4565634dda9bf460fc64059fdc612"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/bd8a5591dd30f185b19ae646e2ee6f2a07b859fc",
-                "reference": "bd8a5591dd30f185b19ae646e2ee6f2a07b859fc",
+                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/bf5937fb58f4565634dda9bf460fc64059fdc612",
+                "reference": "bf5937fb58f4565634dda9bf460fc64059fdc612",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/datastore/issues",
-                "source": "https://github.com/hizzle-co/datastore/tree/0.2.25"
+                "source": "https://github.com/hizzle-co/datastore/tree/0.2.26"
             },
-            "time": "2026-08-18T10:06:31+00:00"
+            "time": "2026-10-02T03:49:20+00:00"
         },
         {
             "name": "hizzle/wp",
