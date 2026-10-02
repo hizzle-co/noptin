@@ -85,6 +85,12 @@ class User extends Person {
 			$field = isset( $args['key'] ) ? $args['key'] : null;
 		}
 
+		// WP_User::get() can also read credential columns from wp_users.
+		// Do not let generic user fields or meta tags expose those values.
+		if ( in_array( strtolower( (string) $field ), array( 'pass', 'user_pass', 'activation_key', 'user_activation_key' ), true ) ) {
+			return null;
+		}
+
 		// Abort if no field.
 		if ( empty( $field ) ) {
 			return null;
