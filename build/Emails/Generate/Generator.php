@@ -166,6 +166,9 @@ class Generator {
 		// Ensure that shortcodes are not wrapped in paragraphs.
 		$content = shortcode_unautop( $content );
 
+		// Render item lists while the email-only shortcode flag is active.
+		$content = self::handle_item_lists_shortcode( $content );
+
 		// Execute shortcodes.
 		$content = do_shortcode( $content );
 
@@ -433,10 +436,10 @@ class Generator {
 			return $content;
 		}
 
-		// Save original shortcodes
+		// Save original shortcodes.
 		$original_shortcodes = $shortcode_tags;
 
-		// Remove all shortcodes
+		// Remove all shortcodes.
 		$shortcode_tags = array(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		// Process shortcodes that begin with noptin_ and end with _list.
@@ -446,11 +449,18 @@ class Generator {
 			}
 		}
 
-		// Process your content
-		$content = do_shortcode( $content );
+		// A distinct callback keeps nested list rendering from clearing the outer flag.
+		$allow_item_lists = static function () {
+			return true;
+		};
+		add_filter( 'noptin_render_email_item_lists', $allow_item_lists );
 
-		// Restore original shortcodes
-		$shortcode_tags = $original_shortcodes; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		try {
+			$content = do_shortcode( $content );
+		} finally {
+			remove_filter( 'noptin_render_email_item_lists', $allow_item_lists );
+			$shortcode_tags = $original_shortcodes; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		}
 
 		return $content;
 	}

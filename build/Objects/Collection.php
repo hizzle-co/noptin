@@ -968,6 +968,11 @@ abstract class Collection {
 	 */
 	public function handle_list_shortcode( $atts, $template ) {
 
+		// List templates may contain private merge tags. Render them only while generating an email.
+		if ( ! apply_filters( 'noptin_render_email_item_lists', false ) ) {
+			return '';
+		}
+
 		if ( ! noptin_has_alk() ) {
 			return $template;
 		}
