@@ -154,6 +154,9 @@ class Generic_Post_Type extends Post_Type {
 			$filters
 		);
 
+		// A post collection must never query a different post type.
+		$filters['post_type'] = $this->type;
+
 		// Convert number to numberposts.
 		if ( isset( $filters['number'] ) ) {
 			$filters['numberposts'] = $filters['number'];
