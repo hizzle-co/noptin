@@ -508,6 +508,14 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_Error|boolean
 	 */
 	public function get_item_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+
+		// Check collection access before looking up a non-post record. Otherwise
+		// the response reveals whether an inaccessible record exists.
+		if ( ! $collection || ( empty( $collection->post_type ) && ! $this->check_record_permissions( 'read' ) ) ) {
+			return new \WP_Error( 'hizzle_rest_cannot_view', 'Sorry, you cannot view this resource.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'read', $object->get_id() ) ) {
@@ -524,6 +532,12 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return WP_Error|boolean
 	 */
 	public function update_item_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+
+		if ( ! $collection || ( empty( $collection->post_type ) && ! $this->check_record_permissions( 'edit' ) ) ) {
+			return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit this resource.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'edit', $object->get_id() ) ) {
@@ -540,6 +554,12 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return bool|WP_Error
 	 */
 	public function delete_item_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+
+		if ( ! $collection || ( empty( $collection->post_type ) && ! $this->check_record_permissions( 'delete' ) ) ) {
+			return new \WP_Error( 'hizzle_rest_cannot_delete', 'Sorry, you are not allowed to delete this resource.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		$object = $this->get_object( $request );
 
 		if ( $object && $object->exists() && ! $this->check_record_permissions( 'delete', $object->get_id() ) ) {
