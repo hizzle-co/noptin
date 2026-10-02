@@ -473,10 +473,15 @@ function add_noptin_subscriber( $fields ) {
 		return 'An error occurred';
 	}
 
-	$_GET['noptin_key'] = $subscriber->get_confirm_key();
+	// Do not set subscribed cookie for unsubscribed users.
+	$double_optin_enabled      = noptin_has_enabled_double_optin() || (bool) get_noptin_option( 'double_optin', false );
+	$can_set_subscriber_cookie = $subscriber->is_active() && ( ! $double_optin_enabled || $subscriber->get_confirmed() );
+	if ( $can_set_subscriber_cookie ) {
+		$_GET['noptin_key'] = $subscriber->get_confirm_key();
+	}
 
 	// Set cookie.
-	if ( ! headers_sent() && ! apply_filters( 'noptin_disable_cookies', false ) ) {
+	if ( $can_set_subscriber_cookie && ! headers_sent() && ! apply_filters( 'noptin_disable_cookies', false ) ) {
 		setcookie( 'noptin_email_subscribed', $subscriber->get_confirm_key(), time() + YEAR_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN );
 
 		$cookie = get_noptin_option( 'subscribers_cookie' );
