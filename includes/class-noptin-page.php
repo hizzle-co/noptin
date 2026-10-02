@@ -133,18 +133,22 @@ class Noptin_Page {
 	 */
 	public function get_request_recipient() {
 
-		// Prepare default recipient.
-		$default = array_filter(
-			array(
-				'subscriber' => get_current_noptin_subscriber_id(),
-				'user'       => get_current_user_id(),
-			)
-		);
+		// Only the manage preferences page may use the current visitor when a
+		// recipient is missing or invalid. Other actions require a link recipient.
+		$default = array();
+		if ( 'manage_preferences' === $this->get_request_action() ) {
+			$default = array_filter(
+				array(
+					'subscriber' => get_current_noptin_subscriber_id(),
+					'user'       => get_current_user_id(),
+				)
+			);
+		}
 
 		// Fetch recipient.
 		$recipient = $this->get_request_value();
 
-		// Fallback to current user / subscriber.
+		// Use the manage-preferences fallback when no recipient was provided.
 		if ( empty( $recipient ) ) {
 			return $default;
 		}

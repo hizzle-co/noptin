@@ -344,6 +344,50 @@ class SubscriberTest extends WP_UnitTestCase {
         }
     }
 
+    public function testOnlyManagePreferencesFallsBackToCurrentVisitor() {
+        $old_get             = $_GET;
+        $old_request         = $_REQUEST;
+        $old_cookie          = $_COOKIE;
+        $old_current_user_id = get_current_user_id();
+
+        try {
+            $user_id = self::factory()->user->create();
+            wp_set_current_user( $user_id );
+
+            $subscriber = noptin_get_subscriber( self::$subscriber_id );
+            $_COOKIE['noptin_email_subscribed'] = $subscriber->get_confirm_key();
+
+            unset( $_GET['nv'], $_REQUEST['nv'] );
+            foreach ( array( 'unsubscribe', 'resubscribe', 'confirm' ) as $action ) {
+                $_GET['noptin_ns'] = $action;
+                $this->assertSame( array(), noptin()->actions_page->get_request_recipient(), "$action must not use the current visitor." );
+
+                $_GET['nv']     = 'invalid-token';
+                $_REQUEST['nv'] = 'invalid-token';
+                $this->assertSame( array(), noptin()->actions_page->get_request_recipient(), "$action must not fall back after an invalid token." );
+                unset( $_GET['nv'], $_REQUEST['nv'] );
+            }
+
+            $_GET['noptin_ns'] = 'manage_preferences';
+            $expected = array_filter(
+                array(
+                    'subscriber' => get_current_noptin_subscriber_id(),
+                    'user'       => $user_id,
+                )
+            );
+            $this->assertSame( $expected, noptin()->actions_page->get_request_recipient() );
+
+            $_GET['nv']     = 'invalid-token';
+            $_REQUEST['nv'] = 'invalid-token';
+            $this->assertSame( $expected, noptin()->actions_page->get_request_recipient() );
+        } finally {
+            $_GET     = $old_get;
+            $_REQUEST = $old_request;
+            $_COOKIE  = $old_cookie;
+            wp_set_current_user( $old_current_user_id );
+        }
+    }
+
     public function testSubscriberOverview() {
         $subscriber = noptin_get_subscriber( self::$subscriber_id );
 
