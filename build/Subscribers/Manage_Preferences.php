@@ -97,7 +97,8 @@ class Manage_Preferences {
 			$subscriber = false;
 		}
 
-		$subscribed = $subscriber && 'subscribed' === $subscriber->get_status();
+		$subscribed        = $subscriber && 'subscribed' === $subscriber->get_status();
+		$can_change_status = ! $subscriber || in_array( $subscriber->get_status(), array( 'subscribed', 'unsubscribed' ), true );
 
 		?>
 			<style>
@@ -169,7 +170,7 @@ class Manage_Preferences {
 					</div>
 				<?php endif; ?>
 
-				<?php if ( apply_filters( 'noptin_manage_subscriptions_show_status_field', true ) && ! empty( $atts['subscribe_label'] ) ) : ?>
+				<?php if ( $can_change_status && apply_filters( 'noptin_manage_subscriptions_show_status_field', true ) && ! empty( $atts['subscribe_label'] ) ) : ?>
 					<input type="hidden" name="noptin_fields[status]" value="unsubscribed" />
 					<label class="noptin-field-wrapper noptin-field-wrapper--status" style="display: block;">
 						<input type="checkbox" name="noptin_fields[status]" value="subscribed" <?php checked( $subscribed ); ?> />
@@ -182,6 +183,10 @@ class Manage_Preferences {
 				<?php
 
 				foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
+
+					if ( 'status' === $custom_field['merge_tag'] ) {
+						continue;
+					}
 
 					if ( ! empty( $custom_field['dynamic'] ) ) {
 						continue;
@@ -251,17 +256,16 @@ class Manage_Preferences {
 		$prepared = array( 'email' => $posted['email'] );
 
 		foreach ( get_noptin_custom_fields( true ) as $custom_field ) {
+			if ( 'status' === $custom_field['merge_tag'] ) {
+				continue;
+			}
+
 			if ( isset( $posted[ $custom_field['merge_tag'] ] ) ) {
 				$prepared[ $custom_field['merge_tag'] ] = $posted[ $custom_field['merge_tag'] ];
 			} elseif ( empty( $custom_field['dynamic'] ) && 'multi_checkbox' === $custom_field['type'] ) {
 				// Browsers omit multi-checkbox fields when all options are unchecked.
 				$prepared[ $custom_field['merge_tag'] ] = array();
 			}
-		}
-
-		// If status was not set, set it to unsubscribed.
-		if ( isset( $posted['status'] ) ) {
-			$prepared['status'] = $posted['status'];
 		}
 
 		$subscriber = false;
@@ -279,11 +283,11 @@ class Manage_Preferences {
 			}
 		}
 
-		// A preferences key belongs to the current email address. Changing the
-		// address requires a fresh subscription and confirmation for that address.
-		if ( $subscriber && strcasecmp( $subscriber->get_email(), $prepared['email'] ) !== 0 ) {
-			self::$error_message = __( 'To use a different email address, subscribe with that address instead.', 'newsletter-optin-box' );
-			return;
+		// Start a separate subscription for a new address. Keep the original
+		// record tied to the address that received its preferences key.
+		$changing_email = $subscriber && strcasecmp( $subscriber->get_email(), $prepared['email'] ) !== 0;
+		if ( $changing_email ) {
+			$subscriber = false;
 		}
 
 		// Do not update existing subscribers unless the request has a valid subscriber key,
@@ -306,12 +310,21 @@ class Manage_Preferences {
 			}
 		}
 
+		// The status checkbox only controls new subscriptions and subscribers
+		// whose current status is subscribed or unsubscribed. Ignore forged values.
+		if (
+			isset( $posted['status'] ) &&
+			in_array( $posted['status'], array( 'subscribed', 'unsubscribed' ), true ) &&
+			( ! $subscriber || in_array( $subscriber->get_status(), array( 'subscribed', 'unsubscribed' ), true ) )
+		) {
+			$prepared['status'] = $posted['status'];
+		}
+
 		$double_optin_enabled = noptin_has_enabled_double_optin() || (bool) get_noptin_option( 'double_optin', false );
-		if ( $double_optin_enabled && isset( $prepared['status'] ) && 'subscribed' === $prepared['status'] ) {
-			if ( ! $subscriber || ! $subscriber->get_confirmed() ) {
-				// A preferences submission is not an email confirmation.
-				$prepared['status'] = 'pending';
-			}
+		if ( $double_optin_enabled && ! $subscriber && isset( $prepared['status'] ) && 'subscribed' === $prepared['status'] ) {
+			// A new address must confirm its subscription. Existing unsubscribed
+			// records can be resubscribed by their key or their logged-in owner.
+			$prepared['status'] = 'pending';
 		}
 
 		// Create or update subscriber.
@@ -333,8 +346,20 @@ class Manage_Preferences {
 		} elseif ( is_wp_error( $result ) ) {
 			self::$error_message = $result->get_error_message();
 		} else {
-			self::$updated_subscriber = noptin_get_subscriber( $result );
-			self::$success_message    = __( 'Your changes have been saved', 'newsletter-optin-box' );
+			$saved_subscriber = noptin_get_subscriber( $result );
+			if ( ! $double_optin_enabled || $saved_subscriber->get_confirmed() ) {
+				self::$updated_subscriber = $saved_subscriber;
+			}
+
+			if ( $changing_email ) {
+				self::$success_message = 'pending' === $saved_subscriber->get_status()
+					? __( 'The new address is pending email confirmation. Your original subscription is unchanged.', 'newsletter-optin-box' )
+					: __( 'Your preferences for the new address were saved. Your original subscription is unchanged.', 'newsletter-optin-box' );
+			} elseif ( 'pending' === $saved_subscriber->get_status() ) {
+				self::$success_message = __( 'Your subscription is pending email confirmation.', 'newsletter-optin-box' );
+			} else {
+				self::$success_message = __( 'Your changes have been saved', 'newsletter-optin-box' );
+			}
 		}
 	}
 }
