@@ -92,6 +92,28 @@ class REST extends \WP_REST_Posts_Controller {
 	}
 
 	/**
+	 * Checks if a given request has access to read a campaign.
+	 *
+	 * Published campaigns may be viewed through their browser links, but the
+	 * REST response also includes campaign settings and metadata.
+	 *
+	 * @param \WP_Post $post Campaign post.
+	 * @return bool Whether the current user can read the campaign.
+	 */
+	public function check_read_permission( $post ) {
+		if ( ! parent::check_read_permission( $post ) ) {
+			return false;
+		}
+
+		$type = get_post_meta( $post->ID, 'campaign_type', true );
+		if ( empty( $type ) ) {
+			$type = 'newsletter'; // Older campaigns have no stored type.
+		}
+
+		return current_user_can_manage_noptin_campaign_type( $type );
+	}
+
+	/**
 	 * Checks if a given request has access to update a post.
 	 *
 	 * @since 4.7.0
