@@ -30,8 +30,14 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 	 * @param mixed $external The external object.
 	 */
 	public function __construct( $external ) {
-		if ( is_numeric( $external ) && ! empty( $external ) ) {
+		if ( is_string( $external ) && is_email( $external ) ) {
+			$email    = $external;
+			$external = new \WC_Customer( 0 );
+			$external->set_email( $email );
+			$external->set_billing_email( $email );
+		}
 
+		if ( is_numeric( $external ) && ! empty( $external ) ) {
 			if ( (int) $external < 1 ) {
 				$order = wc_get_order( absint( $external ) );
 
@@ -80,7 +86,7 @@ class Customer extends \Hizzle\Noptin\Objects\Person {
 			return false;
 		}
 
-		return ! ! $this->get_email();
+		return (bool) $this->get_email();
 	}
 
 	/**
