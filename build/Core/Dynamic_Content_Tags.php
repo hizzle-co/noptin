@@ -358,7 +358,15 @@ abstract class Dynamic_Content_Tags {
 		// Parse attributes.
 		$attributes = $this->default_attributes;
 		if ( isset( $matches[2] ) ) {
-			$attribute_string = html_entity_decode( $matches[2] );
+			// HTML attributes can encode merge-tag quotes. Decode only those
+			// delimiters; encoded markup in a tag value must stay encoded.
+			$attribute_string = preg_replace_callback(
+				'/&(?:quot|apos|#(?:0*34|0*39|x0*22|x0*27));/i',
+				static function ( $match ) {
+					return html_entity_decode( $match[0], ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+				},
+				$matches[2]
+			);
 			$attributes       = array_merge( $attributes, shortcode_parse_atts( $attribute_string ) );
 		}
 
