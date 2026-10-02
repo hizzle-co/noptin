@@ -201,19 +201,33 @@ class Listener {
 			return;
 		}
 
-		// Process the form.
-		$form_action = $this->get_submitted( 'form_action', 'subscribe' );
-
-		if ( 'subscribe' === $form_action ) {
-			$this->process_subscribe_request();
-		}
-
-		if ( 'unsubscribe' === $form_action ) {
+		// Process the configured form action, not the submitted hidden field.
+		if ( $this->is_unsubscribe_form() ) {
 			$this->process_unsubscribe_request();
+		} else {
+			$this->process_subscribe_request();
 		}
 
 		// Trigger success/error hooks and maybe redirect to a different page.
 		$this->respond();
+	}
+
+	/**
+	 * Whether the submitted form is configured to unsubscribe visitors.
+	 *
+	 * Saved form settings take precedence over the encoded shortcode config.
+	 *
+	 * @return bool
+	 */
+	private function is_unsubscribe_form() {
+		$source = $this->get_submitted( 'source' );
+
+		if ( is_numeric( $source ) && 'noptin-form' === get_post_type( (int) $source ) ) {
+			$form = new Form( (int) $source );
+			return ! empty( $form->is_unsubscribe );
+		}
+
+		return ! empty( $this->get_cached( 'is_unsubscribe' ) );
 	}
 
 	/**
