@@ -208,6 +208,24 @@ class Generic_Post extends Record {
 		// Meta.
 		if ( 'meta' === $field ) {
 			$field = isset( $args['key'] ) ? $args['key'] : null;
+
+			if ( ! is_string( $field ) || '' === $field ) {
+				return null;
+			}
+
+			// During list rendering, require registration for all posts or this
+			// post type unless an integration explicitly allows the key.
+			if (
+				! registered_meta_key_exists( 'post', $field, $this->external->post_type ) &&
+				! registered_meta_key_exists( 'post', $field ) &&
+				! apply_filters(
+					'noptin_should_show_post_meta_key',
+					! apply_filters( 'noptin_render_email_item_lists', false ),
+					$field
+				)
+			) {
+				return null;
+			}
 		}
 
 		// Abort if no field.
