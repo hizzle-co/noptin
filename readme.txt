@@ -1,4 +1,4 @@
-=== Simple Newsletter Plugin - Noptin ===
+=== Noptin – Newsletter, New Post Notifications & Email Automation ===
 Contributors: picocodes, mutendebrian
 Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
@@ -10,12 +10,15 @@ License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
 
-A fast, GDPR-compliant newsletter plugin. Collect newsletter subscribers, let users subscribe to new post notifications, and send newsletters. ★★★★★
+Fast, GDPR-friendly newsletter plugin. Send new post notifications, collect unlimited subscribers, automate emails, and grow your audience. ★★★★★
 
 == Description ==
 
 **Noptin is a fast, lightweight newsletter and email marketing plugin for WordPress.**
 ★★★★★<br>
+
+Noptin is a WordPress newsletter plugin built for publishers, bloggers, stores, and sites that want to automatically notify subscribers when new content is published.
+Send new post notifications, newsletters, post digests, and automated emails directly from WordPress while keeping full control of your subscriber list.
 
 It helps you collect subscribers, grow your newsletter audience, and send newsletters and notifications directly from your website, without relying on expensive third-party email services.
 
@@ -215,7 +218,7 @@ There are a lot of ways to contribute to this newsletter plugin:-
 == Upgrade Notice ==
 
 = 4.4.0 =
-Security release addressing multiple vulnerabilities involving subscriber data, double opt-in, REST API responses, post-list shortcodes, and campaign previews. Updating is strongly recommended.
+Important security release addressing multiple vulnerabilities. Updating is strongly recommended.
 
 == Changelog ==
 
