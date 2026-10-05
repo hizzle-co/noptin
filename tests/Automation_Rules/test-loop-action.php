@@ -88,20 +88,29 @@ class Test_Loop_Action extends Actions_Test_Case {
 			$this->markTestSkipped( 'XML loop tests require XMLReader or SimpleXML.' );
 		}
 
-		list( $loop ) = $this->create_loop_with_body(
-			array(
-				'loop_over'      => $type,
-				'file'           => $this->fixture_path( $file ),
-				'max_iterations' => 2,
-			)
-		);
+		// The plugin checkout may be outside ABSPATH in the test environment.
+		$fixture = trailingslashit( ABSPATH ) . 'noptin-loop-' . wp_generate_uuid4() . '.' . $type;
 
-		$this->run_rule( $loop );
-		$this->drain_pending_automation_tasks();
+		try {
+			$this->assertTrue( copy( $this->fixture_path( $file ), $fixture ) );
 
-		$this->assertCount( 2, Test_Spy_Action::$runs );
-		$this->assert_extra_arg_values( Test_Spy_Action::$runs[0], array( $first_email, $first_name, 0 ) );
-		$this->assert_extra_arg_values( Test_Spy_Action::$runs[1], array( 1 ) );
+			list( $loop ) = $this->create_loop_with_body(
+				array(
+					'loop_over'      => $type,
+					'file'           => $fixture,
+					'max_iterations' => 2,
+				)
+			);
+
+			$this->run_rule( $loop );
+			$this->drain_pending_automation_tasks();
+
+			$this->assertCount( 2, Test_Spy_Action::$runs );
+			$this->assert_extra_arg_values( Test_Spy_Action::$runs[0], array( $first_email, $first_name, 0 ) );
+			$this->assert_extra_arg_values( Test_Spy_Action::$runs[1], array( 1 ) );
+		} finally {
+			wp_delete_file( $fixture );
+		}
 	}
 
 	public function file_loop_provider() {
