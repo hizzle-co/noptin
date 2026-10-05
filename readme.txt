@@ -105,18 +105,33 @@ Let users sign up for your newsletter using any of the following email opt-in fo
 
 Noptin plays nicely with the tools you already use:
 
-- **Form Builders:** Gravity Forms, Contact Form 7 (CF7), WPForms, Ninja Forms, Everest Forms, Fluent Forms, Forminator, Formidable Forms, HappyForms, JetFormBuilder, MetForm, weForms, WordPress registration forms, WordPress comment forms, WSForm, Convert Pro.
-- **Page Builders:** Elementor, Divi, Beaver Builder, Bricks Builder.
-- **E-Commerce:** WooCommerce, Easy Digital Downloads (EDD).
-- **Membership:** MemberPress, Simple Membership, Paid Memberships Pro (PMPro), SureMembers, WP eMember.
-- **Others:** Advanced Ads, ACF, Pods, Akismet, GeoDirectory, Toolset Types, Modern Events Calendar, The Events Calendar, myCRED, WPLoyalty, Polylang, WPML, WP Job Manager (WPJM), WP Job Openings, WP Recipe Maker.
+- **Advertising:** Advanced Ads.
+- **Community:** bbPress, FluentCommunity.
+- **Custom Fields:** Advanced Custom Fields, Meta Box, Pods, Toolset Types.
+- **Customer Support:** Fluent Support.
+- **Directories:** Directorist, GeoDirectory.
+- **eCommerce:** Charitable, Easy Digital Downloads, Hizzle Pay, WooCommerce.
+- **Events:** Events Manager, Modern Events Calendar, The Events Calendar.
+- **Forms:** Beaver Builder, Bit Form, Bricks Builder, Brizy, Contact Form 7, Convert Pro, Divi Builder, Elementor, Everest Forms, Fluent Forms, Formidable Forms, Forminator, Gravity Forms, Happyforms, JetFormBuilder, MetForm, Ninja Forms, weForms, WPForms, WS Form.
+- **Jobs:** WP Job Manager, WP Job Openings.
+- **Learning Management:** LearnDash, LearnPress, LifterLMS, Masteriyo LMS, MasterStudy LMS, Sensei LMS, Tutor LMS.
+- **Membership:** MemberPress, Paid Memberships Pro, ProfilePress, Simple Membership, SureMembers, Ultimate Member, WishList Member, WP eMember.
+- **Polls:** WP-Polls.
+- **Recipes:** WP Recipe Maker.
+- **Rewards:** GamiPress, myCRED, WPLoyalty.
+- **Security:** Akismet.
+- **Social Media:** Bit Social.
+- **Translation:** Polylang, WPML.
+- **WordPress:** WordPress Comments, WordPress Registration Form, WordPress Users.
 
 = Use Noptin standalone or connect external services =
 
 Noptin works as a complete self-hosted newsletter solution.
 
-If you want, you can also connect subscribers to external email services using optional addons. Supported services include ActiveCampaign, Activetrail, Agile CRM, Attio, AWeber, Birdsend, Brevo (Sendinblue), Campaign Monitor, Constant Contact, ConvertKit, Customerly, Drip, EmailOctopus, GetResponse, Gist, Google Sheets, HubSpot, iContact, Keap/Infusionsoft, Klaviyo, Mailchimp, MailerLite, Mailjet, Moosend, Ontraport, Ortto, Pipedrive, Quentn, Salesflare, Salesforce, SendFox, Sendgrid, Sendlane, SendPulse, Sendy, Slack, Smaily, Telegram, Twilio, VerticalResponse, Webhooks, Zoho Campaigns, Zoho CRM, and many more.
+You can also connect external services using optional addons:
 
+- **Email services:** ActiveCampaign, Activetrail, Agile CRM, Attio, AWeber, Birdsend, Brevo (Sendinblue), Campaign Monitor, Constant Contact, ConvertKit, Customerly, Drip, Emailit, EmailOctopus, GetResponse, Gist, HubSpot, iContact, Keap/Infusionsoft, Klaviyo, Mailchimp, MailerLite, MailerLite (Classic), Mailjet, Moosend, Ontraport, Ortto, Pipedrive, Quentn, Salesflare, Salesforce, SendFox, Sendgrid, Sendlane, SendPulse, Sendy, Smaily, VerticalResponse, Zoho Campaigns, Zoho CRM.
+- **Non-email services:** Google Sheets, Postal, Slack, Telegram, Twilio, Webhooks.
 
 == Installation ==
 
