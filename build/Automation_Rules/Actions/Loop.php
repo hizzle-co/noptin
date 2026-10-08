@@ -137,7 +137,7 @@ class Loop extends Action {
 				'label'       => __( 'File URL/Path', 'newsletter-optin-box' ),
 				'el'          => 'input',
 				'type'        => 'text',
-				'description' => __( 'Enter a URL, a path inside the WordPress installation, or a merge tag that resolves to file contents.', 'newsletter-optin-box' ),
+				'description' => __( 'Enter a URL, a server path inside the WordPress installation, or a merge tag that resolves to file contents.', 'newsletter-optin-box' ),
 				'conditions'  => array(
 					array(
 						'key'      => 'action_settings.loop_over',

@@ -459,6 +459,8 @@ class Generator {
 			$content = do_shortcode( $content );
 		} finally {
 			remove_filter( 'noptin_render_email_item_lists', $allow_item_lists );
+
+			// Restore original shortcodes
 			$shortcode_tags = $original_shortcodes; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		}
 

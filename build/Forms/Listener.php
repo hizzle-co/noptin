@@ -201,11 +201,11 @@ class Listener {
 			return;
 		}
 
-		// Process the configured form action, not the submitted hidden field.
-		if ( $this->is_unsubscribe_form() ) {
-			$this->process_unsubscribe_request();
-		} else {
+		// Process the form.
+		if ( ! $this->is_unsubscribe_form() ) {
 			$this->process_subscribe_request();
+		} else {
+			$this->process_unsubscribe_request();
 		}
 
 		// Trigger success/error hooks and maybe redirect to a different page.

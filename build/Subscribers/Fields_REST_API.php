@@ -540,7 +540,7 @@ class Fields_REST_API {
 
 		// 1. Update unassigned values stored in settings.
 		$original_options = self::get_unassigned_options( $field );
-		$was_configured    = self::TAGS_FIELD === $field ? in_array( $value, $original_options, true ) : array_key_exists( $value, $original_options );
+		$was_configured   = self::TAGS_FIELD === $field ? in_array( $value, $original_options, true ) : array_key_exists( $value, $original_options );
 		$unassigned       = $original_options;
 		if ( self::TAGS_FIELD === $field ) {
 			$unassigned = array_diff( $unassigned, array( $value ) );
