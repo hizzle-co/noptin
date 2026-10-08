@@ -134,7 +134,7 @@ Noptin works as a complete self-hosted newsletter solution.
 You can also connect external services using optional addons:
 
 - **Email services:** ActiveCampaign, Activetrail, Agile CRM, Attio, AWeber, Birdsend, Brevo (Sendinblue), Campaign Monitor, Constant Contact, ConvertKit, Customerly, Drip, Emailit, EmailOctopus, GetResponse, Gist, HubSpot, iContact, Keap/Infusionsoft, Klaviyo, Mailchimp, MailerLite, MailerLite (Classic), Mailjet, Moosend, Ontraport, Ortto, Pipedrive, Quentn, Salesflare, Salesforce, SendFox, Sendgrid, Sendlane, SendPulse, Sendy, Smaily, VerticalResponse, Zoho Campaigns, Zoho CRM.
-- **Non-email services:** Google Sheets, Postal, Slack, Telegram, Twilio, Webhooks.
+- **Non-email services:** Google Sheets, Postal, Slack, Telegram, Twilio, Webhooks, WhatsApp.
 
 == Installation ==
 
