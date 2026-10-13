@@ -367,10 +367,14 @@ abstract class Collection {
 		$block_name  = \Hizzle\Noptin\Emails\Admin\Editor::merge_tag_to_block_name( $this->field_to_merge_tag( $this->image_field ) );
 		$block_class = str_replace( '/', '-', $block_name );
 		$class_name  = 'wp-block-' . $block_class . ' noptin-image-block__wrapper ' . $block_class;
+		$attributes  = array(
+			'anchor'   => $class_name,
+			'settings' => (object) $atts,
+		);
 
 		ob_start();
 		?>
-			<!-- wp:<?php echo esc_html( $block_name ); ?> {"anchor":"<?php echo esc_html( $class_name ); ?>"} -->
+			<!-- wp:<?php echo esc_html( $block_name ); ?> <?php echo esc_html( serialize_block_attributes( $attributes ) ); ?> -->
 			<table border="0" cellpadding="0" cellspacing="0" role="presentation" class="<?php echo esc_html( $class_name ); ?>">
 				<tbody>
 					<tr>
