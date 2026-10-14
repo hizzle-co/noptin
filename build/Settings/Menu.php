@@ -109,20 +109,6 @@ class Menu {
 			'hizzleWPSettings',
 			array(
 				'data' => array(
-					'settings'    => self::prepare_settings(),
-					'saved'       => array_merge(
-						get_noptin_options(),
-						array(
-							'custom_fields' => array_values(
-								array_filter(
-									get_noptin_custom_fields(),
-									static function ( $field ) {
-										return empty( $field['dynamic'] );
-									}
-								)
-							),
-						)
-					),
 					'brand'       => noptin()->white_label->get_details(),
 					'option_name' => 'noptin_options',
 				),
@@ -130,6 +116,23 @@ class Menu {
 		);
 
 		wp_set_script_translations( 'hizzlewp-settings', 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
+	}
+
+	/** Saved values for the editor, excluding generated subscriber fields. */
+	public static function get_saved_settings() {
+		return array_merge(
+			get_noptin_options(),
+			array(
+				'custom_fields' => array_values(
+					array_filter(
+						get_noptin_custom_fields(),
+						static function ( $field ) {
+							return empty( $field['dynamic'] );
+						}
+					)
+				),
+			)
+		);
 	}
 
 	/**

@@ -15,7 +15,6 @@ defined( 'ABSPATH' ) || exit;
  * Main settings class.
  */
 class Main {
-
 	/**
 	 * Inits the main emails class.
 	 *
@@ -34,6 +33,14 @@ class Main {
 	 * Register rest fields.
 	 */
 	public static function register_setting() {
+		\Hizzle\WordPress\ScriptManager::register_settings(
+			'noptin_options',
+			array(
+				'fields'              => array( Menu::class, 'prepare_settings' ),
+				'values'              => array( Menu::class, 'get_saved_settings' ),
+				'permission_callback' => 'current_user_can_manage_noptin',
+			)
+		);
 
 		// Register settings.
 		register_setting(
@@ -82,10 +89,8 @@ class Main {
 	public static function sanitize_settings( $settings ) {
 
 		if ( ! empty( $settings['custom_fields'] ) ) {
-
 			$prepared = array();
 			foreach ( $settings['custom_fields'] as $custom_field ) {
-
 				if ( ! empty( $custom_field['label'] ) && empty( $custom_field['merge_tag'] ) ) {
 					$custom_field['merge_tag'] = sanitize_key( preg_replace( '/[^a-z0-9_]/', '_', strtolower( $custom_field['label'] ) ) );
 				}

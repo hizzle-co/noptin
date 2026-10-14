@@ -50,6 +50,8 @@ class ScriptManager {
 	 * @var array
 	 */
 	public static function init() {
+		require_once __DIR__ . '/SettingsAPI.php';
+		add_action( 'rest_api_init', array( SettingsAPI::class, 'register_routes' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_collection' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
@@ -146,23 +148,6 @@ class ScriptManager {
 	 */
 	public static function preload_settings() {
 		if ( wp_script_is( 'hizzlewp-settings', 'enqueued' ) ) {
-			wp_add_inline_script(
-				'wp-api-fetch',
-				sprintf(
-					'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
-					wp_json_encode(
-						array_reduce(
-							array(
-								'/wp/v2/settings',
-								array( '/wp/v2/settings', 'OPTIONS' ),
-							),
-							'rest_preload_api_request',
-							array()
-						)
-					)
-				),
-				'after'
-			);
 
 			wp_add_inline_script(
 				'wp-api-fetch',
@@ -173,6 +158,11 @@ class ScriptManager {
 				'before'
 			);
 		}
+	}
+
+	/** Register the option, fields, and access check used by the settings provider. */
+	public static function register_settings( $option_name, $args ) {
+		SettingsAPI::register( $option_name, $args );
 	}
 
 	/**
