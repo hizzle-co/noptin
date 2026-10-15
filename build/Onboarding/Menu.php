@@ -173,6 +173,7 @@ class Menu {
 		// Get license info.
 		$current_user = wp_get_current_user();
 		$data         = array(
+			'license_key'          => \Noptin_COM::get_active_license_key(),
 			'brand'                => noptin()->white_label->get_details(),
 			'home_url'             => home_url(),
 			'dashboardURL'         => add_query_arg(
@@ -185,12 +186,6 @@ class Menu {
 			'crmConnections'       => Main::get_crm_connections(),
 			'ajaxUrl'              => admin_url( 'admin-ajax.php' ),
 			'updatesNonce'         => wp_create_nonce( 'updates' ),
-			'options'              => array_merge(
-				get_noptin_options(),
-				array(
-					'custom_fields' => array_values( get_noptin_custom_fields() ),
-				)
-			),
 			'plugins'              => self::get_installed_plugins(),
 			'emailSettings'        => array(
 				'from_email'        => array(
