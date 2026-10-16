@@ -178,14 +178,23 @@ class Catalog {
 	 */
 	public static function config() {
 		$fields = \Hizzle\Noptin\Settings\Menu::prepare_settings();
-		$fields = $fields['integrations']['sub_sections']['main']['settings'] ?? array();
 
 		$with_settings = static function ( $addons ) use ( $fields ) {
 			foreach ( $addons as &$addon ) {
-				$slug     = str_replace( '-', '_', $addon['slug'] );
-				$settings = $fields[ 'settings_section_' . $slug ]['settings'] ?? array();
+				$integration = noptin()->integrations->integrations[ $addon['slug'] ]
+					?? noptin()->integrations->integrations[ str_replace( '-', '_', $addon['slug'] ) ]
+					?? null;
+				$slug = str_replace( '-', '_', $integration->slug ?? $addon['slug'] );
+				$section = 'addons-pack' === $addon['slug'] ? 'coupon_codes' : 'integrations';
+				$settings = $fields[ $section ]['sub_sections']['main']['settings'] ?? array();
+				if ( 'integrations' === $section ) {
+					$settings = $settings[ 'settings_section_' . $slug ]['settings'] ?? array();
+				}
 				// Catalog placeholders for uninstalled add-ons are not settings forms.
 				$addon['hasSettings'] = ! empty( $settings ) && ! isset( $settings[ 'noptin_' . $slug . '_install' ] );
+				$addon['settingsPath'] = $addon['hasSettings']
+					? $section . '.main' . ( 'integrations' === $section ? '.settings_section_' . $slug : '' )
+					: null;
 			}
 			return array_values( $addons );
 		};
@@ -205,6 +214,14 @@ class Catalog {
 			'updatesNonce' => wp_create_nonce( 'updates' ),
 			'license_key'  => \Noptin_COM::get_active_license_key(),
 			'plugins'      => self::get_installed_plugins(),
+			'addons'       => $with_settings( array( array(
+				'slug' => 'addons-pack',
+				'plan' => 'premium',
+				'name' => __( 'Addons Pack', 'newsletter-optin-box' ),
+				'description' => __( 'Enable email sequences/courses, coupon codes, and more premium features.', 'newsletter-optin-box' ),
+				'icon' => array( 'icon' => 'email', 'fill' => '#e91e63' ),
+				'plugin_url' => 'https://noptin.com/ultimate-addons-pack/',
+			) ) ),
 			'integrations' => $with_settings( self::get_detected_integrations() ),
 			'connections'  => $with_settings( self::get_crm_connections() ),
 			'triggers'     => self::events( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
