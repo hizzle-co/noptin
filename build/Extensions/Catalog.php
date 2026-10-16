@@ -192,7 +192,8 @@ class Catalog {
 					$settings = $settings[ 'settings_section_' . $slug ]['settings'] ?? array();
 				}
 				// Catalog placeholders for uninstalled add-ons are not settings forms.
-				$addon['hasSettings'] = ! empty( $settings ) && ! isset( $settings[ 'noptin_' . $slug . '_install' ] );
+				// Webhooks only exposes debug logging and needs no setup dialog.
+				$addon['hasSettings'] = 'webhooks' !== $slug && ! empty( $settings ) && ! isset( $settings[ 'noptin_' . $slug . '_install' ] );
 				$addon['settingsPath'] = $addon['hasSettings']
 					? $section . '.main' . ( 'integrations' === $section ? '.settings_section_' . $slug : '' )
 					: null;
