@@ -440,69 +440,6 @@ class Main {
 		}
 	}
 
-	/**
-	 * Slims down a settings schema for AI consumption.
-	 * Removes noise keys and omits defaults (type=text, el=input).
-	 *
-	 * @param array $settings Raw settings schema.
-	 * @return array
-	 */
-	private static function slim_settings_for_ai( $settings ) {
-		$result = array();
-
-		foreach ( $settings as $key => $field ) {
-			if ( ! is_array( $field ) ) {
-				continue;
-			}
-
-			// Recurse into grouped fields.
-			if ( isset( $field['fields'] ) && is_array( $field['fields'] ) ) {
-				$children = self::slim_settings_for_ai( $field['fields'] );
-				if ( ! empty( $children ) ) {
-					$result[ $key ] = $children;
-				}
-				continue;
-			}
-
-			$slim = array();
-
-			$label = $field['label'] ?? $key;
-
-			if ( ! empty( $field['description'] ) ) {
-				$label .= ' (' . $field['description'] . ')';
-			}
-
-			if ( ! empty( $label ) ) {
-				$slim['label'] = $label;
-			}
-
-			// type: only include if not the default 'text'.
-			if ( ! empty( $field['type'] ) && 'text' !== $field['type'] ) {
-				$slim['type'] = $field['type'];
-			}
-
-			// el: only include if not the default 'input'.
-			if ( ! empty( $field['el'] ) && 'input' !== $field['el'] ) {
-				$slim['el'] = $field['el'];
-			}
-
-			// options.
-			if ( ! empty( $field['options'] ) && is_array( $field['options'] ) ) {
-				$slim['options'] = $field['options'];
-			}
-
-			// default.
-			if ( isset( $field['default'] ) && '' !== $field['default'] ) {
-				$slim['default'] = $field['default'];
-			}
-
-			if ( ! empty( $slim ) ) {
-				$result[ $key ] = $slim;
-			}
-		}
-
-		return $result;
-	}
 
 	/**
 	 * Loads AI script
@@ -536,93 +473,6 @@ class Main {
 		$brand_color = empty( $brand_color ) ? '#1a82e2' : $brand_color;
 
 		$ai_localization = array(
-			'email_types'         => array_filter(
-				array_map(
-					function ( $type ) {
-						// Skip email_templates and trash.
-						if ( 'email_template' === $type->type || 'trash' === $type->type || ! current_user_can_manage_noptin_campaign_type( $type->type ) ) {
-							return null;
-						}
-
-						/** @var \Hizzle\Noptin\Emails\Types\Type $type */
-						$to_return = array(
-							'label'               => $type->label,
-							'type'                => $type->type,
-							'plural_label'        => $type->plural_label,
-							'supports_recipients' => $type->supports_recipients,
-							'supports_timing'     => $type->supports_timing,
-							'supports_menu_order' => $type->supports_menu_order,
-							'contexts'            => $type->contexts,
-						);
-
-						if ( $type->supports_sub_types ) {
-							$to_return['types'] = array();
-
-							foreach ( $type->get_sub_types() as $sub_type_key => $sub_type ) {
-								if ( 0 === strpos( $sub_type_key, 'automation_rule_' ) || empty( $sub_type['category'] ) ) {
-									continue;
-								}
-
-								$to_return['types'][ $sub_type_key ] = array(
-									'label'       => $sub_type['label'],
-									'description' => $sub_type['description'],
-									'contexts'    => $sub_type['contexts'] ?? array(),
-								);
-							}
-						}
-
-						foreach ( array( 'child_type', 'parent_type' ) as $property ) {
-							if ( $type->{$property} ) {
-								$to_return[ $property ] = $type->{$property};
-							}
-						}
-
-						return $to_return;
-					},
-					\Hizzle\Noptin\Emails\Main::get_email_types()
-				)
-			),
-			'automation_triggers' => array_filter(
-				array_map(
-					function ( $trigger ) {
-						/** @var \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger */
-						if ( $trigger->depricated || empty( $trigger->category ) ) {
-							return null;
-						}
-
-						$entry = array(
-							'description' => $trigger->get_description(),
-						);
-						$settings = self::slim_settings_for_ai( $trigger->get_settings() );
-						if ( ! empty( $settings ) ) {
-							$entry['settings'] = $settings;
-						}
-						return $entry;
-					},
-					\Hizzle\Noptin\Automation_Rules\Triggers\Main::all()
-				)
-			),
-			'automation_actions'  => array_filter(
-				array_map(
-					function ( $action ) {
-						/** @var \Hizzle\Noptin\Automation_Rules\Actions\Action $action */
-
-						if ( $action->depricated || empty( $action->category ) ) {
-							return null;
-						}
-
-						$entry = array(
-							'description' => $action->get_description(),
-						);
-						$settings = self::slim_settings_for_ai( $action->get_settings() );
-						if ( ! empty( $settings ) ) {
-							$entry['settings'] = $settings;
-						}
-						return $entry;
-					},
-					\Hizzle\Noptin\Automation_Rules\Actions\Main::all()
-				)
-			),
 			'user'                => array(
 				'id'    => $current_user->ID,
 				'name'  => $current_user->display_name,
@@ -673,58 +523,6 @@ class Main {
 					),
 				);
 			}
-		}
-
-		$senders = array_merge(
-			array(
-				'manual_recipients' => array(
-					'label'        => __( 'Specific People', 'newsletter-optin-box' ),
-					'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
-					'is_installed' => true,
-					'settings'     => array(
-						'disableMergeTags' => false,
-						'fields'           => array(
-							'recipients' => array(
-								'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
-								'description' => sprintf(
-									'%s<br /> <br />%s',
-									__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
-									sprintf(
-										/* translators: %s: code */
-										__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
-										'<code>--notracking</code>'
-									)
-								),
-								'type'        => 'text',
-								'placeholder' => sprintf(
-									/* translators: %s: The Example */
-									__( 'For example, %s', 'newsletter-optin-box' ),
-									'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
-								),
-							),
-						),
-					),
-				),
-			),
-			get_noptin_email_senders( true )
-		);
-
-		$potential_senders = array();
-
-		foreach ( $senders as $key => $sender ) {
-			if ( ! is_array( $sender ) || empty( $sender['is_installed'] ) ) {
-				continue;
-			}
-
-			$potential_senders[ $key ] = array(
-				'label'       => $sender['label'] ?? $key,
-				'description' => $sender['description'] ?? '',
-				'settings'    => $sender['settings'] ?? array(),
-			);
-		}
-
-		if ( ! empty( $potential_senders ) ) {
-			$ai_localization['potential_senders'] = $potential_senders;
 		}
 
 		wp_add_inline_script(
@@ -858,12 +656,12 @@ class Main {
 			$data = apply_filters(
 				'noptin_email_settings_misc',
 				array(
+					'config'            => \Hizzle\Noptin\Extensions\Catalog::config(),
 					'isTest'            => defined( 'NOPTIN_IS_TESTING' ),
-					'data'              => (object) ( empty( $type ) ? array() : $type->to_array() ),
+					'data'              => (object) array( 'type' => empty( $type ) ? '' : $type->type ),
 					'from_name'         => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
 					'from_email'        => get_noptin_option( 'from_email', '' ),
 					'reply_to'          => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
-					'integrations'      => 'view-campaigns' === $script ? apply_filters( 'noptin_get_all_known_integrations', array() ) : array(),
 					'utm_enabled'       => get_noptin_option( 'add_utm_params', true ),
 					'utm_docs_url'      => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
 					'assets_url'        => plugins_url( 'static/images/', __DIR__ ),
@@ -874,81 +672,9 @@ class Main {
 					'foregroundSending' => 'view-campaigns' === $script && $type && 'newsletter' === $type->type
 						? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data()
 						: false,
-					'senders'           => array_merge(
-						array(
-							'manual_recipients' => array(
-								'label'        => __( 'Specific People', 'newsletter-optin-box' ),
-								'description'  => __( 'Enter one or more email addresses manually, separated by commas.', 'newsletter-optin-box' ),
-								'image'        => array(
-									'icon' => 'businessperson',
-									'fill' => '#212121',
-								),
-								'is_active'    => true,
-								'is_installed' => true,
-								'is_local'     => true,
-								'settings'     => array(
-									'disableMergeTags' => false,
-									'fields'           => array(
-										'recipients' => array(
-											'label'       => __( 'Recipient(s)', 'newsletter-optin-box' ),
-											'description' => sprintf(
-												'%s<br /> <br />%s',
-												__( 'Enter recipients (comma-separated) for this email.', 'newsletter-optin-box' ),
-												sprintf(
-													/* translators: %s: code */
-													__( 'Add %s after an email to disable send, open and click tracking for that recipient.', 'newsletter-optin-box' ),
-													'<code>--notracking</code>'
-												)
-											),
-											'type'        => 'text',
-											'placeholder' => sprintf(
-												/* translators: %s: The Example */
-												__( 'For example, %s', 'newsletter-optin-box' ),
-												'[[email]], ' . get_option( 'admin_email' ) . ' --notracking'
-											),
-										),
-									),
-								),
-							),
-						),
-						get_noptin_email_senders( true )
-					),
 				),
 				$script
 			);
-
-			// Add available automation triggers for sequence emails.
-			if (
-				'view-campaigns' === $script &&
-				$type &&
-				'sequence' === $type->type &&
-				is_object( $data['data'] ) &&
-				! empty( $data['data']->ai ) &&
-				is_array( $data['data']->ai )
-			) {
-				$ai_triggers = array();
-
-				foreach ( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() as $trigger ) {
-					if ( ! empty( $trigger->depricated ) || empty( $trigger->category ) ) {
-						continue;
-					}
-
-					if ( ! isset( $ai_triggers[ $trigger->category ] ) ) {
-						$ai_triggers[ $trigger->category ] = array();
-					}
-
-					$ai_triggers[ $trigger->category ][] = array(
-						'id'          => $trigger->get_id(),
-						'name'        => $trigger->get_name(),
-						'description' => $trigger->get_description(),
-						'merge_tags'  => $trigger->get_known_smart_tags_for_js(),
-					);
-				}
-
-				if ( ! empty( $ai_triggers ) ) {
-					$data['data']->ai['triggers'] = $ai_triggers;
-				}
-			}
 
 			wp_add_inline_script(
 				$localize_script,

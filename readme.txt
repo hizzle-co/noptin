@@ -115,7 +115,7 @@ Noptin plays nicely with the tools you already use:
 - **Directories:** Directorist, GeoDirectory.
 - **eCommerce:** Charitable, Easy Digital Downloads, Hizzle Pay, WooCommerce.
 - **Events:** Events Manager, Modern Events Calendar, The Events Calendar.
-- **Forms:** Beaver Builder, Bit Form, Bricks Builder, Brizy, Contact Form 7, Convert Pro, Divi Builder, Elementor, Everest Forms, Fluent Forms, Formidable Forms, Forminator, Gravity Forms, Happyforms, JetFormBuilder, MetForm, Ninja Forms, weForms, WPForms, WS Form.
+- **Forms:** Beaver Builder, Bit Form, Bricks Builder, Brizy, Contact Form 7, Convert Pro, Divi Builder, Elementor, Everest Forms, Fluent Forms, Formidable Forms, Forminator, Gravity Forms, Happyforms, JetFormBuilder, MetForm, Ninja Forms, QuillForms, weForms, WPForms, WS Form.
 - **Jobs:** WP Job Manager, WP Job Openings.
 - **Learning Management:** LearnDash, LearnPress, LifterLMS, Masteriyo LMS, MasterStudy LMS, Sensei LMS, Tutor LMS.
 - **Membership:** MemberPress, Paid Memberships Pro, ProfilePress, Simple Membership, SureMembers, Ultimate Member, WishList Member, WP eMember.

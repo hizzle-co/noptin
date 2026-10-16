@@ -172,22 +172,17 @@ class Menu {
 
 		// Get license info.
 		$current_user = wp_get_current_user();
+		$catalog      = \Hizzle\Noptin\Extensions\Catalog::config();
 		$data         = array(
-			'license_key'          => \Noptin_COM::get_active_license_key(),
-			'brand'                => noptin()->white_label->get_details(),
-			'home_url'             => home_url(),
-			'dashboardURL'         => add_query_arg(
+			'config'        => $catalog,
+			'brand'         => noptin()->white_label->get_details(),
+			'dashboardURL'  => add_query_arg(
 				array(
 					'page' => 'noptin',
 				),
 				admin_url( 'admin.php' )
 			),
-			'detectedIntegrations' => Main::get_detected_integrations(),
-			'crmConnections'       => Main::get_crm_connections(),
-			'ajaxUrl'              => admin_url( 'admin-ajax.php' ),
-			'updatesNonce'         => wp_create_nonce( 'updates' ),
-			'plugins'              => self::get_installed_plugins(),
-			'emailSettings'        => array(
+			'emailSettings' => array(
 				'from_email'        => array(
 					'el'      => 'input',
 					'section' => 'emails',
@@ -266,8 +261,8 @@ class Menu {
 					),
 				),
 			),
-			'userEmail'            => $current_user->user_email ?? '',
-			'emailSignup'          => (object) array_filter(
+			'userEmail'     => $current_user->user_email ?? '',
+			'emailSignup'   => (object) array_filter(
 				array(
 					'first_name' => $current_user->first_name ?? '',
 					'last_name'  => $current_user->last_name ?? '',
@@ -291,34 +286,5 @@ class Menu {
 			array( 'wp-components' ),
 			$config['version']
 		);
-	}
-
-	/**
-	 * Retrieves a list of installed plugins.
-	 *
-	 * @return array
-	 */
-	public static function get_installed_plugins() {
-
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$plugins = array();
-
-		foreach ( get_plugins() as $filename => $data ) {
-			// Skip if does not have a directory.
-			if ( false === strpos( $filename, '/' ) ) {
-				continue;
-			}
-
-			$plugins[ basename( dirname( $filename ) ) ] = array(
-				'file_name' => $filename,
-				'name'      => $data['Name'],
-				'isActive'  => is_plugin_active( $filename ),
-			);
-		}
-
-		return $plugins;
 	}
 }

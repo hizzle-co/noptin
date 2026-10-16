@@ -268,7 +268,8 @@ class Noptin_Form_Submit_Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger
 				$prepared['email'] = sanitize_email( $value );
 			}
 
-			$prepared[ $key ] = $value;
+			// Preserve raw arrays for option-label rendering; flatten only for email detection.
+			$prepared[ $key ] = $posted[ $key ];
 		}
 
 		// Maybe set an email.

@@ -114,23 +114,20 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
+						'config'       => \Hizzle\Noptin\Extensions\Catalog::config(),
 						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
-						'integrations' => apply_filters( 'noptin_get_all_known_integrations', array() ),
 						'ai'           => array(
 							'disabled' => (bool) $disable_ai,
 						),
-						'license'      => self::prepare_license_for_editor(),
 						'data'         => array(
-							'add_new'       => add_query_arg(
+							'add_new'  => add_query_arg(
 								array(
 									'page'          => 'noptin-automation-rules',
 									'hizzlewp_path' => '/edit/0',
 								),
 								admin_url( 'admin.php' )
 							),
-							'triggers'      => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
-							'actions'       => self::prepare_triggers_for_editor( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
-							'app'           => $map,
+							'app'      => $map,
 						),
 						'brand'        => noptin()->white_label->get_details(),
 						'comparisons'  => noptin_get_conditional_logic_comparisons(),
@@ -178,19 +175,6 @@ class Main {
 		}
 
 		return absint( $matches[1] );
-	}
-
-	/**
-	 * Prepares license details for the editor.
-	 *
-	 * @return array
-	 */
-	private static function prepare_license_for_editor() {
-		return array(
-			'key'          => class_exists( '\Noptin_COM' ) ? \Noptin_COM::get_active_license_key() : '',
-			'activate_url' => admin_url( 'admin.php?page=noptin-addons' ),
-			'upgrade_url'  => function_exists( 'noptin_get_upsell_url' ) ? noptin_get_upsell_url( 'pricing', 'license', 'automationrules' ) : 'https://noptin.com/pricing/',
-		);
 	}
 
 	/**
@@ -337,35 +321,6 @@ class Main {
 		$values = array_filter( array_unique( array_map( 'sanitize_text_field', (array) $values ) ) );
 
 		return array_slice( array_values( $values ), 0, $limit );
-	}
-
-	/**
-	 * Fetches triggers for the automation rule editor.
-	 *
-	 * @param \Noptin_Abstract_Trigger_Action[] $triggers The triggers.
-	 * @since 3.1.0
-	 */
-	private static function prepare_triggers_for_editor( $triggers ) {
-
-		$triggers_data = array();
-
-		foreach ( $triggers as $trigger ) {
-			if ( ! empty( $trigger->depricated ) ) {
-				continue;
-			}
-
-			$triggers_data[ $trigger->get_id() ] = array(
-				'name'                => $trigger->get_id(),
-				'label'               => $trigger->get_name(),
-				'description'         => $trigger->get_description(),
-				'image'               => $trigger->get_image(),
-				'category'            => $trigger->depricated ? '' : $trigger->category,
-				'featured'            => $trigger->featured,
-				'has_wizard_settings' => $trigger->has_wizard_settings(),
-			);
-		}
-
-		return $triggers_data;
 	}
 
 	/**

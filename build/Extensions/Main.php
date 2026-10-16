@@ -15,16 +15,16 @@ defined( 'ABSPATH' ) || exit;
  * Main extensions class.
  */
 class Main {
-
 	/**
 	 * Inits the main emails class.
 	 *
 	 */
 	public static function init() {
 
+		Catalog::init();
+
 		if ( is_admin() ) {
 			Menu::init();
 		}
 	}
-
 }

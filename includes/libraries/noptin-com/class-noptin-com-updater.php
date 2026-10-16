@@ -28,7 +28,6 @@ class Noptin_COM_Updater {
 		add_filter( 'plugins_api', array( __CLASS__, 'plugins_api' ), 20, 3 );
 		add_action( 'plugins_loaded', array( __CLASS__, 'add_notice_unlicensed_product' ), 10, 4 );
 		add_filter( 'site_transient_update_plugins', array( __CLASS__, 'change_update_information' ) );
-		add_filter( 'noptin_email_settings_misc', array( __CLASS__, 'filter_email_settings' ) );
 		add_action( 'noptin_refresh_integrations', array( __CLASS__, 'refresh' ) );
 	}
 
@@ -410,40 +409,6 @@ class Noptin_COM_Updater {
 		return $transient;
 	}
 
-	/**
-	 * Filters the email settings.
-	 *
-	 * @param array $settings The email settings.
-	 * @return array
-	 */
-	public static function filter_email_settings( $settings ) {
-
-		// Installed add-ons.
-		$installed_addons    = wp_list_pluck( Noptin_COM::get_installed_addons(), '_filename', 'slug' );
-		$slug                = 'noptin-addons-pack';
-		$settings['license'] = array(
-			'key'          => Noptin_COM::get_active_license_key(),
-			'upgrade_url'  => noptin_get_upsell_url( 'pricing', 'upgrade', 'license' ),
-			'is_usable'    => defined( 'NOPTIN_ADDONS_PACK_VERSION' ),
-			'activate_url' => admin_url( 'admin.php?page=noptin-addons' ),
-			'install_text' => isset( $installed_addons[ $slug ] ) ? __( 'Activate', 'newsletter-optin-box' ) : __( 'Install', 'newsletter-optin-box' ),
-			'install_desc' => isset( $installed_addons[ $slug ] ) ?
-				__( 'Activate the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ) :
-				__( 'Install the Noptin Addons Pack addon to unlock.', 'newsletter-optin-box' ),
-			'install_url'  => isset( $installed_addons[ $slug ] ) ?
-				str_replace( '&amp;', '&', wp_nonce_url( admin_url( 'plugins.php?action=activate&plugin=' . $installed_addons[ $slug ] ), 'activate-plugin_' . $installed_addons[ $slug ] ) ) :
-				str_replace( '&amp;', '&', wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=noptin-plugin-with-slug-' . $slug ), 'install-plugin_noptin-plugin-with-slug-' . $slug ) ),
-		);
-
-		// Unset install_text, install_desc and install_url if the license is empty.
-		if ( empty( $settings['license']['key'] ) ) {
-			unset( $settings['license']['install_text'] );
-			unset( $settings['license']['install_url'] );
-			unset( $settings['license']['install_desc'] );
-		}
-
-		return $settings;
-	}
 
 	/**
 	 * Refreshes all known connections.
