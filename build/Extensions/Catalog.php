@@ -173,7 +173,7 @@ class Catalog {
 	 * Screens localize this array under config and keep navigation/editor data separate.
 	 *
 	 * @return array{home_url: string, ajaxUrl: string, updatesNonce: string, license_key: string|false,
-	 *     plugins: array, integrations: array, connections: array, triggers: array, actions: array,
+	 *     plugins: array, addons: array, integrations: array, connections: array, triggers: array, actions: array,
 	 *     emailTypes: array, senders: array, canInstall: bool, canActivate: bool}
 	 */
 	public static function config() {
@@ -181,7 +181,8 @@ class Catalog {
 
 		$with_settings = static function ( $addons ) use ( $fields ) {
 			foreach ( $addons as &$addon ) {
-				$integration = noptin()->integrations->integrations[ $addon['slug'] ]
+				$integration = noptin()->integrations_new->integrations[ $addon['slug'] ]
+					?? noptin()->integrations->integrations[ $addon['slug'] ]
 					?? noptin()->integrations->integrations[ str_replace( '-', '_', $addon['slug'] ) ]
 					?? null;
 				$slug = str_replace( '-', '_', $integration->slug ?? $addon['slug'] );
