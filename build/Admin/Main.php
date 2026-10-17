@@ -386,7 +386,7 @@ class Main {
 			}
 		}
 
-        // The React campaign browser reads and dismisses queued notices through REST.
+		// The React campaign browser reads and dismisses queued notices through REST.
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		if ( $screen && false !== strpos( $screen->id, 'noptin-email-campaigns' ) && ! isset( $_GET['noptin_campaign'] ) ) {
 			return;

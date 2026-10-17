@@ -662,9 +662,6 @@ class Main {
 					'ai'                => array(
 						'disabled' => (bool) $disable_ai,
 					),
-					'foregroundSending' => 'view-campaigns' === $script
-						? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data()
-						: false,
 				),
 				$script
 			);
