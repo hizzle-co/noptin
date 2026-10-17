@@ -193,7 +193,11 @@ class REST extends \WP_REST_Posts_Controller {
 		return $params;
 	}
 
-	/** Describe a campaign for its authorized manager without loading editor content. */
+	/**
+	 * Describe a campaign for its authorized manager without loading editor content.
+	 *
+	 * @param Email $email
+	 */
 	public function get_list_data( $email ) {
 		$type      = Main::get_email_type( $email->type );
 		$subtype   = $type ? $type->get_sub_type( $email->get_sub_type() ) : false;
@@ -202,6 +206,7 @@ class REST extends \WP_REST_Posts_Controller {
 		$statuses  = get_post_statuses();
 		$status    = 'future' === $email->status ? __( 'Scheduled', 'newsletter-optin-box' ) : ( $statuses[ $email->status ] ?? $email->status );
 		$state     = $email->status;
+
 		if ( 'newsletter' === $email->type && 'publish' === $state ) {
 			$state  = $completed ? 'completed' : ( $paused ? 'paused' : 'sending' );
 			$status = array(
@@ -210,6 +215,7 @@ class REST extends \WP_REST_Posts_Controller {
 				'sending'   => __( 'Sending', 'newsletter-optin-box' ),
 			)[ $state ];
 		}
+
 		$sender     = $email->get_sender();
 		$senders    = get_noptin_email_senders( true );
 		$recipients = $senders[ $sender ]['label'] ?? $sender;
@@ -241,6 +247,7 @@ class REST extends \WP_REST_Posts_Controller {
 		$source      = $email->parent_id ? new Email( $email->parent_id ) : null;
 		$source_post = absint( $email->get( 'source_post_id' ) );
 		$stats       = array();
+
 		foreach ( array( 'send', 'open', 'click', 'unsubscribe' ) as $activity ) {
 			$method             = 'get_' . $activity . '_count';
 			$stats[ $activity ] = array(
@@ -248,10 +255,12 @@ class REST extends \WP_REST_Posts_Controller {
 				'url'   => $email->get_activity_url( $activity ),
 			);
 		}
+
 		$revenue          = noptin_has_alk() ? (float) get_post_meta( $email->id, '_revenue', true ) : null;
 		$formatter        = apply_filters( 'noptin_format_price_callback', '', $revenue );
 		$extra_columns    = array();
 		$description_html = '';
+
 		if ( $type ) {
 			$context          = new Admin\Table( $type, false );
 			$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email, $context ) );
@@ -301,7 +310,7 @@ class REST extends \WP_REST_Posts_Controller {
 			}
 		}
 
-		$data = array(
+		$data             = array(
 			'warnings'           => array_values( apply_filters( 'noptin_campaign_warnings', $warnings, $email ) ),
 			'row_actions'        => Admin\Browser::public_actions( $email ),
 			'legacy_row_actions' => $type ? wp_kses_post( implode( ' ', (array) apply_filters( 'noptin_email_row_actions', array(), $email, new Admin\Table( $type, false ) ) ) ) : '',
@@ -341,7 +350,108 @@ class REST extends \WP_REST_Posts_Controller {
 			'show_tracking'      => 'email_template' !== $email->type && (bool) get_noptin_option( 'track_campaign_stats', true ),
 			'show_revenue'       => ! noptin_has_alk() || ( noptin_supports_ecommerce_tracking() && get_noptin_option( 'enable_ecommerce_tracking', true ) ),
 		);
-		return apply_filters( 'noptin_campaign_list_data', $data, $email );
+		$data             = apply_filters( 'noptin_campaign_list_data', $data, $email );
+		$data['row_meta'] = $this->get_row_meta( $data, $email );
+		return $data;
+	}
+
+	/**
+	 * Prepare the ordered metadata shown below a campaign's name.
+	 *
+	 * The noptin_campaign_row_meta filter receives entries keyed by stable IDs.
+	 * Each entry supports label (without a colon), value (plain text), value_html
+	 * (HTML, preferred over value when non-empty), and muted (boolean).
+	 * Labels and plain values are rendered as text; HTML is sanitized after filtering.
+	 * Return an empty value to omit an entry. Numeric zero remains visible.
+	 *
+	 * @param array $data  Campaign list data, after noptin_campaign_list_data.
+	 * @param Email $email Campaign being described.
+	 * @return array Ordered metadata entries, each including its stable ID.
+	 */
+	private function get_row_meta( $data, $email ) {
+		$meta = array(
+			'description'      => array(
+				'value' => $data['description'],
+				'muted' => true,
+			),
+			'description_html' => array(
+				'value_html' => $data['description_html'],
+				'muted'      => true,
+			),
+		);
+
+		if ( $data['subject'] !== $data['name'] ) {
+			$meta['subject'] = array(
+				'label' => __( 'Subject', 'newsletter-optin-box' ),
+				'value' => $data['subject'],
+			);
+		}
+
+		if ( 'email_template' === $email->type ) {
+			$meta['slug'] = array(
+				'label' => __( 'Slug', 'newsletter-optin-box' ),
+				'value' => get_post_field( 'post_name', $email->id ),
+				'muted' => true,
+			);
+		}
+
+		$meta['recipients'] = array(
+			'label' => __( 'Recipients', 'newsletter-optin-box' ),
+			'value' => $data['recipients'],
+			'muted' => true,
+		);
+
+		foreach ( $data['recipient_filters'] as $index => $filter ) {
+			$meta[ 'recipient_filter_' . $index ] = array_merge( $filter, array( 'muted' => true ) );
+		}
+
+		$meta['delay'] = array(
+			'label' => __( 'Delay', 'newsletter-optin-box' ),
+			'value' => $data['delay'],
+		);
+
+		foreach ( array(
+			'source'      => __( 'Source', 'newsletter-optin-box' ),
+			'source_post' => __( 'Post', 'newsletter-optin-box' ),
+		) as $key => $label ) {
+			if ( ! empty( $data[ $key ] ) ) {
+				$item         = $data[ $key ];
+				$meta[ $key ] = array(
+					'label' => $label,
+					'value' => $item['name'],
+				);
+				if ( ! empty( $item['url'] ) ) {
+					$meta[ $key ]['value_html'] = sprintf( '<a href="%s">%s</a>', esc_url( $item['url'] ), esc_html( $item['name'] ) );
+				}
+			}
+		}
+
+		if ( 'automation' === $email->type ) {
+			$meta['campaign_id'] = array(
+				'label' => __( 'Campaign ID', 'newsletter-optin-box' ),
+				'value' => $email->id,
+				'muted' => true,
+			);
+		}
+
+		$entries = array();
+		foreach ( (array) apply_filters( 'noptin_campaign_row_meta', $meta, $email ) as $id => $entry ) {
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+			$value = isset( $entry['value'] ) && is_scalar( $entry['value'] ) ? (string) $entry['value'] : '';
+			$html  = isset( $entry['value_html'] ) && is_string( $entry['value_html'] ) ? wp_kses_post( $entry['value_html'] ) : '';
+			if ( '' !== $value || '' !== $html ) {
+				$entries[] = array(
+					'id'         => (string) $id,
+					'label'      => isset( $entry['label'] ) && is_scalar( $entry['label'] ) ? (string) $entry['label'] : '',
+					'value'      => $value,
+					'value_html' => $html,
+					'muted'      => ! empty( $entry['muted'] ),
+				);
+			}
+		}
+		return $entries;
 	}
 
 	/** Authorize the complete operation before changing any campaign or child email. */
