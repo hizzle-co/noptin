@@ -269,13 +269,13 @@ class Table extends \WP_List_Table {
 	}
 
 	/**
-	 * Displays the campaign name
+	 * Build legacy title actions before filtering, for table and REST consumers.
 	 *
-	 * @param  Email $item item.
-	 * @return string
+	 * @param Email     $item     Campaign.
+	 * @param bool|null $is_trash Whether this is Trash; null uses the table type.
+	 * @return array Action IDs mapped to their HTML.
 	 */
-	public function column_title( $item ) {
-
+	public function get_title_actions( $item, $is_trash = null ) {
 		$preview_url = $item->get_preview_url();
 
 		// Prepare row actions.
@@ -336,7 +336,7 @@ class Table extends \WP_List_Table {
 		}
 
 		if ( ! $item->current_user_can_delete() ) {
-			unset( $row_actions['delete'] );
+			unset( $row_actions['trash'] );
 		}
 
 		// Sent newsletters are not editable.
@@ -345,7 +345,7 @@ class Table extends \WP_List_Table {
 		}
 
 		// If trash, only show delete and restore.
-		$is_trash = 'trash' === $this->email_type->type;
+		$is_trash = null === $is_trash ? 'trash' === $this->email_type->type : $is_trash;
 		if ( $is_trash ) {
 			$row_actions = array(
 				'restore' => sprintf(
@@ -360,7 +360,28 @@ class Table extends \WP_List_Table {
 					esc_html__( 'Delete', 'newsletter-optin-box' )
 				),
 			);
+			if ( ! $item->current_user_can_edit() ) {
+				unset( $row_actions['restore'] );
+			}
+			if ( ! $item->current_user_can_delete() ) {
+				unset( $row_actions['delete'] );
+			}
 		}
+
+		return $row_actions;
+	}
+
+	/**
+	 * Displays the campaign name
+	 *
+	 * @param  Email $item item.
+	 * @return string
+	 */
+	public function column_title( $item ) {
+
+		$preview_url = $item->get_preview_url();
+		$row_actions = $this->get_title_actions( $item );
+		$is_trash = 'trash' === $this->email_type->type;
 
 		$is_template = 'email_template' === $item->type;
 		$item_name   = $is_template ? $item->subject : $item->name;

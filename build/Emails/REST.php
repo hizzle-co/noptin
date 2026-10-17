@@ -224,7 +224,8 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 		$sender_filters  = array();
 		$sender_settings = $senders[ $sender ]['settings'] ?? array();
-		foreach ( (array) $email->get( $sender_settings['key'] ?? '' ) as $key => $value ) {
+		$sender_options = empty( $sender_settings['key'] ) ? array() : $email->get( $sender_settings['key'] );
+		foreach ( is_array( $sender_options ) ? $sender_options : array() as $key => $value ) {
 			if ( is_object( $value ) || ( ! is_numeric( $value ) && empty( $value ) ) ) {
 				continue;
 			}
@@ -234,12 +235,12 @@ class REST extends \WP_REST_Posts_Controller {
 			}
 			$values           = array_map(
 				static function ( $item ) use ( $field ) {
-					return is_scalar( $item ) ? ( $field['options'][ $item ] ?? (string) $item ) : '';
+					return maybe_serialize( is_array( $field['options'] ?? null ) && is_scalar( $item ) ? ( $field['options'][ $item ] ?? $item ) : $item );
 				},
 				(array) $value
 			);
 			$sender_filters[] = array(
-				'label' => $field['label'] ?? $key,
+				'label' => $field['label'] ?? ucfirst( str_replace( '_', ' ', $key ) ),
 				'value' => implode( ', ', $values ),
 			);
 		}
@@ -263,7 +264,9 @@ class REST extends \WP_REST_Posts_Controller {
 
 		if ( $type ) {
 			$context          = new Admin\Table( $type, false );
-			$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email, $context ) );
+			if ( is_array( $subtype ) ) {
+				$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email, $context ) );
+			}
 			foreach ( $context->get_columns() as $key => $label ) {
 				if ( in_array( $key, array( 'cb', 'title', 'status', 'recipients', 'opens', 'clicks', 'revenue', 'unsubscribed', 'date_sent', 'menu_order' ), true ) ) {
 					continue;
@@ -284,15 +287,25 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 
 		$warnings = array();
-		if ( 'trash' !== $email->status ) {
-			if ( ! $email->subject && $email->get_preview_url() ) {
-				$warnings[] = array(
-					'code'    => 'no-subject',
-					'message' => __( 'No subject', 'newsletter-optin-box' ),
-				);
+		if ( null === $subtype ) {
+			$warnings[] = array( 'code' => 'unknown-type', 'message' => __( 'Unknown type', 'newsletter-optin-box' ) );
+		}
+		if ( $email->supports( 'supports_recipients' ) ) {
+			if ( ! $sender || ( 'manual_recipients' === $sender && ! $email->get_recipients() ) ) {
+				$warnings[] = array( 'code' => 'no-recipients', 'message' => __( 'No recipients', 'newsletter-optin-box' ) );
+			} elseif ( 'manual_recipients' !== $sender && ! isset( $senders[ $sender ] ) ) {
+				$warnings[] = array( 'code' => 'unknown-sender', 'message' => __( 'Unknown sender', 'newsletter-optin-box' ) );
 			}
+		}
+		if ( ! $email->subject && $email->get_preview_url() ) {
+			$warnings[] = array(
+				'code'    => 'no-subject',
+				'message' => __( 'No subject', 'newsletter-optin-box' ),
+			);
+		}
 
-			if ( is_array( $error ) && ! $completed ) {
+		if ( 'trash' !== $email->status ) {
+			if ( is_array( $error ) && ( ( 'newsletter' === $email->type && ! $completed ) || ( 'automation' === $email->type && $email->is_published() ) ) ) {
 				$warnings[]               = array(
 					'code'    => 'sending-error',
 					'message' => $error['message'] ?? '',
@@ -306,14 +319,33 @@ class REST extends \WP_REST_Posts_Controller {
 				$warnings[] = array(
 					'code'    => 'missing-cron',
 					'message' => __( 'The email sending CRON event was not scheduled. Try pausing then resuming the campaign.', 'newsletter-optin-box' ),
+					'url'     => noptin_get_guide_url( $type->plural_label ?? 'Newsletters', 'sending-emails/how-to-fix-emails-not-sending/' ),
 				);
 			}
 		}
 
+		$hidden_actions = array();
+		$legacy_actions = array();
+		if ( $type ) {
+			$action_context = 'trash' === $email->status ? new Admin\Table( Main::get_email_type( 'trash' ), false ) : $context;
+			$defaults       = $action_context->get_title_actions( $email, 'trash' === $email->status );
+			$filtered       = (array) apply_filters( 'noptin_email_row_actions', $defaults, $email, $action_context );
+			foreach ( $defaults as $key => $html ) {
+				if ( ! isset( $filtered[ $key ] ) || $filtered[ $key ] !== $html ) {
+					$hidden_actions[] = $key;
+				}
+			}
+			foreach ( $filtered as $key => $html ) {
+				if ( ! isset( $defaults[ $key ] ) || $defaults[ $key ] !== $html ) {
+					$legacy_actions[] = wp_kses_post( $html );
+				}
+			}
+		}
 		$data             = array(
 			'warnings'           => array_values( apply_filters( 'noptin_campaign_warnings', $warnings, $email ) ),
 			'row_actions'        => Admin\Browser::public_actions( $email ),
-			'legacy_row_actions' => $type ? wp_kses_post( implode( ' ', (array) apply_filters( 'noptin_email_row_actions', array(), $email, new Admin\Table( $type, false ) ) ) ) : '',
+			'legacy_row_actions' => implode( ' ', $legacy_actions ),
+			'hidden_actions'     => $hidden_actions,
 			'type'               => $email->type,
 			'subtype'            => $email->get_sub_type(),
 			'subject'            => $email->subject,
@@ -341,7 +373,7 @@ class REST extends \WP_REST_Posts_Controller {
 				'url'  => $source->get_edit_url(),
 			) : null,
 			'source_post'        => $source_post && get_post( $source_post ) ? array(
-				'name' => get_the_title( $source_post ),
+				'name' => get_the_title( $source_post ) ?: __( '(no title)', 'newsletter-optin-box' ),
 				'url'  => get_edit_post_link( $source_post, 'raw' ),
 			) : null,
 			'stats'              => $stats,
@@ -360,7 +392,7 @@ class REST extends \WP_REST_Posts_Controller {
 	 *
 	 * The noptin_campaign_row_meta filter receives entries keyed by stable IDs.
 	 * Each entry supports label (without a colon), value (plain text), value_html
-	 * (HTML, preferred over value when non-empty), and muted (boolean).
+	 * (HTML, preferred over value when non-empty), muted (boolean), and indent (boolean for nested sender filters).
 	 * Labels and plain values are rendered as text; HTML is sanitized after filtering.
 	 * Return an empty value to omit an entry. Numeric zero remains visible.
 	 *
@@ -380,7 +412,7 @@ class REST extends \WP_REST_Posts_Controller {
 			),
 		);
 
-		if ( $data['subject'] !== $data['name'] ) {
+		if ( 'email_template' !== $email->type && $data['preview_url'] && $data['subject'] !== $data['name'] ) {
 			$meta['subject'] = array(
 				'label' => __( 'Subject', 'newsletter-optin-box' ),
 				'value' => $data['subject'],
@@ -395,38 +427,47 @@ class REST extends \WP_REST_Posts_Controller {
 			);
 		}
 
-		$meta['recipients'] = array(
-			'label' => __( 'Recipients', 'newsletter-optin-box' ),
-			'value' => $data['recipients'],
-			'muted' => true,
-		);
+		if ( $email->supports( 'supports_recipients' ) && ( 'manual_recipients' === $email->get_sender() || isset( get_noptin_email_senders( true )[ $email->get_sender() ] ) ) ) {
+			$meta['recipients'] = array(
+				'label' => __( 'Recipients', 'newsletter-optin-box' ),
+				'value' => $data['recipients'],
+				'muted' => true,
+			);
 
-		foreach ( $data['recipient_filters'] as $index => $filter ) {
-			$meta[ 'recipient_filter_' . $index ] = array_merge( $filter, array( 'muted' => true ) );
+			foreach ( $data['recipient_filters'] as $index => $filter ) {
+				$meta[ 'recipient_filter_' . $index ] = array_merge( $filter, array( 'muted' => true, 'indent' => true ) );
+			}
 		}
 
-		$meta['delay'] = array(
-			'label' => __( 'Delay', 'newsletter-optin-box' ),
-			'value' => $data['delay'],
-		);
+		if ( 'trash' !== $email->status ) {
+			$meta['delay'] = array(
+				'label' => __( 'Delay', 'newsletter-optin-box' ),
+				'value' => $data['delay'],
+			);
+		}
 
-		foreach ( array(
-			'source'      => __( 'Source', 'newsletter-optin-box' ),
-			'source_post' => __( 'Post', 'newsletter-optin-box' ),
-		) as $key => $label ) {
-			if ( ! empty( $data[ $key ] ) ) {
-				$item         = $data[ $key ];
-				$meta[ $key ] = array(
-					'label' => $label,
-					'value' => $item['name'],
-				);
-				if ( ! empty( $item['url'] ) ) {
-					$meta[ $key ]['value_html'] = sprintf( '<a href="%s">%s</a>', esc_url( $item['url'] ), esc_html( $item['name'] ) );
+		if ( 'newsletter' === $email->type && 'trash' !== $email->status ) {
+			foreach ( array(
+				'source'      => __( 'Source', 'newsletter-optin-box' ),
+				'source_post' => __( 'Source post', 'newsletter-optin-box' ),
+			) as $key => $label ) {
+				if ( ! empty( $data[ $key ] ) ) {
+					$item         = $data[ $key ];
+					if ( 'source_post' === $key && empty( $item['url'] ) ) {
+						continue;
+					}
+					$meta[ $key ] = array(
+						'label' => $label,
+						'value' => $item['name'],
+					);
+					if ( ! empty( $item['url'] ) ) {
+						$meta[ $key ]['value_html'] = sprintf( '<a href="%s"%s>%s</a>', esc_url( $item['url'] ), 'source_post' === $key ? ' target="_blank" rel="noopener noreferrer"' : '', esc_html( $item['name'] ) );
+					}
 				}
 			}
 		}
 
-		if ( 'automation' === $email->type ) {
+		if ( 'automation' === $email->type && 'trash' !== $email->status ) {
 			$meta['campaign_id'] = array(
 				'label' => __( 'Campaign ID', 'newsletter-optin-box' ),
 				'value' => $email->id,
@@ -448,6 +489,7 @@ class REST extends \WP_REST_Posts_Controller {
 					'value'      => $value,
 					'value_html' => $html,
 					'muted'      => ! empty( $entry['muted'] ),
+					'indent'     => ! empty( $entry['indent'] ),
 				);
 			}
 		}
