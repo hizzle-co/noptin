@@ -142,6 +142,7 @@ class REST extends \WP_REST_Posts_Controller {
 			array(
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'list_action' ),
+				'allow_batch'         => $this->allow_batch,
 				'permission_callback' => array( $this, 'list_action_permissions_check' ),
 				'args'                => array(
 					'id'         => array(
