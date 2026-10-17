@@ -180,10 +180,10 @@ class REST extends \WP_REST_Posts_Controller {
 		if ( ! is_wp_error( $post ) && 'trash' === $post->post_status && 'draft' === $request['status'] ) {
 			$restored = wp_untrash_post( $post->ID );
 			if ( ! $restored ) {
-				return new \WP_Error( 'noptin_restore_failed', __( 'Could not restore this campaign.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+				return new \WP_Error( 'noptin_restore_failed', 'Could not restore this campaign.', array( 'status' => 409 ) );
 			}
 			// Respect WordPress's untrash status filter, including its default of draft.
-			$request->set_param( 'status', $restored->post_status );
+			$request->set_param( 'status', get_post_status( $post->ID ) );
 		}
 		return parent::update_item( $request );
 	}
@@ -201,7 +201,7 @@ class REST extends \WP_REST_Posts_Controller {
 		// Authorize the entire tree before deleting any part of it.
 		foreach ( $ids as $id ) {
 			if ( ! $this->check_delete_permission( get_post( $id ) ) ) {
-				return new \WP_Error( 'rest_forbidden', __( 'You cannot delete every campaign in this sequence.', 'newsletter-optin-box' ), array( 'status' => 403 ) );
+				return new \WP_Error( 'rest_forbidden', 'You cannot delete every campaign in this sequence.', array( 'status' => 403 ) );
 			}
 		}
 		foreach ( array_reverse( $ids ) as $id ) {
@@ -268,7 +268,7 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 		$sender_filters  = array();
 		$sender_settings = $senders[ $sender ]['settings'] ?? array();
-		$sender_options = empty( $sender_settings['key'] ) ? array() : $email->get( $sender_settings['key'] );
+		$sender_options  = empty( $sender_settings['key'] ) ? array() : $email->get( $sender_settings['key'] );
 		foreach ( is_array( $sender_options ) ? $sender_options : array() as $key => $value ) {
 			if ( is_object( $value ) || ( ! is_numeric( $value ) && empty( $value ) ) ) {
 				continue;
@@ -332,13 +332,22 @@ class REST extends \WP_REST_Posts_Controller {
 
 		$warnings = array();
 		if ( null === $subtype ) {
-			$warnings[] = array( 'code' => 'unknown-type', 'message' => __( 'Unknown type', 'newsletter-optin-box' ) );
+			$warnings[] = array(
+				'code'    => 'unknown-type',
+				'message' => __( 'Unknown type', 'newsletter-optin-box' ),
+			);
 		}
 		if ( $email->supports( 'supports_recipients' ) ) {
 			if ( ! $sender || ( 'manual_recipients' === $sender && ! $email->get_recipients() ) ) {
-				$warnings[] = array( 'code' => 'no-recipients', 'message' => __( 'No recipients', 'newsletter-optin-box' ) );
+				$warnings[] = array(
+					'code'    => 'no-recipients',
+					'message' => __( 'No recipients', 'newsletter-optin-box' ),
+				);
 			} elseif ( 'manual_recipients' !== $sender && ! isset( $senders[ $sender ] ) ) {
-				$warnings[] = array( 'code' => 'unknown-sender', 'message' => __( 'Unknown sender', 'newsletter-optin-box' ) );
+				$warnings[] = array(
+					'code'    => 'unknown-sender',
+					'message' => __( 'Unknown sender', 'newsletter-optin-box' ),
+				);
 			}
 		}
 		if ( ! $email->subject && $email->get_preview_url() ) {
@@ -479,7 +488,13 @@ class REST extends \WP_REST_Posts_Controller {
 			);
 
 			foreach ( $data['recipient_filters'] as $index => $filter ) {
-				$meta[ 'recipient_filter_' . $index ] = array_merge( $filter, array( 'muted' => true, 'indent' => true ) );
+				$meta[ 'recipient_filter_' . $index ] = array_merge(
+					$filter,
+					array(
+						'muted'  => true,
+						'indent' => true,
+					)
+				);
 			}
 		}
 
