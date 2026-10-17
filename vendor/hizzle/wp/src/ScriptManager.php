@@ -160,9 +160,42 @@ class ScriptManager {
 		}
 	}
 
-	/** Register the option, fields, and access check used by the settings provider. */
-	public static function register_settings( $option_name, $args ) {
-		SettingsAPI::register( $option_name, $args );
+	/**
+	 * Register a WordPress option with the settings REST API.
+	 *
+	 * Call this on every request, including REST requests, rather than only when
+	 * enqueueing the settings page. Updates use update_option() and the option's
+	 * registered WordPress sanitization callbacks.
+	 *
+	 * @param string $option WordPress option name. Must match the option_name passed
+	 *                       to SettingsProvider and contain only letters, numbers,
+	 *                       underscores, or hyphens.
+	 * @param array  $args {
+	 *     Registration arguments.
+	 *
+	 *     @type callable $fields              Required. Called without arguments to
+	 *                                         return the current grouped settings
+	 *                                         field tree as an array, or WP_Error.
+	 *                                         Build fields from current saved values
+	 *                                         so labels and action URLs can refresh.
+	 *     @type callable $values              Optional. Called without arguments to
+	 *                                         return saved values prepared for the
+	 *                                         editor, or WP_Error. Defaults to
+	 *                                         get_option( $option, array() ). This
+	 *                                         callback does not handle saving.
+	 *     @type string   $capability          Capability required for all reads and
+	 *                                         updates. Default 'manage_options'.
+	 *                                         Ignored when permission_callback is set.
+	 *     @type callable $permission_callback Optional. Receives WP_REST_Request and
+	 *                                         returns bool or WP_Error to authorize
+	 *                                         values reads, fields reads, and updates.
+	 *                                         Replaces the capability check.
+	 * }
+	 * @return void
+	 * @throws \InvalidArgumentException When fields is missing or is not callable.
+	 */
+	public static function register_settings( $option, $args ) {
+		SettingsAPI::register( $option, $args );
 	}
 
 	/**
