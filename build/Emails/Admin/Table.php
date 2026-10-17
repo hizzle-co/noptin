@@ -52,8 +52,15 @@ class Table extends \WP_List_Table {
 	 * Constructor function.
 	 *
 	 * @param \Hizzle\Noptin\Emails\Type $email_type email type.
+	 * @param bool $prepare Whether to initialize the admin table. False creates a lightweight context for extension rendering hooks.
 	 */
-	public function __construct( $email_type ) {
+	public function __construct( $email_type, $prepare = true ) {
+		// REST reuses extension column/description hooks without querying or rendering a list table.
+		if ( ! $prepare ) {
+			$this->email_type = $email_type;
+			$this->email_senders = get_noptin_email_senders( true );
+			return;
+		}
 		global $current_screen;
 
 		if ( $current_screen ) {

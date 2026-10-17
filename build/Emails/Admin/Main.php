@@ -618,13 +618,6 @@ class Main {
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
-			if ( 'view-campaigns' === $script && $type && $type->supports_menu_order ) {
-				// Enqueue jQuery UI core
-				wp_enqueue_script( 'jquery-ui-core' );
-
-				// Enqueue jQuery UI sortable plugin
-				wp_enqueue_script( 'jquery-ui-sortable' );
-			}
 
 			// Prepare the block editor.
 			if ( 'view-campaigns' === $script && ! $disable_ai ) {
@@ -669,7 +662,7 @@ class Main {
 					'ai'                => array(
 						'disabled' => (bool) $disable_ai,
 					),
-					'foregroundSending' => 'view-campaigns' === $script && $type && 'newsletter' === $type->type
+					'foregroundSending' => 'view-campaigns' === $script
 						? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data()
 						: false,
 				),

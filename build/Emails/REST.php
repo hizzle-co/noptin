@@ -15,7 +15,6 @@ defined( 'ABSPATH' ) || exit;
  * Main rest class.
  */
 class REST extends \WP_REST_Posts_Controller {
-
 	/**
 	 * Registers the routes for posts.
 	 *
@@ -76,19 +75,374 @@ class REST extends \WP_REST_Posts_Controller {
 				'callback'            => array( $this, 'reorder_emails' ),
 				'permission_callback' => 'is_user_logged_in',
 				'args'                => array(
-					'ids' => array(
+					'ids'    => array(
 						'description' => 'The IDs of the emails to reorder.',
 						'type'        => 'array',
 						'items'       => array(
 							'type' => 'integer',
 						),
 					),
+					'offset' => array(
+						'type'    => 'integer',
+						'default' => 0,
+						'minimum' => 0,
+					),
 				),
 				'schema'              => array( $this, 'get_public_item_schema' ),
 			)
 		);
 
+		// Campaign-list actions use REST nonces and the same per-campaign permissions.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->rest_base . '/(?P<id>[\\d]+)/list-action',
+			array(
+				'methods'             => \WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'list_action' ),
+				'permission_callback' => array( $this, 'list_action_permissions_check' ),
+				'args'                => array(
+					'id'         => array(
+						'type'    => 'integer',
+						'minimum' => 1,
+					),
+					'action'     => array(
+						'type'     => 'string',
+						'required' => true,
+						'enum'     => array( 'duplicate', 'restore', 'pause', 'resume', 'resend', 'send', 'publish', 'delete' ),
+					),
+					'name'       => array(
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'subject'    => array(
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'recipients' => array(
+						'type'    => 'string',
+						'default' => 'all',
+						'enum'    => array( 'all', 'new' ),
+					),
+				),
+			)
+		);
+
 		parent::register_routes();
+	}
+
+	/** Collection filters used by the React campaign browser. */
+	public function get_collection_params() {
+		$params                     = parent::get_collection_params();
+		$params['campaign_type']    = array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_key',
+		);
+		$params['campaign_subtype'] = array(
+			'type'              => 'string',
+			'sanitize_callback' => 'sanitize_text_field',
+		);
+		$params['delivery_status']  = array(
+			'type' => 'string',
+			'enum' => array( '', 'completed', 'sending', 'paused' ),
+		);
+		$params['orderby']['enum']  = array_values( array_unique( array_merge( $params['orderby']['enum'], array( 'sent', 'opened', 'clicked', 'unsubscribed' ) ) ) );
+		return $params;
+	}
+
+	/** Expose lightweight list metadata separately from the editor's merge-tag definitions. */
+	public function get_item_schema() {
+		$schema                              = parent::get_item_schema();
+		$schema['properties']['noptin_list'] = array(
+			'type'                 => 'object',
+			'readonly'             => true,
+			'context'              => array( 'edit' ),
+			'additionalProperties' => true,
+			'description'          => 'Campaign list labels, links, permissions, and delivery statistics.',
+		);
+		return $schema;
+	}
+
+	/** Prepare only the requested list metadata; do not load full email editor data. */
+	public function prepare_item_for_response( $post, $request ) {
+		$response = parent::prepare_item_for_response( $post, $request );
+		if ( 'edit' === $request['context'] && rest_is_field_included( 'noptin_list', $this->get_fields_for_response( $request ) ) ) {
+			$data                = $response->get_data();
+			$data['noptin_list'] = $this->get_list_data( new Email( $post->ID ) );
+			$response->set_data( $data );
+		}
+		return $response;
+	}
+
+	/** Describe a campaign for its authorized manager without loading editor content. */
+	public function get_list_data( $email ) {
+		$type      = Main::get_email_type( $email->type );
+		$subtype   = $type ? $type->get_sub_type( $email->get_sub_type() ) : false;
+		$completed = '' !== get_post_meta( $email->id, 'completed', true );
+		$paused    = '' !== get_post_meta( $email->id, 'paused', true );
+		$statuses  = get_post_statuses();
+		$status    = 'future' === $email->status ? __( 'Scheduled', 'newsletter-optin-box' ) : ( $statuses[ $email->status ] ?? $email->status );
+		$state     = $email->status;
+		if ( 'newsletter' === $email->type && 'publish' === $state ) {
+			$state  = $completed ? 'completed' : ( $paused ? 'paused' : 'sending' );
+			$status = array(
+				'completed' => __( 'Sent', 'newsletter-optin-box' ),
+				'paused'    => __( 'Paused', 'newsletter-optin-box' ),
+				'sending'   => __( 'Sending', 'newsletter-optin-box' ),
+			)[ $state ];
+		}
+		$sender     = $email->get_sender();
+		$senders    = get_noptin_email_senders( true );
+		$recipients = $senders[ $sender ]['label'] ?? $sender;
+		if ( 'manual_recipients' === $sender ) {
+			$recipients = implode( ', ', noptin_parse_list( $email->get_recipients(), true ) );
+		}
+		$sender_filters  = array();
+		$sender_settings = $senders[ $sender ]['settings'] ?? array();
+		foreach ( (array) $email->get( $sender_settings['key'] ?? '' ) as $key => $value ) {
+			if ( is_object( $value ) || ( ! is_numeric( $value ) && empty( $value ) ) ) {
+				continue;
+			}
+			$field                          = $sender_settings['fields'][ $key ] ?? array();
+			if ( is_bool( $value ) ) {
+				$value = $value ? __( 'Yes', 'newsletter-optin-box' ) : __( 'No', 'newsletter-optin-box' );
+			}
+			$values           = array_map(
+				static function ( $item ) use ( $field ) {
+					return is_scalar( $item ) ? ( $field['options'][ $item ] ?? (string) $item ) : '';
+				},
+				(array) $value
+			);
+			$sender_filters[] = array(
+				'label' => $field['label'] ?? $key,
+				'value' => implode( ', ', $values ),
+			);
+		}
+		$error       = get_post_meta( $email->id, '_bulk_email_last_error', true );
+		$source      = $email->parent_id ? new Email( $email->parent_id ) : null;
+		$source_post = absint( $email->get( 'source_post_id' ) );
+		$stats       = array();
+		foreach ( array( 'send', 'open', 'click', 'unsubscribe' ) as $activity ) {
+			$method             = 'get_' . $activity . '_count';
+			$stats[ $activity ] = array(
+				'count' => $email->$method(),
+				'url'   => $email->get_activity_url( $activity ),
+			);
+		}
+		$revenue          = noptin_has_alk() ? (float) get_post_meta( $email->id, '_revenue', true ) : null;
+		$formatter        = apply_filters( 'noptin_format_price_callback', '', $revenue );
+		$extra_columns    = array();
+		$description_html = '';
+		if ( $type ) {
+			$context          = new Admin\Table( $type, false );
+			$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email, $context ) );
+			foreach ( $context->get_columns() as $key => $label ) {
+				if ( in_array( $key, array( 'cb', 'title', 'status', 'recipients', 'opens', 'clicks', 'revenue', 'unsubscribed', 'date_sent', 'menu_order' ), true ) ) {
+					continue;
+				}
+				ob_start();
+				try {
+					$context->column_default( $email, $key );
+					$html = ob_get_contents();
+				} finally {
+					ob_end_clean();
+				}
+				$extra_columns[] = array(
+					'key'   => $key,
+					'label' => trim( wp_strip_all_tags( $label ) ),
+					'html'  => wp_kses_post( $html ),
+				);
+			}
+		}
+		$data = array(
+			'type'              => $email->type,
+			'subtype'           => $email->get_sub_type(),
+			'subject'           => $email->subject,
+			'name'              => ( 'email_template' === $email->type ? $email->subject : $email->name ) ?: ( $email->name ?: $email->subject ?: ( $subtype['label'] ?? __( '(no title)', 'newsletter-optin-box' ) ) ),
+			'description'       => $subtype['description'] ?? '',
+			'status_label'      => $status,
+			'state'             => $state,
+			'description_html'  => $description_html,
+			'extra_columns'     => $extra_columns,
+			'edit_url'          => $email->get_edit_url(),
+			'preview_url'       => $email->get_preview_url(),
+			'activity_url'      => $email->get_activity_url(),
+			'can_edit'          => $email->current_user_can_edit(),
+			'can_delete'        => $email->current_user_can_delete(),
+			'can_publish'       => $email->current_user_can_publish(),
+			'can_send'          => $email->is_mass_mail() && ! $email->supports_timing() && ! ( 'newsletter' === $email->type && $email->is_published() ),
+			'can_resend'        => 'newsletter' === $email->type && 'publish' === $email->status,
+			'partial_sending'   => (bool) apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $email ),
+			'recipients'        => $recipients,
+			'recipient_filters' => $sender_filters,
+			'delay'             => $email->sends_immediately() ? '' : $email->get_sends_after() . ' ' . $email->get_sends_after_unit( true ),
+			'last_error'        => is_array( $error ) && ! $completed ? ( $error['message'] ?? '' ) : '',
+			'source'            => $source && $source->exists() ? array(
+				'name' => $source->name,
+				'url'  => $source->get_edit_url(),
+			) : null,
+			'source_post'       => $source_post && get_post( $source_post ) ? array(
+				'name' => get_the_title( $source_post ),
+				'url'  => get_edit_post_link( $source_post, 'raw' ),
+			) : null,
+			'stats'             => $stats,
+			'revenue'           => $revenue,
+			'revenue_label'     => null !== $revenue && is_callable( $formatter ) ? wp_strip_all_tags( call_user_func( $formatter, $revenue ) ) : (string) $revenue,
+			'show_tracking'     => 'email_template' !== $email->type && (bool) get_noptin_option( 'track_campaign_stats', true ),
+			'show_revenue'      => ! noptin_has_alk() || ( noptin_supports_ecommerce_tracking() && get_noptin_option( 'enable_ecommerce_tracking', true ) ),
+		);
+		return apply_filters( 'noptin_campaign_list_data', $data, $email );
+	}
+
+	/** Authorize the complete operation before changing any campaign or child email. */
+	public function list_action_permissions_check( $request ) {
+		if ( ! get_noptin_accessible_campaign_type_capability() ) {
+			return new \WP_Error( 'rest_forbidden', __( 'You cannot manage campaigns.', 'newsletter-optin-box' ), array( 'status' => 403 ) );
+		}
+		$post = get_post( $request['id'] );
+		if ( ! $post || 'noptin-campaign' !== $post->post_type ) {
+			return new \WP_Error( 'rest_post_invalid_id', __( 'Campaign not found.', 'newsletter-optin-box' ), array( 'status' => 404 ) );
+		}
+		$email   = new Email( $post->ID );
+		$action  = $request['action'];
+		$allowed = current_user_can_manage_noptin_campaign_type( $email->type ) && $email->current_user_can_edit();
+		if ( 'delete' === $action ) {
+			$allowed = current_user_can_manage_noptin_campaign_type( $email->type ) && $email->current_user_can_delete();
+		}
+		if ( in_array( $action, array( 'publish', 'send', 'pause', 'resume', 'resend' ), true ) ) {
+			$allowed = $allowed && $email->current_user_can_publish();
+		}
+		if ( in_array( $action, array( 'duplicate', 'delete' ), true ) ) {
+			foreach ( $this->campaign_tree( $email->id ) as $id ) {
+				$child   = new Email( $id );
+				$allowed = $allowed && current_user_can_manage_noptin_campaign_type( $child->type ) && ( 'delete' === $action ? $child->current_user_can_delete() : $child->current_user_can_edit() );
+			}
+		}
+		return $allowed ? true : new \WP_Error( 'rest_forbidden', __( 'You cannot perform this campaign action.', 'newsletter-optin-box' ), array( 'status' => 403 ) );
+	}
+
+	/** Return a complete, cycle-safe descendant list including trashed children. */
+	private function campaign_tree( $id, &$seen = array() ) {
+		if ( isset( $seen[ $id ] ) ) {
+			return array();
+		}
+		$seen[ $id ] = true;
+		$ids         = array( $id );
+		$children    = get_posts(
+			array(
+				'post_type'      => 'noptin-campaign',
+				'post_parent'    => $id,
+				'post_status'    => array_keys( get_post_stati() ),
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+		foreach ( $children as $child ) {
+			$ids = array_merge( $ids, $this->campaign_tree( $child, $seen ) );
+		}
+		return $ids;
+	}
+
+	/** Execute a campaign command without redirecting away from the React list. */
+	public function list_action( $request ) {
+		$email  = new Email( $request['id'] );
+		$action = $request['action'];
+		if ( 'duplicate' === $action ) {
+			$args = array( 'name' => $request['name'] ?? $email->name . ' - ' . __( 'Copy', 'newsletter-optin-box' ) );
+			if ( isset( $request['subject'] ) ) {
+				$args['subject'] = $request['subject'];
+			}
+			if ( 'newsletter' === $email->type ) {
+				$args['status'] = 'draft';
+			}
+			$result = $email->duplicate( $args );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+			if ( ! $result instanceof Email || ! $result->exists() ) {
+				return new \WP_Error( 'noptin_duplicate_failed', __( 'Could not duplicate this campaign.', 'newsletter-optin-box' ), array( 'status' => 500 ) );
+			}
+			return rest_ensure_response(
+				array(
+					'id'       => $result->id,
+					'campaign' => $this->get_list_data( $result ),
+				)
+			);
+		}
+		if ( 'delete' === $action ) {
+			if ( 'trash' !== $email->status ) {
+				return new \WP_Error( 'noptin_invalid_state', __( 'Move this campaign to Trash before deleting it permanently.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+			}
+			foreach ( array_reverse( $this->campaign_tree( $email->id ) ) as $id ) {
+				$child = new Email( $id );
+				do_action( 'noptin_' . $child->type . '_campaign_before_delete', $child );
+				do_action( 'noptin_' . $child->get_sub_type() . '_campaign_before_delete', $id );
+				if ( ! wp_delete_post( $id, true ) ) {
+					return new \WP_Error( 'noptin_delete_failed', __( 'Could not delete every selected campaign. Refresh the list and try again.', 'newsletter-optin-box' ), array( 'status' => 500 ) );
+				}
+			}
+			return rest_ensure_response( array( 'deleted' => true ) );
+		}
+		if ( 'restore' === $action ) {
+			if ( 'trash' !== $email->status || ! $email->restore() ) {
+				return new \WP_Error( 'noptin_restore_failed', __( 'Could not restore this campaign.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+			}
+		} elseif ( in_array( $action, array( 'pause', 'resume', 'resend' ), true ) ) {
+			$completed = '' !== get_post_meta( $email->id, 'completed', true );
+			if ( 'newsletter' !== $email->type || 'publish' !== $email->status || ( 'resend' === $action ? ! $completed : $completed ) ) {
+				return new \WP_Error( 'noptin_invalid_state', __( 'This delivery action is no longer available. Refresh the list.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+			}
+			if ( 'pause' === $action ) {
+				update_post_meta( $email->id, 'paused', 1 );
+				if ( '1' !== (string) get_post_meta( $email->id, 'paused', true ) ) {
+					return new \WP_Error( 'noptin_pause_failed', __( 'Could not pause sending.', 'newsletter-optin-box' ), array( 'status' => 500 ) );
+				}
+			} else {
+				$sender = $email->get_sender();
+				if ( 'new' === $request['recipients'] && ! apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $email ) ) {
+					return new \WP_Error( 'noptin_invalid_recipients', __( 'This sender does not support sending only to new recipients.', 'newsletter-optin-box' ), array( 'status' => 400 ) );
+				}
+				delete_post_meta( $email->id, 'completed' );
+				delete_post_meta( $email->id, 'paused' );
+				delete_post_meta( $email->id, '_bulk_email_last_error' );
+				update_post_meta( $email->id, '_resend_to', $request['recipients'] );
+				update_post_meta( $email->id, '_resent_on', gmdate( 'Y-m-d H:i:s e' ) );
+				if ( '' !== get_post_meta( $email->id, 'completed', true ) || '' !== get_post_meta( $email->id, 'paused', true ) ) {
+					return new \WP_Error( 'noptin_resume_failed', __( 'Could not resume sending.', 'newsletter-optin-box' ), array( 'status' => 500 ) );
+				}
+				do_action( 'noptin_newsletter_campaign_published', $email );
+			}
+		} elseif ( in_array( $action, array( 'publish', 'send' ), true ) ) {
+			if ( 'trash' === $email->status || ( 'send' === $action && ! $this->get_list_data( $email )['can_send'] ) ) {
+				return new \WP_Error( 'noptin_invalid_state', __( 'This campaign cannot be sent from the list.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+			}
+			if ( 'send' === $action && ! defined( 'NOPTIN_RESENDING_CAMPAIGN' ) ) {
+				define( 'NOPTIN_RESENDING_CAMPAIGN', true );
+			}
+			$result = wp_update_post(
+				array(
+					'ID'          => $email->id,
+					'post_status' => 'publish',
+				),
+				true
+			);
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+			$email = new Email( $email->id );
+			if ( 'send' === $action ) {
+				do_action( 'noptin_send_' . $email->type, $email );
+				if ( 'automation' === $email->type ) {
+					do_action( 'noptin_send_' . $email->get_sub_type(), $email );
+					do_action( 'noptin_send_' . $email->get_sub_type() . '_email', $email );
+				}
+			}
+		}
+		return rest_ensure_response(
+			array(
+				'id'       => $email->id,
+				'campaign' => $this->get_list_data( new Email( $email->id ) ),
+			)
+		);
 	}
 
 	/**
@@ -186,8 +540,75 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 
 		$prepared_args['meta_query'][] = $type_query;
+		if ( $request ) {
+			$type = $request->get_param( 'campaign_type' );
+			if ( $type && 'trash' !== $type ) {
+				$specific                               = array(
+					'key'   => 'campaign_type',
+					'value' => $type,
+				);
+				if ( 'newsletter' === $type ) {
+					$specific = array(
+						'relation' => 'OR',
+						$specific,
+						array(
+							'key'     => 'campaign_type',
+							'compare' => 'NOT EXISTS',
+						),
+					);
+				}
+				$prepared_args['meta_query'][]          = $specific;
+			}
+			if ( $request->get_param( 'campaign_subtype' ) && $type && 'trash' !== $type ) {
+				$prepared_args['meta_query'][] = array(
+					'key'   => $type . '_type',
+					'value' => $request['campaign_subtype'],
+				);
+			}
+			$delivery = $request->get_param( 'delivery_status' );
+			if ( 'newsletter' === $type && $delivery ) {
+				$prepared_args['post_status']  = 'publish';
+				$prepared_args['meta_query'][] = array(
+					'key'     => 'completed',
+					'compare' => 'completed' === $delivery ? 'EXISTS' : 'NOT EXISTS',
+				);
+				if ( 'completed' !== $delivery ) {
+					$prepared_args['meta_query'][] = array(
+						'key'     => 'paused',
+						'compare' => 'paused' === $delivery ? 'EXISTS' : 'NOT EXISTS',
+					);
+				}
+			}
+			$sorts = array(
+				'sent'         => '_noptin_sends',
+				'opened'       => '_noptin_opens',
+				'clicked'      => '_noptin_clicks',
+				'unsubscribed' => '_noptin_unsubscribed',
+			);
+			if ( isset( $sorts[ $request['orderby'] ] ) ) {
+				// Keep emails without engagement counters in the results too.
+				$prepared_args['meta_query'][] = array(
+					'relation' => 'OR',
+					'noptin_stat_value' => array( 'key' => $sorts[ $request['orderby'] ], 'compare' => 'EXISTS', 'type' => 'NUMERIC' ),
+					array( 'key' => $sorts[ $request['orderby'] ], 'compare' => 'NOT EXISTS' ),
+				);
+				$prepared_args['orderby'] = 'noptin_stat_value';
+			}
+			if ( ! current_user_can( get_post_type_object( 'noptin-campaign' )->cap->edit_others_posts ) ) {
+				$prepared_args['author'] = get_current_user_id();
+			}
+		}
 
 		return $prepared_args;
+	}
+
+	/** Authorize the requested list type before performing a collection lookup. */
+	public function get_items_permissions_check( $request ) {
+		$type = $request->get_param( 'campaign_type' );
+		if ( ! get_noptin_accessible_campaign_type_capability() || ( $type && ! current_user_can_manage_noptin_campaign_type( $type ) ) ) {
+			return new \WP_Error( 'rest_forbidden', __( 'You cannot manage this campaign type.', 'newsletter-optin-box' ), array( 'status' => 403 ) );
+		}
+		return parent::get_items_permissions_check( $request );
 	}
 
 	/**
@@ -331,6 +752,22 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 
 		$ids = array_map( 'intval', $ids );
+		if ( count( array_unique( $ids ) ) !== count( $ids ) ) {
+			return new \WP_Error( 'noptin_invalid_order', 'Duplicate campaign IDs.', array( 'status' => 400 ) );
+		}
+		$group = null;
+		foreach ( $ids as $id ) {
+			$email = new Email( $id );
+			$type  = Main::get_email_type( $email->type );
+			if ( ! $email->exists() || ! current_user_can_manage_noptin_campaign_type( $email->type ) || ! $email->current_user_can_edit() ) {
+				return new \WP_Error( 'rest_forbidden', 'You cannot reorder these campaigns.', array( 'status' => 403 ) );
+			}
+			$identity = $email->type . ':' . $email->parent_id;
+			if ( ! $type || ! $type->supports_menu_order || ( null !== $group && $group !== $identity ) ) {
+				return new \WP_Error( 'noptin_invalid_order', 'Only emails in the same ordered collection can be reordered.', array( 'status' => 400 ) );
+			}
+			$group = $identity;
+		}
 
 		do_action( 'noptin_before_reorder_emails', $ids );
 
@@ -339,12 +776,16 @@ class REST extends \WP_REST_Posts_Controller {
 
 			// Check if user can edit the email.
 			if ( current_user_can( 'edit_post', $id ) ) {
-				wp_update_post(
+				$result = wp_update_post(
 					array(
 						'ID'         => $id,
-						'menu_order' => $index + 1,
-					)
+						'menu_order' => $index + 1 + absint( $request->get_param( 'offset' ) ),
+					),
+					true
 				);
+				if ( is_wp_error( $result ) ) {
+					return $result;
+				}
 			}
 		}
 
@@ -367,7 +808,7 @@ class REST extends \WP_REST_Posts_Controller {
 			return rest_ensure_response(
 				array(
 					'content' => '',
-					'options' => $defaults['noptin-visual']
+					'options' => $defaults['noptin-visual'],
 				)
 			);
 		}

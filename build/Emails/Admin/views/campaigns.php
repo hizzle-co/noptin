@@ -14,36 +14,9 @@
 	// Send pending emails.
 	\Hizzle\Noptin\Emails\Bulk\Main::send_pending();
 
-	// Prepare the email type.
-	$email_type  = \Hizzle\Noptin\Emails\Main::get_email_type( $query_args['noptin_email_type'] );
-	$email_types = \Hizzle\Noptin\Emails\Main::get_email_types();
-
-	// Prepare items.
-	$table = new Table( $email_type );
-	$table->prepare_items();
-
-	// Check if we have trash campaigns.
-	$trash_count = wp_count_posts( 'noptin-campaign' );
-	$parent      = ( empty( $email_type->parent_type ) || empty( $_GET['noptin_parent_id'] ) ) ? false : noptin_get_email_campaign_object( (int) $_GET['noptin_parent_id'] );
-	$app         = '';
-
-if ( $parent ) {
-	$app = wp_json_encode(
-		array(
-			'title'      => $parent->name,
-			'status'     => $parent->status,
-			'id'         => $parent->id,
-			'modalTitle' => sprintf(
-				/* translators: %s: email type label */
-				esc_html__( 'Edit %s', 'newsletter-optin-box' ),
-				isset( $email_types[ $email_type->parent_type ] ) ? $email_types[ $email_type->parent_type ]->label : __( 'Campaign', 'newsletter-optin-box' )
-			),
-		)
-	);
-}
 ?>
 
-<div class="wrap noptin noptin-email-campaigns noptin-<?php echo sanitize_html_class( $email_type->type ); ?> noptin-<?php echo sanitize_html_class( $email_type->type ); ?>-main" id="noptin-wrapper">
+<div id="noptin-campaign-server-notices" hidden>
 
 	<?php
 
@@ -69,7 +42,7 @@ if ( $parent ) {
 			);
 		}
 		?>
-		<div id="noptin-foreground-email-recovery"></div>
+
 		<?php
 
 		// Check if sending has been paused due to limits.
@@ -129,81 +102,5 @@ if ( $parent ) {
 		}
 	?>
 
-	<?php if ( isset( $_REQUEST['s'] ) && strlen( $_REQUEST['s'] ) ) : ?>
-		<div style="padding-top: 9px;">
-			<?php
-				printf(
-					/* translators: %s: Search query. */
-					__( 'Search results for: %s' ),
-					'<strong>' . esc_html( sanitize_text_field( rawurldecode( $_REQUEST['s'] ) ) ) . '</strong>'
-				);
-			?>
-		</div>
-	<?php endif; ?>
-
-	<!-- Display tabs -->
-	<div class="nav-tab-wrapper noptin-nav-tab-wrapper">
-		<?php
-
-		foreach ( $email_types as $email_type_data ) {
-
-			if ( ! empty( $email_type_data->parent_type ) ) {
-				continue;
-			}
-
-			// Hide trash if it's empty.
-			if ( 'trash' === $email_type_data->type && empty( $trash_count->trash ) ) {
-				continue;
-			}
-
-			printf(
-				'<a href="%s" class="%s">%s</a>',
-				esc_url(
-					add_query_arg(
-						array(
-							'page'              => 'noptin-email-campaigns',
-							'noptin_email_type' => rawurlencode( $email_type_data->type ),
-						),
-						admin_url( '/admin.php' )
-					)
-				),
-				( $email_type->type === $email_type_data->type || $email_type->type === $email_type_data->child_type ) ? 'nav-tab nav-tab-active' : 'nav-tab',
-				esc_html( $email_type_data->plural_label )
-			);
-
-		}
-
-		?>
-	</div>
-
-	<?php if ( $parent ) : ?>
-		<div id="noptin-email-campaigns-parent">
-			<h1 class="wp-heading-inline">
-				<?php echo esc_html( $parent->name ); ?>
-			</h1>
-			<span id="noptin-email-campaigns-parent_edit" data-app="<?php echo esc_attr( $app ); ?>">
-				<span class="spinner" style="visibility: visible; float: none;"></span>
-			</span>
-			<a href="<?php echo esc_url( $parent->get_base_url() ); ?>" class="page-title-action"><?php esc_html_e( 'Back', 'newsletter-optin-box' ); ?></a>
-			<hr class="wp-header-end">
-		</div>
-	<?php endif; ?>
-
-	<div>
-		<?php $table->views(); ?>
-	</div>
-
-	<!-- Display actual content -->
-	<div class="noptin-email-campaigns-tab-content">
-		<form id="noptin-email-campaigns-table" method="get">
-			<?php $table->search_box( __( 'Search Campaigns', 'newsletter-optin-box' ), 'post' ); ?>
-			<?php foreach ( $query_args as $key => $value ) : ?>
-				<?php if ( is_scalar( $value ) && ! in_array( $key, array( 's', '_wpnonce', '_wp_http_referer', 'action', 'action2' ), true ) ) : ?>
-					<input type="hidden" name="<?php echo esc_attr( $key ); ?>" value="<?php echo esc_attr( $value ); ?>"/>
-				<?php endif; ?>
-			<?php endforeach; ?>
-			<?php $table->display(); ?>
-		</form>
-	</div>
-
 </div>
+<div id="noptin-email-campaigns__app"></div>
