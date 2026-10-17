@@ -174,6 +174,50 @@ class REST extends \WP_REST_Posts_Controller {
 		parent::register_routes();
 	}
 
+	/** Restore through WordPress's untrash API when Core Data moves a trashed record to draft. */
+	public function update_item( $request ) {
+		$post = $this->get_post( $request['id'] );
+		if ( ! is_wp_error( $post ) && 'trash' === $post->post_status && 'draft' === $request['status'] ) {
+			$restored = wp_untrash_post( $post->ID );
+			if ( ! $restored ) {
+				return new \WP_Error( 'noptin_restore_failed', __( 'Could not restore this campaign.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
+			}
+			// Respect WordPress's untrash status filter, including its default of draft.
+			$request->set_param( 'status', $restored->post_status );
+		}
+		return parent::update_item( $request );
+	}
+
+	/** Standard REST deletion also owns sequence descendants and legacy cleanup hooks. */
+	public function delete_item( $request ) {
+		if ( ! $request['force'] ) {
+			return parent::delete_item( $request );
+		}
+		$post = $this->get_post( $request['id'] );
+		if ( is_wp_error( $post ) ) {
+			return $post;
+		}
+		$ids = $this->campaign_tree( $post->ID );
+		// Authorize the entire tree before deleting any part of it.
+		foreach ( $ids as $id ) {
+			if ( ! $this->check_delete_permission( get_post( $id ) ) ) {
+				return new \WP_Error( 'rest_forbidden', __( 'You cannot delete every campaign in this sequence.', 'newsletter-optin-box' ), array( 'status' => 403 ) );
+			}
+		}
+		foreach ( array_reverse( $ids ) as $id ) {
+			$child = new Email( $id );
+			do_action( 'noptin_' . $child->type . '_campaign_before_delete', $child );
+			do_action( 'noptin_' . $child->get_sub_type() . '_campaign_before_delete', $id );
+			$child_request = clone $request;
+			$child_request->set_param( 'id', $id );
+			$response = parent::delete_item( $child_request );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+		}
+		return $response;
+	}
+
 	/** Collection filters used by the React campaign browser. */
 	public function get_collection_params() {
 		$params                     = parent::get_collection_params();
@@ -598,15 +642,8 @@ class REST extends \WP_REST_Posts_Controller {
 			if ( 'trash' !== $email->status ) {
 				return new \WP_Error( 'noptin_invalid_state', __( 'Move this campaign to Trash before deleting it permanently.', 'newsletter-optin-box' ), array( 'status' => 409 ) );
 			}
-			foreach ( array_reverse( $this->campaign_tree( $email->id ) ) as $id ) {
-				$child = new Email( $id );
-				do_action( 'noptin_' . $child->type . '_campaign_before_delete', $child );
-				do_action( 'noptin_' . $child->get_sub_type() . '_campaign_before_delete', $id );
-				if ( ! wp_delete_post( $id, true ) ) {
-					return new \WP_Error( 'noptin_delete_failed', __( 'Could not delete every selected campaign. Refresh the list and try again.', 'newsletter-optin-box' ), array( 'status' => 500 ) );
-				}
-			}
-			return rest_ensure_response( array( 'deleted' => true ) );
+			$request->set_param( 'force', true );
+			return $this->delete_item( $request );
 		}
 		if ( 'restore' === $action ) {
 			if ( 'trash' !== $email->status || ! $email->restore() ) {
