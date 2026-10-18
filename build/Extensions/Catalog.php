@@ -153,7 +153,18 @@ class Catalog {
 	public static function get_detected_integrations() {
 		return array_map(
 			function ( $integration ) {
+				$requirements = array();
+				foreach ( array( 'triggers', 'actions' ) as $kind ) {
+					foreach ( $integration[ $kind ] ?? array() as $events ) {
+						foreach ( $events as $event ) {
+							foreach ( $event['requires'] ?? array() as $type => $name ) {
+								$requirements[ $type . ':' . $name ] = 'class' === $type ? class_exists( $name ) : ( 'function' === $type ? function_exists( $name ) : ( 'constant' === $type && defined( $name ) ) );
+							}
+						}
+					}
+				}
 				return array(
+					'requirements' => $requirements,
 					'kind'        => 'integration',
 					'slug'        => $integration['slug'],
 					'name'        => $integration['label'],

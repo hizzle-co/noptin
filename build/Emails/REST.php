@@ -263,8 +263,12 @@ class REST extends \WP_REST_Posts_Controller {
 		$sender     = $email->get_sender();
 		$senders    = get_noptin_email_senders( true );
 		$recipients = $senders[ $sender ]['label'] ?? $sender;
+		$recipient_tokens = '';
 		if ( 'manual_recipients' === $sender ) {
 			$recipients = implode( ', ', noptin_parse_list( $email->get_recipients(), true ) );
+			$raw_recipients = $recipients;
+			$recipients = str_replace( array( '[[site_admin_email]]', '[[current_user.email]]' ), array( __( 'Site Admin', 'newsletter-optin-box' ), __( 'Current WordPress User', 'newsletter-optin-box' ) ), $recipients );
+			$recipient_tokens = $raw_recipients !== $recipients ? $raw_recipients : '';
 		}
 		$sender_filters  = array();
 		$sender_settings = $senders[ $sender ]['settings'] ?? array();
@@ -431,7 +435,8 @@ class REST extends \WP_REST_Posts_Controller {
 			) : null,
 			'stats'              => $stats,
 			'revenue'            => $revenue,
-			'revenue_label'      => null !== $revenue && is_callable( $formatter ) ? wp_strip_all_tags( call_user_func( $formatter, $revenue ) ) : (string) $revenue,
+			'revenue_label'      => null !== $revenue && is_callable( $formatter ) ? html_entity_decode( wp_strip_all_tags( call_user_func( $formatter, $revenue ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : (string) $revenue,
+			'recipient_tokens'   => $recipient_tokens,
 			'show_tracking'      => 'email_template' !== $email->type && (bool) get_noptin_option( 'track_campaign_stats', true ),
 			'show_revenue'       => ! noptin_has_alk() || ( noptin_supports_ecommerce_tracking() && get_noptin_option( 'enable_ecommerce_tracking', true ) ),
 		);
