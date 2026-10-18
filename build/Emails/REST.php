@@ -265,9 +265,18 @@ class REST extends \WP_REST_Posts_Controller {
 		$recipients = $senders[ $sender ]['label'] ?? $sender;
 		$recipient_tokens = '';
 		if ( 'manual_recipients' === $sender ) {
-			$recipients = implode( ', ', noptin_parse_list( $email->get_recipients(), true ) );
-			$raw_recipients = $recipients;
-			$recipients = str_replace( array( '[[site_admin_email]]', '[[current_user.email]]' ), array( __( 'Site Admin', 'newsletter-optin-box' ), __( 'Current WordPress User', 'newsletter-optin-box' ) ), $recipients );
+			$recipient_list = noptin_parse_list( $email->get_recipients(), true );
+			$labels         = \Hizzle\Noptin\Misc\Main::get_manual_recipient_labels( $subtype );
+			$raw_recipients = implode( ', ', $recipient_list );
+			$recipients     = implode(
+				', ',
+				array_map(
+					static function ( $recipient ) use ( $labels ) {
+						return $labels[ $recipient ] ?? $recipient;
+					},
+					$recipient_list
+				)
+			);
 			$recipient_tokens = $raw_recipients !== $recipients ? $raw_recipients : '';
 		}
 		$sender_filters  = array();

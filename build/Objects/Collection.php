@@ -368,13 +368,13 @@ abstract class Collection {
 		$block_class = str_replace( '/', '-', $block_name );
 		$class_name  = 'wp-block-' . $block_class . ' noptin-image-block__wrapper ' . $block_class;
 		$attributes  = array(
-			'anchor'   => $class_name,
+			'anchor'   => $block_class,
 			'settings' => (object) $atts,
 		);
 
 		ob_start();
 		?>
-			<!-- wp:<?php echo esc_html( $block_name ); ?> <?php echo esc_html( serialize_block_attributes( $attributes ) ); ?> -->
+			<!-- wp:<?php echo esc_html( $block_name ); ?> <?php echo serialize_block_attributes( $attributes ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- WordPress escapes block-comment JSON during serialization. ?> -->
 			<table border="0" cellpadding="0" cellspacing="0" role="presentation" class="<?php echo esc_html( $class_name ); ?>">
 				<tbody>
 					<tr>

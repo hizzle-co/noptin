@@ -259,34 +259,20 @@ class Main {
 		}
 
 		if ( isset( $senders['manual_recipients'] ) ) {
-			$senders['[[site_admin_email]]'] = array_merge(
-				$senders['manual_recipients'],
-				array(
-					'label'       => __( 'Site Admin', 'newsletter-optin-box' ),
-					'description' => sprintf(
-						/* translators: %s: description */
-						__( 'Send an email to the %s', 'newsletter-optin-box' ),
-						__( 'site admin', 'newsletter-optin-box' )
-					),
-				)
-			);
-
-			if ( ! empty( $selected_sub_type['manual_recipients'] ) && is_array( $selected_sub_type['manual_recipients'] ) ) {
-				foreach ( $selected_sub_type['manual_recipients'] as $recipient_tag => $label ) {
-					$senders[ $recipient_tag ] = array_merge(
-						$senders['manual_recipients'],
-						array(
-							'label'       => $label,
-							'description' => '[[current_user.email]]' === $recipient_tag
-								? __( 'Send an email to the currently logged-in user.', 'newsletter-optin-box' )
-								: sprintf(
-									/* translators: %s: description */
-									__( 'Send an email to the %s', 'newsletter-optin-box' ),
-									$label
-								),
-						)
-					);
-				}
+			foreach ( self::get_manual_recipient_labels( $selected_sub_type ) as $recipient_tag => $label ) {
+				$senders[ $recipient_tag ] = array_merge(
+					$senders['manual_recipients'],
+					array(
+						'label'       => $label,
+						'description' => '[[current_user.email]]' === $recipient_tag
+							? __( 'Send an email to the currently logged-in user.', 'newsletter-optin-box' )
+							: sprintf(
+								/* translators: %s: description */
+								__( 'Send an email to the %s', 'newsletter-optin-box' ),
+								'[[site_admin_email]]' === $recipient_tag ? __( 'site admin', 'newsletter-optin-box' ) : $label
+							),
+					)
+				);
 			}
 		}
 
@@ -305,6 +291,24 @@ class Main {
 		}
 
 		return rest_ensure_response( $prepared );
+	}
+
+	/**
+	 * Returns recipient labels for the selected email subtype without resolving addresses.
+	 *
+	 * Collection triggers include their contextual recipients in the subtype's mail config.
+	 *
+	 * @param array|false|null $sub_type Selected email subtype configuration.
+	 * @return array
+	 */
+	public static function get_manual_recipient_labels( $sub_type = array() ) {
+		$labels = array( '[[site_admin_email]]' => __( 'Site Admin', 'newsletter-optin-box' ) );
+
+		if ( ! empty( $sub_type['manual_recipients'] ) && is_array( $sub_type['manual_recipients'] ) ) {
+			$labels = array_merge( $labels, $sub_type['manual_recipients'] );
+		}
+
+		return $labels;
 	}
 
 	/**

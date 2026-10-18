@@ -36,6 +36,7 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		$this->collection        = $collection->type;
 		$this->type              = 'latest_' . $collection->plural_type() . '_digest';
 		$this->notification_hook = 'noptin_send_' . $this->type;
+		$this->mail_config['integration'] = $collection->integration;
 
 		$this->add_hooks();
 	}
@@ -163,6 +164,10 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		$types = parent::register_automation_type( $types );
 
 		$types[ $this->type ]['alt_category'] = $this->collection_label;
+		if ( ! empty( $this->mail_config['integration'] ) ) {
+			$types[ $this->type ]['subCategory'] = $this->collection_label;
+			$types[ $this->type ]['keywords']    = array( $this->category );
+		}
 		return $types;
 	}
 }
