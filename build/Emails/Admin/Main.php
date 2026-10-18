@@ -789,10 +789,20 @@ class Main {
 		// Set the type.
 		$campaign->type = sanitize_text_field( $query_args['noptin_email_type'] );
 
+		// Carry setup options into the unsaved email, preserving their value types.
+		$options = $query_args['noptin_email_options'] ?? array();
+		if ( is_string( $options ) ) {
+			$options = json_decode( $options, true );
+		}
+		if ( is_array( $options ) ) {
+			$campaign->options = array_merge( $campaign->options, $options );
+		}
+
 		// Set the sub type.
 		if ( ! empty( $query_args['noptin_email_sub_type'] ) ) {
 			$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
 		}
+
 
 		// Set the sender.
 		if ( ! empty( $query_args['noptin_email_sender'] ) ) {

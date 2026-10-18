@@ -179,6 +179,13 @@ abstract class Collection {
 			}
 
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this, $key );
+			if ( 'post_type' === $this->object_type ) {
+				$args['mail_config']['post_type'] = array(
+					'name' => $this->type,
+					'label' => $this->label,
+					'image' => $this->icon,
+				);
+			}
 
 			\Hizzle\Noptin\Automation_Rules\Triggers\Main::add(
 				new Trigger( $key, $args, $this )
