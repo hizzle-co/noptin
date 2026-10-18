@@ -38,6 +38,7 @@ class Digest extends \Hizzle\Noptin\Emails\Types\Recurring {
 		$this->notification_hook          = 'noptin_send_' . $this->type;
 		$this->mail_config['integration'] = $collection->integration;
 		$this->mail_config['digest']      = true;
+
 		if ( 'post_type' === $collection->object_type ) {
 			$this->mail_config['post_type'] = array(
 				'name'  => $collection->type,

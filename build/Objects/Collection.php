@@ -179,9 +179,10 @@ abstract class Collection {
 			}
 
 			$args = apply_filters( 'noptin_collection_type_register_trigger_args', $args, $this, $key );
+
 			if ( 'post_type' === $this->object_type ) {
 				$args['mail_config']['post_type'] = array(
-					'name' => $this->type,
+					'name'  => $this->type,
 					'label' => $this->label,
 					'image' => $this->icon,
 				);
@@ -419,24 +420,24 @@ abstract class Collection {
 		?>
 			<!-- wp:<?php echo esc_html( $block_name ); ?> {"style":{"noptin":{"border":{"radius":"5px"},"typography":{"textTransform":"none","textDecoration":"none","textAlign":"center"},"align":"left"}}} -->
 			<table width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" class="wp-block-<?php echo esc_attr( str_replace( '/', '-', $block_name ) ); ?> noptin-button-block__wrapper">
-                <tbody>
-                    <tr>
-                        <td align="left">
-                            <div class="noptin-block__margin-wrapper">
-                                <table>
-                                    <tbody>
-                                        <tr>
-                                            <td role="presentation" valign="middle" class="noptin-button-link__wrapper" style="text-align:center;cursor:auto;border-radius:5px">
-                                                <a class="noptin-button-link" href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="text-transform:none;text-decoration:none;text-align:center;border-radius:5px;margin:0px;display:block;word-break:break-word"><?php esc_html_e( 'Read more', 'newsletter-optin-box' ); ?></a>
+				<tbody>
+					<tr>
+						<td align="left">
+							<div class="noptin-block__margin-wrapper">
+								<table>
+									<tbody>
+										<tr>
+											<td role="presentation" valign="middle" class="noptin-button-link__wrapper" style="text-align:center;cursor:auto;border-radius:5px">
+												<a class="noptin-button-link" href="<?php echo esc_html( $this->field_to_merge_tag( $this->url_field ) ); ?>" style="text-transform:none;text-decoration:none;text-align:center;border-radius:5px;margin:0px;display:block;word-break:break-word"><?php esc_html_e( 'Read more', 'newsletter-optin-box' ); ?></a>
 											</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
 			<!-- /wp:<?php echo esc_html( $block_name ); ?> -->
 		<?php
 		return ob_get_clean();
