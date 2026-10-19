@@ -316,31 +316,10 @@ class REST extends \WP_REST_Posts_Controller {
 
 		$revenue          = noptin_has_alk() ? (float) get_post_meta( $email->id, '_revenue', true ) : null;
 		$formatter        = apply_filters( 'noptin_format_price_callback', '', $revenue );
-		$extra_columns    = array();
 		$description_html = '';
 
-		if ( $type ) {
-			$context          = new Admin\Table( $type, false );
-			if ( is_array( $subtype ) ) {
-				$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email, $context ) );
-			}
-			foreach ( $context->get_columns() as $key => $label ) {
-				if ( in_array( $key, array( 'cb', 'title', 'status', 'recipients', 'opens', 'clicks', 'revenue', 'unsubscribed', 'date_sent', 'menu_order' ), true ) ) {
-					continue;
-				}
-				ob_start();
-				try {
-					$context->column_default( $email, $key );
-					$html = ob_get_contents();
-				} finally {
-					ob_end_clean();
-				}
-				$extra_columns[] = array(
-					'key'   => $key,
-					'label' => trim( wp_strip_all_tags( $label ) ),
-					'html'  => wp_kses_post( $html ),
-				);
-			}
+		if ( $type && is_array( $subtype ) ) {
+			$description_html = wp_kses_post( apply_filters( 'noptin_' . $email->type . '_table_about_' . $email->get_sub_type(), '', $email ) );
 		}
 
 		$warnings = array();
@@ -390,28 +369,9 @@ class REST extends \WP_REST_Posts_Controller {
 			}
 		}
 
-		$hidden_actions = array();
-		$legacy_actions = array();
-		if ( $type ) {
-			$action_context = 'trash' === $email->status ? new Admin\Table( Main::get_email_type( 'trash' ), false ) : $context;
-			$defaults       = $action_context->get_title_actions( $email, 'trash' === $email->status );
-			$filtered       = (array) apply_filters( 'noptin_email_row_actions', $defaults, $email, $action_context );
-			foreach ( $defaults as $key => $html ) {
-				if ( ! isset( $filtered[ $key ] ) || $filtered[ $key ] !== $html ) {
-					$hidden_actions[] = $key;
-				}
-			}
-			foreach ( $filtered as $key => $html ) {
-				if ( ! isset( $defaults[ $key ] ) || $defaults[ $key ] !== $html ) {
-					$legacy_actions[] = wp_kses_post( $html );
-				}
-			}
-		}
 		$data             = array(
 			'warnings'           => array_values( apply_filters( 'noptin_campaign_warnings', $warnings, $email ) ),
 			'row_actions'        => Admin\Browser::public_actions( $email ),
-			'legacy_row_actions' => implode( ' ', $legacy_actions ),
-			'hidden_actions'     => $hidden_actions,
 			'type'               => $email->type,
 			'subtype'            => $email->get_sub_type(),
 			'subject'            => $email->subject,
@@ -420,7 +380,6 @@ class REST extends \WP_REST_Posts_Controller {
 			'status_label'       => $status,
 			'state'              => $state,
 			'description_html'   => $description_html,
-			'extra_columns'      => $extra_columns,
 			'edit_url'           => $email->get_edit_url(),
 			'preview_url'        => $email->get_preview_url(),
 			'activity_url'       => $email->get_activity_url(),
