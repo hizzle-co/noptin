@@ -31,6 +31,10 @@ class Users extends People {
 	 * @return string
 	 */
 	public function __construct( $type, $label, $singular_label ) {
+		if ( 'user' === $type ) {
+			$this->integration = 'wordpress-users';
+		}
+
 		$this->label          = $label;
 		$this->singular_label = $singular_label;
 		$this->type           = $type;
