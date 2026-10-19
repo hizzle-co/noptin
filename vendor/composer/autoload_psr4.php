@@ -9,5 +9,5 @@ return array(
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
     'Hizzle\\Store\\' => array($vendorDir . '/hizzle/store/src'),
-    'Hizzle\\Noptin\\' => array($baseDir . '/src', $baseDir . '/build'),
+    'Hizzle\\Noptin\\' => array($baseDir . '/build'),
 );

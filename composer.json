@@ -18,7 +18,6 @@
     "autoload": {
         "psr-4": {
             "Hizzle\\Noptin\\": [
-                "src/",
                 "build/"
             ]
         },
