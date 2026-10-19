@@ -197,7 +197,7 @@ abstract class Checkbox_Integration {
 			'heading'     => sanitize_text_field( $this->name ),
 			'description' => sprintf(
 				/* translators: %s is the integration name */
-				__( 'Add a subscription checkbox to %s', 'newsletter-optin-box' ),
+				__( 'Collect newsletter subscribers through %s', 'newsletter-optin-box' ),
 				$this->name
 			),
 			'help_url'    => noptin_get_guide_url( 'Settings', $this->url ),
@@ -298,10 +298,10 @@ abstract class Checkbox_Integration {
 			'type'        => 'checkbox_alt',
 			'el'          => 'input',
 			'section'     => 'integrations',
-			'label'       => __( 'Enable', 'newsletter-optin-box' ),
+			'label'       => __( 'Collect newsletter subscribers', 'newsletter-optin-box' ),
 			'description' => sprintf(
 				/* translators: %s is the integration name */
-				__( 'Enable the %s Integration', 'newsletter-optin-box' ),
+				__( 'Collect subscribers through %s, using a subscription checkbox or automatic subscription.', 'newsletter-optin-box' ),
 				$this->name
 			),
 			'default'     => false,
@@ -494,10 +494,10 @@ abstract class Checkbox_Integration {
 			'type'        => 'checkbox_alt',
 			'el'          => 'input',
 			'section'     => 'integrations',
-			'label'       => __( 'Manual Subscription', 'newsletter-optin-box' ),
+			'label'       => __( 'Show a subscription checkbox', 'newsletter-optin-box' ),
 			'description' => sprintf(
 				/* translators: %s is the context, e.g users, customers */
-				__( 'Check to display a subscription checkbox instead of automatically subscribing new %s', 'newsletter-optin-box' ),
+				__( 'Let new %s choose whether to subscribe. Turn off to subscribe them automatically without showing a checkbox.', 'newsletter-optin-box' ),
 				$this->context
 			),
 			'conditions'  => array(
