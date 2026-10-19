@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Version: 4.4.0
-Stable tag: 4.4.0
+Version: 4.4.1
+Stable tag: 4.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -221,6 +221,9 @@ There are a lot of ways to contribute to this newsletter plugin:-
 Important security release addressing multiple vulnerabilities. Updating is strongly recommended.
 
 == Changelog ==
+
+= 4.4.1 =
+* Simplify the newsletter creation wizard.
 
 = 4.4.0 =
 * Fix: Unable to delete lists with spaces in their name.
