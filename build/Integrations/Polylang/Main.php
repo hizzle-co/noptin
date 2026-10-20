@@ -16,6 +16,7 @@ class Main {
 	 * Constructor
 	 */
 	public function __construct() {
+		new Editor();
 
 		add_filter( 'pll_get_post_types', array( __CLASS__, 'filter_post_types' ), 10, 2 );
 		add_filter( 'translate_noptin_form_id', array( __CLASS__, 'translate_form_id' ) );
@@ -63,6 +64,7 @@ class Main {
 		if (
 			! $source instanceof \WP_Post ||
 			'noptin-form' !== $source->post_type ||
+			! Editor::can_translate( PLL()->model->get_language( $language ) ) ||
 			! current_user_can( 'edit_post', $source->ID ) ||
 			! current_user_can( 'edit_post', $post->ID )
 		) {
@@ -70,6 +72,15 @@ class Main {
 		}
 
 		$source_form = new \Hizzle\Noptin\Forms\Form( $source->ID );
+		// Pro may already have duplicated or machine-translated the saved form state.
+		if ( get_post_meta( $post->ID, '_noptin_state', true ) ) {
+			if ( 'auto-draft' === $post->post_status ) {
+				wp_update_post( array( 'ID' => $post->ID, 'post_title' => $post->post_title, 'post_content' => $post->post_content, 'post_status' => 'draft' ) );
+				$post->post_status = 'draft';
+			}
+			self::connect_translation( $post->ID, $from_post, $language );
+			return;
+		}
 		$state       = $source_form->get_all_data();
 		$form_type   = isset( $state['optinType'] ) ? $state['optinType'] : get_post_meta( $source->ID, '_noptin_optin_type', true );
 
@@ -120,6 +131,9 @@ class Main {
 	 * @param bool             $creating True on insert, false on update.
 	 */
 	public static function set_rest_api_language( $post, $request, $creating ) {
+		if ( $request->has_param( 'noptin_polylang' ) ) {
+			return;
+		}
 		$language  = sanitize_key( (string) $request->get_param( 'noptin_new_lang' ) );
 		$from_post = absint( $request->get_param( 'noptin_from_post' ) );
 
@@ -182,6 +196,7 @@ class Main {
 
 		if ( ! $is_settings ) {
 			$post_types['noptin-form'] = 'noptin-form';
+			$post_types['noptin-campaign'] = 'noptin-campaign';
 		}
 
 		return $post_types;
@@ -216,7 +231,7 @@ class Main {
 	 */
 	public static function filter_post_locale( $locale, $post_id ) {
 		if ( function_exists( 'pll_get_post_language' ) ) {
-			$locale = pll_get_post_language( $post_id, 'locale' );
+			$locale = pll_get_post_language( $post_id, 'locale' ) ?: $locale;
 		}
 
 		return $locale;
