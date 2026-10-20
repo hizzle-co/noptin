@@ -20,7 +20,14 @@ class Editor {
 	public static function load( $edited_campaign ) {
 
 		// Block editor context.
-		$post                 = self::get_post( $edited_campaign );
+		$post = self::get_post( $edited_campaign );
+
+		// Allow multilingual integrations to initialize translated drafts before preloading.
+		$post = apply_filters( 'noptin_prepare_email_editor_post', $post );
+		if ( $edited_campaign->id !== $post->ID ) {
+			$edited_campaign = new \Hizzle\Noptin\Emails\Email( $post->ID );
+		}
+
 		$block_editor_context = new \WP_Block_Editor_Context( array( 'post' => $post ) );
 
 		/*
