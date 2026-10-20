@@ -48,6 +48,7 @@ class Main {
 		add_action( 'after_setup_theme', array( __CLASS__, 'register_email_types' ), 0 );
 
 		// Fire hooks.
+		add_filter( 'noptin_get_settings', array( Admin\Main::class, 'email_settings' ), 10 );
 		add_action( 'noptin_before_send_email', array( __CLASS__, 'set_current_email' ), -10 );
 		add_filter( 'noptin_email_sending_function', array( __CLASS__, 'maybe_disable_staging_email' ), PHP_INT_MAX );
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );

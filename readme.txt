@@ -222,6 +222,9 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 
 == Changelog ==
 
+= 4.4.2 =
+* Fix: Email settings not showing.
+
 = 4.4.1 =
 * Simplify the newsletter creation wizard.
 

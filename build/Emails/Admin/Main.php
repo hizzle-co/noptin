@@ -43,9 +43,6 @@ class Main {
 		add_filter( 'noptin_emails_submenu', array( __CLASS__, 'filter_emails_nav_submenus' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_scripts' ) );
 		add_filter( 'admin_body_class', array( __CLASS__, 'add_split_menu_body_class' ) );
-
-		// Email settings.
-		add_filter( 'noptin_get_settings', array( __CLASS__, 'email_settings' ), 10 );
 	}
 
 	/**
