@@ -833,7 +833,6 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			// Allow other plugins to filter the query.
 			$args = apply_filters( 'noptin_mass_mailer_subscriber_query', $args, $email );
 		} else {
-			// Language targeting is available without a license, including exclusions.
 			foreach ( array( 'language', 'language_not' ) as $key ) {
 				if ( isset( $options[ $key ] ) && '' !== $options[ $key ] && array() !== $options[ $key ] ) {
 					$args[ $key ] = $options[ $key ];

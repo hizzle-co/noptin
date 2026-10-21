@@ -11,11 +11,11 @@ defined( 'ABSPATH' ) || exit;
  * @since 2.0.0
  */
 class Main {
-
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
+		// Init Polylang editor integrations.
 		new Editor();
 
 		add_filter( 'pll_get_post_types', array( __CLASS__, 'filter_post_types' ), 10, 2 );
@@ -72,17 +72,27 @@ class Main {
 		}
 
 		$source_form = new \Hizzle\Noptin\Forms\Form( $source->ID );
+
 		// Pro may already have duplicated or machine-translated the saved form state.
 		if ( get_post_meta( $post->ID, '_noptin_state', true ) ) {
 			if ( 'auto-draft' === $post->post_status ) {
-				wp_update_post( array( 'ID' => $post->ID, 'post_title' => $post->post_title, 'post_content' => $post->post_content, 'post_status' => 'draft' ) );
+				wp_update_post(
+					array(
+						'ID'           => $post->ID,
+						'post_title'   => $post->post_title,
+						'post_content' => $post->post_content,
+						'post_status'  => 'draft',
+					)
+				);
 				$post->post_status = 'draft';
 			}
+
 			self::connect_translation( $post->ID, $from_post, $language );
 			return;
 		}
-		$state       = $source_form->get_all_data();
-		$form_type   = isset( $state['optinType'] ) ? $state['optinType'] : get_post_meta( $source->ID, '_noptin_optin_type', true );
+
+		$state     = $source_form->get_all_data();
+		$form_type = isset( $state['optinType'] ) ? $state['optinType'] : get_post_meta( $source->ID, '_noptin_optin_type', true );
 
 		unset( $state['id'], $state['optinType'], $state['optinStatus'] );
 
@@ -134,6 +144,7 @@ class Main {
 		if ( $request->has_param( 'noptin_polylang' ) ) {
 			return;
 		}
+
 		$language  = sanitize_key( (string) $request->get_param( 'noptin_new_lang' ) );
 		$from_post = absint( $request->get_param( 'noptin_from_post' ) );
 
@@ -196,8 +207,10 @@ class Main {
 
 		if ( ! $is_settings ) {
 			$post_types['noptin-form'] = 'noptin-form';
-			$post_types['noptin-campaign'] = 'noptin-campaign';
 		}
+
+		// Campaign languages are recipient filters, not translatable content.
+		unset( $post_types['noptin-campaign'] );
 
 		return $post_types;
 	}
