@@ -318,6 +318,29 @@ class Generic_Post_Type extends Post_Type {
 				'label'   => __( 'Content', 'newsletter-optin-box' ),
 				'type'    => 'string',
 				'actions' => array( $action ),
+				'block'   => array(
+					'title'       => __( 'Content', 'newsletter-optin-box' ),
+					'description' => sprintf(
+						/* translators: %s: Object type label. */
+						__( 'Displays the %s content.', 'newsletter-optin-box' ),
+						strtolower( $this->singular_label )
+					),
+					'icon'        => 'editor-alignleft',
+					'element'     => 'div',
+					'metadata'    => array(
+						'ancestor' => array( $this->context ),
+					),
+					'settings'    => array(
+						'paragraphs' => array(
+							'label'       => __( 'Maximum paragraphs', 'newsletter-optin-box' ),
+							'el'          => 'input',
+							'type'        => 'number',
+							'min'         => 0,
+							'description' => __( 'Leave empty or enter 0 to display the full content.', 'newsletter-optin-box' ),
+							'placeholder' => __( 'All', 'newsletter-optin-box' ),
+						),
+					),
+				),
 			),
 			'status'         => array(
 				'label'   => __( 'Status', 'newsletter-optin-box' ),
