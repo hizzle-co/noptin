@@ -152,14 +152,15 @@ class Form {
 	public function get_defaults() {
 
 		$defaults = array(
-			'optinName'       => '',
-			'optinType'       => 'inpost',
-			'optinStatus'     => true,
-			'id'              => null,
-			'singleLine'      => false,
-			'gdprCheckbox'    => false,
-			'hideSeconds'     => WEEK_IN_SECONDS,
-			'fields'          => array(
+			'optinName'           => '',
+			'optinType'           => 'inpost',
+			'optinStatus'         => true,
+			'id'                  => null,
+			'singleLine'          => false,
+			'disableDesignStyles' => false,
+			'gdprCheckbox'        => false,
+			'hideSeconds'         => WEEK_IN_SECONDS,
+			'fields'              => array(
 				array(
 					'type'    => array(
 						'label' => __( 'Email Address', 'newsletter-optin-box' ),
@@ -170,12 +171,12 @@ class Form {
 					'key'     => 'noptin_email_key',
 				),
 			),
-			'noptinOverlayBg' => 'rgba(96, 125, 139, 0.6)',
-			'hideFields'      => false,
-			'inject'          => '0',
-			'buttonPosition'  => 'block',
-			'subscribeAction' => 'message',
-			'hidePrefix'      => true,
+			'noptinOverlayBg'     => 'rgba(96, 125, 139, 0.6)',
+			'hideFields'          => false,
+			'inject'              => '0',
+			'buttonPosition'      => 'block',
+			'subscribeAction'     => 'message',
+			'hidePrefix'          => true,
 		);
 
 		// Loop through all custom fields.

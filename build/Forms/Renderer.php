@@ -414,19 +414,19 @@ class Renderer {
 						<div class="noptin-form-header-text">
 
 							<?php if ( ! $form->hidePrefix ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->prefixColor, $form->prefixTypography ) ); ?>" class="noptin-form-prefix">
+								<div <?php if ( ! $form->disableDesignStyles ) : ?>style="<?php echo esc_attr( self::get_typography_css( $form->prefixColor, $form->prefixTypography ) ); ?>"<?php endif; ?> class="noptin-form-prefix">
 									<?php echo wp_kses_post( self::format_text( $form->prefix ) ); ?>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideTitle ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->titleColor, $form->titleTypography ) ); ?>" class="noptin-form-heading">
+								<div <?php if ( ! $form->disableDesignStyles ) : ?>style="<?php echo esc_attr( self::get_typography_css( $form->titleColor, $form->titleTypography ) ); ?>"<?php endif; ?> class="noptin-form-heading">
 									<?php echo wp_kses_post( self::format_text( $form->title ) ); ?>
 								</div>
 							<?php endif; ?>
 
 							<?php if ( ! $form->hideDescription ) : ?>
-								<div style="<?php echo esc_attr( self::get_typography_css( $form->descriptionColor, $form->descriptionTypography ) ); ?>" class="noptin-form-description">
+								<div <?php if ( ! $form->disableDesignStyles ) : ?>style="<?php echo esc_attr( self::get_typography_css( $form->descriptionColor, $form->descriptionTypography ) ); ?>"<?php endif; ?> class="noptin-form-description">
 									<?php echo wp_kses_post( self::format_text( $form->description ) ); ?>
 								</div>
 							<?php endif; ?>
@@ -560,7 +560,7 @@ class Renderer {
 		if ( $form ) {
 			?>
 			<?php if ( ! $form->hideNote && ! empty( $form->note ) ) : ?>
-				<div style="<?php echo esc_attr( self::get_typography_css( $form->noteColor, $form->noteTypography ) ); ?>" class="noptin-form-note">
+				<div <?php if ( ! $form->disableDesignStyles ) : ?>style="<?php echo esc_attr( self::get_typography_css( $form->noteColor, $form->noteTypography ) ); ?>"<?php endif; ?> class="noptin-form-note">
 					<?php echo wp_kses_post( self::format_text( $form->note ) ); ?>
 				</div>
 			<?php endif; ?>
@@ -669,7 +669,7 @@ class Renderer {
 			'value' => empty( $args['submit'] ) ? __( 'Subscribe', 'newsletter-optin-box' ) : $args['submit'],
 		);
 
-		if ( $form ) {
+		if ( $form && ! $form->disableDesignStyles ) {
 			$button_atts['style'] = '';
 
 			if ( ! empty( $form->noptinButtonBgGradient ) ) {
@@ -729,7 +729,7 @@ class Renderer {
 
 		$attr = '';
 
-		foreach ( $colors as $key => $color ) {
+		foreach ( $form->disableDesignStyles ? array() : $colors as $key => $color ) {
 			if ( ! empty( $color ) ) {
 				$attr .= " --noptin-$key-color: $color;";
 			}
@@ -745,6 +745,7 @@ class Renderer {
 				'class'                => array(
 					'noptin-optin-main-wrapper',
 					sprintf( 'noptin-form-id-%d', $form->id ),
+					$form->disableDesignStyles ? 'noptin-design-disabled' : '',
 					sprintf( 'noptin-%s-main-wrapper', $form->optinType ),
 				),
 				'aria-hidden'          => $form->is_slide_in() || $form->is_popup() ? 'true' : false,
@@ -762,7 +763,7 @@ class Renderer {
 			echo '<div class="noptin-popup__container">';
 		}
 
-		$has_field_styles = ! empty( $form->fieldBg ) || ! empty( $form->fieldTextColor ) || ! empty( $form->fieldBorder['generated'] );
+		$has_field_styles = ! $form->disableDesignStyles && ( ! empty( $form->fieldBg ) || ! empty( $form->fieldTextColor ) || ! empty( $form->fieldBorder['generated'] ) );
 		if ( ! empty( $form->CSS ) || ! empty( $attr ) || $has_field_styles ) {
 			$id_class   = sprintf( 'noptin-form-id-%d', $form->id );
 			$type_class = sprintf( 'noptin-%s-main-wrapper', $form->optinType );
@@ -771,13 +772,13 @@ class Renderer {
 			$extra_css = '';
 
 			$field_css = '';
-			if ( ! empty( $form->fieldBg ) ) {
+			if ( ! $form->disableDesignStyles && ! empty( $form->fieldBg ) ) {
 				$field_css .= 'background-color: ' . $form->fieldBg . ';';
 			}
-			if ( ! empty( $form->fieldTextColor ) ) {
+			if ( ! $form->disableDesignStyles && ! empty( $form->fieldTextColor ) ) {
 				$field_css .= 'color: ' . $form->fieldTextColor . ';';
 			}
-			if ( ! empty( $form->fieldBorder['generated'] ) ) {
+			if ( ! $form->disableDesignStyles && ! empty( $form->fieldBorder['generated'] ) ) {
 				$field_css .= $form->fieldBorder['generated'];
 			}
 			if ( ! empty( $field_css ) ) {
@@ -848,7 +849,7 @@ class Renderer {
 		$wrapper_styles .= $form->formBorder['generated'];
 
 		$atts = array(
-			'style' => $wrapper_styles,
+			'style' => $form->disableDesignStyles ? false : $wrapper_styles,
 			'class' => array(
 				'noptin-optin-form-wrapper',
 				$form->imageMain ? "noptin-img-{$form->imageMainPos}" : 'no-image',

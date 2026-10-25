@@ -407,6 +407,21 @@ $editor_settings = array(
 	'design'       => array(
 		'label'       => __( 'Design', 'newsletter-optin-box' ),
 
+		'styling'     => array(
+			'el'       => 'panel',
+			'title'    => __( 'Styling', 'newsletter-optin-box' ),
+			'id'       => 'formStyling',
+			'children' => array(
+				'disableDesignStyles' => array(
+					'el'          => 'input',
+					'type'        => 'checkbox',
+					'default'     => false,
+					'label'       => __( 'Disable Noptin design styles', 'newsletter-optin-box' ),
+					'description' => __( 'Style this form using your theme or custom CSS. Custom CSS will still apply.', 'newsletter-optin-box' ),
+				),
+			),
+		),
+
 		// Form Design.
 		'form'        => array(
 			'el'       => 'panel',
@@ -464,7 +479,7 @@ $editor_settings = array(
 						),
 						'hideLabelFromVision' => true,
 						'fields'              => array(
-							'type.type'  => array(
+							'type.type'          => array(
 								'el'         => 'select',
 								'label'      => __( 'Field Type', 'newsletter-optin-box' ),
 								'options'    => wp_list_pluck(
@@ -474,7 +489,7 @@ $editor_settings = array(
 								),
 								'label_sets' => 'type.label',
 							),
-							'type.label' => array(
+							'type.label'         => array(
 								'el'          => 'input',
 								'label'       => __( 'Frontend Label', 'newsletter-optin-box' ),
 								'description' => __( 'Leave empty to use the default label.', 'newsletter-optin-box' ),
@@ -485,7 +500,7 @@ $editor_settings = array(
 								'can_map'     => true,
 								'description' => __( 'Optional. You can insert dynamic values from the page where the form is submitted.', 'newsletter-optin-box' ),
 							),
-							'type.hidden' => array(
+							'type.hidden'        => array(
 								'el'          => 'input',
 								'type'        => 'checkbox_alt',
 								'label'       => __( 'Hidden', 'newsletter-optin-box' ),
@@ -1027,6 +1042,31 @@ $editor_settings = array(
 		'label' => __( 'Integrations', 'newsletter-optin-box' ),
 	),
 );
+
+// Hide controls whose design output is disabled, without changing their saved values.
+$noptin_design_controls = array(
+	'form'   => array( 'formWidth', 'formHeight', 'formBoxShadow', 'formBorder' ),
+	'fields' => array( 'fieldBorder', 'singleLine' ),
+	'image'  => array( 'noptinFormBgImg', 'imagePos', 'imageMainPos' ),
+	'button' => array( 'buttonPosition', 'noptinButtonRadius', 'noptinButtonShadow' ),
+);
+foreach ( array( 'prefix', 'title', 'description', 'note' ) as $noptin_text_part ) {
+	$noptin_design_controls[ $noptin_text_part ] = array( $noptin_text_part . 'Typography', $noptin_text_part . 'Advanced' );
+}
+foreach ( $noptin_design_controls as $noptin_panel => $noptin_controls ) {
+	foreach ( $noptin_controls as $noptin_control ) {
+		$editor_settings['design'][ $noptin_panel ]['children'][ $noptin_control ]['conditions'][] = array(
+			'key'      => 'disableDesignStyles',
+			'operator' => 'empty',
+		);
+	}
+}
+foreach ( array( 'form', 'colors' ) as $noptin_panel ) {
+	$editor_settings['design'][ $noptin_panel ]['conditions'][] = array(
+		'key'      => 'disableDesignStyles',
+		'operator' => 'empty',
+	);
+}
 
 // Loop through all custom fields.
 foreach ( get_noptin_multicheck_custom_fields() as $field ) {

@@ -4,6 +4,7 @@
 	return array(
 		'optinType'             => 'inpost',
 		'singleLine'            => false,
+		'disableDesignStyles'   => false,
 		'gdprCheckbox'          => false,
 		'hideSeconds'           => WEEK_IN_SECONDS,
 		'gdprConsentText'       => __( 'I consent to receive promotional emails about your products and services.', 'newsletter-optin-box' ),
