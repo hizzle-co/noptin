@@ -54,6 +54,7 @@ class ScriptManager {
 		add_action( 'rest_api_init', array( SettingsAPI::class, 'register_routes' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register_scripts' ), 5 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'load_collection' ) );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'schedule_auto_load_styles' ), 9 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 1000 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'preload_settings' ), 1000 );
 		self::$request_uuid = wp_generate_uuid4();
@@ -114,6 +115,17 @@ class ScriptManager {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Schedules shared styles after normal app loaders and before host overrides.
+	 *
+	 * Register during priority 9 so this pass follows the priority-10 callbacks
+	 * already registered by plugins, including the collection loader. Keep the
+	 * priority-1000 pass for apps that enqueue their scripts later.
+	 */
+	public static function schedule_auto_load_styles() {
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'auto_load_styles' ), 10 );
 	}
 
 	/**

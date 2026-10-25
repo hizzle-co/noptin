@@ -126,6 +126,23 @@ class Main {
 	 */
 	private function init_hooks() {
 
+		// TEMPORARY: reproduce the WordPress.com sidebar for issue #1138.
+		// Match Masterbar's Base_Admin_Menu::enqueue_scripts hook and priority.
+		if ( 'local' === wp_get_environment_type() ) {
+			add_action(
+				'admin_enqueue_scripts',
+				static function () {
+					wp_enqueue_style(
+						'noptin-test-wpcom-admin-menu',
+						plugins_url( 'assets/wpcom-admin-menu-test.css', __FILE__ ),
+						array(),
+						null
+					);
+				},
+				11
+			);
+		}
+
 		/**
 		 * Runs right before registering admin hooks.
 		 *
