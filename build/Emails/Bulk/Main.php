@@ -96,6 +96,9 @@ class Main {
 		// Delete the last error.
 		delete_post_meta( $campaign->id, '_bulk_email_last_error' );
 
+		// Record entry into the sending queue once; resuming keeps the original start.
+		add_post_meta( $campaign->id, '_noptin_sending_started', time(), true );
+
 		// Log the campaign.
 		log_noptin_message(
 			sprintf(
@@ -114,7 +117,6 @@ class Main {
 
 		// Send the campaign.
 		if ( self::has_sender( $campaign->get_sender() ) ) {
-			update_post_meta( $campaign->id, '_noptin_last_activity', time() );
 			self::send_pending();
 		} elseif ( has_action( 'noptin_send_email_via_' . $campaign->get_sender() ) ) {
 			log_noptin_message(
@@ -660,9 +662,6 @@ class Main {
 	 */
 	private static function send_campaign( $recipient, $campaign ) {
 
-		// Update last activity.
-		update_post_meta( $campaign->id, '_noptin_last_activity', time() );
-
 		if ( empty( $recipient ) ) {
 			return false;
 		}
@@ -689,6 +688,9 @@ class Main {
 			);
 
 			return false;
+		} finally {
+			// Record a completed send attempt, including failures, but not empty batches.
+			update_post_meta( $campaign->id, '_noptin_last_activity', time() );
 		}
 
 		// Pause the campaign if there was an error.
@@ -790,12 +792,17 @@ class Main {
 
 		$stuck_after   = max( MINUTE_IN_SECONDS, (int) apply_filters( 'noptin_bulk_email_stuck_after', 30 * MINUTE_IN_SECONDS, $campaign ) );
 		$last_activity = (int) get_post_meta( $campaign->id, '_noptin_last_activity', true );
+		$started       = (int) get_post_meta( $campaign->id, '_noptin_sending_started', true );
+		$total_sent    = (int) get_post_meta( $campaign->id, '_noptin_sends', true );
 
-		if ( empty( $last_activity ) ) {
-			$last_activity = (int) get_post_time( 'U', true, $campaign->id );
+		// Legacy campaigns have no recorded queue-entry time.
+		if ( ! $started ) {
+			$started = (int) get_post_time( 'U', true, $campaign->id );
 		}
+		$never_sent_stuck = 0 === $total_sent && $started <= ( time() - $stuck_after );
+		$last_progress    = $last_activity ?: $started;
 
-		if ( $last_activity > ( time() - $stuck_after ) ) {
+		if ( $last_progress > ( time() - $stuck_after ) && ! $never_sent_stuck ) {
 			return false;
 		}
 
@@ -809,7 +816,7 @@ class Main {
 			}
 		}
 
-		if ( ! $tasks_unhealthy ) {
+		if ( ! $tasks_unhealthy && ! $never_sent_stuck ) {
 			return false;
 		}
 
@@ -818,7 +825,7 @@ class Main {
 			'nonce'        => wp_create_nonce( self::FOREGROUND_AJAX_ACTION ),
 			'campaignId'   => $campaign->id,
 			'campaign'     => $campaign->name,
-			'totalSent'    => (int) get_post_meta( $campaign->id, '_noptin_sends', true ),
+			'totalSent'    => $total_sent,
 			'lastActivity' => $last_activity,
 			'lastActive'   => $last_activity
 				? sprintf(

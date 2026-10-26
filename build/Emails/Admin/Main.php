@@ -172,6 +172,8 @@ class Main {
 		delete_post_meta( $campaign->id, 'completed' );
 		delete_post_meta( $campaign->id, 'paused' );
 		delete_post_meta( $campaign->id, '_bulk_email_last_error' );
+		delete_post_meta( $campaign->id, '_noptin_sending_started' );
+		delete_post_meta( $campaign->id, '_noptin_last_activity' );
 		update_post_meta( $campaign->id, '_resend_to', $_REQUEST['noptin_email_recipients'] ?? 'all' );
 		update_post_meta( $campaign->id, '_resent_on', gmdate( 'Y-m-d H:i:s e', time() ) );
 		do_action( 'noptin_newsletter_campaign_published', $campaign );

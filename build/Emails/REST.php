@@ -250,6 +250,7 @@ class REST extends \WP_REST_Posts_Controller {
 		$statuses  = get_post_statuses();
 		$status    = 'future' === $email->status ? __( 'Scheduled', 'newsletter-optin-box' ) : ( $statuses[ $email->status ] ?? $email->status );
 		$state     = $email->status;
+		$started   = (int) get_post_meta( $email->id, '_noptin_sending_started', true );
 
 		if ( 'newsletter' === $email->type && 'publish' === $state ) {
 			$state  = $completed ? 'completed' : ( $paused ? 'paused' : 'sending' );
@@ -260,15 +261,15 @@ class REST extends \WP_REST_Posts_Controller {
 			)[ $state ];
 		}
 
-		$sender     = $email->get_sender();
-		$senders    = get_noptin_email_senders( true );
-		$recipients = $senders[ $sender ]['label'] ?? $sender;
+		$sender           = $email->get_sender();
+		$senders          = get_noptin_email_senders( true );
+		$recipients       = $senders[ $sender ]['label'] ?? $sender;
 		$recipient_tokens = '';
 		if ( 'manual_recipients' === $sender ) {
-			$recipient_list = noptin_parse_list( $email->get_recipients(), true );
-			$labels         = \Hizzle\Noptin\Misc\Main::get_manual_recipient_labels( $subtype );
-			$raw_recipients = implode( ', ', $recipient_list );
-			$recipients     = implode(
+			$recipient_list   = noptin_parse_list( $email->get_recipients(), true );
+			$labels           = \Hizzle\Noptin\Misc\Main::get_manual_recipient_labels( $subtype );
+			$raw_recipients   = implode( ', ', $recipient_list );
+			$recipients       = implode(
 				', ',
 				array_map(
 					static function ( $recipient ) use ( $labels ) {
@@ -370,43 +371,50 @@ class REST extends \WP_REST_Posts_Controller {
 		}
 
 		$data             = array(
-			'warnings'           => array_values( apply_filters( 'noptin_campaign_warnings', $warnings, $email ) ),
-			'row_actions'        => Admin\Browser::public_actions( $email ),
-			'type'               => $email->type,
-			'subtype'            => $email->get_sub_type(),
-			'subject'            => $email->subject,
-			'name'               => ( 'email_template' === $email->type ? $email->subject : $email->name ) ?: ( $email->name ?: $email->subject ?: ( $subtype['label'] ?? __( '(no title)', 'newsletter-optin-box' ) ) ),
-			'description'        => $subtype['description'] ?? '',
-			'status_label'       => $status,
-			'state'              => $state,
-			'description_html'   => $description_html,
-			'edit_url'           => $email->get_edit_url(),
-			'preview_url'        => $email->get_preview_url(),
-			'activity_url'       => $email->get_activity_url(),
-			'can_edit'           => $email->current_user_can_edit(),
-			'can_delete'         => $email->current_user_can_delete(),
-			'can_publish'        => $email->current_user_can_publish(),
-			'can_send'           => $email->is_mass_mail() && ! $email->supports_timing() && ! ( 'newsletter' === $email->type && $email->is_published() ),
-			'can_resend'         => 'newsletter' === $email->type && 'publish' === $email->status,
-			'partial_sending'    => $email->is_mass_mail() && (bool) apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $email ),
-			'recipients'         => $recipients,
-			'recipient_filters'  => $sender_filters,
-			'delay'              => $email->sends_immediately() ? '' : $email->get_sends_after() . ' ' . $email->get_sends_after_unit( true ),
-			'last_error'         => is_array( $error ) && ! $completed ? ( $error['message'] ?? '' ) : '',
-			'source'             => $source && $source->exists() ? array(
+			'warnings'              => array_values( apply_filters( 'noptin_campaign_warnings', $warnings, $email ) ),
+			'row_actions'           => Admin\Browser::public_actions( $email ),
+			'type'                  => $email->type,
+			'subtype'               => $email->get_sub_type(),
+			'subject'               => $email->subject,
+			'name'                  => ( 'email_template' === $email->type ? $email->subject : $email->name ) ?: ( $email->name ?: $email->subject ?: ( $subtype['label'] ?? __( '(no title)', 'newsletter-optin-box' ) ) ),
+			'description'           => $subtype['description'] ?? '',
+			'status_label'          => $status,
+			'state'                 => $state,
+			'sending_started'       => $started,
+			'sending_started_at'    => $started ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $started ) : '',
+			'sending_started_label' => 'sending' === $state && $started ? sprintf(
+				/* translators: %s: elapsed time since the campaign entered the sending queue. */
+				__( 'Started %s ago', 'newsletter-optin-box' ),
+				human_time_diff( $started, time() )
+			) : '',
+			'description_html'      => $description_html,
+			'edit_url'              => $email->get_edit_url(),
+			'preview_url'           => $email->get_preview_url(),
+			'activity_url'          => $email->get_activity_url(),
+			'can_edit'              => $email->current_user_can_edit(),
+			'can_delete'            => $email->current_user_can_delete(),
+			'can_publish'           => $email->current_user_can_publish(),
+			'can_send'              => $email->is_mass_mail() && ! $email->supports_timing() && ! ( 'newsletter' === $email->type && $email->is_published() ),
+			'can_resend'            => 'newsletter' === $email->type && 'publish' === $email->status,
+			'partial_sending'       => $email->is_mass_mail() && (bool) apply_filters( "noptin_{$sender}_email_sender_supports_partial_sending", false, $email ),
+			'recipients'            => $recipients,
+			'recipient_filters'     => $sender_filters,
+			'delay'                 => $email->sends_immediately() ? '' : $email->get_sends_after() . ' ' . $email->get_sends_after_unit( true ),
+			'last_error'            => is_array( $error ) && ! $completed ? ( $error['message'] ?? '' ) : '',
+			'source'                => $source && $source->exists() ? array(
 				'name' => $source->name,
 				'url'  => $source->get_edit_url(),
 			) : null,
-			'source_post'        => $source_post && get_post( $source_post ) ? array(
+			'source_post'           => $source_post && get_post( $source_post ) ? array(
 				'name' => get_the_title( $source_post ) ?: __( '(no title)', 'newsletter-optin-box' ),
 				'url'  => get_edit_post_link( $source_post, 'raw' ),
 			) : null,
-			'stats'              => $stats,
-			'revenue'            => $revenue,
-			'revenue_label'      => null !== $revenue && is_callable( $formatter ) ? html_entity_decode( wp_strip_all_tags( call_user_func( $formatter, $revenue ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : (string) $revenue,
-			'recipient_tokens'   => $recipient_tokens,
-			'show_tracking'      => 'email_template' !== $email->type && (bool) get_noptin_option( 'track_campaign_stats', true ),
-			'show_revenue'       => ! noptin_has_alk() || ( noptin_supports_ecommerce_tracking() && get_noptin_option( 'enable_ecommerce_tracking', true ) ),
+			'stats'                 => $stats,
+			'revenue'               => $revenue,
+			'revenue_label'         => null !== $revenue && is_callable( $formatter ) ? html_entity_decode( wp_strip_all_tags( call_user_func( $formatter, $revenue ) ), ENT_QUOTES | ENT_HTML5, 'UTF-8' ) : (string) $revenue,
+			'recipient_tokens'      => $recipient_tokens,
+			'show_tracking'         => 'email_template' !== $email->type && (bool) get_noptin_option( 'track_campaign_stats', true ),
+			'show_revenue'          => noptin_supports_ecommerce_tracking() && ( ! noptin_has_alk() || get_noptin_option( 'enable_ecommerce_tracking', true ) ),
 		);
 		$data             = apply_filters( 'noptin_campaign_list_data', $data, $email );
 		$data['row_meta'] = $this->get_row_meta( $data, $email );
@@ -655,6 +663,8 @@ class REST extends \WP_REST_Posts_Controller {
 				delete_post_meta( $email->id, 'completed' );
 				delete_post_meta( $email->id, 'paused' );
 				delete_post_meta( $email->id, '_bulk_email_last_error' );
+				delete_post_meta( $email->id, '_noptin_sending_started' );
+				delete_post_meta( $email->id, '_noptin_last_activity' );
 				update_post_meta( $email->id, '_resend_to', $request['recipients'] );
 				update_post_meta( $email->id, '_resent_on', gmdate( 'Y-m-d H:i:s e' ) );
 				if ( '' !== get_post_meta( $email->id, 'completed', true ) || '' !== get_post_meta( $email->id, 'paused', true ) ) {
