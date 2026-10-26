@@ -222,6 +222,13 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 
 == Changelog ==
 
+= 4.4.3 =
+* Add: Show when newsletter sending started or last recorded activity.
+* Improve: Detect newsletters stuck at zero sends even when background tasks keep running.
+* Fix: PowerPress shortcodes and embedded iframes causing email content to disappear.
+* Fix: HTML entities displaying literally in campaign titles and invalid campaign dates causing browser warnings.
+* Improve: Verify the task runner schedule after cron-save errors and log error codes and database errors when scheduling actually fails.
+
 = 4.4.2 =
 * Fix: Email settings not showing.
 
