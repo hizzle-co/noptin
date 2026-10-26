@@ -249,8 +249,9 @@ class REST extends \WP_REST_Posts_Controller {
 		$paused    = '' !== get_post_meta( $email->id, 'paused', true );
 		$statuses  = get_post_statuses();
 		$status    = 'future' === $email->status ? __( 'Scheduled', 'newsletter-optin-box' ) : ( $statuses[ $email->status ] ?? $email->status );
-		$state     = $email->status;
-		$started   = (int) get_post_meta( $email->id, '_noptin_sending_started', true );
+		$state         = $email->status;
+		$started       = (int) get_post_meta( $email->id, '_noptin_sending_started', true );
+		$last_activity = (int) get_post_meta( $email->id, '_noptin_last_activity', true );
 
 		if ( 'newsletter' === $email->type && 'publish' === $state ) {
 			$state  = $completed ? 'completed' : ( $paused ? 'paused' : 'sending' );
@@ -382,6 +383,13 @@ class REST extends \WP_REST_Posts_Controller {
 			'state'                 => $state,
 			'sending_started'       => $started,
 			'sending_started_at'    => $started ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $started ) : '',
+			'last_activity'         => $last_activity,
+			'last_activity_at'      => $last_activity ? wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $last_activity ) : '',
+			'last_activity_label'   => 'sending' === $state && $last_activity ? sprintf(
+				/* translators: %s: elapsed time since the last completed sending attempt. */
+				__( 'Last activity %s ago', 'newsletter-optin-box' ),
+				human_time_diff( $last_activity, time() )
+			) : '',
 			'sending_started_label' => 'sending' === $state && $started ? sprintf(
 				/* translators: %s: elapsed time since the campaign entered the sending queue. */
 				__( 'Started %s ago', 'newsletter-optin-box' ),
