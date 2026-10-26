@@ -246,7 +246,7 @@ class Generic_Post extends Record {
 			'wpautop',
 			'shortcode_unautop',
 			'wp_replace_insecure_home_url',
-			'do_shortcode',
+			'\\Hizzle\\Noptin\\Emails\\Generate\\Generator::render_shortcodes',
 			'capital_P_dangit',
 			'convert_smilies',
 		);
