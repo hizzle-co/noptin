@@ -185,7 +185,28 @@ class Main {
 		$result = wp_schedule_event( $run_at, 'every_minute', $this->cron_hook, array(), true );
 
 		if ( is_wp_error( $result ) ) {
-			log_noptin_message( 'Failed to schedule task runner cron event: ' . $result->get_error_message() );
+			global $wpdb;
+			// Preserve the write error before checking the schedule performs another query.
+			$database_error = $wpdb->last_error;
+			$error_code     = $result->get_error_code();
+			$error_message  = $result->get_error_message();
+
+			// Another request may have saved the event while this request held stale options.
+			wp_cache_delete( 'cron', 'options' );
+			wp_cache_delete( 'alloptions', 'options' );
+			$event = wp_get_scheduled_event( $this->cron_hook, array() );
+			if ( $event && 'every_minute' === $event->schedule && abs( $event->timestamp - $run_at ) <= MINUTE_IN_SECONDS ) {
+				return;
+			}
+
+			log_noptin_message(
+				sprintf(
+					'Failed to schedule task runner cron event [%s]: %s Database error: %s',
+					$error_code,
+					$error_message,
+					$database_error ?: 'none reported'
+				)
+			);
 		}
 	}
 
