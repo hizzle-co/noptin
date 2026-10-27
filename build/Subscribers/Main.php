@@ -51,6 +51,9 @@ class Main {
 		// Initialize the manage preferences class.
 		Manage_Preferences::init();
 
+		// Custom unsubscribe links.
+		Unsubscribe_Links::init();
+
 		// Initialize the bounce handler.
 		Bounce_Handler::init();
 

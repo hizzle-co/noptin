@@ -853,6 +853,11 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 		return false;
 	}
 
+	// Preference-only records can suppress confirmation for their creation request.
+	if ( ! apply_filters( 'noptin_should_send_double_optin_email', true, $subscriber, $force ) ) {
+		return false;
+	}
+
 	if ( ! $force && 'pending' !== $subscriber->get_status() ) {
 		return false;
 	}

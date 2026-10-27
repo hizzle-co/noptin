@@ -710,10 +710,11 @@ class Main {
 	/**
 	 * Retrieves the current unsubscribe url.
 	 *
+	 * @param array $attributes Merge-tag attributes, including an optional custom link type.
 	 * @return string
 	 */
-	public static function get_current_unsubscribe_url() {
-		return get_noptin_action_url( 'unsubscribe', noptin_encrypt( wp_json_encode( self::$current_email_recipient ) ) );
+	public static function get_current_unsubscribe_url( $attributes = array() ) {
+		return \Hizzle\Noptin\Subscribers\Unsubscribe_Links::url( self::$current_email_recipient, $attributes );
 	}
 
 	/**

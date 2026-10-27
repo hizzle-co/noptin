@@ -69,6 +69,16 @@ class Actions {
 
 		$recipient = \Hizzle\Noptin\Emails\Main::$current_email_recipient;
 
+		if ( array_key_exists( 'unsubscribe_type', $recipient ) ) {
+			$result = Unsubscribe_Links::apply( self::get_subscriber(), $recipient['unsubscribe_type'], $recipient['email'] ?? '' );
+
+			if ( is_wp_error( $result ) ) {
+				wp_die( esc_html( $result->get_error_message() ), '', array( 'response' => 400 ) );
+			}
+
+			return;
+		}
+
 		// Fetch the campaign id.
 		$campaign    = \Hizzle\Noptin\Emails\Main::$current_email;
 		$campaign_id = $campaign ? $campaign->id : 0;
