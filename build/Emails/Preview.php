@@ -67,9 +67,10 @@ class Preview {
 		}
 
 		// Prepare the preview.
-		self::$mode     = 'browser';
-		self::$campaign = new Email( $request['cid'] );
-		self::$user     = $request;
+		self::$simulation = false;
+		self::$mode       = 'browser';
+		self::$campaign   = new Email( $request['cid'] );
+		self::$user       = $request;
 
 		// Render the preview.
 		self::render();
@@ -100,7 +101,7 @@ class Preview {
 		remove_filter( 'get_post_metadata', '_wp_preview_meta_filter' );
 
 		// Prepare the preview.
-		self::$simulation = ! empty( $_GET['noptin_simulate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		self::$simulation = ! isset( $_GET['noptin_simulate'] ) || '0' !== $_GET['noptin_simulate']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		self::$mode       = 'preview';
 		self::$campaign   = new Email( $campaign_id );
 		$user             = wp_get_current_user();
@@ -109,9 +110,9 @@ class Preview {
 			'cid'   => $campaign_id,
 		);
 
-		// Maybe set plain text mode.
+		// Plain-text admin previews use an HTML shell for the preview mode controls.
 		if ( 'plain_text' === self::$campaign->get_email_type() && ! headers_sent() ) {
-			header( 'Content-Type: text/plain' );
+			header( 'Content-Type: text/html; charset=UTF-8' );
 		}
 
 		// Render the preview.
@@ -129,6 +130,9 @@ class Preview {
 		}
 
 		define( 'NOPTIN_EMAIL_PREVIEW_MODE', true );
+		$GLOBALS['noptin_email_force_skip'] = null;
+		$empty_before     = did_action( 'noptin_collection_list_empty' );
+		$not_empty_before = did_action( 'noptin_collection_list_not_empty' );
 
 		// Prepare test content if needed.
 		$prepare_preview = self::$campaign->prepare_preview( self::$mode, self::$user );
@@ -149,13 +153,14 @@ class Preview {
 			wp_die( esc_html( $preview->get_error_message() ) );
 		}
 
-		if ( self::$simulation && ! empty( $GLOBALS['noptin_email_force_skip'] ) ) {
-			wp_die( esc_html( $GLOBALS['noptin_email_force_skip']['message'] ) );
-		}
-
-		// Explain why since-last-send collections can contain older items in previews.
-		if ( 'preview' === self::$mode && self::uses_since_last_send() && 'plain_text' !== self::$campaign->get_email_type() ) {
-			$preview = self::add_since_last_send_notice( $preview );
+		if ( 'preview' === self::$mode ) {
+			$skip_reason = self::$simulation ? self::get_skip_reason( self::$campaign, $empty_before, $not_empty_before ) : '';
+			if ( $skip_reason ) {
+				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><main style="max-width:680px;margin:40px auto;padding:24px;font:16px/1.5 sans-serif"><h1>' . esc_html__( 'This email would not be sent now', 'newsletter-optin-box' ) . '</h1><p>' . esc_html( $skip_reason ) . '</p><p>' . '<a href="' . esc_url( add_query_arg( 'noptin_simulate', 0 ) ) . '">' . esc_html__( 'View sample content using older items.', 'newsletter-optin-box' ) . '</a>' . '</p></main></body></html>';
+			} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
+				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><pre style="margin:24px;white-space:pre-wrap">' . esc_html( $preview ) . '</pre></body></html>';
+			}
+			$preview = self::add_preview_controls( $preview );
 		}
 
 		echo $preview; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -163,27 +168,53 @@ class Preview {
 	}
 
 	/**
-	 * Checks whether the active email body enables the since-last-send filter.
+	 * Explain whether the generated content would be skipped by the normal send flow.
 	 *
-	 * @return bool
+	 * @param Email $campaign Campaign being previewed.
+	 * @param int   $empty_before Empty collection count before rendering.
+	 * @param int   $not_empty_before Nonempty collection count before rendering.
+	 * @return string Empty when the campaign is allowed to send.
 	 */
-	private static function uses_since_last_send() {
-		$content = self::$campaign->get_content( self::$campaign->get_email_type() );
-		return 1 === preg_match( '/since_last_send\s*=\s*(["\']?)\s*(?:yes|true|1)\s*\1/i', $content );
+	private static function get_skip_reason( $campaign, $empty_before, $not_empty_before ) {
+		if ( ! empty( $GLOBALS['noptin_email_force_skip'] ) ) {
+			return $GLOBALS['noptin_email_force_skip']['message'];
+		}
+		$empty     = did_action( 'noptin_collection_list_empty' ) - $empty_before;
+		$not_empty = did_action( 'noptin_collection_list_not_empty' ) - $not_empty_before;
+		if ( $empty > 0 && 0 === $not_empty && apply_filters( 'noptin_email_skip_if_all_items_empty', (bool) $campaign->get( 'skip_if_all_items_empty' ), $campaign ) ) {
+			return __( 'All dynamic blocks have no matching records, and this campaign is configured to skip sending in that case.', 'newsletter-optin-box' );
+		}
+		return '';
 	}
 
 	/**
-	 * Adds a floating warning to an admin campaign preview.
+	 * Add read-only mode controls to the admin preview, never to recipient emails.
 	 *
 	 * @param string $preview Rendered email HTML.
 	 * @return string
 	 */
-	private static function add_since_last_send_notice( $preview ) {
-		$message = 'Preview and test emails may include older content because the last-send date is ignored during testing. Scheduled emails still use the campaign\'s saved last-send date.';
-		$notice  = sprintf(
-			'<div role="status" style="position:fixed;z-index:2147483647;top:16px;left:16px;width:min(420px,calc(100%% - 32px));box-sizing:border-box;padding:12px 16px;border:1px solid #dba617;border-left-width:4px;border-radius:3px;background:rgba(255,251,235,.94);box-shadow:0 2px 8px rgba(0,0,0,.16);color:#1e1e1e;font:14px/1.4 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;text-align:left;">%s</div>',
-			$message
-		);
+	private static function add_preview_controls( $preview ) {
+		$message = self::$simulation
+			? __( 'Uses the saved sending date filters as of now. Content may change before the scheduled send.', 'newsletter-optin-box' )
+			: __( 'Sample content ignores the last-send date. Other content filters still apply.', 'newsletter-optin-box' );
+		$links = '';
+		foreach ( array( 1 => __( 'If sent now', 'newsletter-optin-box' ), 0 => __( 'Sample content', 'newsletter-optin-box' ) ) as $simulate => $label ) {
+			$active = (bool) $simulate === self::$simulation;
+			$links .= sprintf(
+				'<a href="%s"%s style="display:inline-block;padding:8px 12px;margin:0 8px 8px 0;border:1px solid %s;border-radius:3px;text-decoration:none;color:%s;background:%s">%s</a>',
+				esc_url( add_query_arg( 'noptin_simulate', $simulate ) ),
+				$active ? ' aria-current="page"' : '',
+				$active ? '#FB1A62' : '#c3c4c7',
+				$active ? '#fff' : '#1e1e1e',
+				$active ? '#FB1A62' : '#fff',
+				esc_html( $label )
+			);
+		}
+		// Native disclosure keeps hiding/showing accessible without preview scripts.
+		$notice = '<style>.noptin-email-preview-controls[open]{width:min(440px,calc(100vw - 32px))}.noptin-email-preview-controls[open] .noptin-email-preview-show,.noptin-email-preview-controls:not([open]) .noptin-email-preview-hide{display:none}</style>';
+		$notice .= '<details open class="noptin-email-preview-controls" aria-label="' . esc_attr__( 'Email preview mode', 'newsletter-optin-box' ) . '" style="position:fixed;z-index:2147483647;bottom:16px;right:16px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;margin:0;padding:16px;border:1px solid #c3c4c7;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.16);background:#fff;color:#1e1e1e;font:14px/1.4 sans-serif;text-align:left">';
+		$notice .= '<summary style="cursor:pointer;font-weight:600"><span class="noptin-email-preview-hide">' . esc_html__( 'Hide preview controls', 'newsletter-optin-box' ) . '</span><span class="noptin-email-preview-show">' . esc_html__( 'Show preview controls', 'newsletter-optin-box' ) . '</span></summary>';
+		$notice .= '<nav style="margin-top:16px" aria-label="' . esc_attr__( 'Preview content', 'newsletter-optin-box' ) . '">' . $links . '</nav><p style="margin:0">' . esc_html( $message ) . '</p></details>';
 
 		if ( preg_match( '/<body\b[^>]*>/i', $preview, $matches, PREG_OFFSET_CAPTURE ) ) {
 			$offset = $matches[0][1] + strlen( $matches[0][0] );
