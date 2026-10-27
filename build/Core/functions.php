@@ -1892,8 +1892,8 @@ function noptin_is_conditional_logic_met( $current_value, $condition_value, $com
 
 	// Treat trailing path slashes as equivalent when comparing two HTTP URLs.
 	if ( preg_match( '#^https?://#', $current_value ) && preg_match( '#^https?://#', $condition_value ) ) {
-		$current_value   = preg_replace( '#/+(?=([?#]|$))#', '', $current_value );
-		$condition_value = preg_replace( '#/+(?=([?#]|$))#', '', $condition_value );
+		$current_value   = preg_replace( '~/+(?=([?#]|$))~', '', $current_value );
+		$condition_value = preg_replace( '~/+(?=([?#]|$))~', '', $condition_value );
 	}
 
 	switch ( $comparison ) {

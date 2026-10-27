@@ -223,6 +223,7 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 == Changelog ==
 
 = 4.4.3 =
+* Fix: Automation rules with clicked-URL conditions running for unrelated links.
 * Add: Show when newsletter sending started or last recorded activity.
 * Improve: Detect newsletters stuck at zero sends even when background tasks keep running.
 * Fix: PowerPress shortcodes and embedded iframes causing email content to disappear.
