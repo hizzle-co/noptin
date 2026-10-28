@@ -1,5 +1,260 @@
 # Changelog
 
+# 4.4.3
+* Fix: Excessive newsletter spacing when sending with Elementor SiteMailer (Email Deliverability).
+* Add: Custom unsubscribe links for adding or removing tags, lists, and segment choices without unsubscribing from all emails.
+* Fix: Automation rules with clicked-URL conditions running for unrelated links.
+* Add: Show when newsletter sending started or last recorded activity.
+* Improve: Detect newsletters stuck at zero sends even when background tasks keep running.
+* Fix: PowerPress shortcodes and embedded iframes causing email content to disappear.
+* Fix: HTML entities displaying literally in campaign titles and invalid campaign dates causing browser warnings.
+* Improve: Verify the task runner schedule after cron-save errors and log error codes and database errors when scheduling actually fails.
+
+# 4.4.2
+* Fix: Email settings not showing.
+
+# 4.4.1
+* Simplify the newsletter creation wizard.
+
+# 4.4.0
+* Fix: Unable to delete lists with spaces in their name.
+* Security: Fixed a stored cross-site scripting (XSS) vulnerability affecting subscriber custom fields and campaign previews.
+* Security: Restricted post-list shortcode queries to prevent access to unintended post types, statuses, and sensitive metadata.
+* Security: Strengthened double opt-in and subscription-management validation to prevent unauthorized subscription confirmation or email changes.
+* Security: Fixed a subscriber enumeration issue in REST API responses.
+
+# 4.3.10
+* Add: Atomic task claiming to prevent the same task from executing concurrently.
+* Add: A new option that disables actual email delivery on staging sites.
+* Fix: Prevent derived email-engagement updates from retriggering subscriber-update automations.
+
+# 4.3.9
+* Add: Support merge tags in email attachment paths.
+
+# 4.3.8
+* Add: Support dynamic default values and hidden fields in subscription forms, including values from the current post.
+* Add: Detect stalled newsletter campaigns and let administrators continue sending them from their browser.
+* Fix: Newsletter editor shows "Submit for Review" button instead of "Publish" button.
+
+# 4.3.7
+* Allow blocking newsletter subscribers using a certain email address domain or tld.
+
+# 4.3.6
+* Test on WordPress 7.1
+
+# 4.3.5
+* Fix: Polylang defaults to the default language when new post notifications are set to display posts in any language.
+
+# 4.3.4
+* Fix: Unchecking every list now saves an empty array instead of leaving the old subscriber lists unchanged.
+
+# 4.3.3
+* Fix: Input loosing focus after editing an automation rule.
+
+# 4.3.2
+* Fix: Custom double opt-in email not being sent when a user subscribes to the newsletter.
+
+# 4.3.1
+* Fix: Newsletter editor not loading when Kubio is active.
+
+# 4.3.0
+* Change: Add a modern automation rule editor.
+
+# 4.2.7
+* Fix: Automated emails should be scheduled after double opt-in.
+
+# 4.2.4
+* Add: Improved WPML and Polylang compatibility for multilingual newsletters.
+
+# 4.2.2
+* Add: Ability to change an automated email's type after it's created.
+* Add: Support creating a custom `name` custom field for newsletter subscribers.
+
+# 4.2.0
+* Add: AI generation framework for newsletters, sequences, automated emails and automation rules.
+* Add: Agency control settings.
+
+# 4.1.8
+* Add: Automatically add UTM parameters to newsletter links for better tracking in Plausible and Google Analytics.
+
+# 4.1.7
+* Add: See which links in your newsletters are getting the most clicks.
+
+# 4.1.6
+* Fix: Error when editing a newsletter subscriber.
+
+# 4.1.5
+* Fix: Noptin dashboard freezes on some timezones.
+
+# 4.1.4
+* Fix: Batch fetch newsletter subscribers when send bulk emails
+
+# 4.1.3
+* Fix: JS enqueued even when no newsletter forms are present on the page.
+
+# 4.1.2
+* Introduce a newsletter sender that does not depend on WP CRON.
+
+# 4.1.1
+* Delay triggering new post notification emails by 10 seconds to allow other processes to complete.
+
+# 4.1.0
+* Add: Ability for merge tags to return option labels where applicable.
+
+# 4.0.13
+* Add: Show filters for sender settings on the email list table
+
+# 4.0.11
+* Change: Speed up the newsletter form editor.
+
+# 4.0.10
+* Add: Ability to delete email logs.
+
+# 4.0.9
+* Change: Newsletter subscribers now have to click confirmation button before unsubscribing.
+
+# 4.0.8
+* Fix: Allow sending emails on a subscribers' birth date, anniversary date or any other date-based custom field.
+
+# 4.0.7
+* Add: WPForms and WooCommerce integration improvements.
+
+# 4.0.6
+* Add: Order newsletter subscribers by their email engagement score.
+
+# 4.0.5
+* Clicking on a newsletter subscription form in the editor now reveals the section related settings.
+
+# 4.0.4
+* Fix: Bulk editing newsletter subscribers only updates 25 subscribers at a time.
+
+# 4.0.3
+* Do not show resending option for newsletters that are not mass emails.
+
+# 4.0.2
+* Allow resending a newsletter only to recipients who were not sent the newsletter before.
+* Filter newsletter campaigns by Status and Subtype.
+* Duplicate subscription forms in one click.
+
+# 4.0.1
+* Fix: Update packages to ensure the sending limits setting is visible on all instances.
+
+# 4.0.0
+* Fine-grained control over email sending limits.
+* Deleted legacy global JavaScript and asset files that are no longer in use.
+
+# 3.8.7
+* Added the ability to view detailed campaign engagement stats. You can now see exactly who opened, clicked, unsubscribed, or purchased from your newsletters — all linked directly to the activity logs.
+
+# 3.8.6
+* Add: Block/unblock certain newsletter subscribers.
+
+# 3.8.5
+* Fix: Dropdown, Radio, and Checkbox custom fields not displaying options input.
+
+# 3.8.4
+* Fix: WooCommerce newsletter subscription checkbox throwing errors on some setups.
+
+# 3.8.3
+* Fix: Fatal error on Multilingual sites.
+
+# 3.8.2
+* Fix: Compatibility with WooCommerce 9.8.
+
+# 3.8.1
+* Add: Amazon SES bounce handler.
+
+# 3.8.0
+* Add: Dashboard stats.
+
+# 3.7.10
+* Fix: Default double opt-in email sending even when using a custom double opt-in email.
+
+# 3.7.9
+* Fix: Compatibility with more email clients.
+* Add: Can now set new posts digest newsletters to send manually. 
+
+# 3.7.8
+* Fix: Bulk senders not showing when creating a new post notification email.
+
+# 3.7.7
+* Fix: Newsletter sending doesn't respect per-hour setting if object cache is in use.
+
+# 3.7.6
+* Fix: Recurring email tasks not re-scheduling.
+
+# 3.7.5
+* Change: Multi-lingual improvements.
+
+# 3.7.4
+* Fix: Protected meta keys cause errors when saving newsletters.
+
+# 3.7.3
+* Change: More automation rule actions now support dynamic values.
+
+# 3.7.2
+* Change: Load external integrations before loading built-in integrations.
+
+# 3.7.1
+* Fix: Classic newsletter subscription forms requiring GDPR acceptance even if not enabled.
+
+# 3.7.0
+* Add: Make it possible to skip sending new post notifications on certain week days.
+
+# 3.6.9
+* Change: Ensure mbstring is loaded before trying to inline CSS in emails.
+
+# 3.6.8
+* Fix: Parse partial send from merge tags for bulk emails.
+
+# 3.6.6
+* Add: Ability to hide whole sections in post notification newsletters when no posts are found.
+
+# 3.6.5
+* Fix: Invalid email address error when signing up.
+
+# 3.6.4
+* Change: Show extra confirmation when duplicating a newsletter campaign.
+
+# 3.6.3
+* Add: Ability to create custom newsletter templates.
+
+# 3.6.2
+* Fix: Subscriber imported automated emails not sending.
+
+# 3.6.1
+* Fix: Submission redirect not working for newsletter forms created using the advanced form builder.
+
+# 3.6.0
+* Fix: [noptin] shortcode only works if a form is specified.
+
+# 3.5.8
+* Add: Ability to use merge tags as values for conditional logic rules.
+* Fix: GDPR consent not required for legacy newsletter subscription forms.
+* Fix: WPBakery shortcodes not processed in new post notification newsletters.
+
+# 3.5.7
+* Change: Use ajax to register new subscribers whenever the REST API is not working.
+
+# 3.5.5
+* Fix: Newsletter form CSS changes for improved theme compatibility.
+
+# 3.5.4
+* Fix: GDPR checkbox shown twice.
+* Fix: Elementor popup forms not detected.
+
+# 3.5.2
+* Remove jQuery dependancy.
+
+# 3.5.0
+* Improvements to the newsletter form editor.
+
+# 3.4.10
+* Add conditional logic for how many times a customer has purchased a given WooCommerce product.
+
+# 3.4.9
+* Fix: Newsletter subscribers not added when WooCommerce HPOS is enabled.
+
 # 3.4.7
 * Fix: [[post_content]] merge tag shows blank.
 
