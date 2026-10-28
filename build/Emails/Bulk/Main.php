@@ -288,68 +288,87 @@ class Main {
 	}
 
 	/**
-	 * Checks if we have a pending campaign.
+	 * Prepare the oldest sendable campaign, pausing invalid queue entries.
 	 */
 	public static function prepare_pending_campaign( $exclude = array() ) {
-		$campaigns = get_posts(
-			array(
-				'post_type'      => 'noptin-campaign',
-				'post_status'    => 'publish',
-				'posts_per_page' => 5,
-				'order'          => 'ASC', // Oldest first.
-				'fields'         => 'ids',
-				'exclude'        => $exclude,
-				'meta_query'     => array(
-					array(
-						'key'   => 'campaign_type',
-						'value' => 'newsletter',
-					),
-					array(
-						'key'     => 'completed',
-						'compare' => 'NOT EXISTS',
-					),
-					array(
-						'key'     => 'paused',
-						'compare' => 'NOT EXISTS',
-					),
-				),
-			)
-		);
-
-		foreach ( $campaigns as $campaign ) {
-			$campaign = noptin_get_email_campaign_object( $campaign );
-			$can_send = $campaign->can_send( true );
-
-			if ( is_wp_error( $can_send ) ) {
-				noptin_pause_email_campaign(
-					$campaign->id,
-					$can_send->get_error_message()
-				);
-				continue;
-			}
-
-			// Check if the sender is supported.
-			if ( ! self::has_sender( $campaign->get_sender() ) ) {
-				noptin_pause_email_campaign(
-					$campaign->id,
-					sprintf(
-						'The email sender "%s" is not supported.',
-						esc_html( $campaign->get_sender() )
-					)
-				);
-				continue;
-			}
-
-			if ( true === $can_send ) {
-				return $campaign;
-			}
+		$selection = self::get_pending_campaign_selection( $exclude );
+		foreach ( $selection['errors'] as $id => $error ) {
+			noptin_pause_email_campaign( $id, $error->get_error_message() );
 		}
+		return $selection['campaign'];
+	}
 
-		if ( count( $campaigns ) === 5 ) {
-			return self::prepare_pending_campaign( array_merge( $exclude, $campaigns ) );
-		}
+	/**
+	 * Inspect the sending queue without pausing campaigns or scheduling delivery.
+	 *
+	 * Polling and sending share ordering, exclusions, and sendability checks.
+	 * The sending path alone applies the returned preparation errors.
+	 *
+	 * @param int[] $exclude Campaign IDs to skip.
+	 * @return array{campaign: \Hizzle\Noptin\Emails\Email|false, errors: array<int, \WP_Error>}
+	 */
+	public static function get_pending_campaign_selection( $exclude = array() ) {
+		$selection = array( 'campaign' => false, 'errors' => array() );
+		do {
+			$campaigns = get_posts(
+				array(
+					'post_type'      => 'noptin-campaign',
+					'post_status'    => 'publish',
+					'posts_per_page' => 5,
+					'orderby'        => array( 'date' => 'ASC', 'ID' => 'ASC' ),
+					'fields'         => 'ids',
+					'exclude'        => $exclude,
+					'meta_query'     => array(
+						array(
+							'key'   => 'campaign_type',
+							'value' => 'newsletter',
+						),
+						array(
+							'key'     => 'completed',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => 'paused',
+							'compare' => 'NOT EXISTS',
+						),
+					),
+				)
+			);
 
-		return false;
+			foreach ( $campaigns as $campaign ) {
+				$campaign = noptin_get_email_campaign_object( $campaign );
+				if ( ! $campaign ) {
+					continue;
+				}
+				$can_send = $campaign->can_send( true );
+
+				if ( is_wp_error( $can_send ) ) {
+					$selection['errors'][ $campaign->id ] = $can_send;
+					continue;
+				}
+
+				// Check if the sender is supported.
+				if ( ! self::has_sender( $campaign->get_sender() ) ) {
+					$selection['errors'][ $campaign->id ] = new \WP_Error(
+						'noptin_email_invalid_sender',
+						sprintf(
+							'The email sender "%s" is not supported.',
+							esc_html( $campaign->get_sender() )
+						)
+					);
+					continue;
+				}
+
+				if ( true === $can_send ) {
+					$selection['campaign'] = $campaign;
+					return $selection;
+				}
+			}
+
+			$exclude = array_merge( $exclude, $campaigns );
+		} while ( count( $campaigns ) === 5 );
+
+		return $selection;
 	}
 
 	/**
@@ -785,7 +804,8 @@ class Main {
 			return false;
 		}
 
-		$campaign = self::prepare_pending_campaign();
+		$selection = self::get_pending_campaign_selection();
+		$campaign  = $selection['campaign'];
 		if ( ! $campaign || ! $campaign->current_user_can_publish() ) {
 			return false;
 		}

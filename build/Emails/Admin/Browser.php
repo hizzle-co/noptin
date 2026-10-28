@@ -118,25 +118,9 @@ class Browser {
 		if ( ! current_user_can_manage_noptin_campaign_type( 'newsletter' ) ) {
 			return 0;
 		}
-		$ids = get_posts(
-			array(
-				'post_type'      => 'noptin-campaign',
-				'post_status'    => 'publish',
-				'posts_per_page' => 1,
-				'orderby'        => array( 'date' => 'ASC', 'ID' => 'ASC' ),
-				'fields'         => 'ids',
-				'meta_query'     => array(
-					array( 'key' => 'campaign_type', 'value' => 'newsletter' ),
-					array( 'key' => 'completed', 'compare' => 'NOT EXISTS' ),
-					array( 'key' => 'paused', 'compare' => 'NOT EXISTS' ),
-				),
-			)
-		);
-		if ( ! $ids ) {
-			return 0;
-		}
-		$email = new \Hizzle\Noptin\Emails\Email( $ids[0] );
-		return $email->current_user_can_edit() ? (int) $ids[0] : 0;
+		$selection = \Hizzle\Noptin\Emails\Bulk\Main::get_pending_campaign_selection();
+		$email     = $selection['campaign'];
+		return $email && $email->current_user_can_edit() ? (int) $email->id : 0;
 	}
 
 	/** Persist dismissal through a REST nonce-protected request. */
