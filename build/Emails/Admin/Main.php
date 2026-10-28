@@ -913,6 +913,15 @@ class Main {
 							'tooltip'     => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 						),
 
+						'email_plain_text_alternative' => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'section'     => 'emails',
+							'label'       => __( 'Include a plain-text version with HTML emails', 'newsletter-optin-box' ),
+							'description' => __( 'Automatically generate a plain-text alternative when Noptin sends an HTML email. Requires a sending method that uses WordPress\'s PHPMailer.', 'newsletter-optin-box' ),
+							'default'     => false,
+						),
+
 						'delete_campaigns'       => array(
 							'el'               => 'input',
 							'type'             => 'number',

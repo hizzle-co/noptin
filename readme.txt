@@ -189,6 +189,9 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 
 == Changelog ==
 
+= 4.4.4 =
+* Add: Optional plain-text alternatives for HTML emails.
+
 = 4.4.3 =
 * Fix: Excessive newsletter spacing when sending with Elementor SiteMailer (Email Deliverability).
 * Add: Custom unsubscribe links for adding or removing tags, lists, and segment choices without unsubscribing from all emails.

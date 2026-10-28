@@ -28,6 +28,11 @@ class Sender {
 	private static $args = array(); // Should be private and reset after each send
 
 	/**
+	 * @var \PHPMailer\PHPMailer\PHPMailer|null Mailer with a generated plain-text alternative.
+	 */
+	private static $plain_text_mailer = null;
+
+	/**
 	 * Sends an email.
 	 *
 	 * A true return value does not automatically mean that the user received the
@@ -221,6 +226,7 @@ class Sender {
 		add_filter( 'wp_mail_from_name', array( __CLASS__, 'get_from_name' ) );
 		add_filter( 'wp_mail_content_type', array( __CLASS__, 'get_content_type' ), 1000 );
 		add_filter( 'wp_mail', array( __CLASS__, 'ensure_email_content' ), 1000000 );
+		add_action( 'phpmailer_init', array( __CLASS__, 'add_plain_text_alternative' ), 1000000 );
 		do_action( 'noptin_email_sender_before_sending', self::$args );
 	}
 
@@ -348,6 +354,20 @@ class Sender {
 	}
 
 	/**
+	 * Add an optional alternative from the final HTML without rendering the email again.
+	 *
+	 * @param \PHPMailer\PHPMailer\PHPMailer $mailer Mailer for this send.
+	 */
+	public static function add_plain_text_alternative( $mailer ) {
+		if ( 'html' !== strtolower( self::$args['content_type'] ) || 'text/html' !== $mailer->ContentType || ! get_noptin_option( 'email_plain_text_alternative', false ) ) {
+			return;
+		}
+
+		$mailer->AltBody         = noptin_convert_html_to_text( $mailer->Body );
+		self::$plain_text_mailer = $mailer;
+	}
+
+	/**
 	 * Remove filters/actions after the email is sent.
 	 *
 	 * @since 1.7.0
@@ -357,6 +377,12 @@ class Sender {
 		remove_filter( 'wp_mail_from_name', array( __CLASS__, 'get_from_name' ) );
 		remove_filter( 'wp_mail_content_type', array( __CLASS__, 'get_content_type' ), 1000 );
 		remove_filter( 'wp_mail', array( __CLASS__, 'ensure_email_content' ), 1000000 );
+		remove_action( 'phpmailer_init', array( __CLASS__, 'add_plain_text_alternative' ), 1000000 );
+
+		if ( null !== self::$plain_text_mailer ) {
+			self::$plain_text_mailer->AltBody = '';
+			self::$plain_text_mailer          = null;
+		}
 		do_action( 'noptin_email_sender_after_sending', self::$args );
 	}
 }
