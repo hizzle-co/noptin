@@ -223,6 +223,7 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 == Changelog ==
 
 = 4.4.3 =
+* Fix: Excessive newsletter spacing when sending with Elementor SiteMailer (Email Deliverability).
 * Add: Custom unsubscribe links for adding or removing tags, lists, and segment choices without unsubscribing from all emails.
 * Fix: Automation rules with clicked-URL conditions running for unrelated links.
 * Add: Show when newsletter sending started or last recorded activity.

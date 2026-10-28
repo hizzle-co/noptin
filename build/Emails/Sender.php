@@ -193,14 +193,14 @@ class Sender {
 		$content  = self::get_content_type( 'text/plain' );
 
 		if ( ! empty( $reply_to ) && ! empty( $name ) ) {
-			$headers[] = "Reply-To:$name <$reply_to>";
+			$headers[] = "Reply-To: $name <$reply_to>";
 		}
 
-		$headers[] = "Content-Type:$content";
+		$headers[] = "Content-Type: $content";
 
 		if ( ! empty( self::$args['unsubscribe_url'] ) ) {
 			$url       = self::$args['unsubscribe_url'];
-			$headers[] = "List-Unsubscribe:<$url>";
+			$headers[] = "List-Unsubscribe: <$url>";
 
 			if ( 'https' === wp_parse_url( $url, PHP_URL_SCHEME ) ) {
 				$headers[] = 'List-Unsubscribe-Post: List-Unsubscribe=One-Click';
