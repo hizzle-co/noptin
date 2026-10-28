@@ -37,6 +37,12 @@ class Browser {
 
 	/** Live sending conditions, notices, and available extension bulk commands. */
 	public static function state() {
+		// Run pending tasks.
+		do_action( 'noptin_tasks_run_pending' );
+
+		// Send pending emails.
+		\Hizzle\Noptin\Emails\Bulk\Main::send_pending();
+
 		$notices = array();
 		$sending_limit_reached = (bool) noptin_email_sending_limit_reached();
 
