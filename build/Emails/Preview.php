@@ -131,6 +131,7 @@ class Preview {
 
 		define( 'NOPTIN_EMAIL_PREVIEW_MODE', true );
 		$GLOBALS['noptin_email_force_skip'] = null;
+
 		$empty_before     = did_action( 'noptin_collection_list_empty' );
 		$not_empty_before = did_action( 'noptin_collection_list_not_empty' );
 
@@ -156,7 +157,7 @@ class Preview {
 		if ( 'preview' === self::$mode ) {
 			$skip_reason = self::$simulation ? self::get_skip_reason( self::$campaign, $empty_before, $not_empty_before ) : '';
 			if ( $skip_reason ) {
-				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><main style="max-width:680px;margin:40px auto;padding:24px;font:16px/1.5 sans-serif"><h1>' . esc_html__( 'This email would not be sent now', 'newsletter-optin-box' ) . '</h1><p>' . esc_html( $skip_reason ) . '</p><p>' . '<a href="' . esc_url( add_query_arg( 'noptin_simulate', 0 ) ) . '">' . esc_html__( 'View sample content using older items.', 'newsletter-optin-box' ) . '</a>' . '</p></main></body></html>';
+				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><main style="max-width:680px;margin:40px auto;padding:24px;font:16px/1.5 sans-serif"><h1>This email would not be sent now</h1><p>' . esc_html( $skip_reason ) . '</p><p>' . '<a href="' . esc_url( add_query_arg( 'noptin_simulate', 0 ) ) . '">View sample content using older items.</a></p></main></body></html>';
 			} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
 				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><pre style="margin:24px;white-space:pre-wrap">' . esc_html( $preview ) . '</pre></body></html>';
 			}
@@ -182,7 +183,7 @@ class Preview {
 		$empty     = did_action( 'noptin_collection_list_empty' ) - $empty_before;
 		$not_empty = did_action( 'noptin_collection_list_not_empty' ) - $not_empty_before;
 		if ( $empty > 0 && 0 === $not_empty && apply_filters( 'noptin_email_skip_if_all_items_empty', (bool) $campaign->get( 'skip_if_all_items_empty' ), $campaign ) ) {
-			return __( 'All dynamic blocks have no matching records, and this campaign is configured to skip sending in that case.', 'newsletter-optin-box' );
+			return 'All dynamic blocks have no matching records, and this campaign is configured to skip sending in that case.';
 		}
 		return '';
 	}
@@ -195,10 +196,16 @@ class Preview {
 	 */
 	private static function add_preview_controls( $preview ) {
 		$message = self::$simulation
-			? __( 'Uses the saved sending date filters as of now. Content may change before the scheduled send.', 'newsletter-optin-box' )
-			: __( 'Sample content ignores the last-send date. Other content filters still apply.', 'newsletter-optin-box' );
-		$links = '';
-		foreach ( array( 1 => __( 'If sent now', 'newsletter-optin-box' ), 0 => __( 'Sample content', 'newsletter-optin-box' ) ) as $simulate => $label ) {
+			? 'Uses the saved sending date filters as of now. Content may change before the scheduled send.'
+			: 'Sample content ignores the last-send date. Other content filters still apply.';
+
+		$links       = '';
+		$simulations = array(
+			1 => 'If sent now',
+			0 => 'Sample content',
+		);
+
+		foreach ( $simulations as $simulate => $label ) {
 			$active = (bool) $simulate === self::$simulation;
 			$links .= sprintf(
 				'<a href="%s"%s style="display:inline-block;padding:8px 12px;margin:0 8px 8px 0;border:1px solid %s;border-radius:3px;text-decoration:none;color:%s;background:%s">%s</a>',
@@ -211,10 +218,10 @@ class Preview {
 			);
 		}
 		// Native disclosure keeps hiding/showing accessible without preview scripts.
-		$notice = '<style>.noptin-email-preview-controls[open]{width:min(440px,calc(100vw - 32px))}.noptin-email-preview-controls[open] .noptin-email-preview-show,.noptin-email-preview-controls:not([open]) .noptin-email-preview-hide{display:none}</style>';
-		$notice .= '<details open class="noptin-email-preview-controls" aria-label="' . esc_attr__( 'Email preview mode', 'newsletter-optin-box' ) . '" style="position:fixed;z-index:2147483647;bottom:16px;right:16px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;margin:0;padding:16px;border:1px solid #c3c4c7;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.16);background:#fff;color:#1e1e1e;font:14px/1.4 sans-serif;text-align:left">';
-		$notice .= '<summary style="cursor:pointer;font-weight:600"><span class="noptin-email-preview-hide">' . esc_html__( 'Hide preview controls', 'newsletter-optin-box' ) . '</span><span class="noptin-email-preview-show">' . esc_html__( 'Show preview controls', 'newsletter-optin-box' ) . '</span></summary>';
-		$notice .= '<nav style="margin-top:16px" aria-label="' . esc_attr__( 'Preview content', 'newsletter-optin-box' ) . '">' . $links . '</nav><p style="margin:0">' . esc_html( $message ) . '</p></details>';
+		$notice  = '<style>.noptin-email-preview-controls[open]{width:min(440px,calc(100vw - 32px))}.noptin-email-preview-controls[open] .noptin-email-preview-show,.noptin-email-preview-controls:not([open]) .noptin-email-preview-hide{display:none}</style>';
+		$notice .= '<details open class="noptin-email-preview-controls" aria-label="Email preview mode" style="position:fixed;z-index:2147483647;bottom:16px;right:16px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;box-sizing:border-box;margin:0;padding:16px;border:1px solid #c3c4c7;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.16);background:#fff;color:#1e1e1e;font:14px/1.4 sans-serif;text-align:left">';
+		$notice .= '<summary style="cursor:pointer;font-weight:600"><span class="noptin-email-preview-hide">Hide preview controls</span><span class="noptin-email-preview-show">Show preview controls</span></summary>';
+		$notice .= '<nav style="margin-top:16px" aria-label="Preview content">' . $links . '</nav><p style="margin:0">' . esc_html( $message ) . '</p></details>';
 
 		if ( preg_match( '/<body\b[^>]*>/i', $preview, $matches, PREG_OFFSET_CAPTURE ) ) {
 			$offset = $matches[0][1] + strlen( $matches[0][0] );

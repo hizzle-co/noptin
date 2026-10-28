@@ -38,6 +38,7 @@ class Browser {
 	/** Live sending conditions, notices, and available extension bulk commands. */
 	public static function state() {
 		$notices = array();
+		$sending_limit_reached = (bool) noptin_email_sending_limit_reached();
 
 		// Warn users when email delivery is disabled on a staging site.
 		if ( \Hizzle\Noptin\Emails\Main::is_staging_email_disabled() ) {
@@ -51,7 +52,7 @@ class Browser {
 		}
 
 		// Check if sending has been paused due to limits.
-		if ( noptin_email_sending_limit_reached() ) {
+		if ( $sending_limit_reached ) {
 			$message = sprintf(
 				/* translators: %1$s: number of emails allowed to be sent per period, %2$s: time period */
 				__( 'Email sending is paused. You have sent %1$s emails in the past %2$s, reaching the sending limit.', 'newsletter-optin-box' ),
@@ -103,11 +104,39 @@ class Browser {
 		}
 
 		return array(
-			'notices'       => array_values( apply_filters( 'noptin_campaign_browser_notices', $notices ) ),
-			'premiumAddons' => array_values( apply_filters( 'noptin_com_helper_premium_addons', defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ? array( 'Noptin Addons Pack' ) : array() ) ),
-			'recovery'      => current_user_can_manage_noptin_campaign_type( 'newsletter' ) ? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data() : false,
-			'bulkActions'   => self::public_actions( null, true ),
+			'sendingCampaignId'   => self::oldest_sending_campaign_id(),
+			'sendingLimitReached' => $sending_limit_reached,
+			'notices'             => array_values( apply_filters( 'noptin_campaign_browser_notices', $notices ) ),
+			'premiumAddons'       => array_values( apply_filters( 'noptin_com_helper_premium_addons', defined( 'NOPTIN_ADDONS_PACK_VERSION' ) ? array( 'Noptin Addons Pack' ) : array() ) ),
+			'recovery'            => ! $sending_limit_reached && current_user_can_manage_noptin_campaign_type( 'newsletter' ) ? \Hizzle\Noptin\Emails\Bulk\Main::get_foreground_recovery_data() : false,
+			'bulkActions'         => self::public_actions( null, true ),
 		);
+	}
+
+	/** Read the queue head without preparing, pausing, or sending a campaign. */
+	private static function oldest_sending_campaign_id() {
+		if ( ! current_user_can_manage_noptin_campaign_type( 'newsletter' ) ) {
+			return 0;
+		}
+		$ids = get_posts(
+			array(
+				'post_type'      => 'noptin-campaign',
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'orderby'        => array( 'date' => 'ASC', 'ID' => 'ASC' ),
+				'fields'         => 'ids',
+				'meta_query'     => array(
+					array( 'key' => 'campaign_type', 'value' => 'newsletter' ),
+					array( 'key' => 'completed', 'compare' => 'NOT EXISTS' ),
+					array( 'key' => 'paused', 'compare' => 'NOT EXISTS' ),
+				),
+			)
+		);
+		if ( ! $ids ) {
+			return 0;
+		}
+		$email = new \Hizzle\Noptin\Emails\Email( $ids[0] );
+		return $email->current_user_can_edit() ? (int) $ids[0] : 0;
 	}
 
 	/** Persist dismissal through a REST nonce-protected request. */
