@@ -383,6 +383,7 @@ class Sender {
 			self::$plain_text_mailer->AltBody = '';
 			self::$plain_text_mailer          = null;
 		}
+
 		do_action( 'noptin_email_sender_after_sending', self::$args );
 	}
 }

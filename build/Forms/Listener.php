@@ -70,6 +70,13 @@ class Listener {
 	private $prepared_fields = null;
 
 	/**
+	 * Whether the contact was subscribed before this subscription request.
+	 *
+	 * @var bool
+	 */
+	private $was_already_subscribed = false;
+
+	/**
 	 * Register relevant hooks.
 	 *
 	 * @since 1.6.2
@@ -316,6 +323,8 @@ class Listener {
 		// Does the subscriber exist already?
 		$subscriber_obj = noptin_get_subscriber( (int) get_noptin_subscriber_id_by_email( sanitize_email( $subscriber['email'] ) ) );
 		if ( $subscriber_obj->exists() ) {
+			$this->was_already_subscribed = 'subscribed' === $subscriber_obj->get_status();
+
 			$subscriber_id       = $subscriber_obj->get_id();
 			$this->subscriber_id = $subscriber_id;
 
@@ -561,6 +570,11 @@ class Listener {
 
 		if ( empty( $url ) ) {
 			$url = trim( $this->get_cached( 'redirect' ) );
+		}
+
+		// An enabled override may be blank to show the response without redirecting.
+		if ( $this->was_already_subscribed && in_array( $this->last_event, array( 'already_subscribed', 'updated' ), true ) && $this->get_cached( 'redirectAlreadySubscribed' ) ) {
+			$url = trim( $this->get_cached( 'alreadySubscribedRedirectUrl' ) );
 		}
 
 		/**

@@ -878,14 +878,6 @@ class Main {
 					'label'    => __( 'General', 'newsletter-optin-box' ),
 					'section'  => 'emails',
 					'settings' => array(
-						'disable_staging_emails' => array(
-							'el'          => 'input',
-							'type'        => 'checkbox_alt',
-							'section'     => 'emails',
-							'label'       => __( 'Disable emails on staging sites', 'newsletter-optin-box' ),
-							'description' => 'Prevent Noptin from delivering emails when the WordPress environment type is set to staging. Emails are recorded as sent so campaigns and automations can continue normally.',
-							'default'     => true,
-						),
 
 						'reply_to'               => array(
 							'el'      => 'input',
@@ -913,15 +905,6 @@ class Main {
 							'tooltip'     => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 						),
 
-						'email_plain_text_alternative' => array(
-							'el'          => 'input',
-							'type'        => 'checkbox_alt',
-							'section'     => 'emails',
-							'label'       => __( 'Include a plain-text version with HTML emails', 'newsletter-optin-box' ),
-							'description' => __( 'Automatically generate a plain-text alternative when Noptin sends an HTML email. Requires a sending method that uses WordPress\'s PHPMailer.', 'newsletter-optin-box' ),
-							'default'     => false,
-						),
-
 						'delete_campaigns'       => array(
 							'el'               => 'input',
 							'type'             => 'number',
@@ -934,6 +917,24 @@ class Main {
 								'prefix' => __( 'After', 'newsletter-optin-box' ),
 								'suffix' => array( __( 'day', 'newsletter-optin-box' ), __( 'days', 'newsletter-optin-box' ) ),
 							),
+						),
+
+						'disable_staging_emails' => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'section'     => 'emails',
+							'label'       => __( 'Disable emails on staging sites', 'newsletter-optin-box' ),
+							'description' => 'Prevent Noptin from delivering emails when the WordPress environment type is set to staging. Emails are recorded as sent so campaigns and automations can continue normally.',
+							'default'     => true,
+						),
+
+						'email_plain_text_alternative' => array(
+							'el'          => 'input',
+							'type'        => 'checkbox_alt',
+							'section'     => 'emails',
+							'label'       => __( 'Include a plain-text version with HTML emails', 'newsletter-optin-box' ),
+							'description' => __( 'Automatically generate a plain-text alternative when Noptin sends an HTML email.', 'newsletter-optin-box' ),
+							'default'     => false,
 						),
 					),
 				),

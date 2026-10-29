@@ -24,6 +24,10 @@
 		'buttonPosition'        => 'block',
 		'subscribeAction'       => 'message', // redirect.
 
+		// Optional redirect for existing subscribed contacts.
+		'redirectAlreadySubscribed'    => false,
+		'alreadySubscribedRedirectUrl' => '',
+
 		// Form Design.
 		'noptinFormBg'          => '#eeeeee',
 		'noptinFormBorderColor' => '#eeeeee',

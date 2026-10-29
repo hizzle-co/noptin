@@ -103,6 +103,30 @@ $editor_settings = array(
 					),
 				),
 
+				'redirectAlreadySubscribed' => array(
+					'type'       => 'checkbox',
+					'el'         => 'input',
+					'label'      => __( 'Use a different redirect for already-subscribed contacts.', 'newsletter-optin-box' ),
+					'tooltip'    => __( 'Applies to contacts who are already subscribed, even when this form updates their details. Pending contacts keep the normal redirect.', 'newsletter-optin-box' ),
+					'conditions' => array(
+						array( 'key' => 'subscribeAction', 'value' => 'redirect' ),
+						array( 'key' => 'is_unsubscribe', 'value' => false ),
+					),
+				),
+
+				'alreadySubscribedRedirectUrl' => array(
+					'type'        => 'text',
+					'el'          => 'input',
+					'can_map'     => true,
+					'label'       => __( 'Already subscribed redirect URL', 'newsletter-optin-box' ),
+					'placeholder' => 'https://example.com/already-subscribed',
+					'description' => __( 'Leave blank if you do not want to redirect already-subscribed contacts.', 'newsletter-optin-box' ),
+					'conditions'  => array(
+						array( 'key' => 'subscribeAction', 'value' => 'redirect' ),
+						array( 'key' => 'is_unsubscribe', 'value' => false ),
+						array( 'key' => 'redirectAlreadySubscribed', 'value' => true ),
+					),
+				),
 			),
 		),
 
