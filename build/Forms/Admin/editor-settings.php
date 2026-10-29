@@ -42,13 +42,13 @@ $editor_settings = array(
 			'id'       => 'basicSettings',
 			'children' => array(
 
-				'is_unsubscribe'  => array(
+				'is_unsubscribe'               => array(
 					'type'  => 'checkbox',
 					'el'    => 'input',
 					'label' => __( 'This is an unsubscribe form.', 'newsletter-optin-box' ),
 				),
 
-				'update_existing' => array(
+				'update_existing'              => array(
 					'type'       => 'checkbox',
 					'el'         => 'input',
 					'label'      => __( 'Update existing subscribers if they match the submitted email address.', 'newsletter-optin-box' ),
@@ -60,7 +60,25 @@ $editor_settings = array(
 					),
 				),
 
-				'inject'          => array(
+				'doubleOptin'                  => array(
+					'el'          => 'select',
+					'default'     => 'global',
+					'label'       => __( 'Double opt-in', 'newsletter-optin-box' ),
+					'description' => __( 'Choose whether new subscribers must confirm their email address. Existing pending contacts remain pending. Already-subscribed contacts stay subscribed.', 'newsletter-optin-box' ),
+					'options'     => array(
+						'global'   => __( 'Use global setting', 'newsletter-optin-box' ),
+						'required' => __( 'Require email confirmation', 'newsletter-optin-box' ),
+						'disabled' => __( 'Subscribe immediately', 'newsletter-optin-box' ),
+					),
+					'conditions'  => array(
+						array(
+							'key'   => 'is_unsubscribe',
+							'value' => false,
+						),
+					),
+				),
+
+				'inject'                       => array(
 					'el'         => 'select',
 					'conditions' => array(
 						array(
@@ -79,7 +97,7 @@ $editor_settings = array(
 				),
 
 				// What should happen after someone subscibes?
-				'subscribeAction' => array(
+				'subscribeAction'              => array(
 					'el'      => 'select',
 					'label'   => __( 'What should happen after the user subscribes', 'newsletter-optin-box' ),
 					'options' => array(
@@ -89,7 +107,7 @@ $editor_settings = array(
 				),
 
 				// Where should we redirect the user after subscription?
-				'redirectUrl'     => array(
+				'redirectUrl'                  => array(
 					'type'        => 'text',
 					'el'          => 'input',
 					'can_map'     => true,
@@ -103,14 +121,20 @@ $editor_settings = array(
 					),
 				),
 
-				'redirectAlreadySubscribed' => array(
+				'redirectAlreadySubscribed'    => array(
 					'type'       => 'checkbox',
 					'el'         => 'input',
 					'label'      => __( 'Use a different redirect for already-subscribed contacts.', 'newsletter-optin-box' ),
 					'tooltip'    => __( 'Applies to contacts who are already subscribed, even when this form updates their details. Pending contacts keep the normal redirect.', 'newsletter-optin-box' ),
 					'conditions' => array(
-						array( 'key' => 'subscribeAction', 'value' => 'redirect' ),
-						array( 'key' => 'is_unsubscribe', 'value' => false ),
+						array(
+							'key'   => 'subscribeAction',
+							'value' => 'redirect',
+						),
+						array(
+							'key'   => 'is_unsubscribe',
+							'value' => false,
+						),
 					),
 				),
 
@@ -122,9 +146,18 @@ $editor_settings = array(
 					'placeholder' => 'https://example.com/already-subscribed',
 					'description' => __( 'Leave blank if you do not want to redirect already-subscribed contacts.', 'newsletter-optin-box' ),
 					'conditions'  => array(
-						array( 'key' => 'subscribeAction', 'value' => 'redirect' ),
-						array( 'key' => 'is_unsubscribe', 'value' => false ),
-						array( 'key' => 'redirectAlreadySubscribed', 'value' => true ),
+						array(
+							'key'   => 'subscribeAction',
+							'value' => 'redirect',
+						),
+						array(
+							'key'   => 'is_unsubscribe',
+							'value' => false,
+						),
+						array(
+							'key'   => 'redirectAlreadySubscribed',
+							'value' => true,
+						),
 					),
 				),
 			),

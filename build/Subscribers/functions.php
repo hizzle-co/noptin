@@ -452,9 +452,12 @@ function add_noptin_subscriber( $fields ) {
 	// Set the confirmation key.
 	$subscriber->set_confirm_key( md5( wp_generate_password( 100, true, true ) . uniqid() ) );
 
+	// Saved forms can override opt-in without changing other subscription sources.
+	$double_optin_override = \Hizzle\Noptin\Forms\Form::get_double_optin_override( $subscriber->get_source() );
+
 	// Set the subscriber status.
 	if ( empty( $fields['status'] ) ) {
-		$subscriber->set_status( get_noptin_option( 'double_optin', false ) ? 'pending' : 'subscribed' );
+		$subscriber->set_status( ( $double_optin_override ?? get_noptin_option( 'double_optin', false ) ) ? 'pending' : 'subscribed' );
 	}
 
 	// Backwards compatibility (status).
@@ -474,7 +477,7 @@ function add_noptin_subscriber( $fields ) {
 	}
 
 	// Do not set subscribed cookie for unsubscribed users.
-	$double_optin_enabled      = noptin_has_enabled_double_optin() || (bool) get_noptin_option( 'double_optin', false );
+	$double_optin_enabled      = $double_optin_override ?? ( noptin_has_enabled_double_optin() || (bool) get_noptin_option( 'double_optin', false ) );
 	$can_set_subscriber_cookie = $subscriber->is_active() && ( ! $double_optin_enabled || $subscriber->get_confirmed() );
 	if ( $can_set_subscriber_cookie ) {
 		$_GET['noptin_key'] = $subscriber->get_confirm_key();
@@ -840,13 +843,14 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 		return false;
 	}
 
-	// Abort if double opt-in is disabled.
-	$double_optin = noptin_has_enabled_double_optin() && ! use_custom_noptin_double_optin_email();
+	$subscriber = noptin_get_subscriber( $id );
+
+	// Abort if double opt-in is disabled for this subscriber's saved form or globally.
+	$override     = \Hizzle\Noptin\Forms\Form::get_double_optin_override( $subscriber->get_source() );
+	$double_optin = ( $override ?? noptin_has_enabled_double_optin() ) && ! use_custom_noptin_double_optin_email();
 	if ( empty( $double_optin ) && doing_action( 'noptin_subscriber_created' ) ) {
 		return false;
 	}
-
-	$subscriber = noptin_get_subscriber( $id );
 
 	// Abort if the subscriber is missing or confirmed.
 	if ( ! $subscriber->exists() || $subscriber->get_confirmed() ) {

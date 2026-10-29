@@ -335,9 +335,22 @@ class Listener {
 				return;
 			}
 
-			// If status is "unsubscribed", set it to "subscribed".
+			$optin_override        = Form::get_double_optin_override( $source );
+			$requires_confirmation = false;
+
+			// Preserve existing subscribed/pending states when a form overrides opt-in.
+			if ( null !== $optin_override ) {
+				$subscriber['status']    = $subscriber_obj->get_status();
+				$subscriber['confirmed'] = $subscriber_obj->get_confirmed();
+			}
+
+			// Resubscriptions must also honor an explicit confirmation requirement.
 			if ( 'unsubscribed' === $subscriber_obj->get_status() ) {
-				$subscriber['status'] = 'subscribed';
+				$requires_confirmation = true === $optin_override;
+				$subscriber['status']   = $requires_confirmation ? 'pending' : 'subscribed';
+				if ( $requires_confirmation ) {
+					$subscriber['confirmed'] = false;
+				}
 			}
 
 			// Update the subscriber properties.
@@ -349,7 +362,14 @@ class Listener {
 			}
 
 			// Save the subscriber.
-			$subscriber_obj->save();
+			$result = $subscriber_obj->save();
+			if ( is_wp_error( $result ) ) {
+				return $this->error->add( 'other_error', $result->get_error_message() );
+			}
+
+			if ( $requires_confirmation && ! use_custom_noptin_double_optin_email() ) {
+				send_new_noptin_subscriber_double_optin_email( $subscriber_id );
+			}
 
 			$this->last_event = 'updated';
 
@@ -404,6 +424,13 @@ class Listener {
 		 * @since 1.6.2
 		 */
 		$subscriber = apply_filters( 'noptin_form_subscriber_details', $subscriber, $source, $this );
+
+		// Enforce saved opt-in policy for public form submissions, including hidden fields.
+		$optin_override = Form::get_double_optin_override( $source );
+		if ( null !== $optin_override ) {
+			$subscriber['status']    = $optin_override ? 'pending' : 'subscribed';
+			$subscriber['confirmed'] = false;
+		}
 
 		// Add the subscriber.
 		$subscriber_id = add_noptin_subscriber( $subscriber );
