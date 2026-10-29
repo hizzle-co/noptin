@@ -190,6 +190,8 @@ Important security release addressing multiple vulnerabilities. Updating is stro
 == Changelog ==
 
 = 4.4.4 =
+* Add: Per-form double opt-in settings override.
+* Add: Optional redirects for already-subscribed contacts, with the option to show a message without redirecting.
 * Add: Optional plain-text alternatives for HTML emails.
 
 = 4.4.3 =
