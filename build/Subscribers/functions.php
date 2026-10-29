@@ -542,12 +542,13 @@ function noptin_is_email_domain_blocked( $email ) {
 /**
  * Updates a Noptin subscriber
  *
- * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber Subscriber ID, email, confirm key, or object.
+ * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber_id Subscriber ID, email, confirm key, or object.
  * @param array $to_update The subscriber fields to update.
+ * @param string|int|null $subscription_source Current subscription request source. Null keeps ordinary update behavior.
  * @access  public
  * @since   1.2.3
  */
-function update_noptin_subscriber( $subscriber_id, $to_update = array() ) {
+function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscription_source = null ) {
 
 	// Get the subscriber object.
 	$subscriber = noptin_get_subscriber( $subscriber_id );
@@ -565,11 +566,41 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array() ) {
 		}
 	}
 
+	$requires_confirmation = false;
+	if ( null !== $subscription_source ) {
+		$optin_override = \Hizzle\Noptin\Forms\Form::get_double_optin_override( $subscription_source );
+
+		// A subscription request must not demote subscribed contacts or confirm pending ones.
+		if ( null !== $optin_override ) {
+			$to_update['status']    = $subscriber->get_status();
+			$to_update['confirmed'] = $subscriber->get_confirmed();
+		}
+
+		if ( 'unsubscribed' === $subscriber->get_status() ) {
+			$requires_confirmation  = true === $optin_override;
+			$to_update['status']    = $requires_confirmation ? 'pending' : 'subscribed';
+			if ( $requires_confirmation ) {
+				$to_update['confirmed'] = false;
+			}
+		}
+	}
+
 	// Set the subscriber properties.
 	$subscriber->set_props( wp_unslash( $to_update ) );
 
-	// Save the subscriber.
-	return $subscriber->save();
+	if ( null !== $subscription_source ) {
+		foreach ( prepare_noptin_subscriber_source_fields( $subscription_source, array() ) as $merge_tag => $to_add ) {
+			$subscriber->set( $merge_tag . '::add', $to_add );
+		}
+	}
+
+	// Send confirmation only after a successful resubscription save.
+	$result = $subscriber->save();
+	if ( ! is_wp_error( $result ) && $requires_confirmation ) {
+		send_new_noptin_subscriber_double_optin_email( $subscriber->get_id() );
+	}
+
+	return $result;
 }
 
 /**
@@ -845,10 +876,8 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 
 	$subscriber = noptin_get_subscriber( $id );
 
-	// Abort if double opt-in is disabled for this subscriber's saved form or globally.
-	$override     = \Hizzle\Noptin\Forms\Form::get_double_optin_override( $subscriber->get_source() );
-	$double_optin = ( $override ?? noptin_has_enabled_double_optin() ) && ! use_custom_noptin_double_optin_email();
-	if ( empty( $double_optin ) && doing_action( 'noptin_subscriber_created' ) ) {
+	// Automatic delivery follows saved subscriber state, not mutable form/global settings.
+	if ( use_custom_noptin_double_optin_email() ) {
 		return false;
 	}
 
@@ -857,12 +886,12 @@ function send_new_noptin_subscriber_double_optin_email( $id, $force = false ) {
 		return false;
 	}
 
-	// Preference-only records can suppress confirmation for their creation request.
-	if ( ! apply_filters( 'noptin_should_send_double_optin_email', true, $subscriber, $force ) ) {
+	if ( ! $force && 'pending' !== $subscriber->get_status() ) {
 		return false;
 	}
 
-	if ( ! $force && 'pending' !== $subscriber->get_status() ) {
+	// Preference-only records can suppress confirmation for their creation request.
+	if ( ! apply_filters( 'noptin_should_send_double_optin_email', true, $subscriber, $force ) ) {
 		return false;
 	}
 

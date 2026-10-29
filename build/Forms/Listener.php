@@ -335,40 +335,10 @@ class Listener {
 				return;
 			}
 
-			$optin_override        = Form::get_double_optin_override( $source );
-			$requires_confirmation = false;
-
-			// Preserve existing subscribed/pending states when a form overrides opt-in.
-			if ( null !== $optin_override ) {
-				$subscriber['status']    = $subscriber_obj->get_status();
-				$subscriber['confirmed'] = $subscriber_obj->get_confirmed();
-			}
-
-			// Resubscriptions must also honor an explicit confirmation requirement.
-			if ( 'unsubscribed' === $subscriber_obj->get_status() ) {
-				$requires_confirmation = true === $optin_override;
-				$subscriber['status']   = $requires_confirmation ? 'pending' : 'subscribed';
-				if ( $requires_confirmation ) {
-					$subscriber['confirmed'] = false;
-				}
-			}
-
-			// Update the subscriber properties.
-			$subscriber_obj->set_props( wp_unslash( $subscriber ) );
-
-			// Set default values.
-			foreach ( prepare_noptin_subscriber_source_fields( $source, array() ) as $merge_tag => $to_add ) {
-				$subscriber_obj->set( $merge_tag . '::add', $to_add );
-			}
-
-			// Save the subscriber.
-			$result = $subscriber_obj->save();
+			// The shared updater owns subscription state, source defaults, and confirmation.
+			$result = update_noptin_subscriber( $subscriber_obj, $subscriber, $source );
 			if ( is_wp_error( $result ) ) {
 				return $this->error->add( 'other_error', $result->get_error_message() );
-			}
-
-			if ( $requires_confirmation && ! use_custom_noptin_double_optin_email() ) {
-				send_new_noptin_subscriber_double_optin_email( $subscriber_id );
 			}
 
 			$this->last_event = 'updated';
