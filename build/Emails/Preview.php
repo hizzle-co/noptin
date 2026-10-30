@@ -47,8 +47,19 @@ class Preview {
 	public static function init() {
 
 		// Preview email.
+		add_action( 'noptin_actions_handle_view_in_browser', array( __CLASS__, 'send_security_headers' ), 10, 0 );
 		add_action( 'noptin_page_view_in_browser', array( __CLASS__, 'view_in_browser' ), 10, 2 );
 		add_filter( 'template_redirect', array( __CLASS__, 'admin_preview' ), -100 );
+	}
+
+	/**
+	 * Restrict preview documents before the public actions-page shell outputs HTML.
+	 */
+	public static function send_security_headers() {
+		if ( ! headers_sent() ) {
+			// Append to preserve any stricter policy already supplied by the site.
+			header( "Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'unsafe-inline' http: https:; font-src http: https: data:; img-src http: https: data:; base-uri 'none'; form-action 'none'", false );
+		}
 	}
 
 	/**
@@ -99,6 +110,7 @@ class Preview {
 		}
 
 		remove_filter( 'get_post_metadata', '_wp_preview_meta_filter' );
+		self::send_security_headers();
 
 		// Prepare the preview.
 		self::$simulation = ! isset( $_GET['noptin_simulate'] ) || '0' !== $_GET['noptin_simulate']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
