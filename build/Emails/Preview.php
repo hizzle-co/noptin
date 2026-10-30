@@ -157,11 +157,13 @@ class Preview {
 		if ( 'preview' === self::$mode ) {
 			$skip_reason = self::$simulation ? self::get_skip_reason( self::$campaign, $empty_before, $not_empty_before ) : '';
 			if ( $skip_reason ) {
-				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><main style="max-width:680px;margin:40px auto;padding:24px;font:16px/1.5 sans-serif"><h1>This email would not be sent now</h1><p>' . esc_html( $skip_reason ) . '</p><p>' . '<a href="' . esc_url( add_query_arg( 'noptin_simulate', 0 ) ) . '">View sample content using older items.</a></p></main></body></html>';
+				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><main style="max-width:680px;margin:40px auto;padding:24px;font:16px/1.5 sans-serif"><h1>This email would not be sent now</h1><p>' . esc_html( $skip_reason ) . '</p><p><a href="' . esc_url( add_query_arg( 'noptin_simulate', 0 ) ) . '">View sample content using older items.</a></p></main></body></html>';
 			} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
 				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><pre style="margin:24px;white-space:pre-wrap">' . esc_html( $preview ) . '</pre></body></html>';
 			}
 			$preview = self::add_preview_controls( $preview );
+		} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
+			$preview = '<pre style="white-space:pre-wrap">' . esc_html( $preview ) . '</pre>';
 		}
 
 		echo $preview; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
