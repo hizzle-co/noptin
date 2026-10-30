@@ -1019,7 +1019,8 @@ abstract class Collection {
 				$items = wp_parse_id_list( $items );
 			}
 		} else {
-			parse_str( rawurldecode( html_entity_decode( $atts['query'] ) ), $query );
+			// Block serialization HTML-escapes query separators; preserve all other entities.
+			parse_str( rawurldecode( str_replace( '&amp;', '&', $atts['query'] ) ), $query );
 
 			// loop query and convert booleans.
 			foreach ( $query as $key => $value ) {
