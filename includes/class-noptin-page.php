@@ -137,6 +137,21 @@ class Noptin_Page {
 	}
 
 	/**
+	 * Read template selection from authenticated tokens, retaining legacy query flags.
+	 *
+	 * @return bool
+	 */
+	public function use_empty_template() {
+		$value = trim( $this->get_request_value(), '/' );
+		if ( preg_match( '/^v[0-9]+:/', $value ) ) {
+			$data = json_decode( noptin_decrypt( $value ), true );
+			return '' !== $this->get_request_action() && is_array( $data ) && 1 === ( $data['nte'] ?? null );
+		}
+
+		return isset( $_GET['nte'] );
+	}
+
+	/**
 	 * Retrieves the request recipient
 	 *
 	 * @access      public
@@ -180,7 +195,7 @@ class Noptin_Page {
 				if ( '' === $this->get_request_action() ) {
 					return array();
 				}
-				unset( $decoded['noptin_ns'] );
+				unset( $decoded['noptin_ns'], $decoded['nte'] );
 			}
 			return empty( $decoded ) ? $default : $decoded;
 		}
@@ -304,7 +319,7 @@ class Noptin_Page {
 		}
 
 		$template = locate_noptin_template( 'actions-page.php' );
-		if ( isset( $_GET['nte'] ) ) {
+		if ( $this->use_empty_template() ) {
 			$template = locate_noptin_template( 'actions-page-empty.php' );
 		}
 

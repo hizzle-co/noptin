@@ -10,7 +10,6 @@ defined( 'ABSPATH' ) || exit;
  * @version 1.0.0
  */
 class Subscriber extends \Hizzle\Store\Record {
-
 	/**
 	 * Returns the subscriber's full name.
 	 *
@@ -560,10 +559,10 @@ class Subscriber extends \Hizzle\Store\Record {
 	 */
 	public function get_manage_preferences_url() {
 		$url = get_noptin_option( 'manage_preferences_url' );
-		parse_str( (string) wp_parse_url( $url ?: '', PHP_URL_QUERY ), $query );
-		$data = isset( $query['nv'] ) && is_string( $query['nv'] ) ? json_decode( noptin_decrypt( $query['nv'] ), true ) : null;
+		parse_str( (string) wp_parse_url( $url ? $url : '', PHP_URL_QUERY ), $query );
+		$data        = isset( $query['nv'] ) && is_string( $query['nv'] ) ? json_decode( noptin_decrypt( $query['nv'] ), true ) : null;
 		$action_args = array( 'noptin_ns', 'nv', 'nte' );
-		$is_default = remove_query_arg( $action_args, $url ?: '' ) === remove_query_arg( $action_args, get_noptin_action_url( 'manage_preferences' ) )
+		$is_default  = remove_query_arg( $action_args, $url ? $url : '' ) === remove_query_arg( $action_args, get_noptin_action_url( 'manage_preferences' ) )
 			&& ( ( 'manage_preferences' === ( $query['noptin_ns'] ?? '' ) && empty( $query['nv'] ) ) || array( 'noptin_ns' => 'manage_preferences' ) === $data );
 
 		if ( empty( $url ) || $is_default ) {

@@ -115,14 +115,18 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
 	$data = empty( $value ) ? array() : json_decode( noptin_decrypt( $value ), true );
 	if ( is_array( $data ) ) {
 		$data['noptin_ns'] = $action;
+		unset( $data['nte'] );
+		if ( $use_empty_template ) {
+			$data['nte'] = 1;
+		}
+
 		try {
 			$value  = noptin_encrypt_action_data( $data );
 			$action = false;
 		} catch ( Exception $error ) {
 			// Rebuild a legacy payload even if the supplied value was already action-bound.
-			unset( $data['noptin_ns'] );
+			unset( $data['noptin_ns'], $data['nte'] );
 			$value = empty( $value ) ? false : noptin_encrypt( wp_json_encode( $data ) );
-			noptin_error_log( 'Authenticated action-link encryption failed; using legacy URL format.', '', false );
 		}
 	}
 
@@ -137,7 +141,7 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
 		array(
 			'noptin_ns' => false === $action ? false : rawurlencode( $action ),
 			'nv'        => empty( $value ) ? false : rawurlencode( $value ),
-			'nte'       => $use_empty_template,
+			'nte'       => false === $action ? false : $use_empty_template,
 		),
 		$home_url
 	);
