@@ -90,10 +90,22 @@ class Noptin_Page {
 	 * @return      string
 	 */
 	public function get_request_action() {
+		$value   = trim( $this->get_request_value(), '/' );
+		$decoded = json_decode( noptin_decrypt( $value ), true );
+
+		if ( is_array( $decoded ) && array_key_exists( 'noptin_ns', $decoded ) ) {
+			$action = $decoded['noptin_ns'];
+			return is_string( $action ) && preg_match( '/^[a-z0-9_-]+$/D', $action ) ? $action : '';
+		}
+
+		// An invalid new token must never downgrade to a query-string action.
+		if ( preg_match( '/^v[0-9]+:/', $value ) ) {
+			return '';
+		}
 
 		// New format. example.com?noptin_ns=$action
 		if ( ! empty( $_GET['noptin_ns'] ) ) {
-			return sanitize_title_with_dashes( trim( urldecode( $_GET['noptin_ns'] ) ) );
+			return is_string( $_GET['noptin_ns'] ) ? sanitize_title_with_dashes( trim( urldecode( $_GET['noptin_ns'] ) ) ) : '';
 		}
 
 		// Backwards compatibility. example.com/noptin_newsletter/$action
@@ -121,7 +133,7 @@ class Noptin_Page {
 	 * @return string
 	 */
 	public function get_request_value() {
-		return isset( $_GET['nv'] ) ? sanitize_text_field( urldecode( $_REQUEST['nv'] ) ) : '';
+		return isset( $_GET['nv'] ) && is_string( $_GET['nv'] ) ? sanitize_text_field( urldecode( wp_unslash( $_GET['nv'] ) ) ) : '';
 	}
 
 	/**
@@ -155,13 +167,25 @@ class Noptin_Page {
 
 		// Remove trailing slash.
 		$recipient = trim( $recipient, '/' );
+		if ( preg_match( '/^v[0-9]+:/', $recipient ) && '' === $this->get_request_action() ) {
+			return array();
+		}
 
 		// Try to decode the recipient.
 		// New recipient format.
 		$decoded = json_decode( noptin_decrypt( $recipient ), true );
 
 		if ( ! empty( $decoded ) && is_array( $decoded ) ) {
-			return $decoded;
+			if ( array_key_exists( 'noptin_ns', $decoded ) ) {
+				if ( '' === $this->get_request_action() ) {
+					return array();
+				}
+				unset( $decoded['noptin_ns'] );
+			}
+			return empty( $decoded ) ? $default : $decoded;
+		}
+		if ( 0 === strpos( $recipient, 'v1:' ) ) {
+			return array();
 		}
 
 		// Old format (subscribers).
@@ -220,7 +244,7 @@ class Noptin_Page {
 
 	public function listen() {
 
-		if ( empty( $_GET['noptin_ns'] ) && empty( $GLOBALS['wp']->query_vars['noptin_newsletter'] ) ) {
+		if ( ! is_noptin_actions_page() && empty( $GLOBALS['wp']->query_vars['noptin_newsletter'] ) ) {
 			return;
 		}
 

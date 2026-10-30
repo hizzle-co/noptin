@@ -987,7 +987,7 @@ class Generator {
 		$url = str_replace( '&amp;', '&', $matches[2] );
 
 		// Skip non-http(s) URLs and action page URLs.
-		if ( ! preg_match( '/^https?:\/\//i', $url ) || false !== strpos( $url, 'noptin_ns' ) ) {
+		if ( ! preg_match( '/^https?:\/\//i', $url ) || noptin_is_action_url( $url ) ) {
 			return $matches[0];
 		}
 
@@ -1112,7 +1112,7 @@ class Generator {
 		$url = str_replace( '&amp;', '&', $matches[2] );
 
 		// Skip action page URLs.
-		if ( false === strpos( $url, 'noptin_ns' ) ) {
+		if ( ! noptin_is_action_url( $url ) ) {
 			$args = array_merge(
 				$this->recipient,
 				array( 'to' => $url )

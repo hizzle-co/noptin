@@ -112,6 +112,12 @@ function update_noptin_option( $key, $value ) {
  * @since   1.0.6
  */
 function get_noptin_action_url( $action, $value = false, $use_empty_template = false ) {
+	$data = empty( $value ) ? array() : json_decode( noptin_decrypt( $value ), true );
+	if ( is_array( $data ) ) {
+		$data['noptin_ns'] = $action;
+		$value             = noptin_encrypt_action_data( $data );
+		$action            = false;
+	}
 
 	$home_url = apply_filters( 'noptin_action_url_home_url', get_home_url() );
 
@@ -122,7 +128,7 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
 
 	return add_query_arg(
 		array(
-			'noptin_ns' => rawurlencode( $action ),
+			'noptin_ns' => false === $action ? false : rawurlencode( $action ),
 			'nv'        => empty( $value ) ? false : rawurlencode( $value ),
 			'nte'       => $use_empty_template,
 		),
@@ -138,7 +144,18 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
  */
 function is_noptin_actions_page() {
 	$matched_var = get_query_var( 'noptin_newsletter' );
-	return ! empty( $_GET['noptin_ns'] ) || ! empty( $matched_var );
+	return ! empty( $_GET['noptin_ns'] ) || ! empty( $matched_var ) || ( isset( $_GET['nv'] ) && is_string( $_GET['nv'] ) && 0 === strpos( $_GET['nv'], 'v1:' ) );
+}
+
+/**
+ * Identify legacy and action-bound links before applying email tracking or UTM parameters.
+ *
+ * @param string $url URL to inspect.
+ * @return bool
+ */
+function noptin_is_action_url( $url ) {
+	parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query );
+	return ! empty( $query['noptin_ns'] ) || ( isset( $query['nv'] ) && is_string( $query['nv'] ) && 0 === strpos( $query['nv'], 'v1:' ) );
 }
 
 /**
@@ -1527,6 +1544,19 @@ function noptin_decrypt( $encoded ) {
 		return '';
 	}
 
+	if ( 0 === strpos( $encoded, 'v1:' ) ) {
+		$packed = base64_decode( strtr( substr( $encoded, 3 ), '-_', '+/' ), true );
+		if ( false === $packed || strlen( $packed ) <= 28 ) {
+			return '';
+		}
+		$key    = hash_hmac( 'sha256', 'noptin-action-v1', wp_salt( 'auth' ), true );
+		$result = openssl_decrypt( substr( $packed, 28 ), 'aes-256-gcm', $key, OPENSSL_RAW_DATA, substr( $packed, 0, 12 ), substr( $packed, 12, 16 ), 'noptin-action-v1' );
+		return false === $result ? '' : $result;
+	}
+	if ( preg_match( '/^v[0-9]+:/', $encoded ) ) {
+		return '';
+	}
+
 	// Decode.
 	// @see noptin_encrypt()
 	$decoded = base64_decode( strtr( $encoded, '._-', '+/=' ) );
@@ -1543,6 +1573,23 @@ function noptin_decrypt( $encoded ) {
 
 	$result = openssl_decrypt( $decoded, 'AES-128-CBC', $passphrase, OPENSSL_RAW_DATA, $iv );
 	return false === $result ? '' : $result;
+}
+
+/**
+ * Encrypt and authenticate a new action payload, independently of legacy ciphertexts.
+ *
+ * @param array $data Recipient data including the intended noptin_ns action.
+ * @return string Versioned, URL-safe authenticated token.
+ */
+function noptin_encrypt_action_data( $data ) {
+	$key        = hash_hmac( 'sha256', 'noptin-action-v1', wp_salt( 'auth' ), true );
+	$iv         = random_bytes( 12 );
+	$tag        = '';
+	$ciphertext = openssl_encrypt( wp_json_encode( $data ), 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $tag, 'noptin-action-v1' );
+	if ( false === $ciphertext ) {
+		throw new RuntimeException( 'Could not encrypt the Noptin action link.' );
+	}
+	return 'v1:' . rtrim( strtr( base64_encode( $iv . $tag . $ciphertext ), '+/', '-_' ), '=' );
 }
 
 /**
