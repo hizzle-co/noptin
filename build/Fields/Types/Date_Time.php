@@ -46,8 +46,8 @@ class Date_Time extends Text {
 			)
 		);
 
-		// Remove the length.
-		unset( $schema[ $column ]['length'] );
+		// Keep the datastore's datetime sanitization instead of text normalization.
+		unset( $schema[ $column ]['length'], $schema[ $column ]['sanitize_callback'] );
 
 		return $schema;
 	}

@@ -38,6 +38,8 @@ class Number extends Text {
 	public function filter_db_schema( $schema, $custom_field ) {
 		$schema = parent::filter_db_schema( $schema, $custom_field );
 		$column = $this->get_column_name( $custom_field );
+		// Keep the datastore's numeric sanitization instead of text normalization.
+		unset( $schema[ $column ]['sanitize_callback'] );
 
 		$schema[ $column ] = array_merge(
 			$schema[ $column ],

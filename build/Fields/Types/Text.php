@@ -29,6 +29,21 @@ class Text extends Base {
 	}
 
 	/**
+	 * Store text as decoded plain text, stripping markup after one decoding pass.
+	 *
+	 * @param mixed $value Submitted value.
+	 * @return string
+	 */
+	public function sanitize_value( $value ) {
+		if ( ! is_scalar( $value ) ) {
+			return '';
+		}
+
+		$value = html_entity_decode( (string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		return sanitize_text_field( wp_strip_all_tags( $value ) );
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function output( $args ) {
@@ -92,10 +107,7 @@ class Text extends Base {
 			$schema[ $column ]['default']  = '';
 		}
 
-		// Sanitize options.
-		if ( is_callable( array( $this, 'sanitize_value' ) ) ) {
-			$schema[ $column ]['sanitize_callback'] = array( $this, 'sanitize_value' );
-		}
+		$schema[ $column ]['sanitize_callback'] = array( $this, 'sanitize_value' );
 
 		return $schema;
 	}
