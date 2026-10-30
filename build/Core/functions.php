@@ -115,8 +115,15 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
 	$data = empty( $value ) ? array() : json_decode( noptin_decrypt( $value ), true );
 	if ( is_array( $data ) ) {
 		$data['noptin_ns'] = $action;
-		$value             = noptin_encrypt_action_data( $data );
-		$action            = false;
+		try {
+			$value  = noptin_encrypt_action_data( $data );
+			$action = false;
+		} catch ( Exception $error ) {
+			// Rebuild a legacy payload even if the supplied value was already action-bound.
+			unset( $data['noptin_ns'] );
+			$value = empty( $value ) ? false : noptin_encrypt( wp_json_encode( $data ) );
+			noptin_error_log( 'Authenticated action-link encryption failed; using legacy URL format.', '', false );
+		}
 	}
 
 	$home_url = apply_filters( 'noptin_action_url_home_url', get_home_url() );
@@ -1546,13 +1553,16 @@ function noptin_decrypt( $encoded ) {
 
 	if ( 0 === strpos( $encoded, 'v1:' ) ) {
 		$packed = base64_decode( strtr( substr( $encoded, 3 ), '-_', '+/' ), true );
+
 		if ( false === $packed || strlen( $packed ) <= 28 ) {
 			return '';
 		}
+
 		$key    = hash_hmac( 'sha256', 'noptin-action-v1', wp_salt( 'auth' ), true );
 		$result = openssl_decrypt( substr( $packed, 28 ), 'aes-256-gcm', $key, OPENSSL_RAW_DATA, substr( $packed, 0, 12 ), substr( $packed, 12, 16 ), 'noptin-action-v1' );
 		return false === $result ? '' : $result;
 	}
+
 	if ( preg_match( '/^v[0-9]+:/', $encoded ) ) {
 		return '';
 	}
