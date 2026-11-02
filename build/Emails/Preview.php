@@ -146,6 +146,7 @@ class Preview {
 
 		$empty_before     = did_action( 'noptin_collection_list_empty' );
 		$not_empty_before = did_action( 'noptin_collection_list_not_empty' );
+		$last_send_before = did_filter( 'noptin_get_last_send_date' );
 
 		// Prepare test content if needed.
 		$prepare_preview = self::$campaign->prepare_preview( self::$mode, self::$user );
@@ -173,7 +174,11 @@ class Preview {
 			} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
 				$preview = '<!doctype html><html><head><meta charset="utf-8"><title>Email preview</title></head><body><pre style="margin:24px;white-space:pre-wrap">' . esc_html( $preview ) . '</pre></body></html>';
 			}
-			$preview = self::add_preview_controls( $preview );
+			// Detect rendered lists, including those supplied by templates or nested tags.
+			// Posts merge tags use the last-send filter without firing collection actions.
+			if ( did_action( 'noptin_collection_list_empty' ) > $empty_before || did_action( 'noptin_collection_list_not_empty' ) > $not_empty_before || did_filter( 'noptin_get_last_send_date' ) > $last_send_before ) {
+				$preview = self::add_preview_controls( $preview );
+			}
 		} elseif ( 'plain_text' === self::$campaign->get_email_type() ) {
 			$preview = '<pre style="white-space:pre-wrap">' . esc_html( $preview ) . '</pre>';
 		}
