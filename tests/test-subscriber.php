@@ -294,17 +294,21 @@ class SubscriberTest extends WP_UnitTestCase {
     public function testSubscriberUrls() {
         $subscriber = noptin_get_subscriber(self::$subscriber_id);
 
-        // Test unsubscribe URL
-        $unsubscribe_url = $subscriber->get_unsubscribe_url();
-        $this->assertStringContainsString('noptin_ns=unsubscribe', $unsubscribe_url);
+        foreach ( array(
+            'unsubscribe' => $subscriber->get_unsubscribe_url(),
+            'resubscribe' => $subscriber->get_resubscribe_url(),
+            'confirm'     => $subscriber->get_confirm_subscription_url(),
+        ) as $action => $url ) {
+            parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query );
+            $this->assertArrayNotHasKey( 'noptin_ns', $query );
+            $this->assertArrayHasKey( 'nv', $query );
+            $this->assertStringStartsWith( 'v1:', $query['nv'] );
 
-        // Test resubscribe URL
-        $resubscribe_url = $subscriber->get_resubscribe_url();
-        $this->assertStringContainsString('noptin_ns=resubscribe', $resubscribe_url);
-
-        // Test confirm subscription URL
-        $confirm_url = $subscriber->get_confirm_subscription_url();
-        $this->assertStringContainsString('noptin_ns=confirm', $confirm_url);
+            $recipient = json_decode( noptin_decrypt( $query['nv'] ), true );
+            $this->assertIsArray( $recipient );
+            $this->assertSame( $action, $recipient['noptin_ns'] );
+            $this->assertSame( $subscriber->get_email(), $recipient['email'] );
+        }
     }
 
     public function testActionPageRecipientRequiresToken() {
