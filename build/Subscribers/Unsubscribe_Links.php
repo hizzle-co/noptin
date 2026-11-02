@@ -154,7 +154,7 @@ class Unsubscribe_Links {
 			array(
 				'custom_unsubscribe_links' => array(
 					'el'               => 'repeater',
-					'label'            => __( 'Additional unsubscribe links', 'newsletter-optin-box' ),
+					'label'            => __( 'Custom unsubscribe links', 'newsletter-optin-box' ),
 					'default'          => array(),
 					'description'      => __( 'Change selected preferences without unsubscribing from all emails. Configure the corresponding recipient filters in your campaigns. Insert the merge tag shown on each link into your email.', 'newsletter-optin-box' ),
 					'customAttributes' => array(
