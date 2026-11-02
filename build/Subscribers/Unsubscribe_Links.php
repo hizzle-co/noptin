@@ -156,7 +156,7 @@ class Unsubscribe_Links {
 					'el'               => 'repeater',
 					'label'            => __( 'Custom unsubscribe links', 'newsletter-optin-box' ),
 					'default'          => array(),
-					'description'      => __( 'Change selected preferences without unsubscribing from all emails. Configure the corresponding recipient filters in your campaigns. Insert the merge tag shown on each link into your email.', 'newsletter-optin-box' ),
+					'description'      => __( 'Let subscribers leave a specific newsletter while keeping their other subscriptions. For each link, choose which tags or fields to update. Copy its merge tag into the URL field of a link or button in your email.', 'newsletter-optin-box' ),
 					'customAttributes' => array(
 						'button'      => __( 'Add unsubscribe link', 'newsletter-optin-box' ),
 						'cardProps'   => array( 'size' => 'medium' ),
@@ -169,10 +169,10 @@ class Unsubscribe_Links {
 						'fields'      => array(
 							'changes'  => array(
 								'el'               => 'repeater',
-								'label'            => __( 'Preference changes', 'newsletter-optin-box' ),
+								'label'            => __( 'Tags and fields to update', 'newsletter-optin-box' ),
 								'default'          => array(),
 								'customAttributes' => array(
-									'button'      => __( 'Add preference change', 'newsletter-optin-box' ),
+									'button'      => __( 'Add', 'newsletter-optin-box' ),
 									'defaultItem' => array(
 										'segment' => 'tags',
 										'action'  => 'remove',
