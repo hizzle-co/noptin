@@ -155,7 +155,7 @@ class Menu {
 				),
 				'fields'       => __( 'Custom Fields', 'newsletter-optin-box' ),
 				'integrations' => __( 'Integrations', 'newsletter-optin-box' ),
-				'messages'     => __( 'Messages', 'newsletter-optin-box' ),
+				'messages'     => __( 'Subscriber Pages', 'newsletter-optin-box' ),
 			)
 		);
 
