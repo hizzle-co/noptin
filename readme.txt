@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Version: 4.4.3
-Stable tag: 4.4.3
+Version: 4.4.4
+Stable tag: 4.4.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -184,12 +184,16 @@ Noptin's newsletter forms can inherit styling from your theme, and you can custo
 
 == Upgrade Notice ==
 
+= 4.4.4 =
+This release includes important security improvements. Updating is strongly recommended.
+
 = 4.4.0 =
 Important security release addressing multiple vulnerabilities. Updating is strongly recommended.
 
 == Changelog ==
 
 = 4.4.4 =
+* Security: General security improvements and hardening.
 * Add: Per-form double opt-in settings override.
 * Add: Optional redirects for already-subscribed contacts, with the option to show a message without redirecting.
 * Add: Optional plain-text alternatives for HTML emails.
