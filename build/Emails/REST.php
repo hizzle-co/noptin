@@ -745,6 +745,11 @@ class REST extends \WP_REST_Posts_Controller {
 		return current_user_can_manage_noptin_campaign_type( $this->get_stored_campaign_type( $post->ID ) );
 	}
 
+	/** Check the saved type independently of request-supplied metadata. */
+	protected function check_update_permission( $post ) {
+		return parent::check_update_permission( $post ) && current_user_can_manage_noptin_campaign_type( $this->get_stored_campaign_type( $post->ID ) );
+	}
+
 	/**
 	 * Checks if a given request has access to update a post.
 	 *
@@ -754,8 +759,7 @@ class REST extends \WP_REST_Posts_Controller {
 	 * @return true|WP_Error True if the request has access to update the item, WP_Error object otherwise.
 	 */
 	public function update_item_permissions_check( $request ) {
-		$type = $this->get_request_campaign_type( $request );
-		if ( ! $type || ! current_user_can_manage_noptin_campaign_type( $type ) ) {
+		if ( ! $this->can_manage_request_campaign_types( $request ) ) {
 			return false;
 		}
 
@@ -771,8 +775,7 @@ class REST extends \WP_REST_Posts_Controller {
 	 * @return bool|\WP_Error
 	 */
 	public function create_item_permissions_check( $request ) {
-		$type = $this->get_request_campaign_type( $request );
-		if ( ! $type || ! current_user_can_manage_noptin_campaign_type( $type ) ) {
+		if ( ! $this->can_manage_request_campaign_types( $request ) ) {
 			return false;
 		}
 
@@ -888,28 +891,44 @@ class REST extends \WP_REST_Posts_Controller {
 	}
 
 	/**
-	 * Gets a campaign type from a REST request or existing campaign.
+	 * Gets the type that will actually be persisted, not the collection filter.
 	 *
 	 * @param \WP_REST_Request $request Request object.
 	 * @return string
 	 */
 	private function get_request_campaign_type( $request ) {
-		$type = $request->get_param( 'campaign_type' );
 		$meta = $request->get_param( 'meta' );
 
 		if ( is_object( $meta ) ) {
 			$meta = (array) $meta;
 		}
 
-		if ( empty( $type ) && is_array( $meta ) ) {
-			$type = $meta['campaign_type'] ?? '';
+		if ( is_array( $meta ) && array_key_exists( 'campaign_type', $meta ) ) {
+			return null === $meta['campaign_type'] ? 'newsletter' : sanitize_key( $meta['campaign_type'] );
 		}
 
-		if ( empty( $type ) && $request->get_param( 'id' ) ) {
-			$type = get_post_meta( (int) $request->get_param( 'id' ), 'campaign_type', true );
+		if ( $request->get_param( 'id' ) ) {
+			return $this->get_stored_campaign_type( (int) $request->get_param( 'id' ) );
 		}
 
-		return sanitize_key( $type );
+		return 'newsletter';
+	}
+
+	/** Authorize the destination type and every supplied subtype field before writing. */
+	private function can_manage_request_campaign_types( $request ) {
+		$type = $this->get_request_campaign_type( $request );
+		if ( ! $type || ! current_user_can_manage_noptin_campaign_type( $type ) ) {
+			return false;
+		}
+
+		$meta = (array) $request->get_param( 'meta' );
+		foreach ( Main::get_email_types() as $email_type ) {
+			if ( $email_type->supports_sub_types && array_key_exists( $email_type->type . '_type', $meta ) && ! current_user_can_manage_noptin_campaign_type( $email_type->type ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

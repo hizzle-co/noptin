@@ -67,11 +67,15 @@ class Main {
 			wp_verify_nonce( $_REQUEST['noptin_email_action_nonce'], 'noptin_email_action' )
 		) {
 			$method   = 'admin_' . $_REQUEST['noptin_email_action'];
-			$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_GET['noptin_campaign'] ) );
+			$campaign = new \Hizzle\Noptin\Emails\Email( intval( $_REQUEST['noptin_campaign'] ) );
 
 			// Abort if not exists.
 			if ( ! $campaign->exists() ) {
 				self::redirect_from_action_with_error( 'Invalid campaign.' );
+			}
+
+			if ( ! current_user_can_manage_noptin_campaign_type( get_post_meta( $campaign->id, 'campaign_type', true ) ?: 'newsletter' ) ) {
+				self::redirect_from_action_with_error( 'You do not have permission to manage this campaign type.' );
 			}
 
 			if ( method_exists( __CLASS__, $method ) ) {
@@ -208,8 +212,8 @@ class Main {
 	 */
 	public static function admin_duplicate_campaign( $campaign ) {
 
-		// Check if the user can publish the campaign.
-		if ( ! $campaign->current_user_can_edit() ) {
+		// Duplication also copies descendants, so authorize the entire tree first.
+		if ( ! self::can_manage_campaign_tree( $campaign, 'edit' ) ) {
 			self::redirect_from_action_with_error( 'You do not have permission to duplicate this campaign.' );
 		}
 
@@ -251,7 +255,7 @@ class Main {
 	public static function admin_delete_campaign( $campaign ) {
 
 		// Check if the user can delete the campaign.
-		if ( ! $campaign->current_user_can_delete() ) {
+		if ( ! self::can_manage_campaign_tree( $campaign, 'delete' ) ) {
 			self::redirect_from_action_with_error( 'You do not have permission to delete this campaign.' );
 		}
 
@@ -300,6 +304,24 @@ class Main {
 
 		// Show success info.
 		self::redirect_from_action_with_success( __( 'The campaign has been restored.', 'newsletter-optin-box' ) );
+	}
+
+	/** Authorize descendants before a recursive duplicate or delete changes anything. */
+	private static function can_manage_campaign_tree( $campaign, $operation, &$seen = array() ) {
+		if ( isset( $seen[ $campaign->id ] ) ) {
+			return false;
+		}
+		$seen[ $campaign->id ] = true;
+		$allowed              = 'delete' === $operation ? $campaign->current_user_can_delete() : $campaign->current_user_can_edit();
+		if ( ! $allowed ) {
+			return false;
+		}
+		foreach ( $campaign->get_children( 'edit' === $operation ? 'any' : 'publish' ) as $child ) {
+			if ( ! self::can_manage_campaign_tree( $child, $operation, $seen ) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

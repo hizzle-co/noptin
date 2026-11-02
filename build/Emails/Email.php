@@ -1356,6 +1356,8 @@ class Email {
 	 */
 	public function duplicate( $override = array() ) {
 		$args = $this->to_array();
+		// Copies, including sequence children, require explicit activation.
+		$args['status'] = 'draft';
 
 		// Remove id.
 		unset( $args['id'] );
@@ -1375,7 +1377,7 @@ class Email {
 
 		// Duplicate any children.
 		if ( $this->supports( 'child_type' ) ) {
-			foreach ( $this->get_children() as $child ) {
+			foreach ( $this->get_children( 'any' ) as $child ) {
 				$child->duplicate( array( 'parent_id' => $duplicate->id ) );
 			}
 		}
@@ -1386,9 +1388,10 @@ class Email {
 	/**
 	 * Fetches the children of this email.
 	 *
+	 * @param string $post_status Child status, or any to include draft copies.
 	 * @return Email[]
 	 */
-	public function get_children() {
+	public function get_children( $post_status = 'publish' ) {
 
 		// Abort if id is not set.
 		if ( ! $this->exists() ) {
@@ -1399,6 +1402,7 @@ class Email {
 			array(
 				'post_type'   => 'noptin-campaign',
 				'post_parent' => $this->id,
+				'post_status' => $post_status,
 				'numberposts' => -1,
 			)
 		);
@@ -1610,7 +1614,7 @@ class Email {
 			return Main::current_user_can_create_new_campaign( $this->type );
 		}
 
-		return current_user_can( 'edit_post', $this->id );
+		return current_user_can( 'edit_post', $this->id ) && current_user_can_manage_noptin_campaign_type( get_post_meta( $this->id, 'campaign_type', true ) ?: 'newsletter' );
 	}
 
 	/**
@@ -1625,7 +1629,7 @@ class Email {
 			return false;
 		}
 
-		return current_user_can( 'delete_post', $this->id );
+		return current_user_can( 'delete_post', $this->id ) && current_user_can_manage_noptin_campaign_type( get_post_meta( $this->id, 'campaign_type', true ) ?: 'newsletter' );
 	}
 
 	/**
