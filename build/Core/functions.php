@@ -303,7 +303,7 @@ function get_noptin_plugin_path( $append = '' ) {
 function noptin_ob_get_clean( $file, $args = array() ) {
 
 	// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
-	extract( $args );
+	extract( $args, EXTR_SKIP );
 	ob_start();
 	include $file;
 	return ob_get_clean();
@@ -385,8 +385,9 @@ function get_noptin_template( $template_name, $args = array(), $template_path = 
 
 	if ( ! empty( $the_template_path ) ) {
 		if ( $args && is_array( $args ) ) {
-			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Please, forgive us.
-			extract( $args );
+			// Merge-tag attributes can contain subscriber data; never overwrite the resolved path.
+			// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Existing template variable API.
+			extract( $args, EXTR_SKIP );
 		}
 
 		include $the_template_path;
