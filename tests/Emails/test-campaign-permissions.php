@@ -227,4 +227,35 @@ class Test_Campaign_Permissions extends Noptin_Regression_Test_Case {
 			wp_delete_user( $admin_id );
 		}
 	}
+
+	public function test_campaign_without_data_metadata_loads_legacy_fields() {
+		$post_id = wp_insert_post( array(
+			'post_type' => 'noptin-campaign',
+			'post_status' => 'draft',
+			'post_title' => 'Legacy campaign fixture',
+			'post_content' => 'Legacy email body',
+			'meta_input' => array( 'campaign_type' => 'newsletter' ),
+		) );
+		$this->assertGreaterThan( 0, $post_id );
+		$missing_data = static function ( $value, $object_id, $meta_key, $single ) use ( $post_id ) {
+			if ( $post_id === $object_id && 'campaign_data' === $meta_key ) {
+				return $single ? '' : array();
+			}
+			return $value;
+		};
+		// Exercise missing metadata even when REST has registered a default value.
+		add_filter( 'default_post_metadata', $missing_data, PHP_INT_MAX, 4 );
+		try {
+			// The insertion hook also loads the campaign before REST metadata is saved.
+			delete_post_meta( $post_id, 'campaign_data' );
+			$this->assertSame( array(), get_post_meta( $post_id, 'campaign_data' ) );
+			$email = new Email( $post_id );
+			$this->assertSame( $post_id, $email->id );
+			$this->assertSame( 'Legacy campaign fixture', $email->subject );
+			$this->assertStringContainsString( 'Legacy email body', $email->options['content_normal'] );
+		} finally {
+			remove_filter( 'default_post_metadata', $missing_data, PHP_INT_MAX );
+			wp_delete_post( $post_id, true );
+		}
+	}
 }

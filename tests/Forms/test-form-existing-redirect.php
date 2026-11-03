@@ -11,11 +11,15 @@ class Test_Form_Existing_Redirect extends WP_UnitTestCase {
 
 	private $subscriber;
 	private $request_globals;
+	private $server_globals;
 
 	public function set_up() {
 		parent::set_up();
 		$this->request_globals = $_REQUEST;
+		$this->server_globals = $_SERVER;
+		$_SERVER['HTTP_ACCEPT'] = 'application/json';
 		add_filter( 'pre_wp_mail', '__return_false', PHP_INT_MAX );
+		add_filter( 'noptin_disable_cookies', '__return_true' );
 		add_filter( 'noptin_has_enabled_double_optin', '__return_true' );
 		$this->subscriber = noptin_get_subscriber( 0 );
 		$this->subscriber->set_email( 'form-redirect-' . wp_generate_uuid4() . '@example.test' );
@@ -32,7 +36,9 @@ class Test_Form_Existing_Redirect extends WP_UnitTestCase {
 			}
 		} finally {
 			$_REQUEST = $this->request_globals;
+			$_SERVER = $this->server_globals;
 			remove_filter( 'pre_wp_mail', '__return_false', PHP_INT_MAX );
+			remove_filter( 'noptin_disable_cookies', '__return_true' );
 			remove_filter( 'noptin_has_enabled_double_optin', '__return_true' );
 			parent::tear_down();
 		}
