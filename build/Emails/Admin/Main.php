@@ -312,7 +312,7 @@ class Main {
 			return false;
 		}
 		$seen[ $campaign->id ] = true;
-		$allowed              = 'delete' === $operation ? $campaign->current_user_can_delete() : $campaign->current_user_can_edit();
+		$allowed = 'delete' === $operation ? $campaign->current_user_can_delete() : $campaign->current_user_can_edit();
 		if ( ! $allowed ) {
 			return false;
 		}
