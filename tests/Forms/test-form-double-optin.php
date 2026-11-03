@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** Regression coverage for form double optin. */
 class Test_Form_Double_Optin extends Noptin_Regression_Test_Case {
 
-	public function test_form_double_optin() {
+	public function test_saved_form_confirmation_policy() {
 		$assert = array( $this, 'assertTrue' );
 		$global = false;
 		$custom = false;

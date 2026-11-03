@@ -2,11 +2,8 @@
 
 require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 
-require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
-require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
-require_once ABSPATH . WPINC . '/class-wp-phpmailer.php';
-
-class Noptin_Multipart_Test_Mailer extends WP_PHPMailer {
+// MockPHPMailer and its dependencies are loaded by the WordPress test bootstrap.
+class Noptin_Multipart_Test_Mailer extends MockPHPMailer {
 	public $mime = '';
 	public $alternative = '';
 	public $fail = false;
@@ -23,7 +20,7 @@ class Noptin_Multipart_Test_Mailer extends WP_PHPMailer {
 /** Regression coverage for email multipart. */
 class Test_Email_Multipart extends Noptin_Regression_Test_Case {
 
-	public function test_email_multipart() {
+	public function test_plain_text_alternatives_and_mailer_cleanup() {
 		$assert = array( $this, 'assertTrue' );
 		add_filter( 'pre_http_request', static function () {
 			return new WP_Error( 'test_no_network', 'Network disabled during checks.' );

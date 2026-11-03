@@ -11,7 +11,7 @@ class Noptin_Campaign_Test_Redirect extends RuntimeException {}
 /** Regression coverage for campaign permissions. */
 class Test_Campaign_Permissions extends Noptin_Regression_Test_Case {
 
-	public function test_campaign_permissions() {
+	public function test_campaign_type_authorization_and_draft_duplicates() {
 		$assert = array( $this, 'assertTrue' );
 		$type_registry = new ReflectionProperty( Hizzle\Noptin\Emails\Main::class, 'types' );
 		$type_registry->setAccessible( true );

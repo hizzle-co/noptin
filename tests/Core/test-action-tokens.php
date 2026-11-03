@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** Regression coverage for action tokens. */
 class Test_Action_Tokens extends Noptin_Regression_Test_Case {
 
-	public function test_action_tokens() {
+	public function test_authenticated_and_legacy_action_links() {
 		$assert = array( $this, 'assertTrue' );
 		$page = new Noptin_Page();
 		$request = static function ( $url, $overrides = array() ) {

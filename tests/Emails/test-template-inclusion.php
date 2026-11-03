@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** Regression coverage for template inclusion. */
 class Test_Template_Inclusion extends Noptin_Regression_Test_Case {
 
-	public function test_template_inclusion() {
+	public function test_template_attributes_cannot_override_include_paths() {
 		$assert = array( $this, 'assertTrue' );
 		$directory = sys_get_temp_dir() . '/noptin-template-' . wp_generate_password( 12, false );
 		mkdir( $directory );

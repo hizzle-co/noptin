@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** Regression coverage for text field sanitization. */
 class Test_Text_Field_Sanitization extends Noptin_Regression_Test_Case {
 
-	public function test_text_field_sanitization() {
+	public function test_plain_text_field_sanitization_and_signup() {
 		$assert = array( $this, 'assertTrue' );
 		$property = static function ( $class, $type, $extra = array() ) {
 			$field = new $class( $type );
