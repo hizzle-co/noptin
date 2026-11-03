@@ -120,7 +120,7 @@ class Email {
 
 		// Fetch campaign data. See: https://core.trac.wordpress.org/ticket/60314.
 		$data        = get_post_meta( $post->ID, 'campaign_data' );
-		$data        = wp_is_numeric_array( $data ) ? $data[0] : $data;
+		$data        = wp_is_numeric_array( $data ) ? ( $data[0] ?? false ) : $data;
 		$resave      = false;
 		$is_revision = wp_is_post_revision( $post->ID );
 
@@ -130,7 +130,7 @@ class Email {
 
 			if ( $parent ) {
 				$data = get_post_meta( $parent, 'campaign_data' );
-				$data = wp_is_numeric_array( $data ) ? $data[0] : $data;
+				$data = wp_is_numeric_array( $data ) ? ( $data[0] ?? false ) : $data;
 			}
 		}
 
