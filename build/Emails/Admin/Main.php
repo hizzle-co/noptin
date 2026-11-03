@@ -666,6 +666,24 @@ class Main {
 				Editor::load( $edited_campaign );
 			}
 
+			if ( 'view-campaigns' === $script ) {
+				// Core Data needs post-type endpoints before resolving campaign queries.
+				// Use API middleware so the normal resolver consumes this response once.
+				$preload_data = array_reduce(
+					array( '/wp/v2/types?context=view', '/wp/v2/noptin-campaign/browser' ),
+					'rest_preload_api_request',
+					array()
+				);
+				wp_add_inline_script(
+					'wp-api-fetch',
+					sprintf(
+						'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
+						wp_json_encode( $preload_data )
+					),
+					'after'
+				);
+			}
+
 			// Localize the script.
 			$data = apply_filters(
 				'noptin_email_settings_misc',

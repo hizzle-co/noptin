@@ -110,7 +110,7 @@ class Browser {
 		}
 
 		return array(
-			'hasTrashCampaigns'   => ! empty( wp_count_posts( 'noptin-campaign' )->trash ),
+			'hasTrashCampaigns'   => ! empty( wp_count_posts( 'noptin-campaign' )->trash ?? 0 ),
 			'sendingCampaignId'   => self::oldest_sending_campaign_id(),
 			'sendingLimitReached' => $sending_limit_reached,
 			'notices'             => array_values( apply_filters( 'noptin_campaign_browser_notices', $notices ) ),
