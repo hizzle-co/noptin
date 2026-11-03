@@ -1509,6 +1509,7 @@ function noptin_get_subscriber_statuses() {
 			'unsubscribed' => __( 'Unsubscribed', 'newsletter-optin-box' ),
 			'inactive'     => __( 'Inactive', 'newsletter-optin-box' ),
 			'bounced'      => __( 'Bounced', 'newsletter-optin-box' ),
+			'complained'   => __( 'Complained', 'newsletter-optin-box' ),
 			'blocked'      => __( 'Blocked', 'newsletter-optin-box' ),
 		)
 	);
