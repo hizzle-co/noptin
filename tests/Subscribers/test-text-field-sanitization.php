@@ -51,7 +51,8 @@ class Test_Text_Field_Sanitization extends Noptin_Regression_Test_Case {
 		remove_shortcode( 'noptin_sanitizer_probe' );
 		$textarea = $property( Hizzle\Noptin\Fields\Types\Textarea::class, 'textarea' );
 		$assert( "Hello\n&lt;example&gt; &amp; team" === $textarea->sanitize( "<b>Hello</b>\n&lt;example&gt; &amp; team" ), 'Textarea must preserve encoded text and line breaks.' );
-		$assert( 'Hello [[posts]] [gallery]' === $textarea->sanitize( 'Hello [[posts]] [gallery]' ), 'Textarea behavior must remain unchanged.' );
+		$assert( "Hello\n\nGoodbye" === $textarea->sanitize( "Hello\n[[posts title=\"[[blog_name]]\"]][noptin_unknown_shortcode /]\nGoodbye" ), 'Textarea must strip nested merge tags and unknown shortcodes while retaining line breaks.' );
+		$assert( 'Hello Goodbye' === $textarea->sanitize( 'Hello &#91;&#91;posts&#93;&#93;[gallery]Goodbye' ), 'Textarea must strip encoded merge tags and registered shortcodes.' );
 		$email = $property( Hizzle\Noptin\Fields\Types\Email::class, 'email' );
 		$assert( $email->sanitize_callback[0] instanceof Hizzle\Noptin\Fields\Types\Email && 'person+tag@example.test' === $email->sanitize( 'person+tag@example.test' ), 'Email must retain its specialized callback.' );
 		$number = $property( Hizzle\Noptin\Fields\Types\Number::class, 'number' );

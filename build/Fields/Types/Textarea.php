@@ -19,6 +19,23 @@ defined( 'ABSPATH' ) || exit;
 class Textarea extends Base {
 
 	/**
+	 * Strip dynamic tags while preserving multiline text.
+	 *
+	 * @param mixed $value Submitted value.
+	 * @return string
+	 */
+	public function sanitize_value( $value ) {
+		return trim( $this->strip_dynamic_tags( sanitize_textarea_field( $value ) ) );
+	}
+
+	/** @inheritdoc */
+	public function filter_db_schema( $schema, $custom_field ) {
+		$schema = parent::filter_db_schema( $schema, $custom_field );
+		$schema[ $this->get_column_name( $custom_field ) ]['sanitize_callback'] = array( $this, 'sanitize_value' );
+		return $schema;
+	}
+
+	/**
 	 * @inheritdoc
 	 */
 	public function output( $args ) {
