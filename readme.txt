@@ -74,7 +74,7 @@ Noptin integrates with the following WordPress tools, with some connections or a
 - **Custom Fields:** Advanced Custom Fields, Meta Box, Pods, Toolset Types.
 - **Customer Support:** Fluent Support.
 - **Directories:** Directorist, GeoDirectory.
-- **eCommerce:** Charitable, Easy Digital Downloads, Hizzle Pay, WooCommerce.
+- **eCommerce:** Charitable, Easy Digital Downloads, Hizzle Pay, WooCommerce, YITH WooCommerce Wishlist.
 - **Events:** Events Manager, Modern Events Calendar, The Events Calendar.
 - **Forms:** Beaver Builder, Bit Form, Bricks Builder, Brizy, Contact Form 7, Convert Pro, Divi Builder, Elementor, Everest Forms, Fluent Forms, Formidable Forms, Forminator, Gravity Forms, Happyforms, JetFormBuilder, MetForm, Ninja Forms, QuillForms, weForms, WPForms, WS Form.
 - **Jobs:** WP Job Manager, WP Job Openings.
