@@ -431,7 +431,6 @@ class Date extends Trigger {
 				'subject'        => get_option( 'admin_email' ),
 				'status'         => 'pending',
 				'primary_id'     => $rule->get_id(),
-				'secondary_id'   => $rule->get_action_id(),
 				'lookup_key'     => self::LOOKUP_KEY,
 			)
 		);

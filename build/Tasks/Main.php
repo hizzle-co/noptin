@@ -697,7 +697,7 @@ class Main {
 				'subject'        => $email,
 				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
-				'secondary_id'   => $args['automation_rule_secondary_id'] ?? $rule->get_action_id(),
+				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
 				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
 				'metadata'       => $deferred_recipient ? array( 'deferred_recipient' => $deferred_recipient ) : array(),
 			)
