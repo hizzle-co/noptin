@@ -325,6 +325,8 @@ class Main {
 
 		if ( doing_action( 'admin_notices' ) ) {
 
+			self::show_past_due_tasks_notice();
+
 			// Warn addons pack if version is less than 2.0.0
 			if ( defined( 'NOPTIN_ADDONS_PACK_VERSION' ) && version_compare( NOPTIN_ADDONS_PACK_VERSION, MINIMUM_SUPPORTED_NOPTIN_ADDONS_PACK_VERSION, '<' ) ) {
 				self::print_notice(
@@ -420,6 +422,51 @@ class Main {
 				self::print_notice( $type, $message );
 			}
 		}
+	}
+
+	/**
+	 * Warn when pending tasks have been waiting past the queue's grace period.
+	 */
+	private static function show_past_due_tasks_notice() {
+		$filters = array(
+			'status'                => 'pending',
+			'date_scheduled_before' => gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 5 * MINUTE_IN_SECONDS ),
+		);
+		$count   = \Hizzle\Noptin\Tasks\Main::query( $filters, 'count' );
+
+		if ( ! is_numeric( $count ) || $count < 1 ) {
+			return;
+		}
+
+		$tasks_url = add_query_arg(
+			array(
+				'page'             => 'noptin-tasks',
+				'hizzlewp_filters' => rawurlencode( wp_json_encode( $filters ) ),
+				'orderby'          => 'date_scheduled',
+				'order'            => 'asc',
+			),
+			admin_url( 'admin.php' )
+		);
+
+		self::print_notice(
+			'warning',
+			sprintf(
+				/* translators: %1$s: Scheduled Tasks URL, %2$s: Number of past-due tasks, %3$s: Documentation link. */
+				_n(
+					'<strong>Noptin:</strong> <a href="%1$s">%2$s past-due task</a> is still waiting to run. %3$s',
+					'<strong>Noptin:</strong> <a href="%1$s">%2$s past-due tasks</a> are still waiting to run. %3$s',
+					$count,
+					'newsletter-optin-box'
+				),
+				esc_url( $tasks_url ),
+				number_format_i18n( $count ),
+				sprintf(
+					'<a href="%s">%s</a>',
+					esc_url( noptin_get_guide_url( 'scheduled-tasks', 'introduction/tools/scheduled-tasks/' ) ),
+					esc_html__( 'Read documentation', 'newsletter-optin-box' )
+				)
+			)
+		);
 	}
 
 	/**
