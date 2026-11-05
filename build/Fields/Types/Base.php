@@ -109,6 +109,7 @@ abstract class Base {
 			if ( preg_match_all( '@\[/?([^<>&/\[\]\x00-\x20=]++)@', $value, $matches ) ) {
 				$value = preg_replace( '/' . get_shortcode_regex( array_unique( $matches[1] ) ) . '/s', '', $value ) ?? '';
 			}
+
 			// Removal can join fragments into another tag; strip those too.
 		} while ( $value !== $previous );
 

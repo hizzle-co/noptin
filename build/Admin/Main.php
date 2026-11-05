@@ -226,6 +226,12 @@ class Main {
 			return array();
 		}
 
+		foreach ( $notices as $type => $messages ) {
+			if ( is_array( $messages ) ) {
+				$notices[ $type ] = array_unique( $messages );
+			}
+		}
+
 		return $notices;
 	}
 
@@ -250,6 +256,10 @@ class Main {
 
 		if ( empty( $notices[ $type ] ) || ! is_array( $notices[ $type ] ) ) {
 			$notices[ $type ] = array();
+		}
+
+		if ( in_array( $message, $notices[ $type ], true ) ) {
+			return;
 		}
 
 		$notices[ $type ][] = $message;
