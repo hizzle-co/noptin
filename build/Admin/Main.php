@@ -451,19 +451,14 @@ class Main {
 		self::print_notice(
 			'warning',
 			sprintf(
-				/* translators: %1$s: Scheduled Tasks URL, %2$s: Number of past-due tasks, %3$s: Documentation link. */
-				_n(
-					'<strong>Noptin:</strong> <a href="%1$s">%2$s past-due task</a> is still waiting to run. %3$s',
-					'<strong>Noptin:</strong> <a href="%1$s">%2$s past-due tasks</a> are still waiting to run. %3$s',
-					$count,
-					'newsletter-optin-box'
-				),
+				'<strong>Noptin:</strong> <a href="%1$s">%2$s past-due %3$s</a> is still waiting to run. %4$s',
 				esc_url( $tasks_url ),
 				number_format_i18n( $count ),
+				1 === (int) $count ? 'task' : 'tasks',
 				sprintf(
 					'<a href="%s">%s</a>',
 					esc_url( noptin_get_guide_url( 'scheduled-tasks', 'introduction/tools/scheduled-tasks/' ) ),
-					esc_html__( 'Read documentation', 'newsletter-optin-box' )
+					'Read documentation'
 				)
 			)
 		);

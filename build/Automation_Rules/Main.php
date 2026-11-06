@@ -9,6 +9,8 @@
 
 namespace Hizzle\Noptin\Automation_Rules;
 
+use Hizzle\Noptin\Tasks\Main as Tasks;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -35,7 +37,6 @@ class Main {
 
 		// Hooks.
 		add_action( 'noptin_run_automation_rule', array( __CLASS__, 'handle_automation_rule_task' ), 10, 2 );
-		add_action( 'noptin_run_delayed_automation_rule', array( __CLASS__, 'run_delayed_automation_rule' ), 10, 2 );
 
 		// Init default actions.
 		Actions\Main::init();
@@ -48,10 +49,12 @@ class Main {
 	 * Runs an automation rule if the Noptin tasks package is installed.
 	 *
 	 * @param int $rule_id
-	 * @return Automation_Rule
+	 * @param array $args Trigger arguments.
+	 * @param \Hizzle\Noptin\Tasks\Task|null $task The persisted task, if any.
+	 * @return bool
 	 * @throws \Exception
 	 */
-	public static function run_automation_rule( $rule_id, $args ) {
+	public static function run_automation_rule( $rule_id, $args, $task = null ) {
 		$rule = noptin_get_automation_rule( $rule_id );
 
 		if ( is_wp_error( $rule ) ) {
@@ -60,6 +63,10 @@ class Main {
 
 		if ( ! $rule->exists() ) {
 			throw new \Exception( 'Automation rule not found' );
+		}
+
+		if ( $task ) {
+			$args[ Tasks::AUTOMATION_PARENT_TASK ] = $task->get_parent_id() ?: $task->get_id();
 		}
 
 		$run_next  = true;
@@ -140,6 +147,8 @@ class Main {
 		}
 
 		// Unserialize the trigger arguments.
+		$parent_id = $args[ Tasks::AUTOMATION_PARENT_TASK ] ?? 0;
+		unset( $args[ Tasks::AUTOMATION_PARENT_TASK ] );
 		$args = $trigger->unserialize_trigger_args( $args );
 
 		// Abort if the trigger does not support scheduling.
@@ -147,8 +156,13 @@ class Main {
 			throw new \Exception( 'Trigger does not support scheduling' );
 		}
 
+		if ( $parent_id ) {
+			$args[ Tasks::AUTOMATION_PARENT_TASK ] = $parent_id;
+		}
+
 		$had_email_meta_data      = array_key_exists( 'noptin_email_meta_data', $GLOBALS );
 		$previous_email_meta_data = $GLOBALS['noptin_email_meta_data'] ?? null;
+
 		$GLOBALS['noptin_email_meta_data'] = is_array( $args['email_meta_data'] ?? null ) ? $args['email_meta_data'] : array();
 
 		try {
@@ -186,7 +200,7 @@ class Main {
 	 * @param array $args The trigger arguments.
 	 */
 	public static function handle_automation_rule_task( $task, $args ) {
-		self::run_automation_rule( $task->get_primary_id(), $args );
+		self::run_automation_rule( $task->get_primary_id(), $args, $task );
 	}
 
 	/**

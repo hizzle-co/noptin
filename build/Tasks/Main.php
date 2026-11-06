@@ -15,6 +15,9 @@ defined( 'ABSPATH' ) || exit;
  *
  */
 class Main {
+
+	const AUTOMATION_PARENT_TASK = 'automation_parent_task_id';
+
 	/**
 	 * Action IDs whose tasks should wait for subscriber confirmation when double opt-in is enabled.
 	 *
@@ -84,6 +87,7 @@ class Main {
 		add_action( 'wp_ajax_nopriv_' . $this->cron_hook, array( $this, 'maybe_handle_rescheduled' ) );
 
 		add_filter( 'noptin_db_schema', array( __CLASS__, 'add_tasks_table' ) );
+		Run_History::init();
 		add_filter( 'hizzle_rest_noptin_tasks_collection_js_params', array( __CLASS__, 'filter_tasks_collection_js_params' ) );
 		add_filter( 'hizzle_rest_noptin_tasks_record_tabs', array( __CLASS__, 'add_record_tabs' ), 1000 );
 		add_action( 'shutdown', array( __CLASS__, 'handle_unexpected_shutdown' ) );
@@ -245,7 +249,6 @@ class Main {
 
 			$this->process_task( $task );
 			++$this->processed_tasks;
-
 		} while ( ! $this->batch_limits_exceeded() );
 
 		$this->unlock_process();
@@ -508,6 +511,9 @@ class Main {
 	public static function retry_task( $task, $after = HOUR_IN_SECONDS ) {
 
 		$new_task = $task->clone();
+		if ( 'noptin_run_automation_rule' === $task->get_hook() ) {
+			$new_task->set_retry_of( $task->get_retry_of() ?: $task->get_id() );
+		}
 		$new_task->set_status( 'pending' );
 		$new_task->set_date_scheduled( time() + $after );
 		$new_task->add_log( "Task was retried from task {$task->get_id()}" );
@@ -571,6 +577,7 @@ class Main {
 	 *    - args: An array of arguments to pass when running the task.
 	 *    - subject: The task subject.
 	 *    - primary_id: The primary ID.
+	 *    - parent_id: The root automation task ID for a follow-up task.
 	 *    - secondary_id: The secondary ID.
 	 *    - lookup_key: An optional lookup key.
 	 *    - date_scheduled: The date scheduled.
@@ -671,8 +678,14 @@ class Main {
 		$status = 'pending';
 		$email  = $trigger->get_subject_email( $subject, $rule, $args );
 
+		$metadata  = array();
+		$parent_id = absint( $args[ self::AUTOMATION_PARENT_TASK ] ?? 0 );
+		unset( $args[ self::AUTOMATION_PARENT_TASK ] );
+
 		$deferred_recipient = self::get_deferred_automation_rule_recipient( $email, $rule, $args );
 		if ( $deferred_recipient ) {
+			$metadata['deferred_recipient'] = $deferred_recipient;
+
 			$status = 'manual';
 			$delay  = 0;
 		}
@@ -697,9 +710,10 @@ class Main {
 				'subject'        => $email,
 				'status'         => $status,
 				'primary_id'     => $rule->get_id(),
+				'parent_id'      => $parent_id,
 				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
 				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
-				'metadata'       => $deferred_recipient ? array( 'deferred_recipient' => $deferred_recipient ) : array(),
+				'metadata'       => $metadata,
 			)
 		);
 
@@ -847,19 +861,30 @@ class Main {
 	}
 
 	public static function delete_old_tasks() {
-		$lifespan = apply_filters( 'noptin_tasks_retention_period', 3 * MONTH_IN_SECONDS );
+		global $wpdb;
 
-		/** @var Task[] $tasks */
-		$tasks = self::query(
-			array(
-				'status'               => array( 'complete', 'canceled' ),
-				'number'               => static::get_batch_size(),
-				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $lifespan ),
+		$lifespan = apply_filters( 'noptin_tasks_retention_period', 3 * MONTH_IN_SECONDS );
+		$table    = $wpdb->prefix . 'noptin_tasks';
+
+		// Keep the root visible while any of its steps are still retained.
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT task.id FROM %i task
+				WHERE task.status IN ('complete', 'canceled') AND task.date_modified < %s
+				AND NOT EXISTS (SELECT 1 FROM %i child WHERE child.parent_id = task.id)
+				ORDER BY task.id DESC LIMIT %d",
+				$table,
+				gmdate( 'Y-m-d H:i:s', time() - (int) $lifespan ),
+				$table,
+				static::get_batch_size()
 			)
 		);
 
-		foreach ( $tasks as $task ) {
-			$task->delete();
+		foreach ( $ids as $id ) {
+			$task = self::get( (int) $id );
+			if ( $task->exists() ) {
+				$task->delete();
+			}
 		}
 	}
 
@@ -945,7 +970,10 @@ class Main {
 					'label'            => __( 'Older than', 'newsletter-optin-box' ),
 					'description'      => __( 'Delete tasks last modified more than this many days ago.', 'newsletter-optin-box' ),
 					'default'          => 30,
-					'customAttributes' => array( 'min' => 1, 'required' => true ),
+					'customAttributes' => array(
+						'min'      => 1,
+						'required' => true,
+					),
 				),
 				'statuses' => array(
 					'el'          => 'select',
@@ -1050,7 +1078,7 @@ class Main {
 					),
 					'props'         => array(
 
-						'id'             => array(
+						'id'                 => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => false,
@@ -1059,35 +1087,35 @@ class Main {
 							'extra'       => 'AUTO_INCREMENT',
 						),
 
-						'hook'           => array(
+						'hook'               => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => false,
 							'description' => __( 'The hook ID.', 'newsletter-optin-box' ),
 						),
 
-						'subject'        => array(
+						'subject'            => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => true,
 							'description' => __( 'The subject ID, email, etc.', 'newsletter-optin-box' ),
 						),
 
-						'primary_id'     => array(
+						'primary_id'         => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
 							'description' => 'Primary identifier for this resource.',
 						),
 
-						'secondary_id'   => array(
+						'secondary_id'       => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
 							'description' => 'Secondary identifier for this resource.',
 						),
 
-						'status'         => array(
+						'status'             => array(
 							'type'        => 'VARCHAR',
 							'length'      => 20,
 							'nullable'    => false,
@@ -1096,48 +1124,72 @@ class Main {
 							'default'     => 'pending',
 						),
 
-						'lookup_key'     => array(
+						'lookup_key'         => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => true,
 							'description' => 'The lookup key.',
 						),
 
-						'args'           => array(
+						'args'               => array(
 							'type'        => 'TEXT',
 							'description' => __( 'The args to pass to the hook.', 'newsletter-optin-box' ),
 						),
 
-						'args_hash'      => array(
+						'args_hash'          => array(
 							'type'        => 'VARCHAR',
 							'length'      => 32,
 							'nullable'    => false,
 							'description' => __( 'The args hash.', 'newsletter-optin-box' ),
 						),
 
-						'date_created'   => array(
+						'date_created'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => 'Creation date',
 							'readonly'    => true,
 						),
 
-						'date_modified'  => array(
+						'date_modified'      => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => 'Last modification date',
 							'readonly'    => true,
 						),
 
-						'date_scheduled' => array(
+						'date_scheduled'     => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => __( 'Scheduled date', 'newsletter-optin-box' ),
 						),
 
-						'metadata'       => array(
+						'metadata'           => array(
 							'type'        => 'TEXT',
 							'description' => 'A key value array of additional metadata about the task',
+						),
+
+						'parent_id'          => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'nullable'    => false,
+							'default'     => 0,
+							'description' => 'Root automation task ID, or zero for a root task.',
+						),
+
+						'retry_of'           => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'nullable'    => false,
+							'default'     => 0,
+							'description' => 'Original task ID for retries.',
+							'readonly'    => true,
+						),
+
+						'automation_started' => array(
+							'type'        => 'BIGINT',
+							'description' => 'Automation task start time.',
+							'is_dynamic'  => true,
+							'readonly'    => true,
 						),
 					),
 
@@ -1150,6 +1202,9 @@ class Main {
 						'lookup_key'     => array( 'lookup_key' ),
 						'date_scheduled' => array( 'date_scheduled' ),
 						'hook'           => array( 'hook' ),
+						'run_roots'      => array( 'parent_id', 'primary_id', 'id' ),
+						'run_task_order' => array( 'parent_id', 'id' ),
+						'run_steps'      => array( 'parent_id', 'status', 'retry_of' ),
 					),
 				),
 			)
@@ -1166,7 +1221,7 @@ class Main {
 
 		$params['hidden'] = array_merge(
 			$params['hidden'],
-			array( 'args_hash', 'date_modified' )
+			array( 'args_hash', 'date_modified', 'parent_id', 'retry_of', 'automation_started' )
 		);
 
 		$params['badges'] = array( 'status' );

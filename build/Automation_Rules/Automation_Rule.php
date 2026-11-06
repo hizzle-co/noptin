@@ -860,7 +860,6 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	/**
 	 * Returns the tree map, but only if this is a root rule (i.e. has no parent).
 	 *
-	 * @return string
 	 */
 	public function get_workflow_tree() {
 		if ( $this->get_parent_id() > 0 ) {
@@ -868,6 +867,28 @@ class Automation_Rule extends \Hizzle\Store\Record {
 		}
 
 		return $this->to_tree_map();
+	}
+
+	/**
+	 * Counts pending tasks for the workflow and its steps.
+	 *
+	 * @return int
+	 */
+	public function get_scheduled_count() {
+		if ( ! $this->exists() || $this->get_parent_id() > 0 ) {
+			return 0;
+		}
+
+		$count = \Hizzle\Noptin\Tasks\Main::query(
+			array(
+				'hook'       => 'noptin_run_automation_rule',
+				'primary_id' => array_column( $this->get_workflow_tree(), 'id' ),
+				'status'     => 'pending',
+			),
+			'count'
+		);
+
+		return is_numeric( $count ) ? (int) $count : 0;
 	}
 
 	/**
@@ -915,6 +936,7 @@ class Automation_Rule extends \Hizzle\Store\Record {
 				'parent_id' => $resolved_parent_uuid,
 				'children'  => array(),
 				'action_id' => $this->get_action_id(),
+				'delay'     => (int) $this->get_delay(),
 			),
 		);
 

@@ -97,6 +97,13 @@ class Schema {
 							'description' => 'The number of seconds to wait before firing the action.',
 						),
 
+						'scheduled_count'  => array(
+							'type'        => 'BIGINT',
+							'description' => 'The number of pending tasks in the workflow.',
+							'is_dynamic'  => true,
+							'readonly'    => true,
+						),
+
 						'created_at'       => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
