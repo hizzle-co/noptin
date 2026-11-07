@@ -404,6 +404,13 @@ class Prop {
 			$query_schema[ "{$this->name}_not" ]['format'] = $rest_schema['format'];
 		}
 
+		if ( $this->nullable && ! $this->is_meta_key ) {
+			$query_schema[ "{$this->name}_is_null" ] = array(
+				'description' => sprintf( 'Filter resources by whether %s is NULL.', $this->name ),
+				'type'        => 'boolean',
+			);
+		}
+
 		// Dates.
 		if ( $this->is_date() && ! $this->is_meta_key ) {
 			$query_schema[ "{$this->name}_before" ] = array(

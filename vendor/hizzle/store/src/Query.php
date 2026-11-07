@@ -879,6 +879,12 @@ class Query {
 			$field      = $collection->get_prop( $key );
 			$data_type  = $field->get_data_type();
 
+			// Explicit null checks also work with REST query strings.
+			$null_check = isset( $qv[ "{$key}_is_null" ] ) ? $qv[ "{$key}_is_null" ] : null;
+			if ( $field->nullable && is_bool( $null_check ) ) {
+				$this->query_where .= $null_check ? " AND $field_name IS NULL" : " AND $field_name IS NOT NULL";
+			}
+
 			// = or IN.
 			if ( array_key_exists( $key, $qv ) && 'any' !== $qv[ $key ] ) {
 
