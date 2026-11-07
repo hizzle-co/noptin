@@ -100,3 +100,6 @@ Session.vim
 *.swp
 .~lock*
 .vscode
+
+# Tests
+.phpunit.result.cache
