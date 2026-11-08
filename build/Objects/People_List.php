@@ -216,15 +216,34 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		// Check if we have contacts.
 		$contacts = get_post_meta( $campaign->id, $this->get_campaign_meta_key(), true );
 
-		// Remove current contact from the list.
+		// Validate the contact before attempting delivery.
 		if ( is_array( $contacts ) ) {
 			if ( ! in_array( $contact_id, $contacts, true ) ) {
 				return new \WP_Error( 'noptin_cannot_email_contact', $collection->singular_label . ' does not exist in the list.' );
 			}
+		}
 
+		// Keep failed attempts (and exceptions) pending for the next run.
+		$result = $this->send_to_contact( $campaign, $contact_id, $collection );
+
+		// Successful deliveries and intentional skips advance the batch.
+		if ( false !== $result && is_array( $contacts ) ) {
 			$contacts = array_diff( $contacts, array( $contact_id ) );
 			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $contacts );
 		}
+
+		return $result;
+	}
+
+	/**
+	 * Checks eligibility and attempts delivery without acknowledging the batch.
+	 *
+	 * @param \Hizzle\Noptin\Emails\Email $campaign The campaign.
+	 * @param int|string $contact_id The contact ID.
+	 * @param People $collection The contact collection.
+	 * @return bool|\WP_Error
+	 */
+	private function send_to_contact( $campaign, $contact_id, $collection ) {
 
 		// Get the contact.
 		/** @var Person $person */

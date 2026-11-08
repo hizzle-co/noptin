@@ -171,7 +171,8 @@ class Sender {
 					}
 				}
 
-				if ( apply_filters( 'noptin_log_email_send', true, $result, self::$args ) ) {
+				// Failed attempts already have diagnostics above; they are not sends.
+				if ( apply_filters( 'noptin_log_email_send', true, $result, self::$args ) && $result ) {
 					increment_noptin_campaign_stat( self::$args['campaign_id'], '_noptin_sends' );
 					\Hizzle\Noptin\Emails\Logs\Main::create( 'send', self::$args['campaign_id'], $recipient, (int) $result );
 				}
