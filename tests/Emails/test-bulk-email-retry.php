@@ -8,6 +8,7 @@
 namespace Hizzle\Noptin\Tests\Bulk_Emails;
 
 use Hizzle\Noptin\Emails\Bulk\Main;
+use Hizzle\Noptin\Emails\Bulk\Reservation;
 use Hizzle\Noptin\Emails\Email;
 
 require_once __DIR__ . '/base.php';
@@ -38,6 +39,7 @@ class Test_Bulk_Email_Retry extends Noptin_Emails_Test_Case {
 		remove_filter( 'noptin_email_sending_function', array( $this, 'transport' ), 10000 );
 		remove_filter( 'noptin_bulk_email_dispatch_next', '__return_false' );
 		remove_filter( 'noptin_can_email_recipient_for_bulk_campaign', array( $this, 'skip_second' ) );
+		delete_option( Reservation::key( $this->campaign->id ) );
 		parent::tear_down();
 		add_action( 'noptin_newsletter_campaign_published', array( Main::class, 'send_newsletter_campaign' ) );
 		add_action( 'noptin_email_campaign_resumed', array( Main::class, 'send_newsletter_campaign' ), 1000 );
@@ -128,8 +130,29 @@ class Test_Bulk_Email_Retry extends Noptin_Emails_Test_Case {
 		$this->campaign->save();
 		Main::run();
 		$this->assert_failed_recipient_pending();
+		$before = $this->attempts;
 		$this->resume();
-		$this->assert_delivered_once();
+		$this->assertSame( $before, $this->attempts, 'An unknown outcome must not automatically retry.' );
+		$this->assertNotEmpty( Reservation::read( $this->campaign->id ) );
+		$this->assertFalse( next_scheduled_noptin_background_action( 'noptin_resume_email_campaign', $this->campaign->id ) );
+	}
+
+	public function test_failed_acknowledgement_retains_reservation() {
+		$fail_ack = static function ( $check, $id, $key, $value ) {
+			return 'contacts_to_send' === $key && is_array( $value ) && 2 === count( $value ) ? false : $check;
+		};
+		add_filter( 'update_post_metadata', $fail_ack, 10, 4 );
+		try {
+			$this->campaign->save();
+			Main::run();
+		} finally {
+			remove_filter( 'update_post_metadata', $fail_ack, 10 );
+		}
+		$this->assertSame( array( 'test1@example.com' ), $this->attempts );
+		$this->assertNotEmpty( Reservation::read( $this->campaign->id ) );
+		$this->assertNotEmpty( get_post_meta( $this->campaign->id, 'paused', true ) );
+		$this->resume();
+		$this->assertSame( array( 'test1@example.com' ), $this->attempts );
 	}
 
 	public function skip_second( $allowed, $email ) {

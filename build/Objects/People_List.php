@@ -97,6 +97,12 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	 * @param \Hizzle\Noptin\Emails\Email $campaign
 	 */
 	public function get_recipients( $campaign ) {
+		return $this->reserved_operation( $campaign, 'batch', null, function () use ( $campaign ) {
+			return $this->get_reserved_recipients( $campaign );
+		} );
+	}
+
+	private function get_reserved_recipients( $campaign ) {
 
 		// Check if we have cached contacts.
 		$contacts = get_post_meta( $campaign->id, $this->get_campaign_meta_key(), true );
@@ -133,8 +139,10 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		// Cache the batch for processing.
 		if ( ! empty( $batch ) ) {
 			// Update the offset for the next batch.
-			update_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), $offset + $batch_size );
-			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $batch );
+			if ( false === update_post_meta( $campaign->id, $this->get_campaign_meta_key( 'offset' ), $offset + $batch_size ) ||
+				false === update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $batch ) ) {
+				throw new \RuntimeException( 'Could not save the recipient batch.' );
+			}
 		}
 
 		return $batch;
@@ -206,6 +214,24 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 	 * @return bool
 	 */
 	public function send( $campaign, $contact_id ) {
+		return $this->reserved_operation( $campaign, 'send', $contact_id, function () use ( $campaign, $contact_id ) {
+			return $this->send_reserved_contact( $campaign, $contact_id );
+		} );
+	}
+
+	/** Keep interrupted operations reserved; only a returned result releases them. */
+	private function reserved_operation( $campaign, $operation, $recipient, $callback ) {
+		$claim = \Hizzle\Noptin\Emails\Bulk\Reservation::acquire( $campaign->id, $operation, $recipient );
+		try {
+			$result = $callback();
+		} catch ( \Throwable $e ) {
+			throw new \Hizzle\Noptin\Emails\Bulk\Reservation_Exception( 'Email processing was interrupted; its delivery status needs review before retrying. ' . $e->getMessage() );
+		}
+		$claim->release();
+		return $result;
+	}
+
+	private function send_reserved_contact( $campaign, $contact_id ) {
 
 		$collection = $this->get_collection();
 
@@ -229,7 +255,9 @@ class People_List extends \Hizzle\Noptin\Emails\Bulk\Sender {
 		// Successful deliveries and intentional skips advance the batch.
 		if ( false !== $result && is_array( $contacts ) ) {
 			$contacts = array_diff( $contacts, array( $contact_id ) );
-			update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $contacts );
+			if ( false === update_post_meta( $campaign->id, $this->get_campaign_meta_key(), $contacts ) ) {
+				throw new \RuntimeException( 'Could not record the recipient outcome.' );
+			}
 		}
 
 		return $result;
