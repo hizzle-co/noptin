@@ -9,6 +9,30 @@ require_once __DIR__ . '/includes/class-actions-test-case.php';
  */
 class Test_Loop_Action extends Actions_Test_Case {
 
+	public function test_collection_iteration_labels_resolve_ids_and_accept_loaded_records() {
+		$action = new \Hizzle\Noptin\Automation_Rules\Actions\Loop();
+		$label = new \ReflectionMethod( $action, 'collection_iteration_label' );
+		$label->setAccessible( true );
+
+		$posts = new \Hizzle\Noptin\Objects\Generic_Post_Type( 'post' );
+		$id = self::factory()->post->create( array( 'post_title' => 'Iteration title', 'post_status' => 'publish' ) );
+		$this->assertContains( $id, $posts->get_all( array() ) );
+		$this->assertSame( 'Iteration title', $label->invoke( $action, $id, $posts ) );
+		$this->assertSame( 'Iteration title', $label->invoke( $action, $posts->get( $id ), $posts ) );
+		wp_update_post( array( 'ID' => $id, 'post_title' => '' ) );
+		$this->assertSame( 'ID #' . $id, $label->invoke( $action, $id, $posts ) );
+		$this->assertSame( '', $label->invoke( $action, 0, $posts ) );
+
+		$users = new \Hizzle\Noptin\Objects\Users( 'user', 'Users', 'User' );
+		$user_id = self::factory()->user->create( array( 'user_email' => 'loop-label@example.test', 'display_name' => 'Loop person' ) );
+		$this->assertSame( 'loop-label@example.test', $label->invoke( $action, $user_id, $users ) );
+		$person = $users->get( $user_id );
+		$this->assertSame( 'loop-label@example.test', $label->invoke( $action, $person, $users ) );
+		$person->external->user_email = '';
+		$users->title_field = 'display_name';
+		$this->assertSame( 'Loop person', $label->invoke( $action, $person, $users ) );
+	}
+
 	public function test_loop_action_loops_over_number_range() {
 		list( $loop ) = $this->create_loop_with_body(
 			array(

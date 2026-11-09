@@ -1109,10 +1109,16 @@ class REST_Controller extends \WP_REST_Controller {
 
 		foreach ( $known_fields as $key ) {
 			if ( rest_is_field_included( $key, $fields ) ) {
-				$value = $item->get( $key, $request['context'] ?? 'view' );
+				$context = $request['context'] ?? 'view';
+				$value   = $item->get( $key, $context );
+
+				// Edit getters serialize metadata for database writes; REST returns structured data.
+				if ( 'metadata' === $key && is_string( $value ) ) {
+					$value = json_decode( $value, true ) ?: array();
+				}
 
 				// If value is a date, convert it to the ISO8601 format.
-				if ( $value instanceof Date_Time ) {
+				if ( $value instanceof \DateTime ) {
 					$value = $value->format( 'Y-m-d\TH:i:sP' );
 
 					// If value contains 00:00:00, remove the time.

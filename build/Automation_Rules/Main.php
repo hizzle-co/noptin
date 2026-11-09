@@ -17,7 +17,6 @@ defined( 'ABSPATH' ) || exit;
  * Main automation rules class.
  */
 class Main {
-
 	/**
 	 * Inits the main emails class.
 	 *
@@ -66,7 +65,15 @@ class Main {
 		}
 
 		if ( $task ) {
-			$args[ Tasks::AUTOMATION_PARENT_TASK ] = $task->get_parent_id() ?: $task->get_id();
+			$args[ Tasks::AUTOMATION_PARENT_TASK ] = $task->get_parent_id() ? $task->get_parent_id() : $task->get_id();
+
+			$args[ Tasks::AUTOMATION_CONTEXT ] = array(
+				'parent'       => $task->get_id(),
+				'scope_parent' => $task->get_history_parent_id(),
+			);
+
+			// Record the action actually executed if the rule changed while queued.
+			$task->update_meta( 'action_id', $rule->get_action_id() );
 		}
 
 		$run_next  = true;
@@ -148,7 +155,8 @@ class Main {
 
 		// Unserialize the trigger arguments.
 		$parent_id = $args[ Tasks::AUTOMATION_PARENT_TASK ] ?? 0;
-		unset( $args[ Tasks::AUTOMATION_PARENT_TASK ] );
+		$history   = $args[ Tasks::AUTOMATION_CONTEXT ] ?? null;
+		unset( $args[ Tasks::AUTOMATION_PARENT_TASK ], $args[ Tasks::AUTOMATION_CONTEXT ] );
 		$args = $trigger->unserialize_trigger_args( $args );
 
 		// Abort if the trigger does not support scheduling.
@@ -158,6 +166,9 @@ class Main {
 
 		if ( $parent_id ) {
 			$args[ Tasks::AUTOMATION_PARENT_TASK ] = $parent_id;
+		}
+		if ( $history ) {
+			$args[ Tasks::AUTOMATION_CONTEXT ] = $history;
 		}
 
 		$had_email_meta_data      = array_key_exists( 'noptin_email_meta_data', $GLOBALS );

@@ -17,6 +17,7 @@ defined( 'ABSPATH' ) || exit;
 class Main {
 
 	const AUTOMATION_PARENT_TASK = 'automation_parent_task_id';
+	const AUTOMATION_CONTEXT     = 'automation_task_context';
 
 	/**
 	 * Action IDs whose tasks should wait for subscriber confirmation when double opt-in is enabled.
@@ -513,7 +514,11 @@ class Main {
 		$new_task = $task->clone();
 		if ( 'noptin_run_automation_rule' === $task->get_hook() ) {
 			$new_task->set_retry_of( $task->get_retry_of() ?: $task->get_id() );
+			$new_task->set_history_parent_id( $task->get_id() );
+			$new_task->remove_meta( 'after_loop' );
+			$new_task->remove_meta( 'iteration' );
 		}
+
 		$new_task->set_status( 'pending' );
 		$new_task->set_date_scheduled( time() + $after );
 		$new_task->add_log( "Task was retried from task {$task->get_id()}" );
@@ -623,6 +628,13 @@ class Main {
 		}
 
 		// Set task properties.
+		if ( Run_History::HOOK === $args['hook'] && empty( $args['metadata']['action_id'] ) && ! empty( $args['primary_id'] ) ) {
+			$rule = noptin_get_automation_rule( $args['primary_id'] );
+			if ( ! is_wp_error( $rule ) && $rule->exists() ) {
+				$args['metadata']['action_id'] = $rule->get_action_id();
+			}
+		}
+
 		$task->set_props( $args );
 
 		$result = $task->save();
@@ -679,8 +691,12 @@ class Main {
 		$email  = $trigger->get_subject_email( $subject, $rule, $args );
 
 		$metadata  = array();
-		$parent_id = absint( $args[ self::AUTOMATION_PARENT_TASK ] ?? 0 );
-		unset( $args[ self::AUTOMATION_PARENT_TASK ] );
+		$parent_id = absint( $args[ self::AUTOMATION_PARENT_TASK ] ?? 0 ) ?: null;
+		$history   = $args[ self::AUTOMATION_CONTEXT ] ?? array();
+		unset( $args[ self::AUTOMATION_PARENT_TASK ], $args[ self::AUTOMATION_CONTEXT ] );
+		$history_parent_id = absint( $history['parent'] ?? 0 ) ?: null;
+		unset( $history['parent'], $history['scope_parent'] );
+		$metadata = array( 'action_id' => $rule->get_action_id() ) + array_intersect_key( $history, array_flip( array( 'after_loop', 'iteration' ) ) );
 
 		$deferred_recipient = self::get_deferred_automation_rule_recipient( $email, $rule, $args );
 		if ( $deferred_recipient ) {
@@ -704,16 +720,17 @@ class Main {
 		// Create the task.
 		$task = self::create(
 			array(
-				'hook'           => 'noptin_run_automation_rule',
-				'args'           => $serialized_args,
-				'date_scheduled' => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
-				'subject'        => $email,
-				'status'         => $status,
-				'primary_id'     => $rule->get_id(),
-				'parent_id'      => $parent_id,
-				'secondary_id'   => $args['automation_rule_secondary_id'] ?? null,
-				'lookup_key'     => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
-				'metadata'       => $metadata,
+				'hook'              => 'noptin_run_automation_rule',
+				'args'              => $serialized_args,
+				'date_scheduled'    => time() + ( $delay ? $delay : - MINUTE_IN_SECONDS ), // If no delay, set to expire 1 minute ago so it runs immediately.
+				'subject'           => $email,
+				'status'            => $status,
+				'primary_id'        => $rule->get_id(),
+				'parent_id'         => $parent_id,
+				'history_parent_id' => $history_parent_id,
+				'secondary_id'      => $args['automation_rule_secondary_id'] ?? null,
+				'lookup_key'        => $args['automation_rule_lookup_key'] ?? $trigger->get_id(),
+				'metadata'          => $metadata,
 			)
 		);
 
@@ -872,9 +889,11 @@ class Main {
 				"SELECT task.id FROM %i task
 				WHERE task.status IN ('complete', 'canceled') AND task.date_modified < %s
 				AND NOT EXISTS (SELECT 1 FROM %i child WHERE child.parent_id = task.id)
+				AND NOT EXISTS (SELECT 1 FROM %i child WHERE child.history_parent_id = task.id)
 				ORDER BY task.id DESC LIMIT %d",
 				$table,
 				gmdate( 'Y-m-d H:i:s', time() - (int) $lifespan ),
+				$table,
 				$table,
 				static::get_batch_size()
 			)
@@ -1078,7 +1097,7 @@ class Main {
 					),
 					'props'         => array(
 
-						'id'                 => array(
+						'id'                => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => false,
@@ -1087,35 +1106,35 @@ class Main {
 							'extra'       => 'AUTO_INCREMENT',
 						),
 
-						'hook'               => array(
+						'hook'              => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => false,
 							'description' => __( 'The hook ID.', 'newsletter-optin-box' ),
 						),
 
-						'subject'            => array(
+						'subject'           => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => true,
 							'description' => __( 'The subject ID, email, etc.', 'newsletter-optin-box' ),
 						),
 
-						'primary_id'         => array(
+						'primary_id'        => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
 							'description' => 'Primary identifier for this resource.',
 						),
 
-						'secondary_id'       => array(
+						'secondary_id'      => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
 							'nullable'    => true,
 							'description' => 'Secondary identifier for this resource.',
 						),
 
-						'status'             => array(
+						'status'            => array(
 							'type'        => 'VARCHAR',
 							'length'      => 20,
 							'nullable'    => false,
@@ -1124,73 +1143,83 @@ class Main {
 							'default'     => 'pending',
 						),
 
-						'lookup_key'         => array(
+						'lookup_key'        => array(
 							'type'        => 'VARCHAR',
 							'length'      => 191,
 							'nullable'    => true,
 							'description' => 'The lookup key.',
 						),
 
-						'args'               => array(
+						'args'              => array(
 							'type'        => 'TEXT',
 							'description' => __( 'The args to pass to the hook.', 'newsletter-optin-box' ),
 						),
 
-						'args_hash'          => array(
+						'args_hash'         => array(
 							'type'        => 'VARCHAR',
 							'length'      => 32,
 							'nullable'    => false,
 							'description' => __( 'The args hash.', 'newsletter-optin-box' ),
 						),
 
-						'date_created'       => array(
+						'date_created'      => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => 'Creation date',
 							'readonly'    => true,
 						),
 
-						'date_modified'      => array(
+						'date_modified'     => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => 'Last modification date',
 							'readonly'    => true,
 						),
 
-						'date_scheduled'     => array(
+						'date_scheduled'    => array(
 							'type'        => 'DATETIME',
 							'nullable'    => false,
 							'description' => __( 'Scheduled date', 'newsletter-optin-box' ),
 						),
 
-						'metadata'           => array(
+						'metadata'          => array(
 							'type'        => 'TEXT',
 							'description' => 'A key value array of additional metadata about the task',
 						),
 
-						'parent_id'          => array(
+						'parent_id'         => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
-							'nullable'    => false,
-							'default'     => 0,
-							'description' => 'Root automation task ID, or zero for a root task.',
+							'nullable'    => true,
+							'default'     => null,
+							'description' => 'Root automation task ID, or NULL for a root task.',
 						),
 
-						'retry_of'           => array(
+						'retry_of'          => array(
 							'type'        => 'BIGINT',
 							'length'      => 20,
-							'nullable'    => false,
-							'default'     => 0,
+							'nullable'    => true,
+							'default'     => null,
 							'description' => 'Original task ID for retries.',
 							'readonly'    => true,
 						),
-
-						'automation_started' => array(
-							'type'        => 'BIGINT',
-							'description' => 'Automation task start time.',
-							'is_dynamic'  => true,
-							'readonly'    => true,
+						'run_status'        => array(
+							'type'              => 'VARCHAR',
+							'description'       => 'Combined automation run status. Returns null outside edit context.',
+							'is_dynamic'        => true,
+							'readonly'          => true,
+							'extra_rest_schema' => array(
+								'context' => array( 'edit' ),
+							),
 						),
+						'history_parent_id' => array(
+							'type'        => 'BIGINT',
+							'length'      => 20,
+							'nullable'    => true,
+							'default'     => null,
+							'description' => 'Immediate parent in recorded automation history.',
+						),
+
 					),
 
 					'keys'          => array(
@@ -1204,6 +1233,7 @@ class Main {
 						'hook'           => array( 'hook' ),
 						'run_roots'      => array( 'parent_id', 'primary_id', 'id' ),
 						'run_task_order' => array( 'parent_id', 'id' ),
+						'history_parent' => array( 'history_parent_id', 'id' ),
 						'run_steps'      => array( 'parent_id', 'status', 'retry_of' ),
 					),
 				),
@@ -1221,7 +1251,7 @@ class Main {
 
 		$params['hidden'] = array_merge(
 			$params['hidden'],
-			array( 'args_hash', 'date_modified', 'parent_id', 'retry_of', 'automation_started' )
+			array( 'args_hash', 'date_modified', 'parent_id', 'history_parent_id', 'retry_of' )
 		);
 
 		$params['badges'] = array( 'status' );

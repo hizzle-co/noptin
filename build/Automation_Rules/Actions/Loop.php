@@ -11,6 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 use Hizzle\Noptin\Objects\People;
 use Hizzle\Noptin\Objects\Store;
+use Hizzle\Noptin\Tasks\Main as Tasks;
 
 /**
  * Loops over a selected data source.
@@ -166,9 +167,9 @@ class Loop extends Action {
 			}
 
 			$settings['loop_over']['options'][ $collection ] = $config['label'];
-			$collection_object                              = $this->get_collection( $collection );
-			$filters                                        = $config['filters'] ?? array();
-			$uses_sender_filters                             = $this->uses_email_sender_filters( $collection_object );
+			$collection_object                               = $this->get_collection( $collection );
+			$filters             = $config['filters'] ?? array();
+			$uses_sender_filters = $this->uses_email_sender_filters( $collection_object );
 
 			// People collections already define their filters for their email sender.
 			if ( $uses_sender_filters ) {
@@ -304,6 +305,15 @@ class Loop extends Action {
 		// If there's an end child, run it after the loop finishes.
 		if ( ! empty( $end ) && $end->get_status() ) {
 			$end_action = Main::get( 'loop_end' );
+
+			if ( ! empty( $args[ Tasks::AUTOMATION_CONTEXT ]['parent'] ) ) {
+				$history                           = $args[ Tasks::AUTOMATION_CONTEXT ];
+				$args[ Tasks::AUTOMATION_CONTEXT ] = array(
+					'parent'     => $history['scope_parent'] ?? 0,
+					'after_loop' => $history['parent'],
+				);
+			}
+
 			$end->maybe_run( $subject, $trigger, $end_action, $args );
 		}
 
@@ -315,6 +325,65 @@ class Loop extends Action {
 	 */
 	public function should_auto_run_child_rules() {
 		return false;
+	}
+
+	/**
+	 * @param \Hizzle\Noptin\Automation_Rules\Automation_Rule $body
+	 * @param int $index
+	 * @param string $label
+	 * @param string $subject
+	 * @param \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger The trigger.
+	 * @param \Hizzle\Noptin\Automation_Rules\Actions\Action $action The action
+	 * @param array $args The args
+	 */
+	private function run_iteration( $body, $index, $label, $subject, $trigger, $action, $args ) {
+		if ( ! empty( $args[ Tasks::AUTOMATION_CONTEXT ]['parent'] ) ) {
+			$args[ Tasks::AUTOMATION_CONTEXT ]['iteration'] = array(
+				'ordinal' => $index + 1,
+				'label'   => '' !== $label ? $label : sprintf( 'Iteration %d', $index + 1 ),
+			);
+		}
+
+		return $body->maybe_run( $subject, $trigger, $action, $args );
+	}
+
+	/**
+	 * @param int|\Hizzle\Noptin\Objects\Record $item Record ID or an already-loaded record.
+	 * @param \Hizzle\Noptin\Objects\Collection $collection
+	 */
+	private function collection_iteration_label( $item, $collection ) {
+		if ( is_scalar( $item ) ) {
+			$item = $collection->get( $item );
+		}
+
+		$label = $item instanceof \Hizzle\Noptin\Objects\Person ? $item->get_email() : '';
+
+		if ( empty( $label ) && $collection->title_field && is_callable( array( $item, 'get' ) ) ) {
+			$label = $item->get( $collection->title_field );
+		}
+
+		if ( is_scalar( $label ) ) {
+			$label = sanitize_text_field( (string) $label );
+			if ( '' !== $label ) {
+				return $label;
+			}
+		}
+
+		$id = is_callable( array( $item, 'get' ) ) ? $item->get( 'id' ) : '';
+
+		return is_scalar( $id ) && ! empty( $id ) ? sprintf( 'ID #%s', sanitize_text_field( (string) $id ) ) : '';
+	}
+
+	/**
+	 * @param string[] $fields
+	 */
+	private function file_iteration_label( $fields ) {
+		foreach ( $fields as $value ) {
+			if ( is_string( $value ) && is_email( trim( $value ) ) ) {
+				return trim( $value );
+			}
+		}
+		return '';
 	}
 
 	/**
@@ -341,7 +410,10 @@ class Loop extends Action {
 				break;
 			}
 
-			$body->maybe_run(
+			$this->run_iteration(
+				$body,
+				$index,
+				sprintf( 'Number #%s', $number ),
 				$subject,
 				$trigger,
 				$action,
@@ -429,7 +501,10 @@ class Loop extends Action {
 				break;
 			}
 
-			$body->maybe_run(
+			$this->run_iteration(
+				$body,
+				$processed,
+				$this->collection_iteration_label( $item, $collection ),
 				$subject,
 				$trigger,
 				$action,
@@ -519,7 +594,10 @@ class Loop extends Action {
 					continue;
 				}
 
-				$body->maybe_run(
+				$this->run_iteration(
+					$body,
+					$processed,
+					$this->collection_iteration_label( $person, $collection ),
 					$subject,
 					$trigger,
 					$action,
@@ -728,7 +806,10 @@ class Loop extends Action {
 
 				$item[ $this->prepend_merge_tag_prefix( $rule, 'index' ) ] = $processed;
 
-				$body->maybe_run(
+				$this->run_iteration(
+					$body,
+					$processed,
+					$this->file_iteration_label( $item ),
 					$subject,
 					$trigger,
 					$action,
@@ -838,7 +919,10 @@ class Loop extends Action {
 				$extra_args = $this->prepare_file_extra_args( $item, $rule );
 				$extra_args[ $this->prepend_merge_tag_prefix( $rule, 'index' ) ] = $processed;
 
-				$body->maybe_run(
+				$this->run_iteration(
+					$body,
+					$processed,
+					$this->file_iteration_label( $extra_args ),
 					$subject,
 					$trigger,
 					$action,
@@ -941,7 +1025,10 @@ class Loop extends Action {
 				$extra_args = $this->prepare_file_extra_args( $item, $rule );
 				$extra_args[ $this->prepend_merge_tag_prefix( $rule, 'index' ) ] = $processed;
 
-				$body->maybe_run(
+				$this->run_iteration(
+					$body,
+					$processed,
+					$this->file_iteration_label( $extra_args ),
 					$subject,
 					$trigger,
 					$action,
@@ -993,7 +1080,10 @@ class Loop extends Action {
 			$extra_args = $this->prepare_file_extra_args( $item, $rule );
 			$extra_args[ $this->prepend_merge_tag_prefix( $rule, 'index' ) ] = $processed;
 
-			$body->maybe_run(
+			$this->run_iteration(
+				$body,
+				$processed,
+				$this->file_iteration_label( $extra_args ),
 				$subject,
 				$trigger,
 				$action,
@@ -1209,11 +1299,11 @@ class Loop extends Action {
 			$candidates[ $uploads['baseurl'] ] = $uploads['basedir'];
 		}
 
-		$candidates[ content_url( '/' ) ]           = WP_CONTENT_DIR;
+		$candidates[ content_url( '/' ) ]               = WP_CONTENT_DIR;
 		$candidates[ network_site_url( '/', 'https' ) ] = ABSPATH;
 		$candidates[ network_site_url( '/', 'http' ) ]  = ABSPATH;
-		$candidates[ site_url( '/', 'https' ) ]     = ABSPATH;
-		$candidates[ site_url( '/', 'http' ) ]      = ABSPATH;
+		$candidates[ site_url( '/', 'https' ) ]         = ABSPATH;
+		$candidates[ site_url( '/', 'http' ) ]          = ABSPATH;
 
 		foreach ( $candidates as $base_url => $base_dir ) {
 			$file_path = $this->url_to_local_path( $url, $base_url, $base_dir );

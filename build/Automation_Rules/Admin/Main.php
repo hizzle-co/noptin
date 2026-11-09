@@ -85,6 +85,7 @@ class Main {
 
 		$script            = 'automation-rules';
 		$edited_rule_id    = self::get_edited_rule_id();
+		$history_route     = self::get_history_route();
 		$is_editor_context = null !== $edited_rule_id;
 
 		$disable_ai = get_noptin_option( 'disable_ai', false );
@@ -114,23 +115,23 @@ class Main {
 				apply_filters(
 					'noptin_email_settings_misc',
 					array(
-						'config'       => \Hizzle\Noptin\Extensions\Catalog::config(),
-						'isTest'       => defined( 'NOPTIN_IS_TESTING' ),
-						'ai'           => array(
+						'config'      => \Hizzle\Noptin\Extensions\Catalog::config(),
+						'isTest'      => defined( 'NOPTIN_IS_TESTING' ),
+						'ai'          => array(
 							'disabled' => (bool) $disable_ai,
 						),
-						'data'         => array(
-							'add_new'  => add_query_arg(
+						'data'        => array(
+							'add_new' => add_query_arg(
 								array(
 									'page'          => 'noptin-automation-rules',
 									'hizzlewp_path' => '/edit/0',
 								),
 								admin_url( 'admin.php' )
 							),
-							'app'      => $map,
+							'app'     => $map,
 						),
-						'brand'        => noptin()->white_label->get_details(),
-						'comparisons'  => noptin_get_conditional_logic_comparisons(),
+						'brand'       => noptin()->white_label->get_details(),
+						'comparisons' => noptin_get_conditional_logic_comparisons(),
 					),
 					$script
 				)
@@ -138,9 +139,11 @@ class Main {
 
 			wp_set_script_translations( 'noptin-' . $script, 'newsletter-optin-box', noptin()->plugin_path . 'languages' );
 
-			// Preload the automation rule being edited into wp.apiFetch cache.
+			// Preload the records used by the current route into wp.apiFetch cache.
 			if ( $is_editor_context ) {
 				self::preload_current_rule_rest_api( $edited_rule_id, $map['treeMap'] ?? array() );
+			} elseif ( null !== $history_route ) {
+				self::preload_history_api( $history_route['rule_id'], $history_route['task_id'] );
 			} else {
 				self::preload_overview_api();
 			}
@@ -175,6 +178,75 @@ class Main {
 		}
 
 		return absint( $matches[1] );
+	}
+
+	/**
+	 * Returns the rule and optional task IDs from the run history route.
+	 *
+	 * @return array|null
+	 */
+	private static function get_history_route() {
+		$path = isset( $_GET['hizzlewp_path'] ) ? sanitize_text_field( wp_unslash( $_GET['hizzlewp_path'] ) ) : '';
+
+		if ( ! preg_match( '#^/runs/(\d+)(?:/(\d+))?/?$#', $path, $matches ) ) {
+			return null;
+		}
+
+		return array(
+			'rule_id' => absint( $matches[1] ),
+			'task_id' => isset( $matches[2] ) ? absint( $matches[2] ) : 0,
+		);
+	}
+
+	/**
+	 * Preloads the workflow and the first page of root tasks used by history.
+	 *
+	 * @param int $rule_id The workflow rule ID.
+	 * @param int $task_id The selected root task ID, or zero for the run list.
+	 */
+	private static function preload_history_api( $rule_id, $task_id ) {
+		$unique_id = \Hizzle\WordPress\ScriptManager::$request_uuid;
+		$paths     = array(
+			'/noptin/v1/automation_rules/collection_schema',
+			add_query_arg(
+				array(
+					'context' => 'view',
+					'uniqid'  => $unique_id,
+				),
+				'/noptin/v1/automation_rules/' . $rule_id
+			),
+		);
+		$rule      = noptin_get_automation_rule( $rule_id );
+		$tree      = is_wp_error( $rule ) ? array() : $rule->get_workflow_tree();
+		$rule_ids  = array_values( array_unique( array_merge( array( $rule_id ), array_filter( array_column( (array) $tree, 'id' ) ) ) ) );
+
+		$paths[] = add_query_arg(
+			array(
+				'context'           => 'edit',
+				'uniqid'            => $unique_id,
+				'hook'              => 'noptin_run_automation_rule',
+				'primary_id'        => $rule_ids,
+				'parent_id_is_null' => 'true',
+				'retry_of_is_null'  => 'true',
+				'page'              => 1,
+				'per_page'          => 10,
+				'orderby'           => 'id',
+				'order'             => 'desc',
+			),
+			'/noptin/v1/tasks'
+		);
+
+		if ( $task_id ) {
+			$paths[] = add_query_arg(
+				array(
+					'context' => 'edit',
+					'uniqid'  => $unique_id,
+				),
+				'/noptin/v1/tasks/' . $task_id
+			);
+		}
+
+		self::preload_rest_api_paths( $paths );
 	}
 
 	/**
@@ -225,20 +297,7 @@ class Main {
 			}
 		}
 
-		$preload_data = array_reduce(
-			array_unique( $preload_paths ),
-			'rest_preload_api_request',
-			array()
-		);
-
-		wp_add_inline_script(
-			'wp-api-fetch',
-			sprintf(
-				'wp.apiFetch.use( wp.apiFetch.createPreloadingMiddleware( %s ) );',
-				wp_json_encode( $preload_data )
-			),
-			'after'
-		);
+		self::preload_rest_api_paths( $preload_paths );
 	}
 
 	/**
@@ -263,8 +322,20 @@ class Main {
 			$preload_paths[] = sprintf( '/noptin/v1/automation-rule-settings?action_id=%s&noptin_raw=true', $action_id );
 		}
 
+		self::preload_rest_api_paths( $preload_paths );
+	}
+
+	/**
+	 * Registers API preloads and the task schema shared by every automation route.
+	 *
+	 * @param string[] $paths REST paths matching the client store requests.
+	 */
+	private static function preload_rest_api_paths( $paths ) {
+		$paths[] = '/noptin/v1/tasks/collection_schema';
+
+		// This middleware runs before API Fetch adds _locale=user to requests.
 		$preload_data = array_reduce(
-			array_unique( $preload_paths ),
+			array_unique( $paths ),
 			'rest_preload_api_request',
 			array()
 		);

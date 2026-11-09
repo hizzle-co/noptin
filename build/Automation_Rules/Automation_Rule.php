@@ -623,8 +623,8 @@ class Automation_Rule extends \Hizzle\Store\Record {
 	/**
 	 * Fires the rule action.
 	 *
-	 * @param \Noptin_Abstract_Trigger $trigger  The trigger.
-	 * @param \Noptin_Abstract_Action $action  The action.
+	 * @param \Hizzle\Noptin\Automation_Rules\Triggers\Trigger $trigger  The trigger.
+	 * @param \Hizzle\Noptin\Automation_Rules\Actions\Action $action  The action.
 	 * @param mixed $subject The subject.
 	 * @param array $args The arguments.
 	 * @return bool|\WP_Error

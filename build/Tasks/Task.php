@@ -15,7 +15,6 @@ defined( 'ABSPATH' ) || exit;
  * Task.
  */
 class Task extends \Hizzle\Store\Record {
-
 	/**
 	 * Get the hook.
 	 *
@@ -317,39 +316,73 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
-	 * Returns the root task ID, or zero for a root task.
-	 *
-	 * @return int
-	 */
-	public function get_parent_id( $context = 'view' ) {
-		return (int) $this->get_prop( 'parent_id', $context );
-	}
-
-	public function set_parent_id( $value ) {
-		$this->set_prop( 'parent_id', absint( $value ) );
-	}
-
-	public function get_retry_of( $context = 'view' ) {
-		return (int) $this->get_prop( 'retry_of', $context );
-	}
-
-	public function set_retry_of( $value ) {
-		$this->set_prop( 'retry_of', absint( $value ) );
-	}
-
-	/**
-	 * Returns the time the task started executing.
+	 * Returns the root task ID, or null for a root task.
 	 *
 	 * @return int|null
 	 */
-	public function get_automation_started() {
-		foreach ( $this->get_logs() as $log ) {
-			if ( 'task started' === ( $log['message'] ?? '' ) && ! empty( $log['date'] ) ) {
-				return (int) $log['date'];
-			}
+	public function get_parent_id( $context = 'view' ) {
+		return $this->get_prop( 'parent_id', $context );
+	}
+
+	/**
+	 * Sets the root task ID, storing NULL for a root task.
+	 *
+	 * @param int|null $value The parent ID, or null when absent.
+	 */
+	public function set_parent_id( $value ) {
+		$this->set_prop( 'parent_id', absint( $value ) ?: null );
+	}
+
+	/**
+	 * Returns the immediate history parent ID.
+	 *
+	 * @return int|null
+	 */
+	public function get_history_parent_id( $context = 'view' ) {
+		return $this->get_prop( 'history_parent_id', $context );
+	}
+
+	/**
+	 * Sets the immediate history parent ID.
+	 *
+	 * @param int|null $value The parent ID, or null when absent.
+	 */
+	public function set_history_parent_id( $value ) {
+		$this->set_prop( 'history_parent_id', absint( $value ) ?: null );
+	}
+
+	/**
+	 * Gets the id of the task being retried.
+	 *
+	 * @return int|null
+	 */
+	public function get_retry_of( $context = 'view' ) {
+		return $this->get_prop( 'retry_of', $context );
+	}
+
+	/**
+	 * Return the aggregate automation run status in edit context.
+	 *
+	 * @param string $context Requested record context.
+	 * @return string|null Run status, or null outside edit context.
+	 */
+	public function get_run_status( $context = 'view' ) {
+		if ( 'edit' !== $context ) {
+			return null;
 		}
 
-		return null;
+		return Run_History::HOOK === $this->get_hook() && ! $this->get_parent_id()
+			? Run_History::get_status( $this )
+			: $this->get_status();
+	}
+
+	/**
+	 * Sets the id of the task being retried.
+	 *
+	 * @param int|null $value The task ID, or null when absent.
+	 */
+	public function set_retry_of( $value ) {
+		$this->set_prop( 'retry_of', absint( $value ) ?: null );
 	}
 
 	/**
@@ -494,7 +527,7 @@ class Task extends \Hizzle\Store\Record {
 		}
 
 		$new_task = $this->clone();
-		$new_task->set_retry_of( 0 );
+		$new_task->set_retry_of( null );
 		$new_task->set_date_created( time() );
 		$new_task->set_date_modified( time() );
 		$new_task->set_date_scheduled( time() + (int) $interval );
@@ -689,9 +722,11 @@ class Task extends \Hizzle\Store\Record {
 
 		$data['metadata'] = $metadata;
 		$new_task->set_props( $data );
+
 		if ( 'noptin_run_automation_rule' === $this->get_hook() ) {
-			$new_task->set_parent_id( $this->get_parent_id() ?: $this->get_id() );
+			$new_task->set_parent_id( $this->get_parent_id() ? $this->get_parent_id() : $this->get_id() );
 		}
+
 		return $new_task;
 	}
 }
