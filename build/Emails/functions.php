@@ -889,7 +889,7 @@ function noptin_get_email_sending_rolling_period() {
 function noptin_emails_sent_this_period() {
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => wp_date( DATE_ATOM, time() - noptin_get_email_sending_rolling_period() ),
+		'date_created_after' => current_datetime()->setTimestamp( time() - noptin_get_email_sending_rolling_period() )->format( DATE_ATOM ),
 	);
 
 	$emails_sent = (int) Hizzle\Noptin\Emails\Logs\Main::query( $args, 'count' );
@@ -906,7 +906,7 @@ function noptin_get_next_email_send_time() {
 
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => wp_date( DATE_ATOM, time() - noptin_get_email_sending_rolling_period() ),
+		'date_created_after' => current_datetime()->setTimestamp( time() - noptin_get_email_sending_rolling_period() )->format( DATE_ATOM ),
 		'orderby'            => 'date_created',
 		'order'              => 'ASC',
 		'number'             => 1,

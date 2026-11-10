@@ -819,7 +819,7 @@ class Main {
 
 		// Optional since in seconds.
 		if ( ! empty( $args['since'] ) ) {
-			$query['date_created_after'] = wp_date( DATE_ATOM, time() - (int) $args['since'] );
+			$query['date_created_after'] = current_datetime()->setTimestamp( time() - (int) $args['since'] )->format( DATE_ATOM );
 		}
 
 		$cache_key = md5( wp_json_encode( $query ) );
@@ -924,7 +924,7 @@ class Main {
 			array(
 				'status'               => 'running',
 				'number'               => static::get_batch_size(),
-				'date_modified_before' => wp_date( DATE_ATOM, time() - (int) $timeout ),
+				'date_modified_before' => current_datetime()->setTimestamp( time() - (int) $timeout )->format( DATE_ATOM ),
 			)
 		);
 
@@ -1028,7 +1028,7 @@ class Main {
 
 		$query = array(
 			'status'               => $statuses,
-			'date_modified_before' => wp_date( DATE_ATOM, time() - ( $days * DAY_IN_SECONDS ) ),
+			'date_modified_before' => current_datetime()->setTimestamp( time() - ( $days * DAY_IN_SECONDS ) )->format( DATE_ATOM ),
 		);
 		$count = self::query( $query, 'count' );
 

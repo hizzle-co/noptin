@@ -274,7 +274,7 @@ class Main {
 				'hook'                 => array( self::TASK_HOOK, self::HEALTH_CHECK_HOOK ),
 				'status'               => array( 'complete', 'canceled' ),
 				'number'               => 20,
-				'date_modified_before' => wp_date( DATE_ATOM, time() - WEEK_IN_SECONDS ),
+				'date_modified_before' => current_datetime()->setTimestamp( time() - WEEK_IN_SECONDS )->format( DATE_ATOM ),
 			)
 		);
 

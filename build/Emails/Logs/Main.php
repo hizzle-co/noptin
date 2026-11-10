@@ -67,7 +67,7 @@ class Main {
 
 		// Throttle repeated opens from the same email within 5 minutes.
 		if ( 'open' === $activity && ! empty( $campaign_id ) ) {
-			$five_minutes_ago = wp_date( DATE_ATOM, time() - 5 * MINUTE_IN_SECONDS );
+			$five_minutes_ago = current_datetime()->setTimestamp( time() - 5 * MINUTE_IN_SECONDS )->format( DATE_ATOM );
 			$recent_open      = self::query(
 				array(
 					'email'              => $email,
