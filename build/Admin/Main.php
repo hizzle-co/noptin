@@ -430,7 +430,7 @@ class Main {
 	private static function show_past_due_tasks_notice() {
 		$filters = array(
 			'status'                => 'pending',
-			'date_scheduled_before' => gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 5 * MINUTE_IN_SECONDS ),
+			'date_scheduled_before' => wp_date( DATE_ATOM, time() - 5 * MINUTE_IN_SECONDS ),
 		);
 		$count   = \Hizzle\Noptin\Tasks\Main::query( $filters, 'count' );
 

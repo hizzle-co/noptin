@@ -782,7 +782,7 @@ function noptin_record_ecommerce_purchase( $args ) {
 		array(
 			'activity'           => 'click',
 			'email'              => $email_address,
-			'date_created_after' => ! empty( $date_since ) ? "{$date_since} UTC" : '-30 days',
+			'date_created_after' => ! empty( $date_since ) ? get_date_from_gmt( $date_since, DATE_ATOM ) : '-30 days',
 			'orderby'            => 'date_created',
 			'order'              => 'DESC',
 			'number'             => 1,
@@ -889,7 +889,7 @@ function noptin_get_email_sending_rolling_period() {
 function noptin_emails_sent_this_period() {
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_email_sending_rolling_period() ),
+		'date_created_after' => wp_date( DATE_ATOM, time() - noptin_get_email_sending_rolling_period() ),
 	);
 
 	$emails_sent = (int) Hizzle\Noptin\Emails\Logs\Main::query( $args, 'count' );
@@ -906,7 +906,7 @@ function noptin_get_next_email_send_time() {
 
 	$args = array(
 		'activity'           => 'send',
-		'date_created_after' => gmdate( 'Y-m-d H:i:s e', time() - noptin_get_email_sending_rolling_period() ),
+		'date_created_after' => wp_date( DATE_ATOM, time() - noptin_get_email_sending_rolling_period() ),
 		'orderby'            => 'date_created',
 		'order'              => 'ASC',
 		'number'             => 1,

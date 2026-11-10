@@ -414,7 +414,7 @@ class Main {
 			array(
 				'status'                => 'pending',
 				'number'                => 1,
-				'date_scheduled_before' => current_time( 'Y-m-d H:i:s' ),
+				'date_scheduled_before' => current_time( DATE_ATOM ),
 			)
 		);
 
@@ -819,7 +819,7 @@ class Main {
 
 		// Optional since in seconds.
 		if ( ! empty( $args['since'] ) ) {
-			$query['date_created_after'] = gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $args['since'] );
+			$query['date_created_after'] = wp_date( DATE_ATOM, time() - (int) $args['since'] );
 		}
 
 		$cache_key = md5( wp_json_encode( $query ) );
@@ -924,7 +924,7 @@ class Main {
 			array(
 				'status'               => 'running',
 				'number'               => static::get_batch_size(),
-				'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - (int) $timeout ),
+				'date_modified_before' => wp_date( DATE_ATOM, time() - (int) $timeout ),
 			)
 		);
 
@@ -1028,7 +1028,7 @@ class Main {
 
 		$query = array(
 			'status'               => $statuses,
-			'date_modified_before' => gmdate( 'Y-m-d H:i:s', time() + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) - ( $days * DAY_IN_SECONDS ) ),
+			'date_modified_before' => wp_date( DATE_ATOM, time() - ( $days * DAY_IN_SECONDS ) ),
 		);
 		$count = self::query( $query, 'count' );
 
@@ -1210,6 +1210,17 @@ class Main {
 							'readonly'          => true,
 							'extra_rest_schema' => array(
 								'context' => array( 'edit' ),
+							),
+						),
+						'loop_iterations'   => array(
+							'type'              => 'TEXT',
+							'description'       => 'Recorded iteration task IDs and labels. Only populated for loop tasks in edit context.',
+							'is_dynamic'        => true,
+							'readonly'          => true,
+							'extra_rest_schema' => array(
+								'context'              => array( 'edit' ),
+								'type'                 => array( 'object', 'null' ),
+								'additionalProperties' => array( 'type' => 'string' ),
 							),
 						),
 						'history_parent_id' => array(

@@ -377,6 +377,43 @@ class Task extends \Hizzle\Store\Record {
 	}
 
 	/**
+	 * Returns all recorded iteration task IDs and labels without loading task objects.
+	 *
+	 * @param string $context Requested record context.
+	 * @return object|null Iteration map for an existing automation loop in edit context.
+	 */
+	public function get_loop_iterations( $context = 'view' ) {
+		if ( 'edit' !== $context || ! $this->get_id() || Run_History::HOOK !== $this->get_hook() || 'loop' !== $this->get_meta( 'action_id' ) ) {
+			return null;
+		}
+
+		$query = $this->get_collection()->query(
+			array(
+				'fields'            => array( 'id', 'metadata' ),
+				'parent_id'         => $this->get_parent_id() ? $this->get_parent_id() : $this->get_id(),
+				'history_parent_id' => $this->get_id(),
+				'hook'              => Run_History::HOOK,
+				'retry_of_is_null'  => true,
+				'orderby'           => 'id',
+				'order'             => 'asc',
+				'per_page'          => -1,
+				'count_total'       => false,
+			)
+		);
+
+		$iterations = array();
+		foreach ( $query->get_results() as $row ) {
+			$metadata = json_decode( (string) $row->metadata, true );
+			if ( ! is_array( $metadata['iteration'] ?? null ) ) {
+				continue;
+			}
+			$iterations[ $row->id ] = (string) ( $metadata['iteration']['label'] ?? sprintf( 'Iteration %d', count( $iterations ) + 1 ) );
+		}
+
+		return (object) $iterations;
+	}
+
+	/**
 	 * Sets the id of the task being retried.
 	 *
 	 * @param int|null $value The task ID, or null when absent.
