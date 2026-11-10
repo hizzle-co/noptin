@@ -352,6 +352,11 @@ class Loop extends Action {
 	 * @param \Hizzle\Noptin\Objects\Collection $collection
 	 */
 	private function collection_iteration_label( $item, $collection ) {
+		// Empty IDs must not resolve context-dependent records such as get_post( 0 ).
+		if ( empty( $item ) ) {
+			return '';
+		}
+
 		if ( is_scalar( $item ) ) {
 			$item = $collection->get( $item );
 		}

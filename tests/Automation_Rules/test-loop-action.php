@@ -9,6 +9,7 @@ require_once __DIR__ . '/includes/class-actions-test-case.php';
  */
 class Test_Loop_Action extends Actions_Test_Case {
 
+	/** Verify loaded records, ID resolution, and empty IDs in a global post context. */
 	public function test_collection_iteration_labels_resolve_ids_and_accept_loaded_records() {
 		$action = new \Hizzle\Noptin\Automation_Rules\Actions\Loop();
 		$label = new \ReflectionMethod( $action, 'collection_iteration_label' );
@@ -21,7 +22,20 @@ class Test_Loop_Action extends Actions_Test_Case {
 		$this->assertSame( 'Iteration title', $label->invoke( $action, $posts->get( $id ), $posts ) );
 		wp_update_post( array( 'ID' => $id, 'post_title' => '' ) );
 		$this->assertSame( 'ID #' . $id, $label->invoke( $action, $id, $posts ) );
-		$this->assertSame( '', $label->invoke( $action, 0, $posts ) );
+		$had_post = array_key_exists( 'post', $GLOBALS );
+		$previous_post = $GLOBALS['post'] ?? null;
+		$GLOBALS['post'] = get_post( $id );
+		try {
+			foreach ( array( 0, '0', '', null, false ) as $empty_id ) {
+				$this->assertSame( '', $label->invoke( $action, $empty_id, $posts ), 'Empty IDs must not resolve the global post.' );
+			}
+		} finally {
+			if ( $had_post ) {
+				$GLOBALS['post'] = $previous_post;
+			} else {
+				unset( $GLOBALS['post'] );
+			}
+		}
 
 		$users = new \Hizzle\Noptin\Objects\Users( 'user', 'Users', 'User' );
 		$user_id = self::factory()->user->create( array( 'user_email' => 'loop-label@example.test', 'display_name' => 'Loop person' ) );
