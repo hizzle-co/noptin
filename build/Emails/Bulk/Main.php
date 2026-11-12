@@ -46,6 +46,7 @@ class Main {
 	 *
 	 */
 	public static function init() {
+		add_filter( 'noptin_campaign_row_actions', array( Reservation::class, 'actions' ), 10, 2 );
 		// Init the email senders.
 		add_action( 'noptin_init', array( __CLASS__, 'init_email_senders' ), 100 );
 
@@ -558,6 +559,7 @@ class Main {
 			return;
 		}
 
+		$dispatch_next = true;
 		try {
 
 			// Raise the memory limit.
@@ -602,6 +604,12 @@ class Main {
 				// Increment the processed tasks counter.
 				++$processed;
 			} while ( time() - $start_time < self::MAX_RUNTIME && ! noptin_memory_exceeded() );
+		} catch ( Reservation_Exception $t ) {
+			$dispatch_next = false;
+			if ( ! $t->wait && isset( $campaign ) && $campaign ) {
+				noptin_pause_email_campaign( $campaign->id, esc_html( $t->getMessage() ), 0 );
+				delete_noptin_background_action( 'noptin_resume_email_campaign', $campaign->id );
+			}
 		} catch ( \Throwable $t ) {
 
 			// Log the error.
@@ -622,7 +630,7 @@ class Main {
 			 *
 			 * @param bool $dispatch_next Whether to dispatch the next batch.
 			 */
-			if ( apply_filters( 'noptin_bulk_email_dispatch_next', true ) ) {
+			if ( $dispatch_next && apply_filters( 'noptin_bulk_email_dispatch_next', true ) ) {
 				self::send_pending();
 			}
 		}
@@ -695,6 +703,8 @@ class Main {
 		// Send the email.
 		try {
 			$result = $sender->send( $campaign, $recipient );
+		} catch ( Reservation_Exception $t ) {
+			throw $t;
 		} catch ( \Throwable $t ) {
 
 			// Log the error.
