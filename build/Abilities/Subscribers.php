@@ -43,31 +43,40 @@ class Subscribers {
 				$list[ $key ]['type'] = array_values( $argument['type'] );
 			}
 		}
+
 		// The REST endpoint also accepts WordPress's standard page parameter.
-		$list += array( 'page' => array( 'type' => 'integer', 'minimum' => 1, 'default' => 1 ) );
+		$list += array(
+			'page' => array(
+				'type'    => 'integer',
+				'minimum' => 1,
+				'default' => 1,
+			),
+		);
 
 		self::register_tool(
 			'list-subscribers',
-			__( 'List subscribers', 'newsletter-optin-box' ),
-			__( 'List Noptin subscribers using the collection’s filters, sorting, and pagination.', 'newsletter-optin-box' ),
+			'List newsletter subscribers',
+			'List Noptin email newsletter subscribers with filtering, sorting, and pagination.',
 			'GET',
 			$list,
 			array(),
 			$response_fields
 		);
+
 		self::register_tool(
 			'get-subscriber',
-			__( 'Get subscriber', 'newsletter-optin-box' ),
-			__( 'Retrieve one Noptin subscriber by ID.', 'newsletter-optin-box' ),
+			'Get newsletter subscriber',
+			'Retrieve one Noptin email newsletter subscriber by subscriber ID or email address. Supply exactly one.',
 			'GET',
-			$id,
-			array( 'id' ),
+			$id + array( 'email' => $fields['email'] ),
+			array(),
 			$response_fields
 		);
+
 		self::register_tool(
 			'create-subscriber',
-			__( 'Create subscriber', 'newsletter-optin-box' ),
-			__( 'Create a new Noptin subscriber with an email address and optional subscriber fields.', 'newsletter-optin-box' ),
+			__( 'Create newsletter subscriber', 'newsletter-optin-box' ),
+			__( 'Create a Noptin email newsletter subscriber with an email address and optional subscriber fields.', 'newsletter-optin-box' ),
 			'POST',
 			$fields,
 			array( 'email' ),
@@ -75,8 +84,8 @@ class Subscribers {
 		);
 		self::register_tool(
 			'update-subscriber',
-			__( 'Update subscriber', 'newsletter-optin-box' ),
-			__( 'Change the supplied fields on an existing Noptin subscriber by ID.', 'newsletter-optin-box' ),
+			__( 'Update newsletter subscriber', 'newsletter-optin-box' ),
+			__( 'Update the supplied fields on a Noptin email newsletter subscriber by subscriber ID.', 'newsletter-optin-box' ),
 			'PATCH',
 			$id + $fields,
 			array( 'id' ),
@@ -84,8 +93,8 @@ class Subscribers {
 		);
 		self::register_tool(
 			'delete-subscriber',
-			__( 'Delete subscriber', 'newsletter-optin-box' ),
-			__( 'Permanently delete one Noptin subscriber and their associated email logs and tasks by subscriber ID.', 'newsletter-optin-box' ),
+			__( 'Delete newsletter subscriber', 'newsletter-optin-box' ),
+			__( 'Permanently delete one Noptin email newsletter subscriber and their associated email logs and tasks by subscriber ID.', 'newsletter-optin-box' ),
 			'DELETE',
 			$id,
 			array( 'id' ),
@@ -105,13 +114,16 @@ class Subscribers {
 	 * @param array  $response_fields Subscriber fields exposed to callers.
 	 */
 	private static function register_tool( $name, $label, $description, $method, $properties, $required, $response_fields ) {
-		$single = in_array( 'id', $required, true );
+		$single = 'get-subscriber' === $name || in_array( 'id', $required, true );
 		$input  = array(
 			'type'                 => 'object',
 			'properties'           => $properties,
 			'additionalProperties' => false,
 		);
-		if ( $required ) {
+		if ( 'get-subscriber' === $name ) {
+			$input['minProperties'] = 1;
+			$input['maxProperties'] = 1;
+		} elseif ( $required ) {
 			$input['required'] = $required;
 		} else {
 			$input['default'] = array();
@@ -156,7 +168,10 @@ class Subscribers {
 	 */
 	private static function request( $method, $single, $response_fields, $args ) {
 		$route = '/noptin/v1/subscribers';
-		if ( $single ) {
+		if ( $single && 'GET' === $method && isset( $args['email'] ) ) {
+			$route .= '/email/' . rawurlencode( $args['email'] );
+			unset( $args['email'] );
+		} elseif ( $single ) {
 			$route .= '/' . (int) $args['id'];
 			unset( $args['id'] );
 		}
