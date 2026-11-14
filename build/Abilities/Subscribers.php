@@ -6,7 +6,6 @@ defined( 'ABSPATH' ) || exit;
 
 /** Exposes subscriber management through the WordPress Abilities API and MCP. */
 class Subscribers {
-
 	/** Register the subscriber tools with the fields configured on this site. */
 	public static function register() {
 		$collection = noptin()->db()->store->get( 'subscribers' );
@@ -30,20 +29,27 @@ class Subscribers {
 		$fields['email']['format'] = 'email';
 		$fields['status']['enum']  = array_keys( noptin_get_subscriber_statuses() );
 
-		$id   = array( 'id' => array( 'type' => 'integer', 'minimum' => 1 ) );
-		$list = array(
-			'page'     => array( 'type' => 'integer', 'minimum' => 1, 'default' => 1 ),
-			'per_page' => array( 'type' => 'integer', 'minimum' => 1, 'maximum' => 100, 'default' => 10 ),
-			'search'   => array( 'type' => 'string' ),
-			'email'    => $fields['email'],
-			'status'   => $fields['status'],
+		$id              = array(
+			'id' => array(
+				'type'    => 'integer',
+				'minimum' => 1,
+			),
 		);
 		$response_fields = array_keys( $id + $fields );
+		$list            = $collection->get_query_schema();
+		foreach ( $list as $key => $argument ) {
+			unset( $list[ $key ]['sanitize_callback'], $list[ $key ]['validate_callback'] );
+			if ( isset( $argument['type'] ) && is_array( $argument['type'] ) ) {
+				$list[ $key ]['type'] = array_values( $argument['type'] );
+			}
+		}
+		// The REST endpoint also accepts WordPress's standard page parameter.
+		$list += array( 'page' => array( 'type' => 'integer', 'minimum' => 1, 'default' => 1 ) );
 
 		self::register_tool(
 			'list-subscribers',
 			__( 'List subscribers', 'newsletter-optin-box' ),
-			__( 'List a page of Noptin subscribers, optionally filtered by email, search text, or status.', 'newsletter-optin-box' ),
+			__( 'List Noptin subscribers using the collection’s filters, sorting, and pagination.', 'newsletter-optin-box' ),
 			'GET',
 			$list,
 			array(),
