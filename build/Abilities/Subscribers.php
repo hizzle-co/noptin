@@ -28,8 +28,8 @@ class Subscribers {
 			}
 			$prop = $collection->get_prop( $name );
 			if ( 'tags' === $name || ( $prop && null !== $prop->enum ) ) {
-				$choice_fields[] = $name;
-				$lookup = sprintf( 'Call noptin/get-subscriber-field-options with {"field":"%s"} for this site\'s current values and labels.', $name );
+				$choice_fields[]                 = $name;
+				$lookup                          = sprintf( 'Call noptin/get-subscriber-field-options with {"field":"%s"} for this site\'s current values and labels.', $name );
 				$fields[ $name ]['description'] .= ' ' . $lookup;
 				if ( 'tags' === $name ) {
 					$fields[ $name ]['description'] .= ' Pass an array of tag names. New tag names are also accepted.';
@@ -49,7 +49,7 @@ class Subscribers {
 				'minimum' => 1,
 			),
 		);
-		$response_fields = array_merge( array_keys( $id + $fields ), array( 'date_created', 'email_engagement_score' ) );
+		$response_fields = wp_list_pluck( $collection->get_props(), 'name' );
 		$list            = $collection->get_query_schema();
 		foreach ( $list as $key => $argument ) {
 			unset( $list[ $key ]['sanitize_callback'], $list[ $key ]['validate_callback'] );
@@ -80,7 +80,12 @@ class Subscribers {
 			'Get newsletter subscriber field options',
 			'Look up the current tag names, lists, or choices for a Noptin email newsletter subscriber field. Match the label and pass its value when assigning or filtering subscribers.',
 			'GET',
-			array( 'field' => array( 'type' => 'string', 'enum' => array_values( array_unique( $choice_fields ) ) ) ),
+			array(
+				'field' => array(
+					'type' => 'string',
+					'enum' => array_values( array_unique( $choice_fields ) ),
+				),
+			),
 			array( 'field' ),
 			array(),
 			array(
@@ -89,8 +94,14 @@ class Subscribers {
 					'items' => array(
 						'type'       => 'object',
 						'properties' => array(
-							'value' => array( 'type' => 'string', 'description' => 'Exact value to pass to the subscriber ability.' ),
-							'label' => array( 'type' => 'string', 'description' => 'Display label on this site.' ),
+							'value' => array(
+								'type'        => 'string',
+								'description' => 'Exact value to pass to the subscriber ability.',
+							),
+							'label' => array(
+								'type'        => 'string',
+								'description' => 'Display label on this site.',
+							),
 						),
 						'required'   => array( 'value', 'label' ),
 					),
@@ -101,15 +112,25 @@ class Subscribers {
 		self::register_tool(
 			'list-subscribers',
 			'List newsletter subscribers',
-			'List Noptin email newsletter subscribers. For newest subscribers, order by date_created descending. For least engaged, order by email_engagement_score ascending.',
+			'List Noptin email newsletter subscribers and their registered record fields. Use orderby and order to sort the results.',
 			'GET',
 			$list,
 			array(),
 			$response_fields,
 			array(
-				'subscribers' => array( 'type' => 'array', 'items' => array( 'type' => 'object' ), 'description' => 'Subscriber records on the requested page.' ),
-				'total'       => array( 'type' => 'integer', 'description' => 'Number of subscribers matching the filters across all pages.' ),
-				'total_pages' => array( 'type' => 'integer', 'description' => 'Number of result pages for the current filters and page size.' ),
+				'subscribers' => array(
+					'type'        => 'array',
+					'items'       => array( 'type' => 'object' ),
+					'description' => 'Subscriber records on the requested page.',
+				),
+				'total'       => array(
+					'type'        => 'integer',
+					'description' => 'Number of subscribers matching the filters across all pages.',
+				),
+				'total_pages' => array(
+					'type'        => 'integer',
+					'description' => 'Number of result pages for the current filters and page size.',
+				),
 			)
 		);
 
@@ -168,7 +189,12 @@ class Subscribers {
 			'Apply the same changes to the selected Noptin email newsletter subscribers. Results report success or failure by subscriber ID.',
 			'PATCH',
 			$selection + array(
-				'bulk_update' => array( 'type' => 'object', 'properties' => $fields, 'minProperties' => 1, 'additionalProperties' => false ),
+				'bulk_update' => array(
+					'type'                 => 'object',
+					'properties'           => $fields,
+					'minProperties'        => 1,
+					'additionalProperties' => false,
+				),
 			),
 			array( 'include', 'bulk_update' ),
 			$response_fields
@@ -187,37 +213,67 @@ class Subscribers {
 			'Run a newsletter subscriber action',
 			'Send a confirmation email to a Noptin email newsletter subscriber, block the subscriber, or unblock them and set their status to subscribed.',
 			'POST',
-			$id + array( 'action' => array( 'type' => 'string', 'enum' => array( 'send_confirmation_email', 'block_subscriber', 'unblock_subscriber' ) ) ),
+			$id + array(
+				'action' => array(
+					'type' => 'string',
+					'enum' => array( 'send_confirmation_email', 'block_subscriber', 'unblock_subscriber' ),
+				),
+			),
 			array( 'id', 'action' ),
 			$response_fields
 		);
-		$tabs = array_filter( apply_filters( 'hizzle_rest_noptin_subscribers_record_tabs', array() ), static function ( $tab ) {
-			return is_callable( $tab['callback'] ?? null );
-		} );
+		$tabs = array_filter(
+			apply_filters( 'hizzle_rest_noptin_subscribers_record_tabs', array() ),
+			static function ( $tab ) {
+				return is_callable( $tab['callback'] ?? null );
+			}
+		);
 		if ( $tabs ) {
 			self::register_tool(
 				'get-subscriber-tab',
 				'Get newsletter subscriber tab',
 				'Read email history, activity, or another registered tab for a Noptin email newsletter subscriber.',
 				'GET',
-				$id + array( 'tab_id' => array( 'type' => 'string', 'enum' => array_keys( $tabs ) ) ),
+				$id + array(
+					'tab_id' => array(
+						'type' => 'string',
+						'enum' => array_keys( $tabs ),
+					),
+				),
 				array( 'id', 'tab_id' ),
 				$response_fields
 			);
 		}
 
-		$filters = array_diff_key( $list, array_flip( array( 'page', 'paged', 'per_page', 'offset', 'order', 'orderby' ) ) );
-		$columns = array_intersect( $collection->get_known_fields()['main'], $response_fields );
-		$metrics = array_fill_keys( $columns, array( 'type' => 'string', 'enum' => array( 'COUNT', 'SUM', 'AVG', 'MIN', 'MAX' ) ) );
-		$metrics['id'] = array( 'type' => 'string', 'enum' => array( 'COUNT', 'MIN', 'MAX' ) );
+		$filters       = array_diff_key( $list, array_flip( array( 'page', 'paged', 'per_page', 'offset', 'order', 'orderby' ) ) );
+		$columns       = array_intersect( $collection->get_known_fields()['main'], $response_fields );
+		$metrics       = array_fill_keys(
+			$columns,
+			array(
+				'type' => 'string',
+				'enum' => array( 'COUNT', 'SUM', 'AVG', 'MIN', 'MAX' ),
+			)
+		);
+		$metrics['id'] = array(
+			'type' => 'string',
+			'enum' => array( 'COUNT', 'MIN', 'MAX' ),
+		);
 		self::register_tool(
 			'aggregate-subscribers',
 			'Summarize newsletter subscribers',
 			'Calculate counts and summary statistics for Noptin email newsletter subscribers. For counts by status, use aggregate {"id":"COUNT"} and groupby "status".',
 			'GET',
 			$filters + array(
-				'aggregate' => array( 'type' => 'object', 'properties' => $metrics, 'minProperties' => 1, 'additionalProperties' => false ),
-				'groupby'   => array( 'type' => 'string', 'enum' => array_keys( $metrics ) ),
+				'aggregate' => array(
+					'type'                 => 'object',
+					'properties'           => $metrics,
+					'minProperties'        => 1,
+					'additionalProperties' => false,
+				),
+				'groupby'   => array(
+					'type' => 'string',
+					'enum' => array_keys( $metrics ),
+				),
 			),
 			array( 'aggregate' ),
 			$response_fields
@@ -359,13 +415,19 @@ class Subscribers {
 		$options = array();
 		if ( 'tags' === $field ) {
 			foreach ( get_noptin_subscriber_tags() as $tag ) {
-				$options[] = array( 'value' => $tag, 'label' => $tag );
+				$options[] = array(
+					'value' => $tag,
+					'label' => $tag,
+				);
 			}
 		} else {
 			$prop    = noptin()->db()->store->get( 'subscribers' )->get_prop( $field );
 			$choices = is_callable( $prop->enum ) ? call_user_func( $prop->enum ) : $prop->enum;
 			foreach ( (array) $choices as $value => $label ) {
-				$options[] = array( 'value' => (string) $value, 'label' => (string) $label );
+				$options[] = array(
+					'value' => (string) $value,
+					'label' => (string) $label,
+				);
 			}
 		}
 		return array( 'options' => $options );
