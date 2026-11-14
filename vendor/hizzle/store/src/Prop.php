@@ -181,6 +181,8 @@ class Prop {
 			}
 		}
 
+		$this->type = strtoupper( (string) $this->type );
+
 		if ( empty( $this->label ) ) {
 			$this->label = ucfirst( str_replace( '_', ' ', $this->name ) );
 		}
@@ -247,13 +249,13 @@ class Prop {
 			return $this->schema;
 		}
 
-		$string = $this->name . ' ' . strtoupper( $this->type );
+		$string = $this->name . ' ' . $this->type;
 
 		if ( $this->length && ! $this->is_date() ) {
 			$string .= '(' . $this->length . ')';
 		}
 
-		if ( 'bigint' === strtolower( $this->type ) ) {
+		if ( 'BIGINT' === $this->type ) {
 			$string .= ' UNSIGNED';
 		}
 
@@ -376,11 +378,16 @@ class Prop {
 		$rest_schema  = $this->get_rest_schema();
 		$query_schema = array();
 
+		$field_name = empty( $this->label ) ? $this->name : $this->label;
+		$collection = $this->get_collection();
+		$resources  = empty( $collection ) ? 'resources' : ( $collection->get_name() ? $collection->get_name() : 'resources' );
+
 		// Has the value.
 		$query_schema[ $this->name ] = array(
 			'description'       => sprintf(
-				'Limit response to resources where %s has the provided value.',
-				$this->name
+				'Limit response to %s where %s has the provided value.',
+				$resources,
+				$field_name
 			),
 			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
 			'validate_callback' => 'rest_validate_request_arg',
@@ -393,8 +400,9 @@ class Prop {
 		// Does not have the value.
 		$query_schema[ "{$this->name}_not" ] = array(
 			'description'       => sprintf(
-				'Limit response to resources where %s does not have the provided value.',
-				$this->name
+				'Limit response to %s where %s does not have the provided value.',
+				$resources,
+				$field_name
 			),
 			'type'              => array_unique( array_merge( (array) $rest_schema['type'], array( 'array' ) ) ),
 			'validate_callback' => 'rest_validate_request_arg',
@@ -406,8 +414,12 @@ class Prop {
 
 		if ( $this->nullable && ! $this->is_meta_key ) {
 			$query_schema[ "{$this->name}_is_null" ] = array(
-				'description' => sprintf( 'Filter resources by whether %s is NULL.', $this->name ),
-				'type'        => 'boolean',
+				'description' => sprintf(
+					'Filter %s by whether %s is NULL.',
+					$resources,
+					$field_name
+				),
+				'type' => 'boolean',
 			);
 		}
 
@@ -415,8 +427,9 @@ class Prop {
 		if ( $this->is_date() && ! $this->is_meta_key ) {
 			$query_schema[ "{$this->name}_before" ] = array(
 				'description'       => sprintf(
-					'Limit response to resources where %s is before a given strtotime compatible date.',
-					$this->name
+					'Limit response to %s where %s is before a given strtotime compatible date.',
+					$resources,
+					$field_name
 				),
 				'type'              => 'string',
 				'validate_callback' => 'rest_validate_request_arg',
@@ -424,8 +437,9 @@ class Prop {
 
 			$query_schema[ "{$this->name}_after" ] = array(
 				'description'       => sprintf(
-					'Limit response to resources where %s is after a given strtotime compatible date.',
-					$this->name
+					'Limit response to %s where %s is after a given strtotime compatible date.',
+					$resources,
+					$field_name
 				),
 				'type'              => 'string',
 				'validate_callback' => 'rest_validate_request_arg',
@@ -442,8 +456,9 @@ class Prop {
 		if ( $this->is_float() && ! $this->is_meta_key ) {
 			$query_schema[ "{$this->name}_min" ] = array(
 				'description'       => sprintf(
-					'Limit response to resources where %s is greater than or equal to a given number.',
-					$this->name
+					'Limit response to %s where %s is greater than or equal to a given number.',
+					$resources,
+					$field_name
 				),
 				'type'              => $rest_schema['type'],
 				'validate_callback' => 'rest_validate_request_arg',
@@ -451,8 +466,9 @@ class Prop {
 
 			$query_schema[ "{$this->name}_max" ] = array(
 				'description'       => sprintf(
-					'Limit response to resources where %s is less than or equal to a given number.',
-					$this->name
+					'Limit response to %s where %s is less than or equal to a given number.',
+					$resources,
+					$field_name
 				),
 				'type'              => $rest_schema['type'],
 				'validate_callback' => 'rest_validate_request_arg',
@@ -468,13 +484,14 @@ class Prop {
 		return $this->query_schema;
 	}
 
+
 	/**
 	 * Checks if the property value is a boolean.
 	 *
 	 * @return bool
 	 */
 	public function is_boolean() {
-		return 1 === $this->length && 'tinyint' === strtolower( $this->type );
+		return 1 === $this->length && 'TINYINT' === $this->type;
 	}
 
 	/**
@@ -483,7 +500,7 @@ class Prop {
 	 * @return bool
 	 */
 	public function is_numeric() {
-		return in_array( strtolower( $this->type ), array( 'int', 'tinyint', 'smallint', 'mediumint', 'bigint' ), true );
+		return in_array( $this->type, array( 'INT', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'BIGINT' ), true );
 	}
 
 	/**
@@ -492,7 +509,7 @@ class Prop {
 	 * @return bool
 	 */
 	public function is_float() {
-		return in_array( strtolower( $this->type ), array( 'float', 'double', 'decimal' ), true );
+		return in_array( $this->type, array( 'FLOAT', 'DOUBLE', 'DECIMAL' ), true );
 	}
 
 	/**
@@ -501,7 +518,7 @@ class Prop {
 	 * @return bool
 	 */
 	public function is_date() {
-		return in_array( strtolower( $this->type ), array( 'date', 'datetime', 'timestamp' ), true );
+		return in_array( $this->type, array( 'DATE', 'DATETIME', 'TIMESTAMP' ), true );
 	}
 
 	/**
@@ -510,7 +527,7 @@ class Prop {
 	 * @return bool
 	 */
 	public function is_date_time() {
-		return in_array( strtolower( $this->type ), array( 'datetime', 'timestamp' ), true );
+		return in_array( $this->type, array( 'DATETIME', 'TIMESTAMP' ), true );
 	}
 
 	/**
@@ -616,20 +633,17 @@ class Prop {
 			return (float) $value;
 		}
 
-		if ( 'date' === $this->type ) {
+		if ( 'DATE' === $this->type ) {
 			return gmdate( 'Y-m-d', strtotime( $value ) );
 		}
 
-		if ( 'datetime' === $this->type ) {
-			return gmdate( 'Y-m-d H:i:s', strtotime( $value ) );
-		}
-
-		if ( 'timestamp' === $this->type ) {
-			return is_numeric( $value ) ? absint( $value ) : strtotime( $value );
+		if ( $this->is_date_time() ) {
+			$timestamp = is_numeric( $value ) ? (int) $value : strtotime( $value );
+			return gmdate( 'Y-m-d H:i:s', $timestamp );
 		}
 
 		// Var chars.
-		if ( 'varchar' === strtolower( $this->type ) ) {
+		if ( 'VARCHAR' === $this->type ) {
 			return sanitize_text_field( $value );
 		}
 
