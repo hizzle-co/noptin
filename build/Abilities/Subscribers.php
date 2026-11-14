@@ -330,8 +330,9 @@ class Subscribers {
 					return self::request( $method, $name, $response_fields, $args );
 				},
 				'meta'                => array(
-					'mcp'         => array( 'public' => true ),
-					'annotations' => array(
+					'show_in_rest' => true,
+					'mcp'          => array( 'public' => true ),
+					'annotations'  => array(
 						'readonly'    => 'GET' === $method,
 						'destructive' => 'run-subscriber-action' === $name || in_array( $method, array( 'PATCH', 'DELETE' ), true ),
 					),
