@@ -88,7 +88,7 @@ class Query {
 	 * Contains the 'FIELDS' sql clause
 	 *
 	 * @since 1.0.0
-	 * @var string[]
+	 * @var string|string[]
 	 */
 	public $query_fields;
 
@@ -197,6 +197,7 @@ class Query {
 	/**
 	 * Retrieves a joined collection.
 	 *
+	 * @param string $join
 	 * @return Collection
 	 */
 	public function get_joined_collection( $join ) {
@@ -272,7 +273,7 @@ class Query {
 		$this->prepare_where_query( $qv, $table );
 
 		// Prepare meta query. After WHERE and JOINs have been prepared.
-		$this->prepare_meta_query( $qv, $table );
+		$this->prepare_meta_query( $qv );
 
 		// Sorting.
 		if ( ! empty( $query['orderby'] ) ) {
@@ -327,7 +328,7 @@ class Query {
 
 			// Determine the foreign field.
 			$foreign_key = ! empty( $join_config['foreign_key'] ) ? $join_config['foreign_key'] : 'id';
-			$foreign_key = $this->prefix_field( "{$requested_join}.$foreign_key", $related_collection );
+			$foreign_key = $this->prefix_field( "{$requested_join}.$foreign_key" );
 
 			if ( empty( $foreign_key ) ) {
 				throw new Store_Exception( 'query_invalid_field', 'Invalid foreign key field in JOIN config.' );
@@ -379,7 +380,6 @@ class Query {
 
 		// Prepare aggregate fields.
 		foreach ( $aggregate_fields as $field => $aggregate ) {
-
 			if ( ! is_array( $aggregate ) ) {
 				$aggregate = wp_parse_list( $aggregate );
 			}
@@ -462,7 +462,7 @@ class Query {
 					$this->query_fields[] = "$function_upper(DISTINCT $query_field) AS $as";
 				} else {
 					$this->query_fields[] = "$function_upper($query_field) AS $as";
-				}	
+				}
 			}
 		}
 
@@ -713,7 +713,6 @@ class Query {
 		}
 
 		if ( is_array( $qv['fields'] ) ) {
-
 			$query_fields = array();
 			foreach ( $qv['fields'] as $field ) {
 				$table_field = $this->prefix_field( esc_sql( $field ) );
@@ -759,7 +758,6 @@ class Query {
 		$not_exists = array();
 
 		foreach ( $collection->get_props() as $prop ) {
-
 			if ( ! $prop->is_meta_key ) {
 				continue;
 			}
@@ -810,7 +808,6 @@ class Query {
 		}
 
 		if ( ! empty( $not_exists ) ) {
-
 			if ( 1 === count( $not_exists ) ) {
 				$select             = current( $not_exists );
 				$this->query_where .= " AND $table.id NOT IN ( SELECT DISTINCT $id_col FROM $meta_table WHERE $select )";
@@ -874,7 +871,6 @@ class Query {
 
 		// Table fields.
 		foreach ( $all_fields as $key ) {
-
 			$field_name = $this->prefix_field( $key );
 			$field      = $collection->get_prop( $key );
 			$data_type  = $field->get_data_type();
@@ -887,20 +883,25 @@ class Query {
 
 			// = or IN.
 			if ( array_key_exists( $key, $qv ) && 'any' !== $qv[ $key ] ) {
-
 				if ( 'id' === $key || $primary === $key || ( isset( $collection->keys['unique'] ) && in_array( $key, (array) $collection->keys['unique'], true ) ) ) {
 					if ( is_string( $qv[ $key ] ) ) {
 						$qv[ $key ] = noptin_parse_list( $qv[ $key ], true );
 					}
 				}
 
-				if ( is_null( $qv[ $key ] ) ) {
+				if ( is_null( $qv[ $key ] ) || 'null' === $qv[ $key ] ) {
 					$this->query_where .= " AND $field_name IS NULL";
 				} elseif ( is_array( $qv[ $key ] ) ) {
+					if ( $field->is_date_time() ) {
+						foreach ( $qv[ $key ] as &$date ) {
+							$date = $this->date_to_gmt( $date, $field );
+						}
+						unset( $date );
+					}
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ $key ] ) ) . "'";
 					$this->query_where .= " AND $field_name IN ($enums)";
 				} else {
-					$value              = $field->sanitize( $qv[ $key ] );
+					$value              = $this->prepare_comparison_value( $qv[ $key ], $field );
 					$value              = is_bool( $value ) ? (int) $value : $value;
 					$this->query_where .= $wpdb->prepare( " AND $field_name=$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
@@ -908,14 +909,19 @@ class Query {
 
 			// != or NOT IN.
 			if ( array_key_exists( "{$key}_not", $qv ) ) {
-
-				if ( is_null( $qv[ "{$key}_not" ] ) ) {
+				if ( is_null( $qv[ "{$key}_not" ] ) || 'null' === $qv[ "{$key}_not" ] ) {
 					$this->query_where .= " AND $field_name IS NOT NULL";
 				} elseif ( is_array( $qv[ "{$key}_not" ] ) ) {
+					if ( $field->is_date_time() ) {
+						foreach ( $qv[ "{$key}_not" ] as &$date ) {
+							$date = $this->date_to_gmt( $date, $field );
+						}
+						unset( $date );
+					}
 					$enums              = "'" . implode( "','", array_map( 'esc_sql', $qv[ "{$key}_not" ] ) ) . "'";
 					$this->query_where .= " AND $field_name NOT IN ($enums)";
 				} else {
-					$value              = $field->sanitize( $qv[ "{$key}_not" ] );
+					$value              = $this->prepare_comparison_value( $qv[ "{$key}_not" ], $field );
 					$value              = is_bool( $value ) ? (int) $value : $value;
 					$this->query_where .= $wpdb->prepare( " AND $field_name<>$data_type", $value ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
@@ -923,30 +929,28 @@ class Query {
 
 			// Date queries.
 			if ( $field->is_date() ) {
-
 				$date_query = array(
 					'column'   => $field_name,
 					'relation' => 'AND',
 				);
 
-				if ( ! empty( $qv[ "{$key}_before" ] ) ) {
+				if ( isset( $qv[ "{$key}_before" ] ) && ( ! empty( $qv[ "{$key}_before" ] ) || is_numeric( $qv[ "{$key}_before" ] ) ) ) {
 					$date_query[] = array(
 						'before' => $this->date_to_gmt( $qv[ "{$key}_before" ], $field ),
 					);
 				}
 
-				if ( ! empty( $qv[ "{$key}_after" ] ) ) {
+				if ( isset( $qv[ "{$key}_after" ] ) && ( ! empty( $qv[ "{$key}_after" ] ) || is_numeric( $qv[ "{$key}_after" ] ) ) ) {
 					$date_query[] = array(
 						'after' => $this->date_to_gmt( $qv[ "{$key}_after" ], $field ),
 					);
 				}
 
 				if ( ! empty( $qv[ "{$key}_query" ] ) && is_array( $qv[ "{$key}_query" ] ) ) {
-					$date_query = array_merge( $date_query, $qv[ "{$key}_query" ] );
+					$date_query = array_merge( $date_query, $this->prepare_date_query( $qv[ "{$key}_query" ], $field ) );
 				}
 
 				if ( 2 < count( $date_query ) ) {
-
 					$date_query         = new \WP_Date_Query( $date_query, $field_name );
 					$this->query_where .= $date_query->get_sql();
 				}
@@ -954,7 +958,6 @@ class Query {
 
 			// Numbers & Floats.
 			if ( $field->is_numeric() || $field->is_float() ) {
-
 				if ( ! empty( $qv[ "{$key}_min" ] ) ) {
 					$this->query_where .= $wpdb->prepare( " AND $field_name >= $data_type", $qv[ "{$key}_min" ] ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 				}
@@ -1003,23 +1006,82 @@ class Query {
 	}
 
 	/**
-	 * @param \Hizzle\Store\Prop $field
+	 * Prepares scalar comparisons while retaining property sanitization callbacks.
+	 *
+	 * @param mixed $value The query value.
+	 * @param \Hizzle\Store\Prop $field The queried property.
+	 * @return mixed The prepared comparison value.
+	 */
+	private function prepare_comparison_value( $value, $field ) {
+		if ( $field->is_date_time() ) {
+			$value = $this->date_to_gmt( $value, $field );
+			if ( empty( $field->sanitize_callback ) ) {
+				return $value;
+			}
+		}
+
+		return $field->sanitize( $value );
+	}
+
+	/**
+	 * Converts boundaries in nested date clauses, preserving date component queries.
+	 *
+	 * @param array $query The WP_Date_Query clauses.
+	 * @param \Hizzle\Store\Prop $field The queried property.
+	 * @return array The prepared clauses.
+	 */
+	private function prepare_date_query( $query, $field ) {
+		foreach ( $query as $key => $value ) {
+			if ( 'before' === $key || 'after' === $key ) {
+				$query[ $key ] = $this->date_to_gmt( $value, $field );
+			} elseif ( is_numeric( $key ) && is_array( $value ) ) {
+				$query[ $key ] = $this->prepare_date_query( $value, $field );
+			}
+		}
+
+		return $query;
+	}
+
+	/**
+	 * Converts datetime query values to UTC while preserving calendar dates.
+	 *
+	 * Unqualified strings use the site timezone; numeric values are Unix timestamps.
+	 * Date component arrays retain WP_Date_Query's native semantics.
+	 *
+	 * @param mixed $date The query value.
+	 * @param \Hizzle\Store\Prop $field The queried property.
+	 * @return mixed The UTC SQL datetime, or the original non-datetime value.
 	 */
 	private function date_to_gmt( $date, $field ) {
-		if ( 'datetime' === $field->type || empty( $date ) || ! is_string( $date ) || is_numeric( $date ) ) {
+		if ( null === $date || '' === $date || is_array( $date ) ) {
 			return $date;
 		}
 
-		$wp_timezone = wp_timezone();
-
-		// Assume local timezone if not provided.
-		$dt = date_create( $date, $wp_timezone );
-
-		if ( false === $dt ) {
-			return gmdate( 'Y-m-d H:i', false );
+		if ( $date instanceof \DateTimeInterface ) {
+			return $field->is_date_time() ? gmdate( 'Y-m-d H:i:s', $date->getTimestamp() ) : $date->format( 'Y-m-d' );
 		}
 
-		return $dt->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i' );
+		// Unsupported objects, resources, and booleans must not reach date parsing.
+		if ( ! is_string( $date ) && ! is_numeric( $date ) ) {
+			return gmdate( 'Y-m-d H:i:s', 0 );
+		}
+
+		if ( ! $field->is_date_time() ) {
+			return $date;
+		}
+
+		if ( is_numeric( $date ) ) {
+			return gmdate( 'Y-m-d H:i:s', (int) $date );
+		}
+
+		$dt = date_create( $date, wp_timezone() );
+
+		if ( false === $dt ) {
+			return gmdate( 'Y-m-d H:i:s', false );
+		}
+
+		// Omit the timezone so WP_Date_Query does not convert UTC back to local time.
+		return $dt->setTimezone( new \DateTimeZone( 'UTC' ) )->format( 'Y-m-d H:i:s' );
 	}
 
 	/**
@@ -1027,9 +1089,9 @@ class Query {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
+	 * @global \wpdb $wpdb WordPress database abstraction object.
 	 *
-	 * @param string $string The string to search for.
+	 * @param string $search_string The string to search for.
 	 * @param array  $cols The columns to search in.
 	 * @return string
 	 */
@@ -1118,8 +1180,6 @@ class Query {
 	 * Parse and sanitize 'orderby' keys passed to the query.
 	 *
 	 * @since 1.0.0
-	 *
-	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
 	 * @param string $orderby Alias for the field to order by.
 	 * @return string Value to use in the ORDER clause, if `$orderby` is valid.
@@ -1237,6 +1297,7 @@ class Query {
 	/**
 	 * Prefixes a field name with the table name.
 	 *
+	 * @param string $field
 	 * @since 1.0.0
 	 * @return string|false
 	 */
@@ -1281,7 +1342,7 @@ class Query {
 	/**
 	 * Retrieves the query results.
 	 *
-	 * @return array[]|int[]|Record[]
+	 * @return array[]|int[]|Record[]|\stdClass
 	 */
 	public function get_results() {
 		return $this->results;
@@ -1338,7 +1399,6 @@ class Query {
 			$this->results = array();
 
 			foreach ( $results as $result ) {
-
 				if ( isset( $result->id ) ) {
 					// Cache object.
 					$collection->update_cache( (array) $result );

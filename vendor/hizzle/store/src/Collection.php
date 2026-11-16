@@ -552,7 +552,6 @@ class Collection {
 	/**
 	 * Returns the REST schema as an array.
 	 *
-	 * @return string
 	 */
 	public function get_rest_schema() {
 
