@@ -67,7 +67,7 @@ class Main {
 
 		// Throttle repeated opens from the same email within 5 minutes.
 		if ( 'open' === $activity && ! empty( $campaign_id ) ) {
-			$five_minutes_ago = current_datetime()->setTimestamp( time() - 5 * MINUTE_IN_SECONDS )->format( DATE_ATOM );
+			$five_minutes_ago = noptin_get_query_date( time() - 5 * MINUTE_IN_SECONDS );
 			$recent_open      = self::query(
 				array(
 					'email'              => $email,

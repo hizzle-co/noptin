@@ -348,6 +348,19 @@ function get_noptin_collection_capability( $collection_name ) {
 }
 
 /**
+ * Formats a query instant with exact seconds and the site's historical offset.
+ *
+ * Construct in UTC before converting to avoid repeated-hour setTimestamp bugs
+ * in older PHP versions. Machine dates must bypass localized display filters.
+ *
+ * @param int $timestamp Unix timestamp.
+ * @return string ISO 8601 date in the site timezone.
+ */
+function noptin_get_query_date( $timestamp ) {
+	return ( new \DateTimeImmutable( '@' . (int) $timestamp ) )->setTimezone( wp_timezone() )->format( DATE_ATOM );
+}
+
+/**
  * Returns a capability that lets the current user open the Noptin menu.
  *
  * @return string
