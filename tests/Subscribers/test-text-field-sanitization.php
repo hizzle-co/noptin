@@ -60,7 +60,8 @@ class Test_Text_Field_Sanitization extends Noptin_Regression_Test_Case {
 		$date = $property( Hizzle\Noptin\Fields\Types\Date::class, 'date' );
 		$assert( empty( $date->sanitize_callback ) && '2026-10-30' === $date->sanitize( '2026-10-30' ), 'Date must retain native date conversion.' );
 		$datetime = $property( Hizzle\Noptin\Fields\Types\Date_Time::class, 'date_time' );
-		$assert( empty( $datetime->sanitize_callback ) && '2026-10-30T11:12:13' === $datetime->sanitize( '2026-10-30T11:12:13' ), 'Datetime must retain its existing property sanitization.' );
+		$assert( empty( $datetime->sanitize_callback ), 'Datetime must retain native datastore sanitization.' );
+		$this->assertSame( '2026-10-30 11:12:13', $datetime->sanitize( '2026-10-30T11:12:13' ), 'Datetime must normalize to the database format without losing seconds.' );
 		$dropdown = $property( Hizzle\Noptin\Fields\Types\Dropdown::class, 'dropdown', array( 'options' => "A &amp; B\nOther" ) );
 		$assert( 'A &amp; B' === $dropdown->sanitize( 'A &amp; B' ), 'Choice values must not be entity-decoded.' );
 		$subscriber = noptin_get_subscriber();
