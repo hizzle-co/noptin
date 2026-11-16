@@ -9,7 +9,7 @@ class Main {
 	/** Connect the module to the Abilities API registration hooks. */
 	public static function init() {
 		add_action( 'wp_abilities_api_categories_init', array( __CLASS__, 'register_category' ) );
-		add_action( 'wp_abilities_api_init', array( Subscribers::class, 'register' ) );
+		add_action( 'wp_abilities_api_init', array( Subscribers::class, 'register' ), 20 );
 		add_action( 'wp_abilities_api_init', array( Automation_Events::class, 'register' ) );
 	}
 
