@@ -56,7 +56,7 @@ class Test_Noptin_Automation_Event_Abilities extends Noptin_Regression_Test_Case
 		$user = self::factory()->user->create( array( 'role' => 'subscriber' ) );
 		wp_set_current_user( $user );
 		$this->assertFalse( wp_get_ability( 'noptin/list-automation-events' )->check_permissions() );
-		get_user_by( 'id', $user )->add_cap( get_noptin_collection_capability( 'automation_rules' ) );
+		wp_get_current_user()->add_cap( get_noptin_collection_capability( 'automation_rules' ) );
 		$this->assertTrue( wp_get_ability( 'noptin/list-automation-events' )->check_permissions() );
 	}
 

@@ -15,7 +15,7 @@ class Test_Loop_Action extends Actions_Test_Case {
 		$label = new \ReflectionMethod( $action, 'collection_iteration_label' );
 		$label->setAccessible( true );
 
-		$posts = new \Hizzle\Noptin\Objects\Generic_Post_Type( 'post' );
+		$posts = \Hizzle\Noptin\Objects\Store::get( 'post' );
 		$id = self::factory()->post->create( array( 'post_title' => 'Iteration title', 'post_status' => 'publish' ) );
 		$this->assertContains( $id, $posts->get_all( array() ) );
 		$this->assertSame( 'Iteration title', $label->invoke( $action, $id, $posts ) );

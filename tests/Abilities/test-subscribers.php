@@ -67,7 +67,7 @@ class Test_Noptin_Subscriber_Abilities extends Noptin_Regression_Test_Case {
 		wp_set_current_user( $user );
 		$ability = wp_get_ability( 'noptin/list-subscribers' );
 		$this->assertFalse( $ability->check_permissions() );
-		get_user_by( 'id', $user )->add_cap( get_noptin_collection_capability( 'subscribers' ) );
+		wp_get_current_user()->add_cap( get_noptin_collection_capability( 'subscribers' ) );
 		$this->assertTrue( $ability->check_permissions() );
 	}
 
@@ -77,7 +77,14 @@ class Test_Noptin_Subscriber_Abilities extends Noptin_Regression_Test_Case {
 		$this->assertSame( 'Test', $created['first_name'] );
 		$this->assertSame( 'Person', $created['last_name'] );
 		$by_id = $this->execute( 'get-subscriber', array( 'id' => $created['id'] ) );
-		$this->assertSame( $by_id, $this->execute( 'get-subscriber', array( 'email' => $created['email'] ) ) );
+		$by_email = $this->execute( 'get-subscriber', array( 'email' => $created['email'] ) );
+		// Action tokens and avatar fallback colors are randomized on each response.
+		$random_fields = array_fill_keys( array( 'unsubscribe_url', 'resubscribe_url', 'confirm_subscription_url', 'manage_preferences_url', 'avatar_url' ), true );
+		foreach ( $random_fields as $field => $unused ) {
+			$this->assertNotEmpty( $by_id[ $field ] );
+			$this->assertNotEmpty( $by_email[ $field ] );
+		}
+		$this->assertSame( array_diff_key( $by_id, $random_fields ), array_diff_key( $by_email, $random_fields ) );
 		foreach ( noptin()->db()->store->get( 'subscribers' )->get_props() as $prop ) {
 			$this->assertArrayHasKey( $prop->name, $by_id );
 		}

@@ -210,7 +210,7 @@ class Test_Task_Query_Dates extends WP_UnitTestCase {
 			$tasks[] = $this->create_task_at( $cutoff );
 			$tasks[] = $this->create_task_at( $cutoff + 1 );
 			$tasks[] = $this->create_task_at( $cutoff - 1, 'complete' );
-			$value = current_datetime()->setTimestamp( $cutoff )->format( DATE_ATOM );
+			$value = noptin_get_query_date( $cutoff );
 			$this->assertSame( $expected, $value );
 			$selected = Main::query(
 				array(
@@ -241,7 +241,7 @@ class Test_Task_Query_Dates extends WP_UnitTestCase {
 		update_option( 'timezone_string', $timezone );
 		try {
 			$timestamp = ( new \DateTimeImmutable( $now ) )->getTimestamp() - $seconds;
-			$value     = current_datetime()->setTimestamp( $timestamp )->format( DATE_ATOM );
+			$value     = noptin_get_query_date( $timestamp );
 			$this->assertSame( $expected, $value );
 			$this->assertSame( $timestamp, ( new \DateTimeImmutable( $value ) )->getTimestamp() );
 		} finally {
