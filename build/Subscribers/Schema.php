@@ -14,6 +14,7 @@ class Schema {
 	 *
 	 */
 	public static function init() {
+		add_filter( 'noptin_subscribers_tags_token_suggestions', 'get_noptin_subscriber_tags' );
 		add_filter( 'noptin_db_schema', array( __CLASS__, 'add_to_schema' ) );
 	}
 
@@ -63,17 +64,19 @@ class Schema {
 					'singular_name'  => 'subscriber',
 					'use_meta_table' => true,
 					'labels'         => array(
-						'name'          => __( 'Subscribers', 'newsletter-optin-box' ),
-						'singular_name' => __( 'Subscriber', 'newsletter-optin-box' ),
-						'add_new'       => __( 'Add New', 'newsletter-optin-box' ),
-						'add_new_item'  => __( 'Add New Subscriber', 'newsletter-optin-box' ),
-						'edit_item'     => __( 'Edit Subscriber', 'newsletter-optin-box' ),
-						'new_item'      => __( 'New Subscriber', 'newsletter-optin-box' ),
-						'view_item'     => __( 'View Subscriber', 'newsletter-optin-box' ),
-						'view_items'    => __( 'View Subscribers', 'newsletter-optin-box' ),
-						'search_items'  => __( 'Search Subscribers', 'newsletter-optin-box' ),
-						'not_found'     => __( 'No subscribers found.', 'newsletter-optin-box' ),
-						'import'        => __( 'Import Subscribers', 'newsletter-optin-box' ),
+						'abilities_singular' => 'Noptin email newsletter subscriber',
+						'abilities_plural'   => 'Noptin email newsletter subscribers',
+						'name'               => __( 'Subscribers', 'newsletter-optin-box' ),
+						'singular_name'      => __( 'Subscriber', 'newsletter-optin-box' ),
+						'add_new'            => __( 'Add New', 'newsletter-optin-box' ),
+						'add_new_item'       => __( 'Add New Subscriber', 'newsletter-optin-box' ),
+						'edit_item'          => __( 'Edit Subscriber', 'newsletter-optin-box' ),
+						'new_item'           => __( 'New Subscriber', 'newsletter-optin-box' ),
+						'view_item'          => __( 'View Subscriber', 'newsletter-optin-box' ),
+						'view_items'         => __( 'View Subscribers', 'newsletter-optin-box' ),
+						'search_items'       => __( 'Search Subscribers', 'newsletter-optin-box' ),
+						'not_found'          => __( 'No subscribers found.', 'newsletter-optin-box' ),
+						'import'             => __( 'Import Subscribers', 'newsletter-optin-box' ),
 					),
 					'props'          => array_merge(
 						$props,
