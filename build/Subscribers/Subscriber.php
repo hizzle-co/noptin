@@ -738,7 +738,7 @@ class Subscriber extends \Hizzle\Store\Record {
 		$actions[] = array(
 			'id'    => 'manage_preferences_url',
 			'type'  => 'copy',
-			'text'  => __( 'Manage Preferences URL', 'newsletter-optin-box' ),
+			'text'  => 'Copy manage preferences URL',
 			'value' => $this->get_manage_preferences_url(),
 			'icon'  => 'admin-customizer',
 		);
@@ -769,7 +769,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			$actions[] = array(
 				'id'    => 'unsubscribe_url',
 				'type'  => 'copy',
-				'text'  => __( 'Unsubscribe URL', 'newsletter-optin-box' ),
+				'text'  => 'Copy unsubscribe URL',
 				'value' => $this->get_unsubscribe_url(),
 				'icon'  => 'minus',
 			);
@@ -777,7 +777,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			$actions[] = array(
 				'id'    => 'resubscribe_url',
 				'type'  => 'copy',
-				'text'  => __( 'Resubscribe URL', 'newsletter-optin-box' ),
+				'text'  => 'Copy resubscribe URL',
 				'value' => $this->get_resubscribe_url(),
 				'icon'  => 'plus',
 			);
@@ -796,7 +796,7 @@ class Subscriber extends \Hizzle\Store\Record {
 			$actions[] = array(
 				'id'    => 'email_confirmation_url',
 				'type'  => 'copy',
-				'text'  => __( 'Email Confirmation URL', 'newsletter-optin-box' ),
+				'text'  => 'Copy email confirmation URL',
 				'value' => $this->get_confirm_subscription_url(),
 				'icon'  => 'email-alt',
 			);
