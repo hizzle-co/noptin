@@ -883,7 +883,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
-		$request->set_param( 'context', 'edit' );
+		$request->set_param( 'context', $request['context'] ?? 'edit' );
 		$response = $this->prepare_item_for_response( $object, $request );
 		$response = rest_ensure_response( $response );
 		$response->set_status( 201 );
@@ -981,7 +981,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
-		$request->set_param( 'context', 'edit' );
+		$request->set_param( 'context', $request['context'] ?? 'edit' );
 		$response = $this->prepare_item_for_response( $object, $request );
 		return rest_ensure_response( $response );
 	}
@@ -1137,7 +1137,7 @@ class REST_Controller extends \WP_REST_Controller {
 					if ( is_array( $value ) && ! is_array( current( $value ) ) ) {
 						$value = implode( ',', $value );
 					}
-				} elseif ( is_callable( array( $item, "get_formatted_{$key}" ) ) ) {
+				} elseif ( 'edit' !== $context && is_callable( array( $item, "get_formatted_{$key}" ) ) ) {
 					$value = array(
 						'raw'      => $value,
 						'rendered' => $item->{"get_formatted_{$key}"}(),
@@ -1219,6 +1219,18 @@ class REST_Controller extends \WP_REST_Controller {
 
 		// Filter collection parameters.
 		return apply_filters( "hizzle_rest_{$this->namespace}_{$this->rest_base}_collection_params", $params, $this );
+	}
+
+	/**
+	 * Add a validated response context to record creation and update arguments.
+	 *
+	 * @param string $method HTTP method used by the endpoint.
+	 * @return array Record endpoint arguments.
+	 */
+	public function get_endpoint_args_for_item_schema( $method = \WP_REST_Server::CREATABLE ) {
+		$args = parent::get_endpoint_args_for_item_schema( $method );
+		$args['context'] = $this->get_context_param( array( 'default' => 'edit' ) );
+		return $args;
 	}
 
 	/**

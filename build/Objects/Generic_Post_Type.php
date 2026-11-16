@@ -196,11 +196,11 @@ class Generic_Post_Type extends Post_Type {
 
 		$filters = apply_filters( 'noptin_post_type_get_all_filters', $filters, $this->type );
 		$filters = array_filter(
-            $filters,
-            function ( $value ) {
+			$filters,
+			function ( $value ) {
 				return '' !== $value && ! is_null( $value );
-            }
-        );
+			}
+		);
 
 		do_action( 'noptin_post_type_get_all_before_query', $filters, $this->type );
 		$posts = get_posts( $filters );
@@ -579,13 +579,13 @@ class Generic_Post_Type extends Post_Type {
 			array(
 				'create_or_update_' . $this->type => array(
 					'forcePremium' => true,
-					'id'          => 'create_or_update_' . $this->type,
-					'label'       => sprintf(
+					'id'           => 'create_or_update_' . $this->type,
+					'label'        => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Create or Update', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => $is_vowel ?
+					'description'  => $is_vowel ?
 						sprintf(
 							/* translators: %s: Object type label. */
 							__( 'Create or update an %s', 'newsletter-optin-box' ),
@@ -596,7 +596,7 @@ class Generic_Post_Type extends Post_Type {
 							__( 'Create or update a %s', 'newsletter-optin-box' ),
 							strtolower( $this->singular_label )
 						),
-					'callback'    => array( $this, 'create_post' ),
+					'callback'     => array( $this, 'create_post' ),
 				),
 			),
 			array(
@@ -795,7 +795,8 @@ class Generic_Post_Type extends Post_Type {
 	 *
 	 * @param \WP_Post $post
 	 */
-	public function after_create_post( $post ) {}
+	public function after_create_post( $post ) {
+	}
 
 	/**
 	 * Deletes a post.

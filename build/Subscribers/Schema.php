@@ -64,8 +64,8 @@ class Schema {
 					'singular_name'  => 'subscriber',
 					'use_meta_table' => true,
 					'labels'         => array(
-						'abilities_singular' => 'Noptin email newsletter subscriber',
-						'abilities_plural'   => 'Noptin email newsletter subscribers',
+						'abilities_singular' => __( 'Noptin email newsletter subscriber', 'newsletter-optin-box' ),
+						'abilities_plural'   => __( 'Noptin email newsletter subscribers', 'newsletter-optin-box' ),
 						'name'               => __( 'Subscribers', 'newsletter-optin-box' ),
 						'singular_name'      => __( 'Subscriber', 'newsletter-optin-box' ),
 						'add_new'            => __( 'Add New', 'newsletter-optin-box' ),

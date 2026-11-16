@@ -118,12 +118,12 @@ abstract class Post_Type extends Collection {
 			array(
 				$this->type . '_published'   => array(
 					'forcePremium' => 'post' !== $this->type,
-					'label'       => sprintf(
+					'label'        => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Published', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => $is_vowel ?
+					'description'  => $is_vowel ?
 						sprintf(
 							/* translators: %s: Object type label. */
 							__( 'When an %s is published', 'newsletter-optin-box' ),
@@ -134,8 +134,8 @@ abstract class Post_Type extends Collection {
 							__( 'When a %s is published', 'newsletter-optin-box' ),
 							strtolower( $this->singular_label )
 						),
-					'subject'     => 'post_author',
-					'mail_config' => array(
+					'subject'      => 'post_author',
+					'mail_config'  => array(
 						'post_notification'          => true,
 						'supports_general_templates' => false,
 						'object_type'                => $this->object_type,
@@ -163,12 +163,12 @@ abstract class Post_Type extends Collection {
 				),
 				$this->type . '_unpublished' => array(
 					'forcePremium' => true,
-					'label'       => sprintf(
+					'label'        => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Unpublished', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => $is_vowel ?
+					'description'  => $is_vowel ?
 						sprintf(
 							/* translators: %s: Object type label. */
 							__( 'When an %s is unpublished', 'newsletter-optin-box' ),
@@ -179,16 +179,16 @@ abstract class Post_Type extends Collection {
 							__( 'When a %s is unpublished', 'newsletter-optin-box' ),
 							strtolower( $this->singular_label )
 						),
-					'subject'     => 'post_author',
+					'subject'      => 'post_author',
 				),
 				$this->type . '_deleted'     => array(
 					'forcePremium' => true,
-					'label'       => sprintf(
+					'label'        => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Deleted', 'newsletter-optin-box' ),
 						$this->singular_label
 					),
-					'description' => $is_vowel ?
+					'description'  => $is_vowel ?
 						sprintf(
 							/* translators: %s: Object type label. */
 							__( 'When an %s is deleted', 'newsletter-optin-box' ),
@@ -199,7 +199,7 @@ abstract class Post_Type extends Collection {
 							__( 'When a %s is deleted', 'newsletter-optin-box' ),
 							strtolower( $this->singular_label )
 						),
-					'subject'     => 'post_author',
+					'subject'      => 'post_author',
 				),
 			)
 		);

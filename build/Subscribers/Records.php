@@ -141,19 +141,19 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		foreach ( $this->subscriber_states() as $state => $label ) {
 			$triggers[ $state ] = array(
 				'forcePremium' => 'noptin_subscribers_import_item' !== $state,
-				'label'       => sprintf(
+				'label'        => sprintf(
 					'%s > %s',
 					$this->singular_label,
 					$label
 				),
-				'description' => sprintf(
+				'description'  => sprintf(
 					/* translators: %s: Object type label and new state */
 					__( 'When a %1$s is %2$s', 'newsletter-optin-box' ),
 					strtolower( $this->singular_label ),
 					'noptin_subscriber_saved' === $state ? __( 'created or updated', 'newsletter-optin-box' ) : strtolower( $label )
 				),
-				'subject'     => 'subscriber',
-				'featured'    => in_array(
+				'subject'      => 'subscriber',
+				'featured'     => in_array(
 					$state,
 					array(
 						'noptin_subscriber_status_set_to_pending',
@@ -405,7 +405,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			// Anniversary.
 			array(
 				'noptin_subscriber_anniversary' => array(
-					'forcePremium' => true,
+					'forcePremium'   => true,
 					'label'          => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Date Anniversary', 'newsletter-optin-box' ),
