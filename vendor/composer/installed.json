@@ -19,6 +19,7 @@
                 "php": ">=5.3.0"
             },
             "time": "2026-11-14T07:19:22+00:00",
+            "published-time": "2026-11-14T07:20:20+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {

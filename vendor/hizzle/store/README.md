@@ -444,6 +444,12 @@ Complete documentation for all components is available in the [docs](docs/) fold
 - [JOIN Queries Guide](docs/joins.md) - Comprehensive guide to using JOINs
 - [Example Code](example-joins.php) - Working examples with JOINs
 
+## Tests
+
+Run `php tests/query-dates.php /path/to/wordpress` to check datetime filters against
+an installed WordPress date-query implementation without connecting to the database.
+In the standard local plugin directory layout, the WordPress path is optional.
+
 ## Requirements
 
 - PHP >= 5.3.0
