@@ -1,1 +1,26 @@
-<?php return array('dependencies' => array('hizzlewp-components', 'hizzlewp-history', 'hizzlewp-interface', 'hizzlewp-records', 'hizzlewp-settings', 'react', 'react-dom', 'react-jsx-runtime', 'wp-api-fetch', 'wp-components', 'wp-compose', 'wp-core-data', 'wp-data', 'wp-date', 'wp-dom-ready', 'wp-element', 'wp-html-entities', 'wp-i18n', 'wp-notices', 'wp-primitives', 'wp-url'), 'version' => '5b2c23ebd1afc0c7250f');
+<?php return array(
+	'dependencies' => array(
+		'hizzlewp-components',
+		'hizzlewp-history',
+		'hizzlewp-interface',
+		'hizzlewp-records',
+		'hizzlewp-settings',
+		'react',
+		'react-dom',
+		'react-jsx-runtime',
+		'wp-api-fetch',
+		'wp-components',
+		'wp-compose',
+		'wp-core-data',
+		'wp-data',
+		'wp-date',
+		'wp-dom-ready',
+		'wp-element',
+		'wp-html-entities',
+		'wp-i18n',
+		'wp-notices',
+		'wp-primitives',
+		'wp-url'
+	),
+	'version' => 'd73042c7d4445fc7b033'
+);
