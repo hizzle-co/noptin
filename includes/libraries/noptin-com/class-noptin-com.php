@@ -165,7 +165,7 @@ class Noptin_COM {
 		}
 
 		if ( empty( $license ) || empty( $license->license ) ) {
-			return new WP_Error( 'invalid_license', __( 'Error fetching your license key.', 'newsletter-optin-box' ) );
+			return new WP_Error( 'invalid_license', 'Error fetching your license key.' );
 		}
 
 		$license = $license->license;

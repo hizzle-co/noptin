@@ -18,6 +18,9 @@ use Hizzle\Noptin\Tasks\Main as Tasks;
  */
 class Loop extends Action {
 
+	/** @inheritdoc */
+	public $forcePremium = true;
+
 	/**
 	 * Maximum remote file size to download, in bytes.
 	 *

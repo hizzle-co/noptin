@@ -46,6 +46,7 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 		$this->object_type    = $collection->type;
 		$this->action_id      = $action_id;
 		$this->action_args    = $action_args;
+		$this->forcePremium   = ! empty( $action_args['forcePremium'] );
 		$this->category       = isset( $action_args['category'] ) ? $action_args['category'] : $collection->label;
 		$this->integration    = $collection->integration;
 		$this->singular_label = $collection->singular_label;

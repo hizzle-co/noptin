@@ -140,6 +140,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		// Statuses.
 		foreach ( $this->subscriber_states() as $state => $label ) {
 			$triggers[ $state ] = array(
+				'forcePremium' => 'noptin_subscribers_import_item' !== $state,
 				'label'       => sprintf(
 					'%s > %s',
 					$this->singular_label,
@@ -404,6 +405,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 			// Anniversary.
 			array(
 				'noptin_subscriber_anniversary' => array(
+					'forcePremium' => true,
 					'label'          => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Date Anniversary', 'newsletter-optin-box' ),

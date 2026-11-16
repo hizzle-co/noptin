@@ -42,6 +42,7 @@ class Trigger extends \Hizzle\Noptin\Automation_Rules\Triggers\Trigger {
 		$this->object_type  = $collection->type;
 		$this->trigger_id   = $trigger_id;
 		$this->trigger_args = $trigger_args;
+		$this->forcePremium = ! empty( $trigger_args['forcePremium'] );
 		$this->category     = isset( $trigger_args['category'] ) ? $trigger_args['category'] : $collection->label;
 		$this->integration  = $collection->integration;
 

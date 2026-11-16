@@ -27,6 +27,9 @@ abstract class Trigger_Action {
 	 */
 	public $featured = false;
 
+	/** @var bool Whether this registration explicitly requires Noptin Premium. */
+	public $forcePremium = false;
+
 	/**
 	 * @var bool
 	 */

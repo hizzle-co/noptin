@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
  */
 class Loop_End extends Action {
 
+	/** @inheritdoc */
+	public $forcePremium = true;
+
 	/**
 	 * @var string
 	 */

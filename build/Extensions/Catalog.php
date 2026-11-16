@@ -334,6 +334,7 @@ class Catalog {
 			$result[ $event->get_id() ] = array(
 				'name'                => $event->get_id(),
 				'label'               => $event->get_name(),
+				'forcePremium'        => ! empty( $event->forcePremium ),
 				'description'         => $event->get_description(),
 				'image'               => $event->get_image(),
 				'category'            => $event->category,

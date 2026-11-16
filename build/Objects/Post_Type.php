@@ -117,6 +117,7 @@ abstract class Post_Type extends Collection {
 			parent::get_triggers(),
 			array(
 				$this->type . '_published'   => array(
+					'forcePremium' => 'post' !== $this->type,
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Published', 'newsletter-optin-box' ),
@@ -161,6 +162,7 @@ abstract class Post_Type extends Collection {
 					),
 				),
 				$this->type . '_unpublished' => array(
+					'forcePremium' => true,
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Unpublished', 'newsletter-optin-box' ),
@@ -180,6 +182,7 @@ abstract class Post_Type extends Collection {
 					'subject'     => 'post_author',
 				),
 				$this->type . '_deleted'     => array(
+					'forcePremium' => true,
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
 						__( '%s > Deleted', 'newsletter-optin-box' ),

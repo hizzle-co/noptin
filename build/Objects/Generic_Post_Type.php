@@ -578,6 +578,7 @@ class Generic_Post_Type extends Post_Type {
 			parent::get_actions(),
 			array(
 				'create_or_update_' . $this->type => array(
+					'forcePremium' => true,
 					'id'          => 'create_or_update_' . $this->type,
 					'label'       => sprintf(
 						/* translators: %s: Object type label. */
