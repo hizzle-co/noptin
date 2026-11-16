@@ -147,4 +147,21 @@ class Test_Noptin_Subscriber_Abilities extends Noptin_Regression_Test_Case {
 		$this->assertContains( array( 'value' => 'Ability Test Tag', 'label' => 'Ability Test Tag' ), $options['options'] );
 		$this->assertWPError( wp_get_ability( 'noptin/get-subscriber-field-options' )->execute( array( 'field' => 'email' ) ) );
 	}
+
+	/** Discovery preserves collection labels, enum labels, and open-ended tag inputs. */
+	public function test_choice_schemas_and_labels() {
+		$ability = wp_get_ability( 'noptin/list-subscribers' );
+		$this->assertStringContainsString( 'Noptin email newsletter subscribers', $ability->get_label() );
+		$create = wp_get_ability( 'noptin/create-subscriber' );
+		$tags = $create->get_input_schema()['properties']['tags'];
+		$this->assertStringContainsString( 'noptin/get-subscriber-field-options', $tags['description'] );
+		$this->assertNotWPError( $create->validate_input( array(
+			'email' => 'tag-test@example.test',
+			'tags'  => array( 'New ' . wp_generate_uuid4() ),
+		) ) );
+		$statuses = $this->execute( 'get-subscriber-field-options', array( 'field' => 'status' ) );
+		foreach ( noptin_get_subscriber_statuses() as $value => $label ) {
+			$this->assertContains( array( 'value' => $value, 'label' => $label ), $statuses['options'] );
+		}
+	}
 }
