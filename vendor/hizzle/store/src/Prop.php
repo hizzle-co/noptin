@@ -651,6 +651,21 @@ class Prop {
 	}
 
 	/**
+	 * Get suggestions for this token field, including configured but unused values.
+	 *
+	 * @return array
+	 */
+	public function get_token_suggestions() {
+		$collection = $this->get_collection();
+		$values     = apply_filters( $this->hook_prefix( 'token_suggestions' ), null, $collection );
+		if ( null !== $values ) {
+			return $values;
+		}
+
+		return $collection ? $collection->get_all_meta( $this->name ) : array();
+	}
+
+	/**
 	 * Retrieves available choices.
 	 *
 	 * @return array

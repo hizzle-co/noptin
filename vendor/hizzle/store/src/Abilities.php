@@ -436,9 +436,6 @@ class Abilities {
 		} elseif ( 'aggregate' === $operation ) {
 			$route .= '/aggregate';
 		}
-		if ( 'get' === $operation || 'list' === $operation ) {
-			$args['context'] = 'edit';
-		}
 		$request = new \WP_REST_Request( 'GET', $route );
 		$request->set_url_params( $url_params );
 		$request->set_query_params( $args );
@@ -461,6 +458,19 @@ class Abilities {
 				// Text storage can contain structured values returned by record getters.
 				if ( in_array( $prop->type, array( 'TEXT', 'LONGTEXT', 'MEDIUMTEXT', 'TINYTEXT' ), true ) && ! isset( $field['items'] ) && ! isset( $field['properties'] ) ) {
 					$property['type'] = array_values( array_unique( array_merge( (array) $property['type'], array( 'array', 'object' ) ) ) );
+				}
+				if ( ! empty( $collection->object ) && method_exists( $collection->object, 'get_formatted_' . $prop->name ) ) {
+					$property = array(
+						'type'        => 'object',
+						'description' => $field['description'] ?? '',
+						'properties'  => array(
+							'raw'      => $property,
+							'rendered' => array(
+								'type'        => array( 'array', 'object', 'string', 'number', 'integer', 'boolean', 'null' ),
+								'description' => 'Formatted display value.',
+							),
+						),
+					);
 				}
 				$properties[ $prop->name ] = $property;
 			}
