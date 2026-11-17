@@ -31,9 +31,40 @@ class Export {
 	}
 
 	/**
+	 * Normalize an editable value for foreground and background exports.
+	 *
+	 * @param mixed $value Raw record value.
+	 * @return mixed Dates as ISO strings, booleans as integers, and scalar lists as CSV cells.
+	 */
+	public static function prepare_value( $value ) {
+		if ( $value instanceof \DateTimeInterface ) {
+			$value = $value->format( 'Y-m-d\TH:i:sP' );
+			if ( false !== strpos( $value, '00:00:00' ) ) {
+				$value = substr( $value, 0, 10 );
+			}
+		}
+
+		if ( is_bool( $value ) ) {
+			return (int) $value;
+		}
+
+		// Leave structured values intact; only flat scalar lists fit a comma-separated cell.
+		if ( is_array( $value ) && ! array_filter(
+			$value,
+			static function ( $item ) {
+				return ! is_scalar( $item ) && null !== $item;
+			}
+		) ) {
+			return implode( ',', $value );
+		}
+
+		return $value;
+	}
+
+	/**
 	 * Queues a new background export job.
 	 *
-	 * @param string $store_namespace Store namespace without the /v1 suffix.
+	 * @param string $store_namespace Store namespace without a REST API version suffix.
 	 * @param string $collection Collection name.
 	 * @param array $query_args Query arguments.
 	 * @param string $email The email to notify when the export is complete.
@@ -57,7 +88,7 @@ class Export {
 			'query_args'      => self::sanitize_query_args( (array) $query_args ),
 			'email'           => $email,
 			'created_at'      => time(),
-			'fields'          => wp_parse_list( $query_args['__fields'] ?? '' ),
+			'fields'          => wp_parse_list( $query_args['_fields'] ?? '' ),
 			'file_path'       => trailingslashit( $path ) . sanitize_key( $store_namespace ) . '-' . sanitize_key( $collection ) . '-' . sanitize_key( $job_id ) . '.csv',
 		);
 
@@ -162,6 +193,16 @@ class Export {
 
 		$start_time = microtime( true );
 		$fields     = empty( $job['fields'] ) ? array_keys( $collection->get_props() ) : $job['fields'];
+		// Honor explicit export restrictions just like context=export REST reads.
+		$schema = $collection->get_rest_schema();
+		$fields = array_values(
+			array_filter(
+				$fields,
+				static function ( $field ) use ( $schema ) {
+					return isset( $schema['properties'][ $field ] ) && in_array( 'export', $schema['properties'][ $field ]['context'] ?? array(), true );
+				}
+			)
+		);
 
 		// Raise the memory limit.
 		wp_raise_memory_limit();
@@ -171,7 +212,6 @@ class Export {
 
 		// Run the queue.
 		do {
-
 			$record = self::get_next_record( $collection, $job_id, $job['query_args'] );
 
 			if ( empty( $record ) ) {
@@ -184,26 +224,9 @@ class Export {
 			foreach ( $fields as $field ) {
 				$value = $record->get( $field, 'edit' );
 
-				// If value is a date, convert it to the ISO8601 format.
-				if ( $value instanceof \DateTime ) {
-					$value = $value->format( 'Y-m-d\TH:i:sP' );
+				$value = self::prepare_value( $value );
 
-					// If value contains 00:00:00, remove the time.
-					if ( false !== strpos( $value, '00:00:00' ) ) {
-						$value = substr( $value, 0, 10 );
-					}
-				}
-
-				if ( is_bool( $value ) ) {
-					$value = (int) $value;
-				}
-
-				// Check if this is an array of scalars.
-				if ( is_array( $value ) && ! is_array( current( $value ) ) ) {
-					$value = implode( ',', $value );
-				}
-
-				// Convert non-scalar values to JSON.
+				// Serialize complex values for a single CSV cell.
 				if ( ! is_scalar( $value ) ) {
 					$value = maybe_serialize( $value );
 				}
@@ -265,11 +288,12 @@ class Export {
 			$query_args
 		);
 
-		// Start with offset 1.
-		$query_args['offset'] = 1;
+		// SQL offsets are zero-based; include the first matching record.
+		$query_args['offset'] = 0;
 
 		// Ensure full objects are fetched so response normalization matches foreground exports.
-		$query_args['fields'] = 'all';
+		$query_args['fields']  = 'all';
+		$query_args['context'] = 'export';
 
 		return $query_args;
 	}
@@ -319,7 +343,7 @@ class Export {
 	 */
 	private static function htaccess_protect( $path ) {
 		$htaccess_path = trailingslashit( $path ) . '.htaccess';
-		$rules = array(
+		$rules         = array(
 			'# Block direct access to exports.',
 			'Options -Indexes',
 			'<IfModule mod_authz_core.c>',
@@ -443,7 +467,7 @@ class Export {
 	private static function current_user_can_download( $job, $job_id ) {
 		$current_user_id = get_current_user_id();
 		$owner_id        = isset( $job['user_id'] ) ? absint( $job['user_id'] ) : 0;
-		$can_download     = $owner_id ? $current_user_id === $owner_id : current_user_can( 'manage_options' );
+		$can_download    = $owner_id ? $current_user_id === $owner_id : current_user_can( 'manage_options' );
 
 		/**
 		 * Filters whether the current user can download an export.

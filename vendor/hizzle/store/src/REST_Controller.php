@@ -894,7 +894,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
-		$request->set_param( 'context', 'edit' );
+		$request->set_param( 'context', $request['context'] ?? 'edit' );
 		$response = $this->prepare_item_for_response( $object, $request );
 		$response = rest_ensure_response( $response );
 		$response->set_status( 201 );
@@ -992,7 +992,7 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
 		}
 
-		$request->set_param( 'context', 'edit' );
+		$request->set_param( 'context', $request['context'] ?? 'edit' );
 		$response = $this->prepare_item_for_response( $object, $request );
 		return rest_ensure_response( $response );
 	}
@@ -1108,7 +1108,7 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-		$fields = isset( $request['__fields'] ) ? wp_parse_list( $request['__fields'] ) : $this->get_fields_for_response( $request );
+		$fields = $this->get_fields_for_response( $request );
 		$data   = array();
 
 		$known_fields = array_unique(
@@ -1121,7 +1121,8 @@ class REST_Controller extends \WP_REST_Controller {
 		foreach ( $known_fields as $key ) {
 			if ( rest_is_field_included( $key, $fields ) ) {
 				$context = $request['context'] ?? 'view';
-				$value   = $item->get( $key, $context );
+				// Exports use editable values, then normalize them for spreadsheet cells.
+				$value   = $item->get( $key, 'export' === $context ? 'edit' : $context );
 
 				// Edit getters serialize metadata for database writes; REST returns structured data.
 				if ( 'metadata' === $key && is_string( $value ) ) {
@@ -1139,16 +1140,9 @@ class REST_Controller extends \WP_REST_Controller {
 				}
 
 				// Normalize values when exporting.
-				if ( ! empty( $request['__fields'] ) ) {
-					if ( is_bool( $value ) ) {
-						$value = (int) $value;
-					}
-
-					// Check if this is an array of scalars.
-					if ( is_array( $value ) && ! is_array( current( $value ) ) ) {
-						$value = implode( ',', $value );
-					}
-				} elseif ( is_callable( array( $item, "get_formatted_{$key}" ) ) ) {
+				if ( 'export' === $context ) {
+					$value = Export::prepare_value( $value );
+				} elseif ( 'edit' !== $context && is_callable( array( $item, "get_formatted_{$key}" ) ) ) {
 					$value = array(
 						'raw'      => $value,
 						'rendered' => $item->{"get_formatted_{$key}"}(),
@@ -1230,6 +1224,19 @@ class REST_Controller extends \WP_REST_Controller {
 
 		// Filter collection parameters.
 		return apply_filters( "hizzle_rest_{$this->namespace}_{$this->rest_base}_collection_params", $params, $this );
+	}
+
+	/**
+	 * Add a validated response context to record creation and update arguments.
+	 *
+	 * @param string $method HTTP method used by the endpoint.
+	 * @return array Record endpoint arguments.
+	 */
+	public function get_endpoint_args_for_item_schema( $method = \WP_REST_Server::CREATABLE ) {
+		$args = parent::get_endpoint_args_for_item_schema( $method );
+
+		$args['context'] = $this->get_context_param( array( 'default' => 'edit' ) );
+		return $args;
 	}
 
 	/**
