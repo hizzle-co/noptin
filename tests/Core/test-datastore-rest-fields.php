@@ -47,7 +47,7 @@ class Noptin_REST_Field_Controller extends Hizzle\Store\REST_Controller {
 	public function get_item_schema() {
 		$properties = array();
 		foreach ( array( 'id', 'hizzlewp_actions', 'expensive', 'enabled', 'labels', 'date' ) as $field ) {
-			$properties[ $field ] = array( 'context' => 'expensive' === $field ? array( 'edit' ) : array( 'view', 'edit' ) );
+			$properties[ $field ] = array( 'context' => 'expensive' === $field ? array( 'edit' ) : array( 'view', 'edit', 'export' ) );
 		}
 		return array( 'type' => 'object', 'properties' => $properties );
 	}
@@ -78,14 +78,15 @@ class Test_Datastore_REST_Fields extends Noptin_Regression_Test_Case {
 		$probe = new Noptin_REST_Field_Probe();
 		/** Assert the expected serialization behavior. */
 		$assert = array( $this, 'assertTrue' );
-		foreach ( array( 'view', 'edit' ) as $context ) {
+		foreach ( array( 'view', 'edit', 'export' ) as $context ) {
 			$request = new WP_REST_Request( 'GET' );
 			$request->set_param( 'context', $context );
 			$request->set_param( '_fields', 'id' );
 			$probe->calls = array();
 			$data = $controller->prepare_item_for_response( $probe, $request )->get_data();
 			$assert( array( 'id' => 123 ) === $data, 'Restricted response must contain only the requested ID.' );
-			$assert( array( array( 'id', $context ) ) === $probe->calls, 'Only the requested getter must run with the requested context.' );
+			$getter_context = 'export' === $context ? 'edit' : $context;
+			$assert( array( array( 'id', $getter_context ) ) === $probe->calls, 'Only the requested getter must run; exports read edit values.' );
 		}
 		$request = new WP_REST_Request( 'GET' );
 		$request->set_param( 'context', 'view' );
@@ -98,9 +99,21 @@ class Test_Datastore_REST_Fields extends Noptin_Regression_Test_Case {
 		$data = $controller->prepare_item_for_response( $probe, $request )->get_data();
 		$assert( 'aggregate' === $data['expensive'], 'Edit context must include its dynamic value without _fields.' );
 		$assert( '2026-11-07T14:30:00+00:00' === $data['date'], 'Dates must retain their ISO formatting.' );
-		$request->set_param( '__fields', 'id,enabled,labels' );
+		// Column selection must not silently turn editable record values into CSV cells.
+		$request->set_param( '_fields', 'id,enabled,labels' );
 		$data = $controller->prepare_item_for_response( $probe, $request )->get_data();
-		$assert( 1 === $data['enabled'] && 'one,two' === $data['labels'], 'Export values must retain boolean and array normalization.' );
+		$this->assertSame( true, $data['enabled'] );
+		$this->assertSame( array( 'one', 'two' ), $data['labels'] );
+		$request->set_param( 'context', 'export' );
+		$probe->calls = array();
+		$data = $controller->prepare_item_for_response( $probe, $request )->get_data();
+		$this->assertSame( array( 'id' => 123, 'enabled' => 1, 'labels' => 'one,two' ), $data );
+		$this->assertSame( array( array( 'id', 'edit' ), array( 'enabled', 'edit' ), array( 'labels', 'edit' ) ), $probe->calls );
+		$request->set_param( '_fields', null );
+		$probe->calls = array();
+		$data = $controller->prepare_item_for_response( $probe, $request )->get_data();
+		$this->assertArrayNotHasKey( 'expensive', $data, 'An edit-only field must remain unavailable in export context.' );
+		$this->assertNotContains( array( 'expensive', 'edit' ), $probe->calls );
 
 		$task = Hizzle\Noptin\Tasks\Main::get( 0 );
 		$task->set_hook( 'probe' );

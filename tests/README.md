@@ -20,6 +20,10 @@ fixtures and the shared `Noptin_Regression_Test_Case`, which restores hooks and 
 context and blocks external HTTP and mail delivery. Tests must restore any additional
 static registries they mutate. Never bootstrap the developer's local site here.
 
+Tests load this plugin's packaged Composer dependencies. When a regression needs
+new dependency behavior, update composer.json, composer.lock, and the tracked vendor
+files together; changes in a sibling library checkout do not reach this suite.
+
 Test method names must differ from their class names, ignoring case. PHP 7.4
 treats matching names as old-style constructors, which can execute test bodies
 before PHPUnit setup and leak hooks or options into other tests. Keep test

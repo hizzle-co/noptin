@@ -1,6 +1,6 @@
 {
     "name": "hizzle/store",
-    "version": "0.3.0",
+    "version": "0.3.1",
     "type": "library",
     "description": "A standardized way of creating data stores for your projects",
     "keywords": [

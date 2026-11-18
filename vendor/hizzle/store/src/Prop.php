@@ -296,7 +296,8 @@ class Prop {
 		$schema = array(
 			'description' => $this->description,
 			'readonly'    => 'id' === $this->name || $this->readonly,
-			'context'     => array( 'view', 'edit' ),
+			// Explicit contexts in extra_rest_schema or filters can restrict export access.
+			'context'     => array( 'view', 'edit', 'export' ),
 		);
 
 		// Value type.
