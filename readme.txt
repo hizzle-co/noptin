@@ -71,7 +71,7 @@ Noptin integrates with the following WordPress tools, with some connections or a
 
 - **Advertising:** Advanced Ads.
 - **Community:** bbPress, FluentCommunity.
-- **Custom Fields:** Advanced Custom Fields, Meta Box, Pods, Toolset Types.
+- **Custom Fields:** Advanced Custom Fields, JetEngine, Meta Box, Pods, Toolset Types.
 - **Customer Support:** Fluent Support.
 - **Directories:** Directorist, GeoDirectory.
 - **eCommerce:** Charitable, Easy Digital Downloads, Hizzle Pay, WooCommerce, YITH WooCommerce Wishlist.
