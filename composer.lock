@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e834ca889ec7d47366407db82563f2fa",
+    "content-hash": "64dde6f56ab32cfb1e462b1abe739d4a",
     "packages": [
         {
             "name": "hizzle/store",
@@ -56,16 +56,16 @@
         },
         {
             "name": "hizzle/wp",
-            "version": "1.5.5",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/hizzle.git",
-                "reference": "5c5b88016a68e2ed32647c14f9c2890a3ac9ca0f"
+                "reference": "3780d27874e4dc3e0b54389dbd849ebd56d3bac2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/5c5b88016a68e2ed32647c14f9c2890a3ac9ca0f",
-                "reference": "5c5b88016a68e2ed32647c14f9c2890a3ac9ca0f",
+                "url": "https://api.github.com/repos/hizzle-co/hizzle/zipball/3780d27874e4dc3e0b54389dbd849ebd56d3bac2",
+                "reference": "3780d27874e4dc3e0b54389dbd849ebd56d3bac2",
                 "shasum": ""
             },
             "require": {
@@ -98,9 +98,10 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/hizzle/issues",
-                "source": "https://github.com/hizzle-co/hizzle/tree/v1.5.5"
+                "source": "https://github.com/hizzle-co/hizzle/tree/v1.6.0"
             },
-            "time": "2026-10-28T03:45:33+00:00"
+            "time": "2026-11-18T06:57:25+00:00",
+            "published-time": "2026-11-18T06:57:38+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -261,5 +262,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.11.0"
 }
