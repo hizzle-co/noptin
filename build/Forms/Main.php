@@ -123,16 +123,16 @@ class Main {
 					// The shared capability mapper preserves administrators, Noptin managers, and opted-in editors.
 					'capabilities'        => array(
 						'edit_posts'             => 'manage_noptin_forms',
-						'edit_others_posts'       => 'manage_noptin_forms',
-						'publish_posts'           => 'manage_noptin_forms',
-						'read_private_posts'      => 'manage_noptin_forms',
-						'delete_posts'            => 'manage_noptin_forms',
-						'delete_private_posts'    => 'manage_noptin_forms',
-						'delete_published_posts'  => 'manage_noptin_forms',
-						'delete_others_posts'     => 'manage_noptin_forms',
-						'edit_private_posts'      => 'manage_noptin_forms',
-						'edit_published_posts'    => 'manage_noptin_forms',
-						'create_posts'            => 'manage_noptin_forms',
+						'edit_others_posts'      => 'manage_noptin_forms',
+						'publish_posts'          => 'manage_noptin_forms',
+						'read_private_posts'     => 'manage_noptin_forms',
+						'delete_posts'           => 'manage_noptin_forms',
+						'delete_private_posts'   => 'manage_noptin_forms',
+						'delete_published_posts' => 'manage_noptin_forms',
+						'delete_others_posts'    => 'manage_noptin_forms',
+						'edit_private_posts'     => 'manage_noptin_forms',
+						'edit_published_posts'   => 'manage_noptin_forms',
+						'create_posts'           => 'manage_noptin_forms',
 					),
 					'publicly_queryable'  => false,
 					'exclude_from_search' => true,
@@ -193,6 +193,7 @@ class Main {
 
 		return $use_block_editor;
 	}
+
 	/**
 	 * Register post meta
 	 */
