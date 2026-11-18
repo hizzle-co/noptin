@@ -8,7 +8,7 @@ use Hizzle\Noptin\Emails\Main as Emails;
 /** First-party regression coverage migrated from unsubscribe-links.php. */
 class Test_Unsubscribe_Links extends Noptin_Regression_Test_Case {
 	/** Verify unsubscribe links using the isolated WordPress test database. */
-	public function test_unsubscribe_links() {
+	public function test_custom_unsubscribe_preferences_are_applied_safely() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

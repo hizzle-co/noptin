@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** First-party regression coverage migrated from addons-api.php. */
 class Test_Addons_API extends Noptin_Regression_Test_Case {
 	/** Verify addons api using the isolated WordPress test database. */
-	public function test_addons_api() {
+	public function test_addon_metadata_matches_registered_capabilities() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

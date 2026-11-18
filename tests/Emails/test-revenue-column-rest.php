@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** First-party regression coverage migrated from revenue-column-rest.php. */
 class Test_Revenue_Column_REST extends Noptin_Regression_Test_Case {
 	/** Verify revenue column rest using the isolated WordPress test database. */
-	public function test_revenue_column_rest() {
+	public function test_revenue_visibility_respects_license_and_tracking_settings() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

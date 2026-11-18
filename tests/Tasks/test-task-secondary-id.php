@@ -8,7 +8,7 @@ use Hizzle\Noptin\Tasks\Run_History;
 /** First-party regression coverage migrated from task-secondary-id.php. */
 class Test_Task_Secondary_ID extends Noptin_Regression_Test_Case {
 	/** Verify task secondary id using the isolated WordPress test database. */
-	public function test_task_secondary_id() {
+	public function test_task_relationships_and_numeric_secondary_ids_persist() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

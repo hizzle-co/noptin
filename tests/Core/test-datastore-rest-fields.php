@@ -67,7 +67,7 @@ class Noptin_REST_Field_Controller extends Hizzle\Store\REST_Controller {
 /** First-party regression coverage migrated from datastore-rest-fields.php. */
 class Test_Datastore_REST_Fields extends Noptin_Regression_Test_Case {
 	/** Verify datastore rest fields using the isolated WordPress test database. */
-	public function test_datastore_rest_fields() {
+	public function test_rest_fields_are_lazy_and_respect_context() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** First-party regression coverage migrated from campaign-polling.php. */
 class Test_Campaign_Polling extends Noptin_Regression_Test_Case {
 	/** Verify campaign polling using the isolated WordPress test database. */
-	public function test_campaign_polling() {
+	public function test_polling_selects_the_oldest_sendable_campaign() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** First-party regression coverage migrated from settings-api.php. */
 class Test_Settings_API extends Noptin_Regression_Test_Case {
 	/** Verify settings api using the isolated WordPress test database. */
-	public function test_settings_api() {
+	public function test_registered_settings_are_scoped_and_permission_checked() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

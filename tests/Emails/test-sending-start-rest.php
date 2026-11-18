@@ -5,7 +5,7 @@ require_once dirname( __DIR__ ) . '/includes/class-regression-test-case.php';
 /** First-party regression coverage migrated from sending-start-rest.php. */
 class Test_Sending_Start_REST extends Noptin_Regression_Test_Case {
 	/** Verify sending start rest using the isolated WordPress test database. */
-	public function test_sending_start_rest() {
+	public function test_rest_timestamps_follow_the_campaign_sending_state() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );

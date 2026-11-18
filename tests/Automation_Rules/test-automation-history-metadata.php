@@ -21,7 +21,7 @@ class Noptin_History_Metadata_Action extends Hizzle\Noptin\Automation_Rules\Acti
 /** First-party regression coverage migrated from automation-history-metadata.php. */
 class Test_Automation_History_Metadata extends Noptin_Regression_Test_Case {
 	/** Verify automation history metadata using the isolated WordPress test database. */
-	public function test_automation_history_metadata() {
+	public function test_run_history_preserves_execution_metadata() {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		wp_set_current_user( $admin_id );
 		remove_all_actions( 'noptin_newsletter_campaign_published' );
