@@ -20,6 +20,11 @@ fixtures and the shared `Noptin_Regression_Test_Case`, which restores hooks and 
 context and blocks external HTTP and mail delivery. Tests must restore any additional
 static registries they mutate. Never bootstrap the developer's local site here.
 
+Test method names must differ from their class names, ignoring case. PHP 7.4
+treats matching names as old-style constructors, which can execute test bodies
+before PHPUnit setup and leak hooks or options into other tests. Keep test
+methods named for the behavior they verify.
+
 Six regression fixtures under `fixtures/isolated` define WordPress doubles and run
 in clean PHP subprocesses through `Test_Noptin_Isolated_Regressions`. They load only
 this repository's packaged `build` code, do not load WordPress, and do not require
