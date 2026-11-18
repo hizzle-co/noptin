@@ -401,7 +401,7 @@ class Main {
 			'noptin',
 			esc_html__( 'Subscription Forms', 'newsletter-optin-box' ),
 			esc_html__( 'Forms', 'newsletter-optin-box' ),
-			get_noptin_capability(),
+			'manage_noptin_forms',
 			'edit.php?post_type=noptin-form'
 		);
 	}

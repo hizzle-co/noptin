@@ -65,6 +65,7 @@ class Main {
 
 		// Register hooks.
 		add_action( 'init', array( __CLASS__, 'register_post_type' ) );
+		add_filter( 'map_meta_cap', array( __CLASS__, 'map_form_capabilities' ), 20, 3 );
 		add_filter( 'use_block_editor_for_post_type', array( __CLASS__, 'disable_block_editor_for_forms' ), 10, 2 );
 		add_action( 'register_noptin_form_post_type', array( __CLASS__, 'register_post_meta' ) );
 		add_action( 'init', array( __CLASS__, 'register_scripts' ) );
@@ -117,6 +118,22 @@ class Main {
 					'public'              => false,
 					'show_ui'             => true,
 					'map_meta_cap'        => true,
+					'capability_type'     => 'noptin_form',
+					// Forms can affect every visitor, so post-author permissions must not grant management access.
+					// The shared capability mapper preserves administrators, Noptin managers, and opted-in editors.
+					'capabilities'        => array(
+						'edit_posts'             => 'manage_noptin_forms',
+						'edit_others_posts'       => 'manage_noptin_forms',
+						'publish_posts'           => 'manage_noptin_forms',
+						'read_private_posts'      => 'manage_noptin_forms',
+						'delete_posts'            => 'manage_noptin_forms',
+						'delete_private_posts'    => 'manage_noptin_forms',
+						'delete_published_posts'  => 'manage_noptin_forms',
+						'delete_others_posts'     => 'manage_noptin_forms',
+						'edit_private_posts'      => 'manage_noptin_forms',
+						'edit_published_posts'    => 'manage_noptin_forms',
+						'create_posts'            => 'manage_noptin_forms',
+					),
 					'publicly_queryable'  => false,
 					'exclude_from_search' => true,
 					'hierarchical'        => false,
@@ -138,6 +155,28 @@ class Main {
 		 * @since 1.6.2
 		 */
 		do_action( 'register_noptin_form_post_type' );
+	}
+
+	/**
+	 * Resolves the form management capability produced by WordPress's post mapper.
+	 *
+	 * WordPress does not recursively map primitive capabilities, so post and meta
+	 * checks must resolve legacy Noptin access just like direct management checks.
+	 *
+	 * @param string[] $caps    Required primitive capabilities.
+	 * @param string   $cap     Requested capability.
+	 * @param int      $user_id User being checked.
+	 * @return string[]
+	 */
+	public static function map_form_capabilities( $caps, $cap, $user_id ) {
+		if ( 'manage_noptin_forms' !== $cap && in_array( 'manage_noptin_forms', $caps, true ) ) {
+			$caps = array_merge(
+				array_diff( $caps, array( 'manage_noptin_forms' ) ),
+				map_meta_cap( 'manage_noptin_forms', $user_id )
+			);
+		}
+
+		return $caps;
 	}
 
 	/**

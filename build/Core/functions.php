@@ -375,6 +375,11 @@ function get_noptin_menu_capability() {
 		}
 	}
 
+	// Forms are a post type rather than a datastore collection, so check their access separately.
+	if ( current_user_can( 'manage_noptin_forms' ) ) {
+		return 'manage_noptin_forms';
+	}
+
 	$capability = false;
 	if ( function_exists( 'get_noptin_accessible_campaign_type_capability' ) ) {
 		$capability = get_noptin_accessible_campaign_type_capability();
