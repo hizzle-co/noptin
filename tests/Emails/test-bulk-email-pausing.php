@@ -196,13 +196,13 @@ class Test_Bulk_Email_Pausing extends Noptin_Emails_Test_Case {
 			)
 		);
 
-		// We should have failed after the first email.
-		$this->assertEquals( 1, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
+		// A failed attempt is not a successful send.
+		$this->assertEquals( 0, (int) get_post_meta( $this->campaign->id, '_noptin_sends', true ) );
 
 		// There should still be recipients left to send to.
-		// The recipient that caused the error should be skipped.
+		// Include the failed recipient so resume can retry it.
 		$remaining_recipients = Main::$senders['noptin']->get_recipients( $this->campaign );
-		$this->assertEquals(4, count( $remaining_recipients ) );
+		$this->assertEquals( 5, count( $remaining_recipients ) );
 	}
 
 	/**

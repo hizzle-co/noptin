@@ -47,7 +47,7 @@ abstract class Noptin_Emails_Test_Case extends WP_UnitTestCase {
 		noptin()->db()->delete_all( 'email_logs' );
 
 		// Clear background tasks.
-		noptin()->db()->delete_all( 'noptin_tasks' );
+		noptin()->db()->delete_all( 'tasks' );
 
 		// Release any existing lock.
 		delete_option( Main::release_lock() );
