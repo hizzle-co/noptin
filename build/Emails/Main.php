@@ -53,6 +53,8 @@ class Main {
 		add_filter( 'noptin_email_sending_function', array( __CLASS__, 'maybe_disable_staging_email' ), PHP_INT_MAX );
 		add_filter( 'noptin_get_last_send_date', array( __CLASS__, 'filter_last_send_date' ) );
 		add_action( 'wp_after_insert_post', array( __CLASS__, 'on_save_campaign' ), 100, 4 );
+		add_filter( 'map_meta_cap', array( __CLASS__, 'map_campaign_capabilities' ), 20, 4 );
+		add_filter( 'wp_insert_post_data', array( __CLASS__, 'filter_campaign_publication' ), 10, 2 );
 		add_action( 'before_delete_post', array( __CLASS__, 'on_delete_campaign' ) );
 		add_filter( 'rest_pre_insert_noptin-campaign', array( __CLASS__, 'filter_campaign_rest_request' ), 10, 2 );
 		add_action( 'noptin_pre_load_actions_page', __NAMESPACE__ . '\Actions::init', 0 );
@@ -341,8 +343,9 @@ class Main {
 					'rest_controller_class' => __NAMESPACE__ . '\REST',
 					'map_meta_cap'          => true,
 					'capabilities'          => array(
-						'read'      => 'edit_posts',
-						'read_post' => 'edit_post',
+						'read'         => 'edit_posts',
+						'read_post'    => 'edit_post',
+						'create_posts' => 'create_noptin_campaigns',
 					),
 					'exclude_from_search'   => true,
 					'publicly_queryable'    => true,
@@ -601,7 +604,53 @@ class Main {
 			return false;
 		}
 
-		return current_user_can( $post_type->cap->edit_posts );
+		return current_user_can( $post_type->cap->create_posts );
+	}
+
+	/**
+	 * Adds Noptin authorization to standard WordPress campaign capabilities.
+	 *
+	 * @param string[] $caps    Required primitive capabilities.
+	 * @param string   $cap     Requested capability.
+	 * @param int      $user_id User being checked.
+	 * @param mixed[]  $args    Capability arguments.
+	 * @return string[]
+	 */
+	public static function map_campaign_capabilities( $caps, $cap, $user_id, $args ) {
+		if ( 'create_noptin_campaigns' === $cap ) {
+			$access = get_noptin_accessible_campaign_type_capability( $user_id );
+			return array_merge( array( 'edit_posts' ), $access ? map_meta_cap( $access, $user_id ) : array( 'do_not_allow' ) );
+		}
+
+		if ( in_array( $cap, array( 'edit_post', 'delete_post', 'read_post' ), true ) && ! empty( $args[0] ) && 'noptin-campaign' === get_post_type( $args[0] ) ) {
+			$type = get_post_meta( $args[0], 'campaign_type', true ) ?: 'newsletter';
+			// WordPress does not recursively resolve the Noptin management capability.
+			$caps = array_merge( $caps, map_meta_cap( get_noptin_campaign_type_capability( $type ), $user_id ) );
+		}
+
+		return $caps;
+	}
+
+	/**
+	 * Keeps unauthorized non-REST campaign publications as drafts.
+	 *
+	 * @param array $data    Sanitized post data.
+	 * @param array $postarr Submitted post data, including metadata.
+	 * @return array
+	 */
+	public static function filter_campaign_publication( $data, $postarr ) {
+		if ( 'noptin-campaign' !== $data['post_type'] || ! get_current_user_id() || ! in_array( $data['post_status'], array( 'publish', 'future' ), true ) ) {
+			return $data;
+		}
+
+		$stored_type = empty( $postarr['ID'] ) ? 'newsletter' : ( get_post_meta( $postarr['ID'], 'campaign_type', true ) ?: 'newsletter' );
+		$type        = $postarr['meta_input']['campaign_type'] ?? $stored_type;
+		// Check both types so retyping cannot launder an inaccessible campaign.
+		if ( ! current_user_can_manage_noptin_campaign_type( $type ?: 'newsletter' ) || ( ! empty( $postarr['ID'] ) && ! current_user_can_manage_noptin_campaign_type( $stored_type ) ) ) {
+			$data['post_status'] = 'draft';
+		}
+
+		return $data;
 	}
 
 	/**
@@ -614,6 +663,24 @@ class Main {
 	 *                                  to the update for updated posts.
 	 */
 	public static function on_save_campaign( $post_id, $post, $update, $post_before ) {
+		if ( 'noptin-campaign' !== $post->post_type || 'auto-draft' === $post->post_status ) {
+			return;
+		}
+
+		$type       = get_post_meta( $post_id, 'campaign_type', true ) ?: 'newsletter';
+		$can_manage = current_user_can_manage_noptin_campaign_type( $type );
+
+		// Scheduled publication runs without a logged-in user. Recheck its author's
+		// current access, rather than letting a lower-privileged scheduled write send.
+		if ( ! get_current_user_id() && $post_before && 'future' === $post_before->post_status && 'publish' === $post->post_status ) {
+			$can_manage = user_can( $post->post_author, get_noptin_campaign_type_capability( $type ) );
+		}
+
+		// wp_insert_post() does not enforce capabilities. Check before constructing
+		// Email too: legacy loading can resave or publish overdue scheduled posts.
+		if ( ! $can_manage && ( get_current_user_id() || in_array( $post->post_status, array( 'publish', 'future' ), true ) ) ) {
+			return;
+		}
 
 		$email = new Email( $post_id );
 

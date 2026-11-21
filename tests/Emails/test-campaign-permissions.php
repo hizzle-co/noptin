@@ -76,7 +76,7 @@ class Test_Campaign_Permissions extends Noptin_Regression_Test_Case {
 			$legacy     = $create();
 			delete_post_meta( $legacy, 'campaign_type' );
 			wp_set_current_user( $user_id );
-			$assert( current_user_can( 'edit_post', $automation ) && current_user_can( 'delete_post', $automation ), 'Fixture must have underlying WordPress object permissions.' );
+			$assert( ! current_user_can( 'edit_post', $automation ) && ! current_user_can( 'delete_post', $automation ), 'WordPress object permissions must enforce the stored campaign type.' );
 			$assert( ! current_user_can_manage_noptin_campaign_type( 'automation' ), 'Fixture must lack automation access.' );
 
 			$before = get_posts( array( 'post_type' => 'noptin-campaign', 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids' ) );
