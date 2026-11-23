@@ -61,7 +61,9 @@ class Test_Noptin_Subscriber_Abilities extends Noptin_Regression_Test_Case {
 			$this->assertTrue( $ability->get_meta()['show_in_rest'] );
 			$this->assertTrue( $ability->get_meta()['mcp']['public'] );
 			wp_set_current_user( 0 );
-			$this->assertFalse( $ability->check_permissions() );
+			// Read abilities may validate their identifier before checking collection access.
+			$input = 'get-subscriber' === $slug ? array( 'id' => 1 ) : array();
+			$this->assertFalse( $ability->check_permissions( $input ), $slug );
 		}
 		$user = self::factory()->user->create( array( 'role' => 'subscriber' ) );
 		wp_set_current_user( $user );
@@ -100,9 +102,19 @@ class Test_Noptin_Subscriber_Abilities extends Noptin_Regression_Test_Case {
 	/** Invalid selectors and writes cannot reach a mutation callback. */
 	public function test_input_validation() {
 		$get = wp_get_ability( 'noptin/get-subscriber' );
-		foreach ( array( array(), array( 'id' => 0 ), array( 'email' => 'invalid' ), array( 'id' => 1, 'email' => 'a@example.test' ) ) as $input ) {
+		foreach ( array( array(), array( 'id' => 0 ), array( 'email' => 'invalid' ) ) as $input ) {
 			$this->assertWPError( $get->validate_input( $input ) );
 		}
+		// Selector exclusivity is enforced by callbacks for compatibility with MCP clients.
+		$ambiguous = array( 'id' => 1, 'email' => 'a@example.test' );
+		$permission = $get->check_permissions( $ambiguous );
+		$this->assertWPError( $permission );
+		$this->assertSame( 'hizzle_store_invalid_identifier', $permission->get_error_code() );
+		// The Abilities API reports incorrect usage and wraps callback permission errors.
+		$this->setExpectedIncorrectUsage( 'WP_Ability::execute' );
+		$result = $get->execute( $ambiguous );
+		$this->assertWPError( $result );
+		$this->assertSame( 'ability_invalid_permissions', $result->get_error_code() );
 		$this->assertWPError( wp_get_ability( 'noptin/update-subscriber' )->validate_input( array( 'id' => 1, 'edit_url' => 'https://example.test' ) ) );
 		$this->assertWPError( wp_get_ability( 'noptin/bulk-delete-subscribers' )->validate_input( array( 'include' => array() ) ) );
 	}
