@@ -1080,6 +1080,7 @@ class Main {
 
 				// Tasks.
 				'tasks' => array(
+					'hidden'        => array( 'id', 'args_hash', 'date_modified', 'parent_id', 'history_parent_id', 'retry_of' ),
 					'capabilities'  => array(
 						'create' => 'manage_options',
 						'edit'   => 'manage_options',
@@ -1263,11 +1264,6 @@ class Main {
 	 * @return array
 	 */
 	public static function filter_tasks_collection_js_params( $params ) {
-
-		$params['hidden'] = array_merge(
-			$params['hidden'],
-			array( 'args_hash', 'date_modified', 'parent_id', 'history_parent_id', 'retry_of' )
-		);
 
 		$params['badges'] = array( 'status' );
 

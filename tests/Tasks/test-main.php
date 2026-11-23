@@ -106,7 +106,7 @@ class Test_Main extends WP_UnitTestCase {
 
     public function test_filter_tasks_collection_js_params() {
         $params = [
-            'hidden' => [],
+            'hidden' => Main::add_tasks_table([])['tasks']['hidden'],
             'schema' => [
                 ['name' => 'hook'],
                 ['name' => 'other']

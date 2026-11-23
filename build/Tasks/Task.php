@@ -143,7 +143,7 @@ class Task extends \Hizzle\Store\Record {
 	/**
 	 * Set the args.
 	 *
-	 * @param string $value args.
+	 * @param string|array $value JSON-encoded arguments or an argument array.
 	 */
 	public function set_args( $value ) {
 		if ( is_array( $value ) ) {
@@ -627,6 +627,22 @@ class Task extends \Hizzle\Store\Record {
 	 * @inheritDoc
 	 */
 	public function save() {
+		$args = $this->get_args( 'edit' );
+		if ( null === $args || '' === $args ) {
+			$this->set_args( array() );
+			$args = $this->get_args( 'edit' );
+		}
+
+		// Validate new work without blocking status changes for older tasks with invalid arguments.
+		// Hooks accept positional or named arguments, so preserve JSON arrays and objects.
+		if ( ! $this->exists() && ( ! is_array( json_decode( $args, true ) ) || JSON_ERROR_NONE !== json_last_error() ) ) {
+			return new \WP_Error( 'invalid_task_args', 'Task arguments must be a valid JSON array or object.', array( 'status' => 400 ) );
+		}
+
+		// Internal schedulers may supply a hash covering more than the hook arguments.
+		if ( ! $this->get_args_hash( 'edit' ) ) {
+			$this->set_args_hash( md5( $args ) );
+		}
 
 		// Ensure the cron is scheduled to run pending tasks.
 		do_action( 'noptin_tasks_ensure_cron_scheduled' );
