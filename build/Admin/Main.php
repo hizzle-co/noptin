@@ -146,6 +146,8 @@ class Main {
 
 		Tools::add_hooks();
 
+		Deactivation_Feedback::add_hooks();
+
 		/**
 		 * Runs right after registering admin hooks.
 		 *
