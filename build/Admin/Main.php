@@ -192,7 +192,7 @@ class Main {
 
 		// Black Friday notice dismissal.
 		if ( isset( $_GET['noptin_black_friday_dismissed'] ) && isset( $_GET['noptin-black-friday-nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['noptin-black-friday-nonce'] ) ), 'noptin-black-friday-nag' ) ) {
-			update_option( 'noptin_black_friday_dismissed', (int) $_GET['noptin_black_friday_dismissed'] );
+			update_user_meta( get_current_user_id(), 'noptin_black_friday_dismissed', (int) $_GET['noptin_black_friday_dismissed'] );
 			wp_safe_redirect( remove_query_arg( array( 'noptin_black_friday_dismissed', 'noptin-black-friday-nonce' ) ) );
 			exit;
 		}
@@ -342,30 +342,12 @@ class Main {
 			// If user has been using Noptin for a while, show them a notice to rate the plugin.
 			$review_nag = get_option( 'noptin_review_nag', time() + WEEK_IN_SECONDS );
 
-			// Black Friday promotion dismissed.
-			$black_friday_dismissed = get_option( 'noptin_black_friday_dismissed', 0 );
+			// Dismissing the promotion must not hide it for other administrators.
+			$black_friday_dismissed = (int) get_user_meta( get_current_user_id(), 'noptin_black_friday_dismissed', true );
 
 			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() ) {
 				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_black_friday_dismissed', time() + MONTH_IN_SECONDS ), 'noptin-black-friday-nag', 'noptin-black-friday-nonce' );
-				self::print_notice(
-					'info',
-					sprintf(
-						'<p><strong>%s</strong></p><p>%s</p><p>%s&nbsp;&nbsp;%s</p>',
-						'Black Friday: Save 60% on Noptin Premium',
-						'Unlock all premium features, the visual email editor, email automations, all integrations, and AI email tools without subscriber limits. Offer ends Cyber Monday. Includes a 30-day money-back guarantee.',
-						sprintf(
-							'<a href="%s" target="_blank" class="button button-primary">%s</a>',
-							esc_url( noptin_get_upsell_url( 'black-friday-sale/', 'black-friday', 'black-friday-notice' ) ),
-							'Get 60% Off'
-						),
-						sprintf(
-							'<a href="%s" class="button button-link">%s</a>',
-							$dismiss_url,
-							'Dismiss'
-						)
-					),
-					$dismiss_url
-				);
+				require __DIR__ . '/views/black-friday-notice.php';
 			} elseif ( ! empty( $review_nag ) && (int) $review_nag < time() ) {
 				self::print_notice(
 					'info',

@@ -2717,6 +2717,19 @@ function is_noptin_test_site() {
 }
 
 /**
+ * Returns the Black Friday sale cutoff in the site's timezone.
+ *
+ * @return DateTimeImmutable Cyber Monday at 23:59:59 in the current year.
+ */
+function noptin_get_black_friday_sale_end() {
+	$now = new DateTimeImmutable( 'now', wp_timezone() );
+
+	return $now->modify( 'fourth thursday of november ' . $now->format( 'Y' ) )
+		->modify( 'next monday' )
+		->setTime( 23, 59, 59 );
+}
+
+/**
  * Checks if we should show black friday sale notice.
  *
  * @return bool
@@ -2734,7 +2747,6 @@ function noptin_should_show_black_friday_sale_notice() {
 	}
 
 	$tz   = wp_timezone();
-	$tz   = wp_timezone();
 	$now  = new DateTime( 'now', $tz );
 	$year = $now->format( 'Y' );
 
@@ -2750,9 +2762,7 @@ function noptin_should_show_black_friday_sale_notice() {
 	->setTime( 0, 1 );
 
 	// Sale ends Cyber Monday at 23:59:59.
-	$end = ( clone $thanksgiving )
-	->modify( 'next monday' )
-	->setTime( 23, 59, 59 );
+	$end = noptin_get_black_friday_sale_end();
 
 	// Check whether the sale is active.
 	$is_within_period = $now >= $start && $now <= $end;
