@@ -266,6 +266,11 @@ class Tools {
 	 * Resets Noptin data.
 	 */
 	public static function reset_data() {
+		// This action can be dispatched outside the tools AJAX controller.
+		if ( ! current_user_can( get_noptin_capability() ) ) {
+			return;
+		}
+
 		define( 'NOPTIN_RESETING_DATA', true );
 		include noptin()->plugin_path . 'uninstall.php';
 		wp_cache_flush();

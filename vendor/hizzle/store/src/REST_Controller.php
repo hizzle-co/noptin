@@ -121,7 +121,7 @@ class REST_Controller extends \WP_REST_Controller {
 				array(
 					'methods'             => 'PATCH',
 					'callback'            => array( $this, 'bulk_update_items' ),
-					'permission_callback' => array( $this, 'create_item_permissions_check' ),
+					'permission_callback' => array( $this, 'bulk_update_items_permissions_check' ),
 					'args'                => array_merge(
 						array_diff_key(
 							$collection_params,
@@ -249,7 +249,7 @@ class REST_Controller extends \WP_REST_Controller {
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'remote_action' ),
-					'permission_callback' => array( $this, 'update_item_permissions_check' ),
+					'permission_callback' => array( $this, 'remote_action_permissions_check' ),
 					'args'                => array(
 						'context' => $this->get_context_param( array( 'default' => 'edit' ) ),
 					),
@@ -355,7 +355,7 @@ class REST_Controller extends \WP_REST_Controller {
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
 					'callback'            => array( $this, 'batch_items' ),
-					'permission_callback' => array( $this, 'create_item_permissions_check' ),
+					'permission_callback' => array( $this, 'batch_items_permissions_check' ),
 					'args'                => $this->get_endpoint_args_for_item_schema( \WP_REST_Server::EDITABLE ),
 					'allow_batch'         => array( 'v1' => true ),
 				),
@@ -513,6 +513,85 @@ class REST_Controller extends \WP_REST_Controller {
 	}
 
 	/**
+	 * Checks bulk editing access while preserving legacy route permission gates.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool|\WP_Error
+	 */
+	public function bulk_update_items_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+		if ( $collection && empty( $collection->capabilities ) ) {
+			// Existing routes used the create gate (publish_posts for post collections).
+			// Keep that contract; individual updates still enforce object permissions.
+			return $this->create_item_permissions_check( $request );
+		}
+		if ( ! $this->check_record_permissions( 'bulk_edit' ) ) {
+			return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit resources.', array( 'status' => rest_authorization_required_code() ) );
+		}
+		return true;
+	}
+
+	/**
+	 * Authorizes batch access; each requested operation is checked separately.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool|\WP_Error
+	 */
+	public function batch_items_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+		if ( $collection && empty( $collection->capabilities ) ) {
+			return $this->create_item_permissions_check( $request );
+		}
+
+		// Collection readers may submit mixed batches and receive per-action errors.
+		// A writer without read access may still perform an explicitly granted action.
+		$read = $this->get_items_permissions_check( $request );
+		if ( ! is_wp_error( $read ) && false !== $read && null !== $read ) {
+			return true;
+		}
+		foreach ( array( 'create', 'import', 'update', 'bulk_update', 'delete' ) as $action ) {
+			if ( $request->get_param( $action ) && $this->check_batch_operation_permission( $action ) ) {
+				return true;
+			}
+		}
+		return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to perform this batch operation.', array( 'status' => rest_authorization_required_code() ) );
+	}
+
+	/**
+	 * Checks one batch operation independently of other requested operations.
+	 *
+	 * @param string $action Batch operation.
+	 * @return bool
+	 */
+	protected function check_batch_operation_permission( $action ) {
+		$contexts = array(
+			'create'      => 'create',
+			'import'      => 'create',
+			'update'      => 'bulk_edit',
+			'bulk_update' => 'bulk_edit',
+			'delete'      => 'delete_multiple',
+		);
+		return isset( $contexts[ $action ] ) && $this->check_record_permissions( $contexts[ $action ] );
+	}
+
+	/**
+	 * Formats a failed batch item using the shared batch response contract.
+	 *
+	 * @param \WP_Error $error Operation error.
+	 * @return array
+	 */
+	protected function prepare_batch_error_response( $error ) {
+		return array(
+			'is_error' => true,
+			'data'     => array(
+				'code'    => $error->get_error_code(),
+				'message' => $error->get_error_message(),
+				'data'    => $error->get_error_data(),
+			),
+		);
+	}
+
+	/**
 	 * Check if a given request has access to read an item.
 	 *
 	 * @param  \WP_REST_Request $request Full details about the request.
@@ -543,15 +622,41 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_Error|boolean
 	 */
 	public function update_item_permissions_check( $request ) {
+		return $this->check_item_write_permissions( $request, 'edit' );
+	}
+
+	/**
+	 * Authorizes existing-record actions independently from definition edits.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return bool|\WP_Error
+	 */
+	public function remote_action_permissions_check( $request ) {
+		$collection = $this->fetch_collection();
+		if ( $collection && empty( $collection->capabilities ) ) {
+			// Preserve existing controller overrides and the edit filter context.
+			return $this->update_item_permissions_check( $request );
+		}
+		return $this->check_item_write_permissions( $request, 'remote_action' );
+	}
+
+	/**
+	 * Checks collection access before looking up a record for a write operation.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @param string $context Operation context.
+	 * @return bool|\WP_Error
+	 */
+	protected function check_item_write_permissions( $request, $context ) {
 		$collection = $this->fetch_collection();
 
-		if ( ! $collection || ( empty( $collection->post_type ) && ! $this->check_record_permissions( 'edit' ) ) ) {
+		if ( ! $collection || ( empty( $collection->post_type ) && ! $this->check_record_permissions( $context ) ) ) {
 			return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit this resource.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
 		$object = $this->get_object( $request );
 
-		if ( $object && $object->exists() && ! $this->check_record_permissions( 'edit', $object->get_id() ) ) {
+		if ( $object && $object->exists() && ! $this->check_record_permissions( $context, $object->get_id() ) ) {
 			return new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit this resource.', array( 'status' => rest_authorization_required_code() ) );
 		}
 
@@ -604,9 +709,25 @@ class REST_Controller extends \WP_REST_Controller {
 	public function check_record_permissions( $context = 'read', $object_id = 0 ) {
 		$collection = $this->fetch_collection();
 
-		// Only admins can query non-post type collections.
-		if ( empty( $collection ) || empty( $collection->post_type ) ) {
-			return current_user_can( $collection->capabillity );
+		if ( empty( $collection ) ) {
+			return false;
+		}
+
+		// Bulk edit and bulk delete inherit their corresponding item permission.
+		$operation  = array(
+			'batch'           => 'edit',
+			'bulk_edit'       => 'edit',
+			'delete_multiple' => 'delete',
+		);
+		$capability = $collection->capabilities[ $context ] ?? $collection->capabilities[ $operation[ $context ] ?? $context ] ?? null;
+
+		if ( empty( $collection->post_type ) ) {
+			return current_user_can( $capability ?: $collection->capabillity );
+		}
+
+		// Preserve WordPress object restrictions when adding a granular post capability.
+		if ( $capability && ! current_user_can( $capability ) ) {
+			return false;
 		}
 
 		$contexts = array(
@@ -616,6 +737,8 @@ class REST_Controller extends \WP_REST_Controller {
 			'delete'          => 'delete_post',
 			'delete_multiple' => 'delete_others_posts',
 			'batch'           => 'edit_others_posts',
+			'bulk_edit'       => 'publish_posts', // Preserve the legacy query-wide gate; each record must also be editable.
+			'remote_action'   => 'edit_post',
 		);
 
 		if ( 'revision' === $collection->post_type ) {
@@ -868,6 +991,10 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function create_item( $request ) {
+		$permission = $this->create_item_permissions_check( $request );
+		if ( is_wp_error( $permission ) || false === $permission || null === $permission ) {
+			return is_wp_error( $permission ) ? $permission : new \WP_Error( 'hizzle_rest_forbidden', 'Sorry, you are not allowed to perform this operation.', array( 'status' => rest_authorization_required_code() ) );
+		}
 
 		if ( ! empty( $request['id'] ) ) {
 			/* translators: %s: rest base */
@@ -912,6 +1039,11 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function bulk_update_items( $request ) {
+		$permission = $this->bulk_update_items_permissions_check( $request );
+		if ( is_wp_error( $permission ) || false === $permission || null === $permission ) {
+			return is_wp_error( $permission ) ? $permission : new \WP_Error( 'hizzle_rest_forbidden', 'Sorry, you are not allowed to perform this operation.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		$collection = $this->fetch_collection();
 		$response   = array();
 
@@ -966,6 +1098,10 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function update_item( $request ) {
+		$permission = $this->update_item_permissions_check( $request );
+		if ( is_wp_error( $permission ) || false === $permission || null === $permission ) {
+			return is_wp_error( $permission ) ? $permission : new \WP_Error( 'hizzle_rest_forbidden', 'Sorry, you are not allowed to perform this operation.', array( 'status' => rest_authorization_required_code() ) );
+		}
 
 		$object = $this->get_object( $request );
 
@@ -1006,6 +1142,11 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Response object on success, or WP_Error object on failure.
 	 */
 	public function delete_item( $request ) {
+		$permission = $this->delete_item_permissions_check( $request );
+		if ( is_wp_error( $permission ) || false === $permission || null === $permission ) {
+			return is_wp_error( $permission ) ? $permission : new \WP_Error( 'hizzle_rest_forbidden', 'Sorry, you are not allowed to perform this operation.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		$object = $this->get_object( $request );
 		$force  = isset( $request['force'] ) ? (bool) $request['force'] : false;
 
@@ -1268,6 +1409,11 @@ class REST_Controller extends \WP_REST_Controller {
 	 * @return \WP_REST_Response|\WP_Error Of WP_Error or WP_REST_Response.
 	 */
 	public function batch_items( $request ) {
+		$permission = $this->batch_items_permissions_check( $request );
+		if ( is_wp_error( $permission ) || false === $permission || null === $permission ) {
+			return is_wp_error( $permission ) ? $permission : new \WP_Error( 'hizzle_rest_forbidden', 'Sorry, you are not allowed to perform this operation.', array( 'status' => rest_authorization_required_code() ) );
+		}
+
 		/**
 		 * REST Server
 		 *
@@ -1295,11 +1441,16 @@ class REST_Controller extends \WP_REST_Controller {
 			return new \WP_Error( $this->prefix_hook( 'request_entity_too_large' ), sprintf( 'Unable to accept more than %s items for this request.', $limit ), array( 'status' => 413 ) );
 		}
 
+		$responses = array();
+
 		// Is the user updating all items matching a query?
 		$bulk_update = $request->get_param( 'bulk_update' );
 		$collection  = $this->fetch_collection();
 
-		if ( ! empty( $bulk_update ) ) {
+		if ( ! empty( $bulk_update ) && ! empty( $collection->capabilities ) && ! $this->check_batch_operation_permission( 'bulk_update' ) ) {
+			// Do not resolve a query or expand its records for an unauthorized update.
+			$responses['update'][] = $this->prepare_batch_error_response( new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to edit resources.', array( 'status' => rest_authorization_required_code() ) ) );
+		} elseif ( ! empty( $bulk_update ) ) {
 			$items['update'] = isset( $items['update'] ) ? $items['update'] : array();
 
 			try {
@@ -1321,9 +1472,6 @@ class REST_Controller extends \WP_REST_Controller {
 			}
 		}
 
-		// Prepare response.
-		$responses = array();
-
 		// Process the batches.
 		foreach ( $items as $action => $action_items ) {
 			if ( ! isset( $responses[ $action ] ) ) {
@@ -1336,22 +1484,20 @@ class REST_Controller extends \WP_REST_Controller {
 			// Set a flag for the current action.
 			$GLOBALS[ $collection->get_full_name() . '_batch_action' ] = $action;
 
-			// Loop through each item.
+			$action_error = null;
+			if ( ! empty( $collection->capabilities ) && ! $this->check_batch_operation_permission( $action ) ) {
+				$action_error = new \WP_Error( 'hizzle_rest_cannot_edit', 'Sorry, you are not allowed to perform this batch operation.', array( 'status' => rest_authorization_required_code() ) );
+			}
+
+			// Denied operations return errors without running import hooks or callbacks.
 			foreach ( $action_items as $item ) {
 
 				// Process the item.
-				$response = rest_ensure_response( $this->$method( $request, $item ) );
+				$response = $action_error ?: rest_ensure_response( $this->$method( $request, $item ) );
 
 				// Check for errors.
 				if ( is_wp_error( $response ) ) {
-					$responses[ $action ][] = array(
-						'is_error' => true,
-						'data'     => array(
-							'code'    => $response->get_error_code(),
-							'message' => $response->get_error_message(),
-							'data'    => $response->get_error_data(),
-						),
-					);
+					$responses[ $action ][] = $this->prepare_batch_error_response( $response );
 				} elseif ( ! $skip_data ) {
 					$responses[ $action ][] = array(
 						'is_error' => false,
@@ -1443,9 +1589,9 @@ class REST_Controller extends \WP_REST_Controller {
 		$new_request->set_headers( $request->get_headers() );
 
 		// Delete item.
-		$this->delete_item( $new_request );
+		$result = $this->delete_item( $new_request );
 
-		return (int) $item;
+		return is_wp_error( $result ) ? $result : (int) $item;
 	}
 
 	/**
@@ -1460,7 +1606,7 @@ class REST_Controller extends \WP_REST_Controller {
 		$collection = $this->fetch_collection();
 
 		// Check if we have duplicates.
-		foreach ( $collection->keys['unique'] as $unique_key ) {
+		foreach ( $collection->keys['unique'] ?? array() as $unique_key ) {
 
 			// Abort if the unique key is not set.
 			if ( empty( $item[ $unique_key ] ) ) {
@@ -1609,6 +1755,7 @@ class REST_Controller extends \WP_REST_Controller {
 
 				$schema[ $prop->name ] = array(
 					'name'         => $prop->name,
+					'context'      => $prop->get_rest_schema()['context'] ?? array(),
 					'label'        => $prop->label,
 					'description'  => $prop->description,
 					'length'       => $prop->length,
@@ -1671,6 +1818,11 @@ class REST_Controller extends \WP_REST_Controller {
 						'tabs'          => $tabs,
 						'fills'         => array(),
 						'singular_name' => $collection->get_singular_name(),
+						'permissions'   => empty( $collection->capabilities ) ? (object) array() : array(
+							'create' => $this->check_record_permissions( 'create' ),
+							'edit'   => $this->check_record_permissions( 'bulk_edit' ),
+							'delete' => $this->check_record_permissions( 'delete_multiple' ),
+						),
 					)
 				)
 			);
@@ -1697,6 +1849,10 @@ class REST_Controller extends \WP_REST_Controller {
 				),
 			)
 		);
+
+		if ( ! empty( $collection->capabilities ) && ! $this->check_record_permissions( 'create' ) ) {
+			unset( $routes[ "$prefix/import" ] );
+		}
 
 		// Add leading / to all routes.
 		$new_routes = array();

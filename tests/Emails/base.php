@@ -16,8 +16,15 @@ abstract class Noptin_Emails_Test_Case extends WP_UnitTestCase {
 	 */
 	protected $campaign;
 
+	/** @var int User active before the authorized campaign fixture. */
+	private $original_user;
+
 	public function set_up() {
 		parent::set_up();
+
+		// Publishing a fixture must satisfy the same authorization as a real send.
+		$this->original_user = get_current_user_id();
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
 
 		// Init email senders once.
 		if ( ! did_action( 'noptin_init' ) ) {
@@ -52,6 +59,7 @@ abstract class Noptin_Emails_Test_Case extends WP_UnitTestCase {
 		// Release any existing lock.
 		delete_option( Main::release_lock() );
 
+		wp_set_current_user( $this->original_user );
 		parent::tear_down();
 	}
 

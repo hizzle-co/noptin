@@ -1080,6 +1080,10 @@ class Main {
 
 				// Tasks.
 				'tasks' => array(
+					'capabilities'  => array(
+						'create' => 'manage_options',
+						'edit'   => 'manage_options',
+					),
 					'object'        => '\Hizzle\Noptin\Tasks\Task',
 					'singular_name' => 'task',
 					'labels'        => array(

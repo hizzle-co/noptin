@@ -104,7 +104,15 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 				),
 			)
 		);
-		$campaign->save();
+		// Authorize campaign activation, then exercise the subscriber event in its
+		// original background context rather than relaxing publication checks.
+		$original_user = get_current_user_id();
+		wp_set_current_user( self::factory()->user->create( array( 'role' => 'administrator' ) ) );
+		try {
+			$campaign->save();
+		} finally {
+			wp_set_current_user( $original_user );
+		}
 		$this->campaign_ids[] = $campaign->id;
 
 		$rule = noptin_get_automation_rule( (int) $campaign->get( 'automation_rule' ) );
