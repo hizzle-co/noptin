@@ -2,23 +2,24 @@
     "packages": [
         {
             "name": "hizzle/store",
-            "version": "0.3.1",
-            "version_normalized": "0.3.1.0",
+            "version": "0.3.2",
+            "version_normalized": "0.3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hizzle-co/datastore.git",
-                "reference": "d0ec1ef14f037a38173d74297f5addb826b37ae8"
+                "reference": "e64abf61da48593b42ad8d8c24bffb04dc646e17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/d0ec1ef14f037a38173d74297f5addb826b37ae8",
-                "reference": "d0ec1ef14f037a38173d74297f5addb826b37ae8",
+                "url": "https://api.github.com/repos/hizzle-co/datastore/zipball/e64abf61da48593b42ad8d8c24bffb04dc646e17",
+                "reference": "e64abf61da48593b42ad8d8c24bffb04dc646e17",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2026-11-17T05:53:28+00:00",
+            "time": "2026-11-23T05:30:25+00:00",
+            "published-time": "2026-11-23T05:31:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,7 +48,7 @@
             ],
             "support": {
                 "issues": "https://github.com/hizzle-co/datastore/issues",
-                "source": "https://github.com/hizzle-co/datastore/tree/0.3.1"
+                "source": "https://github.com/hizzle-co/datastore/tree/0.3.2"
             },
             "install-path": "../hizzle/store"
         },

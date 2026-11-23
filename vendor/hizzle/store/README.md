@@ -454,3 +454,34 @@ In the standard local plugin directory layout, the WordPress path is optional.
 
 - PHP >= 5.3.0
 - WordPress >= 4.7.0
+
+## Granular REST capabilities
+
+Collections may override the legacy `capabillity` for individual operations:
+
+```php
+'capabillity' => 'manage_background_jobs',
+'capabilities' => array(
+    'create' => 'manage_options',
+    'edit'   => 'manage_options',
+),
+```
+
+The supported operation keys are `read`, `create`, `edit`, `delete`,
+`delete_multiple`, `bulk_edit`, `batch`, and `remote_action`. Unspecified operations retain
+the existing collection capability. Bulk edits (`bulk_edit`) inherit `edit` and
+bulk deletion inherits `delete` unless explicitly overridden. Remote actions
+remain independent from definition edits and default to the collection capability.
+For post-backed collections, these overrides add to WordPress's normal post
+permissions. They do not grant access to otherwise inaccessible posts.
+
+Create and edit restrictions also apply to bulk, batch, and import requests.
+Mixed batches return errors for denied actions while processing permitted actions.
+Denied imports do not fire import hooks, and denied query-wide updates do not
+resolve their queries. The collection
+schema exposes resolved `permissions.create`, `permissions.edit`, and
+`permissions.delete` booleans for shared UI consumers. Older configurations
+without granular capabilities receive an empty permissions object, preserving the
+existing UI behavior. For these collections, bulk and batch endpoints also keep
+their legacy create-permission gate, and remote actions continue through the
+existing update-permission callback. Per-record authorization still applies.
