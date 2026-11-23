@@ -579,6 +579,7 @@ class Collection {
 		// Add each prop.
 		foreach ( $this->props as $prop ) {
 			$schema['properties'][ $prop->name ] = $prop->get_rest_schema();
+
 			// Hidden fields are supplied internally; non-null storage does not require client input.
 			if ( in_array( $prop->name, $this->hidden, true ) && ! empty( $schema['properties'][ $prop->name ] ) ) {
 				$schema['properties'][ $prop->name ]['required'] = false;

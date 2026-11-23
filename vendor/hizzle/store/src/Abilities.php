@@ -288,7 +288,7 @@ class Abilities {
 			$input['required'] = $required;
 		} elseif ( 'get' === $operation ) {
 			$input['minProperties'] = 1;
-			$input['maxProperties'] = 1;
+			// Enforce exactly one selector in callbacks; some MCP clients miscount maxProperties.
 		} else {
 			$input['default'] = array();
 		}
@@ -325,7 +325,21 @@ class Abilities {
 				'category'            => $store,
 				'input_schema'        => self::normalize_schema( $input ),
 				'output_schema'       => self::normalize_schema( $output_schema ),
-				'permission_callback' => function ( $args = array() ) use ( $operation, $route ) {
+				'permission_callback' => function ( $args = array() ) use ( $operation, $route, $collection ) {
+					/**
+					 * Fires on entry to the permission callback.
+					 *
+					 * @param string     $operation  Read operation name.
+					 * @param string     $route      Collection REST path.
+					 * @param Collection $collection Collection whose access is being checked.
+					 * @param array      $args       Caller input supplied to the permission check.
+					 */
+					do_action( 'hizzle_store_ability_permission_check', $operation, $route, $collection, $args );
+
+					if ( 'get' === $operation && ( ! is_array( $args ) || 1 !== count( $args ) ) ) {
+						return new \WP_Error( 'hizzle_store_invalid_identifier', 'Supply exactly one identifier.' );
+					}
+
 					$request = $this->request( $operation, $route, $args );
 					if ( 'get' === $operation || 'tab' === $operation ) {
 						return true === $this->controller->get_item_permissions_check( $request );
@@ -357,6 +371,20 @@ class Abilities {
 	 * @return array|\WP_Error Operation result or an error from the REST endpoint.
 	 */
 	private function execute( $operation, $route, $collection, $args ) {
+		/**
+		 * Fires after authorization, before an ability operation is executed.
+		 *
+		 * @param string     $operation  Read operation name.
+		 * @param string     $route      Collection REST path.
+		 * @param Collection $collection Collection supplying the records.
+		 * @param array      $args       Validated caller input, before REST parameters are added.
+		 */
+		do_action( 'hizzle_store_ability_execute', $operation, $route, $collection, $args );
+
+		if ( 'get' === $operation && ( ! is_array( $args ) || 1 !== count( $args ) ) ) {
+			return new \WP_Error( 'hizzle_store_invalid_identifier', 'Supply exactly one identifier.' );
+		}
+
 		if ( 'field-options' === $operation ) {
 			$prop    = $collection->get_prop( $args['field'] );
 			$options = array();
@@ -388,7 +416,32 @@ class Abilities {
 		if ( 'get' === $operation || 'list' === $operation ) {
 			$request->set_param( '_fields', implode( ',', wp_list_pluck( $collection->get_props(), 'name' ) ) );
 		}
+
+		/**
+		 * Fires with the completed internal REST request, immediately before dispatch.
+		 *
+		 * The original ability input remains separate from context and _fields.
+		 *
+		 * @param \WP_REST_Request $request    Internal REST request.
+		 * @param string           $operation  Read operation name.
+		 * @param Collection       $collection Collection supplying the records.
+		 * @param array            $args       Original validated caller input.
+		 */
+		do_action( 'hizzle_store_ability_before_rest_request', $request, $operation, $collection, $args );
+
 		$response = rest_do_request( $request );
+
+		/**
+		 * Fires after REST dispatch, before errors or data become ability output.
+		 *
+		 * @param \WP_REST_Response $response   REST response, including error responses.
+		 * @param \WP_REST_Request  $request    Internal REST request.
+		 * @param string            $operation  Read operation name.
+		 * @param Collection        $collection Collection supplying the records.
+		 * @param array             $args       Original validated caller input.
+		 */
+		do_action( 'hizzle_store_ability_after_rest_request', $response, $request, $operation, $collection, $args );
+
 		if ( $response->is_error() ) {
 			return $response->as_error();
 		}
