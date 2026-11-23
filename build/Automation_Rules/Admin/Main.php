@@ -116,7 +116,7 @@ class Main {
 					'noptin_email_settings_misc',
 					array(
 						'config'      => \Hizzle\Noptin\Extensions\Catalog::config(),
-						'isTest'      => defined( 'NOPTIN_IS_TESTING' ),
+						'isTest'      => is_noptin_test_site(),
 						'ai'          => array(
 							'disabled' => (bool) $disable_ai,
 						),

@@ -1053,7 +1053,7 @@ abstract class Collection {
 		}
 
 		// Debug the query later.
-		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING ) {
+		if ( is_noptin_test_site() ) {
 			noptin_error_log( $items, 'Item collection results' );
 		}
 

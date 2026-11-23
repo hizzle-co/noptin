@@ -312,7 +312,7 @@ class Main {
 			return false;
 		}
 		$seen[ $campaign->id ] = true;
-		$allowed = 'delete' === $operation ? $campaign->current_user_can_delete() : $campaign->current_user_can_edit();
+		$allowed               = 'delete' === $operation ? $campaign->current_user_can_delete() : $campaign->current_user_can_edit();
 		if ( ! $allowed ) {
 			return false;
 		}
@@ -461,7 +461,6 @@ class Main {
 		}
 	}
 
-
 	/**
 	 * Loads AI script
 	 */
@@ -522,7 +521,10 @@ class Main {
 						'post_parent'    => $parent_id,
 						'post_status'    => array( 'publish', 'draft', 'pending', 'future', 'private' ),
 						'posts_per_page' => -1,
-						'orderby'        => array( 'menu_order' => 'ASC', 'date' => 'ASC' ),
+						'orderby'        => array(
+							'menu_order' => 'ASC',
+							'date'       => 'ASC',
+						),
 						'order'          => 'ASC',
 					)
 				);
@@ -639,7 +641,6 @@ class Main {
 		if ( file_exists( plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.js' ) ) {
 			$config = include plugin_dir_path( __DIR__ ) . 'assets/js/' . $script . '.asset.php';
 
-
 			// Prepare the block editor.
 			if ( 'view-campaigns' === $script && ! $disable_ai ) {
 				self::load_ai_script( $edited_campaign );
@@ -688,17 +689,17 @@ class Main {
 			$data = apply_filters(
 				'noptin_email_settings_misc',
 				array(
-					'config'            => \Hizzle\Noptin\Extensions\Catalog::config(),
-					'isTest'            => defined( 'NOPTIN_IS_TESTING' ),
-					'data'              => (object) array( 'type' => empty( $type ) ? '' : $type->type ),
-					'from_name'         => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
-					'from_email'        => get_noptin_option( 'from_email', '' ),
-					'reply_to'          => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
-					'utm_enabled'       => get_noptin_option( 'add_utm_params', true ),
-					'utm_docs_url'      => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
-					'assets_url'        => plugins_url( 'static/images/', __DIR__ ),
-					'brand'             => noptin()->white_label->get_details(),
-					'ai'                => array(
+					'config'       => \Hizzle\Noptin\Extensions\Catalog::config(),
+					'isTest'       => is_noptin_test_site(),
+					'data'         => (object) array( 'type' => empty( $type ) ? '' : $type->type ),
+					'from_name'    => get_noptin_option( 'from_name', get_option( 'blogname' ) ),
+					'from_email'   => get_noptin_option( 'from_email', '' ),
+					'reply_to'     => get_noptin_option( 'reply_to', get_option( 'admin_email' ) ),
+					'utm_enabled'  => get_noptin_option( 'add_utm_params', true ),
+					'utm_docs_url' => noptin_get_guide_url( 'Settings', 'sending-emails/utm-parameters/' ),
+					'assets_url'   => plugins_url( 'static/images/', __DIR__ ),
+					'brand'        => noptin()->white_label->get_details(),
+					'ai'           => array(
 						'disabled' => (bool) $disable_ai,
 					),
 				),
@@ -842,7 +843,6 @@ class Main {
 			$campaign->options[ $campaign->type . '_type' ] = sanitize_text_field( $query_args['noptin_email_sub_type'] );
 		}
 
-
 		// Set the sender.
 		if ( ! empty( $query_args['noptin_email_sender'] ) ) {
 			$campaign->options['email_sender'] = sanitize_text_field( $query_args['noptin_email_sender'] );
@@ -919,7 +919,7 @@ class Main {
 					'section'  => 'emails',
 					'settings' => array(
 
-						'reply_to'               => array(
+						'reply_to'                     => array(
 							'el'      => 'input',
 							'section' => 'emails',
 							'type'    => 'email',
@@ -928,7 +928,7 @@ class Main {
 							'tooltip' => __( 'Where should subscribers reply to in case they need to get in touch with you?', 'newsletter-optin-box' ),
 						),
 
-						'from_email'             => array(
+						'from_email'                   => array(
 							'el'      => 'input',
 							'section' => 'emails',
 							'type'    => 'email',
@@ -936,7 +936,7 @@ class Main {
 							'tooltip' => __( 'How the sender email appears in outgoing emails. Leave this field blank if you are not able to send any emails.', 'newsletter-optin-box' ),
 						),
 
-						'from_name'              => array(
+						'from_name'                    => array(
 							'el'          => 'input',
 							'section'     => 'emails',
 							'label'       => __( '"From" Name', 'newsletter-optin-box' ),
@@ -945,7 +945,7 @@ class Main {
 							'tooltip'     => __( 'How the sender name appears in outgoing emails', 'newsletter-optin-box' ),
 						),
 
-						'delete_campaigns'       => array(
+						'delete_campaigns'             => array(
 							'el'               => 'input',
 							'type'             => 'number',
 							'section'          => 'emails',
@@ -959,7 +959,7 @@ class Main {
 							),
 						),
 
-						'disable_staging_emails' => array(
+						'disable_staging_emails'       => array(
 							'el'          => 'input',
 							'type'        => 'checkbox_alt',
 							'section'     => 'emails',

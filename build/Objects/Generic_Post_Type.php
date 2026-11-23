@@ -207,7 +207,7 @@ class Generic_Post_Type extends Post_Type {
 		do_action( 'noptin_post_type_get_all_after_query', $posts, $this->type, $filters );
 
 		// Debug the query later.
-		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+		if ( is_noptin_test_site() && ! empty( $GLOBALS['wpdb']->last_query ) ) {
 			noptin_error_log( $filters, 'Post collection args' );
 			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Post collection query' );
 			noptin_error_log( count( $posts ), 'Post collection posts' );

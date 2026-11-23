@@ -19,7 +19,6 @@
                 "php": ">=5.3.0"
             },
             "time": "2026-11-23T05:30:25+00:00",
-            "published-time": "2026-11-23T05:31:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -71,7 +70,6 @@
                 "php": ">=5.3.0"
             },
             "time": "2026-11-18T06:57:25+00:00",
-            "published-time": "2026-11-18T06:57:38+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {

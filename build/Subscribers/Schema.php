@@ -8,7 +8,6 @@ defined( 'ABSPATH' ) || exit;
  * The subscribers' DB schema class.
  */
 class Schema {
-
 	/**
 	 * Loads the class.
 	 *

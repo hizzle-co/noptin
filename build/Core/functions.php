@@ -809,7 +809,7 @@ function log_noptin_message( $message, $code = 'error' ) {
 }
 
 function noptin_has_alk() {
-	return ! ! Noptin_COM::get_active_license_key();
+	return (bool) Noptin_COM::get_active_license_key();
 }
 
 /**
@@ -1068,7 +1068,7 @@ function schedule_noptin_recurring_background_action( $interval, $timestamp, $ho
  * @return bool Whether the post was built with Elementor.
  */
 function noptin_is_page_built_with_elementor( $post_id ) {
-	return ! ! get_post_meta( $post_id, '_elementor_edit_mode', true );
+	return (bool) get_post_meta( $post_id, '_elementor_edit_mode', true );
 }
 
 /**
@@ -2177,12 +2177,12 @@ function noptin_sort_by_name( $a, $b ) {
  */
 function noptin_sort_by_time_key( $a, $b ) {
 	if ( $a['time'] > $b['time'] ) {
-        return 1;
-    } elseif ( $a['time'] < $b['time'] ) {
-        return -1;
-    }
+		return 1;
+	} elseif ( $a['time'] < $b['time'] ) {
+		return -1;
+	}
 
-    return 0;
+	return 0;
 }
 
 /**
@@ -2428,6 +2428,7 @@ function noptin_daily_maintenance() {
 		schedule_noptin_background_action( time() + 1200, 'noptin_refresh_email_templates' );
 	}
 }
+
 add_action( 'noptin_daily_maintenance', 'noptin_daily_maintenance' );
 
 /**
@@ -2703,27 +2704,58 @@ function noptin_get_color_scheme() {
 }
 
 /**
+ * Checks if this is a noptin test site.
+ *
+ * @return bool
+ */
+function is_noptin_test_site() {
+	if ( 'noptin.test' === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+		return true;
+	}
+
+	return defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING;
+}
+
+/**
  * Checks if we should show black friday sale notice.
  *
  * @return bool
  */
 function noptin_should_show_black_friday_sale_notice() {
+	$is_test_site = is_noptin_test_site();
+
+	if ( noptin_has_alk() && ! $is_test_site ) {
+		return false;
+	}
+
+	// Skip staging, development, and local site copies.
+	if ( 'production' !== wp_get_environment_type() && ! $is_test_site ) {
+		return false;
+	}
+
+	$tz   = wp_timezone();
 	$tz   = wp_timezone();
 	$now  = new DateTime( 'now', $tz );
 	$year = $now->format( 'Y' );
 
-	$thanksgiving = new DateTime( "$year-11 fourth thursday", $tz );
+	// Thanksgiving: Fourth Thursday of November.
+	$thanksgiving = new DateTime(
+		"fourth thursday of november $year",
+		$tz
+	);
 
-	// Black Friday: day after Thanksgiving (start at 00:01).
-	$start = (clone $thanksgiving)->modify( '+1 day' )->setTime( 0, 1 );
+	// Sale starts Monday before Thanksgiving at 00:01.
+	$start = ( clone $thanksgiving )
+	->modify( '-3 days' )
+	->setTime( 0, 1 );
 
-	// Cyber Monday: the Monday after Thanksgiving.
-	$end = (clone $thanksgiving)
-		->modify( 'next monday' )
-		->setTime( 23, 59 );
+	// Sale ends Cyber Monday at 23:59:59.
+	$end = ( clone $thanksgiving )
+	->modify( 'next monday' )
+	->setTime( 23, 59, 59 );
 
-	// Check if the current date is within the range.
-	$is_within_period = ($now >= $start && $now <= $end);
+	// Check whether the sale is active.
+	$is_within_period = $now >= $start && $now <= $end;
 
 	return apply_filters( 'noptin_show_black_friday_sale_notice', $is_within_period );
 }

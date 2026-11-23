@@ -608,7 +608,7 @@ class Merge_Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 		$posts = get_posts( $query );
 
 		// Debug the query later.
-		if ( defined( 'NOPTIN_IS_TESTING' ) && NOPTIN_IS_TESTING && ! empty( $GLOBALS['wpdb']->last_query ) ) {
+		if ( is_noptin_test_site() && ! empty( $GLOBALS['wpdb']->last_query ) ) {
 			noptin_error_log( $query, 'Posts args' );
 			noptin_error_log( $GLOBALS['wpdb']->last_query, 'Posts query' );
 			noptin_error_log( count( $posts ), 'Posts posts' );

@@ -52,8 +52,7 @@
                 "issues": "https://github.com/hizzle-co/datastore/issues",
                 "source": "https://github.com/hizzle-co/datastore/tree/0.3.2"
             },
-            "time": "2026-11-23T05:30:25+00:00",
-            "published-time": "2026-11-23T05:31:35+00:00"
+            "time": "2026-11-23T05:30:25+00:00"
         },
         {
             "name": "hizzle/wp",
@@ -101,8 +100,7 @@
                 "issues": "https://github.com/hizzle-co/hizzle/issues",
                 "source": "https://github.com/hizzle-co/hizzle/tree/v1.6.0"
             },
-            "time": "2026-11-18T06:57:25+00:00",
-            "published-time": "2026-11-18T06:57:38+00:00"
+            "time": "2026-11-18T06:57:25+00:00"
         },
         {
             "name": "symfony/css-selector",
@@ -263,5 +261,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.11.0"
+    "plugin-api-version": "2.6.0"
 }

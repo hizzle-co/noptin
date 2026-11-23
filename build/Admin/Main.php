@@ -345,23 +345,23 @@ class Main {
 			// Black Friday promotion dismissed.
 			$black_friday_dismissed = get_option( 'noptin_black_friday_dismissed', 0 );
 
-			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() && ! noptin_has_alk() ) {
+			if ( noptin_should_show_black_friday_sale_notice() && $black_friday_dismissed < time() ) {
 				$dismiss_url = wp_nonce_url( add_query_arg( 'noptin_black_friday_dismissed', time() + MONTH_IN_SECONDS ), 'noptin-black-friday-nag', 'noptin-black-friday-nonce' );
 				self::print_notice(
 					'info',
 					sprintf(
 						'<p><strong>%s</strong></p><p>%s</p><p>%s&nbsp;&nbsp;%s</p>',
-						'Black Friday Sale!',
-						'Upgrade to <strong>Noptin Premium</strong> and save up to 40% on all plans. Limited time offer!',
+						'Black Friday: Save 60% on Noptin Premium',
+						'Unlock all premium features, the visual email editor, email automations, all integrations, and AI email tools without subscriber limits. Offer ends Cyber Monday. Includes a 30-day money-back guarantee.',
 						sprintf(
 							'<a href="%s" target="_blank" class="button button-primary">%s</a>',
-							noptin_get_upsell_url( 'black-friday-sale/', 'black-friday', 'black-friday-notice' ),
-							__( 'Get the Deal', 'newsletter-optin-box' )
+							esc_url( noptin_get_upsell_url( 'black-friday-sale/', 'black-friday', 'black-friday-notice' ) ),
+							'Get 60% Off'
 						),
 						sprintf(
 							'<a href="%s" class="button button-link">%s</a>',
 							$dismiss_url,
-							__( 'Dismiss', 'newsletter-optin-box' )
+							'Dismiss'
 						)
 					),
 					$dismiss_url

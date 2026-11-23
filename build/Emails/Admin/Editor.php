@@ -238,7 +238,7 @@ JS;
 			'noptin-blocks',
 			'noptinEmailEditorSettings',
 			array(
-				'isTest'           => defined( 'NOPTIN_IS_TESTING' ),
+				'isTest'           => is_noptin_test_site(),
 				'styles'           => (object) $to_load,
 				'css'              => self::get_editor_styles(),
 				'settings'         => self::get_editor_settings(),
