@@ -15,5 +15,5 @@
 		'wp-primitives',
 		'wp-viewport'
 	),
-	'version' => 'b39e93fabd1905a35da3'
+	'version' => 'dc9e2c8504e2f57c9393'
 );
