@@ -10,11 +10,12 @@
 		'wp-components',
 		'wp-compose',
 		'wp-data',
+		'wp-date',
 		'wp-dom-ready',
 		'wp-i18n',
 		'wp-notices',
 		'wp-preferences',
 		'wp-url'
 	),
-	'version' => '6c209dba42403ef2707e'
+	'version' => '80576295332b1d93f402'
 );

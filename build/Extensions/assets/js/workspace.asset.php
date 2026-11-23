@@ -8,6 +8,7 @@
 		'wp-api-fetch',
 		'wp-components',
 		'wp-data',
+		'wp-date',
 		'wp-dom-ready',
 		'wp-element',
 		'wp-i18n',
@@ -15,5 +16,5 @@
 		'wp-primitives',
 		'wp-url'
 	),
-	'version' => '5d028e61667179a8520c'
+	'version' => 'b116170d218956b4fe49'
 );

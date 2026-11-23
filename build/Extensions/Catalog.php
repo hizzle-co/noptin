@@ -165,13 +165,13 @@ class Catalog {
 				}
 				return array(
 					'requirements' => $requirements,
-					'kind'        => 'integration',
-					'slug'        => $integration['slug'],
-					'name'        => $integration['label'],
-					'description' => $integration['description'] ?? '',
-					'icon'        => $integration['icon_url'] ?? '',
-					'plugin_url'  => $integration['url'] ?? '',
-					'plan'        => $integration['plan'] ?? '',
+					'kind'         => 'integration',
+					'slug'         => $integration['slug'],
+					'name'         => $integration['label'],
+					'description'  => $integration['description'] ?? '',
+					'icon'         => $integration['icon_url'] ?? '',
+					'plugin_url'   => $integration['url'] ?? '',
+					'plan'         => $integration['plan'] ?? '',
 				);
 			},
 			apply_filters( 'noptin_get_all_known_integrations', array() )
@@ -196,15 +196,15 @@ class Catalog {
 					?? noptin()->integrations->integrations[ $addon['slug'] ]
 					?? noptin()->integrations->integrations[ str_replace( '-', '_', $addon['slug'] ) ]
 					?? null;
-				$slug = str_replace( '-', '_', $integration->slug ?? $addon['slug'] );
-				$section = 'addons-pack' === $addon['slug'] ? 'coupon_codes' : 'integrations';
-				$settings = $fields[ $section ]['sub_sections']['main']['settings'] ?? array();
+				$slug        = str_replace( '-', '_', $integration->slug ?? $addon['slug'] );
+				$section     = 'addons-pack' === $addon['slug'] ? 'coupon_codes' : 'integrations';
+				$settings    = $fields[ $section ]['sub_sections']['main']['settings'] ?? array();
 				if ( 'integrations' === $section ) {
 					$settings = $settings[ 'settings_section_' . $slug ]['settings'] ?? array();
 				}
 				// Catalog placeholders for uninstalled add-ons are not settings forms.
 				// Webhooks only exposes debug logging and needs no setup dialog.
-				$addon['hasSettings'] = 'webhooks' !== $slug && ! empty( $settings ) && ! isset( $settings[ 'noptin_' . $slug . '_install' ] );
+				$addon['hasSettings']  = ! in_array( $slug, array( 'webhooks', 'addons-pack' ), true ) && ! empty( $settings ) && ! isset( $settings[ 'noptin_' . $slug . '_install' ] );
 				$addon['settingsPath'] = $addon['hasSettings']
 					? $section . '.main' . ( 'integrations' === $section ? '.settings_section_' . $slug : '' )
 					: null;
@@ -220,27 +220,40 @@ class Catalog {
 		}
 
 		return array(
-			'emailTypes'   => $email_types,
-			'senders'      => self::senders(),
-			'home_url'     => home_url(),
-			'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
-			'updatesNonce' => wp_create_nonce( 'updates' ),
-			'license_key'  => \Noptin_COM::get_active_license_key(),
-			'plugins'      => self::get_installed_plugins(),
-			'addons'       => $with_settings( array( array(
-				'slug' => 'addons-pack',
-				'plan' => 'premium',
-				'name' => __( 'Addons Pack', 'newsletter-optin-box' ),
-				'description' => __( 'Enable email sequences/courses, coupon codes, and more premium features.', 'newsletter-optin-box' ),
-				'icon' => array( 'icon' => 'email', 'fill' => '#e91e63' ),
-				'plugin_url' => 'https://noptin.com/ultimate-addons-pack/',
-			) ) ),
-			'integrations' => $with_settings( self::get_detected_integrations() ),
-			'connections'  => $with_settings( self::get_crm_connections() ),
-			'triggers'     => self::events( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
-			'actions'      => self::events( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
-			'canInstall'   => current_user_can( 'install_plugins' ),
-			'canActivate'  => current_user_can( 'activate_plugins' ),
+			'emailTypes'       => $email_types,
+			'senders'          => self::senders(),
+			'home_url'         => home_url(),
+			'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
+			'updatesNonce'     => wp_create_nonce( 'updates' ),
+			'license_key'      => \Noptin_COM::get_active_license_key(),
+			'blackFridayOffer' => noptin_should_show_black_friday_sale_notice()
+				? array(
+					'endsAt' => noptin_get_black_friday_sale_end()->getTimestamp() * 1000,
+					'url'    => 'https://noptin.com/black-friday-sale/',
+				)
+				: null,
+			'plugins'          => self::get_installed_plugins(),
+			'addons'           => $with_settings(
+				array(
+					array(
+						'slug'        => 'addons-pack',
+						'plan'        => 'premium',
+						'name'        => __( 'Addons Pack', 'newsletter-optin-box' ),
+						'description' => __( 'Enable email sequences/courses, coupon codes, and more premium features.', 'newsletter-optin-box' ),
+						'icon'        => array(
+							'icon' => 'email',
+							'fill' => '#e91e63',
+						),
+						'plugin_url'  => 'https://noptin.com/ultimate-addons-pack/',
+					),
+				)
+			),
+			'integrations'     => $with_settings( self::get_detected_integrations() ),
+			'connections'      => $with_settings( self::get_crm_connections() ),
+			'triggers'         => self::events( \Hizzle\Noptin\Automation_Rules\Triggers\Main::all() ),
+			'actions'          => self::events( \Hizzle\Noptin\Automation_Rules\Actions\Main::all() ),
+			'canInstall'       => current_user_can( 'install_plugins' ),
+			'canActivate'      => current_user_can( 'activate_plugins' ),
 		);
 	}
 

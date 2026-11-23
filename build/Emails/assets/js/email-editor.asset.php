@@ -12,6 +12,7 @@
 		'wp-compose',
 		'wp-core-data',
 		'wp-data',
+		'wp-date',
 		'wp-deprecated',
 		'wp-dom',
 		'wp-editor',
@@ -29,5 +30,5 @@
 		'wp-rich-text',
 		'wp-url'
 	),
-	'version' => '2f113da225aec98de4fc'
+	'version' => 'acbaf2d2fd57e822d442'
 );
