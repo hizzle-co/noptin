@@ -21,6 +21,8 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 
 	public function set_up() {
 		parent::set_up();
+		add_filter( 'pre_option_noptin_helper_data', array( $this, 'license_options' ) );
+		add_filter( 'pre_transient_noptin_license_subscriber-email-test', array( $this, 'license_response' ) );
 
 		noptin()->db()->delete_all( 'automation_rules' );
 		noptin()->db()->delete_all( 'subscribers' );
@@ -41,7 +43,19 @@ class Test_Subscriber_Email_Trigger extends WP_UnitTestCase {
 		noptin()->db()->delete_all( 'subscribers' );
 		noptin()->db()->delete_all( 'tasks' );
 
+		remove_filter( 'pre_option_noptin_helper_data', array( $this, 'license_options' ) );
+		remove_filter( 'pre_transient_noptin_license_subscriber-email-test', array( $this, 'license_response' ) );
 		parent::tear_down();
+	}
+
+	/** Supply a disposable key for Premium subscriber-triggered email fixtures. @return array */
+	public function license_options() {
+		return array( 'license_key' => 'subscriber-email-test' );
+	}
+
+	/** Supply verified cached entitlement without network access. @return object */
+	public function license_response() {
+		return (object) array( 'is_active' => true, 'is_active_on_site' => true, 'has_expired' => false );
 	}
 
 	public function test_defaults_ignore_unsaved_email_without_matching_subtype() {

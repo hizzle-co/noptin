@@ -111,6 +111,7 @@ class Noptin_COM {
 		if ( is_wp_error( $details ) ) {
 			if ( in_array( 'hizzle_licenses_not_found', $details->get_error_codes(), true ) ) {
 				self::update( 'license_key', '' );
+				self::update( 'active_license_keys', array() );
 			}
 
 			return $details;
@@ -121,8 +122,10 @@ class Noptin_COM {
 		}
 
 		// Check if it was deactivated remotely.
-		if ( empty( $details->is_active_on_site ) ) {
+		// A partial service response must not be mistaken for explicit deactivation.
+		if ( isset( $details->is_active_on_site ) && ! $details->is_active_on_site ) {
 			self::update( 'license_key', '' );
+			self::update( 'active_license_keys', array() );
 			return false;
 		}
 

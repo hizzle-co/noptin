@@ -418,6 +418,11 @@ abstract class Trigger extends \Hizzle\Noptin\Automation_Rules\Trigger_Action {
 	 */
 	public function is_rule_valid_for_args( $rule, $args, $subject, $action ) {
 
+		if ( $this->forcePremium && ! noptin_has_alk() ) {
+			log_noptin_message( 'Automation trigger "' . $this->get_id() . '" requires an active Noptin Premium license on this site.' );
+			return false;
+		}
+
 		// Set the current email.
 		$GLOBALS['current_noptin_rule']  = $rule->get_id();
 		$GLOBALS['current_noptin_email'] = $this->get_subject_email( $subject, $this, $args );

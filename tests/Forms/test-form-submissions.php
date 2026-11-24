@@ -22,6 +22,11 @@ class Test_Form_Submissions extends Noptin_Regression_Test_Case {
 		$campaign_id = 0;
 		$rule = null;
 		$cases = 0;
+		// Custom subscriber confirmation campaigns require a verified Premium license.
+		add_filter( 'pre_option_noptin_helper_data', static function () { return array( 'license_key' => 'form-confirmation-test' ); }, PHP_INT_MAX );
+		add_filter( 'pre_transient_noptin_license_form-confirmation-test', static function () {
+			return (object) array( 'is_active' => true, 'is_active_on_site' => true, 'has_expired' => false );
+		}, PHP_INT_MAX );
 
 		add_filter( 'get_noptin_option_double_optin', static function () use ( &$global ) { return $global; } );
 		add_filter( 'use_custom_noptin_double_optin_email', static function () use ( &$custom ) { return $custom; } );
