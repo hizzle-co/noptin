@@ -4,8 +4,8 @@ Tags: newsletter, subscribe, newsletter subscribers, notify, woocommerce
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Version: 4.4.4
-Stable tag: 4.4.4
+Version: 4.5.0
+Stable tag: 4.5.0
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 Donate link: https://noptin.com/pricing/?utm_source=wp-repo&utm_medium=donate&utm_campaign=readme
@@ -191,6 +191,11 @@ This release includes important security improvements. Updating is strongly reco
 Important security release addressing multiple vulnerabilities. Updating is strongly recommended.
 
 == Changelog ==
+
+= 4.5.0 =
+* Add: Improve automation run history viewer.
+* Add: Subscriber management through the WordPress Abilities API and MCP.
+* Change: Unsubscribed subscribers can sign up again through forms even when updates to existing subscribers are disabled.
 
 = 4.4.4 =
 * Security: General security improvements and hardening.
