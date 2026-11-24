@@ -37,8 +37,11 @@ function get_noptin_options() {
 	}
 
 	if ( ! is_array( $options ) || empty( $options ) ) {
+		// Options are also read during plugins_loaded, before translations can safely load.
 		$options = array(
-			'success_message' => __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' ),
+			'success_message' => did_action( 'init' )
+				? __( 'Thanks for subscribing to our newsletter', 'newsletter-optin-box' )
+				: 'Thanks for subscribing to our newsletter',
 		);
 	}
 
