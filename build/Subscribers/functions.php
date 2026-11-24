@@ -571,14 +571,13 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscr
 		$optin_override = \Hizzle\Noptin\Forms\Form::get_double_optin_override( $subscription_source );
 
 		// A subscription request must not demote subscribed contacts or confirm pending ones.
-		if ( null !== $optin_override ) {
-			$to_update['status']    = $subscriber->get_status();
-			$to_update['confirmed'] = $subscriber->get_confirmed();
-		}
+		$to_update['status'] = $subscriber->get_status();
+		// Reapplying confirmed=true invokes a setter that would reactivate inactive contacts.
+		unset( $to_update['confirmed'] );
 
 		if ( 'unsubscribed' === $subscriber->get_status() ) {
-			$requires_confirmation = $optin_override ?? noptin_has_enabled_double_optin();
-			$to_update['status']   = $requires_confirmation ? 'pending' : 'subscribed';
+			$requires_confirmation  = $optin_override ?? noptin_has_enabled_double_optin();
+			$to_update['status']    = $requires_confirmation ? 'pending' : 'subscribed';
 			if ( $requires_confirmation ) {
 				$to_update['confirmed'] = false;
 			}
