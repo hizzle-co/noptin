@@ -28,7 +28,8 @@ class Noptin_COM_Helper {
 		add_action( 'admin_init', array( __CLASS__, 'admin_init' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'admin_notices' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_rest_routes' ) );
-		add_action( 'noptin_load', array( __CLASS__, 'noptin_load' ) );
+		// Apply branding before Noptin initializes at priority 5, once translations are safe.
+		add_action( 'init', array( __CLASS__, 'noptin_load' ), 0 );
 		add_filter( 'noptin_show_addons_page', array( __CLASS__, 'should_show_addons_page' ), 5 );
 
 		do_action( 'noptin_com_helper_loaded' );
@@ -385,7 +386,7 @@ class Noptin_COM_Helper {
 	}
 
 	/**
-	 * Fires after Noptin is loaded.
+	 * Applies saved white-label settings at the start of init.
 	 */
 	public static function noptin_load() {
 		if ( ! Noptin_COM::get_active_license_key() ) {
