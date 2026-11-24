@@ -127,6 +127,10 @@ class Bounce_Handler {
 					'name' => 'Brevo',
 					'url'  => self::service_url( 'brevo' ),
 				),
+				'cloudflare'   => array(
+					'name' => 'Cloudflare Email Service',
+					'url'  => self::service_url( 'cloudflare' ),
+				),
 				'tosend'       => array(
 					'name' => 'ToSend',
 					'url'  => self::service_url( 'tosend' ),
@@ -352,6 +356,28 @@ class Bounce_Handler {
 		} elseif ( in_array( $request['type'], array( 'bounce', 'bounced' ), true ) && true === ( $data['is_hard_bounce'] ?? false ) && empty( $data['sender_fault'] ) ) {
 			self::handle_bounced_action( 'bounce', $data['email'] ?? '' );
 		}
+	}
+
+	/**
+	 * Handles Email Sending events relayed from a Cloudflare Queue consumer.
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 * @return \WP_REST_Response Acknowledgement for the queue relay.
+	 */
+	public static function handle_cloudflare( $request ) {
+		$event   = $request->get_json_params();
+		$payload = is_array( $event ) && is_array( $event['payload'] ?? null ) ? $event['payload'] : array();
+		$type    = is_array( $event ) ? ( $event['type'] ?? '' ) : '';
+		$bounce  = is_array( $payload['bounce'] ?? null ) ? $payload['bounce'] : array();
+
+		if ( 'cf.email.sending.message.complained' === $type ) {
+			self::handle_bounced_action( 'complaint', $payload['recipient'] ?? '' );
+		} elseif ( 'cf.email.sending.message.bounced' === $type && 'hard' === ( $bounce['type'] ?? '' ) ) {
+			// Exhausted temporary retries are also message.bounced events, with type soft.
+			self::handle_bounced_action( 'bounce', $payload['recipient'] ?? '' );
+		}
+
+		return rest_ensure_response( true );
 	}
 
 	/**

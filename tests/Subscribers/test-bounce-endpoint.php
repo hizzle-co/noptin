@@ -109,6 +109,14 @@ class Test_Bounce_Endpoint extends Noptin_Regression_Test_Case {
 			array( 'tosend', array( 'type' => 'bounced', 'data' => array( 'is_hard_bounce' => false ) ), 'subscribed' ),
 			array( 'tosend', array( 'type' => 'bounced', 'data' => array( 'is_hard_bounce' => true, 'sender_fault' => true ) ), 'subscribed' ),
 			array( 'tosend', array( 'type' => 'complaint', 'data' => array() ), 'complained' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.bounced', 'payload' => array( 'bounce' => array( 'type' => 'hard' ) ) ), 'bounced' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.complained' ), 'complained' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.bounced', 'payload' => array( 'bounce' => array( 'type' => 'soft' ) ) ), 'subscribed' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.bounced' ), 'subscribed' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.deferred' ), 'subscribed' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.failed' ), 'subscribed' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.rejected' ), 'subscribed' ),
+			array( 'cloudflare', array( 'type' => 'cf.email.sending.message.delivered' ), 'subscribed' ),
 		);
 	}
 
@@ -127,6 +135,9 @@ class Test_Bounce_Endpoint extends Noptin_Regression_Test_Case {
 		$payload['email'] = $email;
 		$payload['rcpt'] = $email;
 		$payload['data']['email'] = $email;
+		if ( 'cloudflare' === $service ) {
+			$payload['payload']['recipient'] = $email;
+		}
 		if ( isset( $payload['payload']['original_message'] ) ) {
 			$payload['payload']['original_message']['to'] = $email;
 		} elseif ( isset( $payload['payload']['message'] ) ) {
@@ -144,7 +155,7 @@ class Test_Bounce_Endpoint extends Noptin_Regression_Test_Case {
 		$group = $settings['bounce_handler_settings'];
 		$this->assertSame( 'main', $group['sub_section'] );
 		$services = Bounce_Handler::get_supported_services();
-		$this->assertCount( 11, $services );
+		$this->assertCount( 12, $services );
 		foreach ( $services as $slug => $service ) {
 			$field = $group['settings'][ 'bounce_handler_url_' . $slug ];
 			$this->assertTrue( $field['readonly'] );
@@ -153,6 +164,23 @@ class Test_Bounce_Endpoint extends Noptin_Regression_Test_Case {
 			$this->assertSame( $slug, $field['conditions'][0]['value'] );
 			$this->assertStringContainsString( '/bounce-handling/', $field['description'] );
 		}
+	}
+
+	/** Malformed envelopes are ignored and the private route still requires its code. */
+	public function test_cloudflare_malformed_events_and_authentication() {
+		foreach ( array(
+			array(),
+			array( 'type' => array( 'cf.email.sending.message.complained' ) ),
+			array( 'type' => 'cf.email.sending.message.complained', 'payload' => 'invalid' ),
+			array( 'type' => 'cf.email.sending.message.complained', 'payload' => array( 'recipient' => array( 'bad@example.test' ) ) ),
+			array( 'type' => 'cf.email.sending.message.bounced', 'payload' => array( 'bounce' => 'hard' ) ),
+		) as $payload ) {
+			$response = $this->request( 'cloudflare', $payload );
+			$this->assertSame( 200, $response->get_status() );
+			$this->assertTrue( $response->get_data() );
+		}
+		$request = new WP_REST_Request( 'POST', '/noptin/v1/bounce_handler/cloudflare/invalid-code' );
+		$this->assertContains( rest_do_request( $request )->get_status(), array( 401, 403 ) );
 	}
 
 	/** SparkPost batch nesting must be resolved afresh for every recipient. */
