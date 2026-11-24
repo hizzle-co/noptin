@@ -27,7 +27,7 @@ class Test_Form_Double_Optin extends Noptin_Regression_Test_Case {
 		}, PHP_INT_MAX, 3 );
 		$form = wp_insert_post( array( 'post_type' => 'noptin-form', 'post_status' => 'publish', 'post_title' => 'Temporary opt-in regression' ) );
 		$configure = static function ( $mode, $update = false ) use ( $form ) {
-			$settings = array( 'fields' => 'email', 'subscribeAction' => 'message', 'update_existing' => $update );
+			$settings = array( 'fields' => 'email,first_name', 'subscribeAction' => 'message', 'update_existing' => $update );
 			if ( null !== $mode ) {
 				$settings['doubleOptin'] = $mode;
 			}
@@ -45,7 +45,7 @@ class Test_Form_Double_Optin extends Noptin_Regression_Test_Case {
 			$request = new WP_REST_Request( 'POST', '/noptin/v1/form' );
 			$request->set_body_params( array(
 				'source' => $source ?? $form,
-				'noptin_fields' => array( 'email' => $email ),
+				'noptin_fields' => array( 'email' => $email, 'first_name' => 'Submitted name' ),
 				'doubleOptin' => 'disabled', // Public values must not override the saved form.
 				'noptin_timestamp' => time() - 5,
 				'noptin_submitted' => time(),
@@ -79,8 +79,8 @@ class Test_Form_Double_Optin extends Noptin_Regression_Test_Case {
 				$assert( noptin_get_subscriber( $id )->get_status() === ( $global ? 'pending' : 'subscribed' ), 'Integration must inherit global setting.' );
 			}
 
-			foreach ( array( 'required', 'disabled' ) as $mode ) {
-				foreach ( array( 'subscribed', 'pending', 'unsubscribed' ) as $status ) {
+			foreach ( array( 'required', 'disabled', 'global' ) as $mode ) {
+				foreach ( array( 'subscribed', 'pending', 'unsubscribed', 'blocked', 'bounced', 'complained' ) as $status ) {
 					foreach ( array( false, true ) as $update ) {
 						$configure( $mode, $update );
 						$record = noptin_get_subscriber( 0 );
@@ -89,15 +89,52 @@ class Test_Form_Double_Optin extends Noptin_Regression_Test_Case {
 						$record->set_confirmed( 'pending' !== $status );
 						$record->save();
 						$record = $submit( $record->get_email() );
-						$resubscribe = $update && 'unsubscribed' === $status;
-						$expected = $resubscribe ? ( 'required' === $mode ? 'pending' : 'subscribed' ) : $status;
-						$assert( $record->get_status() === $expected, 'Existing contact status incorrect.' );
-						$assert( $mails === ( $resubscribe && 'required' === $mode ? 1 : 0 ), 'Existing contact confirmation count incorrect.' );
+						$resubscribe = 'unsubscribed' === $status;
+						$expected = $resubscribe ? ( 'disabled' !== $mode ? 'pending' : 'subscribed' ) : $status;
+						$assert( $record->get_status() === $expected, 'Existing contact status incorrect: ' . wp_json_encode( array( $mode, $status, $update, $expected, $record->get_status() ) ) );
+						$assert( $mails === ( $resubscribe && 'disabled' !== $mode ? 1 : 0 ), 'Existing contact confirmation count incorrect.' );
 						$assert( ! isset( $_GET['noptin_key'] ), 'Existing contact must not expose a confirmation key.' );
 					}
 				}
 			}
 
+
+			// Custom confirmation uses the pending transition, never the built-in mailer.
+			$pending_events = array();
+			add_action( 'noptin_subscriber_status_set_to_pending', static function ( $subscriber, $previous ) use ( &$pending_events ) {
+				$pending_events[] = array( $subscriber->get_id(), $subscriber->get_confirmed(), $previous );
+			}, 100, 2 );
+			foreach ( array( false, true ) as $global_value ) {
+				$global = $global_value;
+				foreach ( array( false, true ) as $custom_value ) {
+					$custom = $custom_value;
+					foreach ( array( 'required', 'disabled', 'global' ) as $mode ) {
+						foreach ( array( false, true ) as $update ) {
+							$configure( $mode, $update );
+							$record = noptin_get_subscriber( 0 );
+							$record->set_email( $new_email() );
+							$record->set_first_name( 'Saved name' );
+							$record->set_status( 'unsubscribed' );
+							$record->set_confirmed( true );
+							$record->save();
+							$pending_events = array();
+							$record = $submit( $record->get_email() );
+							$pending = 'required' === $mode || ( 'global' === $mode && $global );
+							$assert( $record->get_status() === ( $pending ? 'pending' : 'subscribed' ), 'Resubscription must follow effective double opt-in policy.' );
+							$assert( ! $pending || ! $record->get_confirmed(), 'Returning subscribers must confirm again.' );
+							$assert( $mails === ( $pending && ! $custom ? 1 : 0 ), 'Only built-in confirmation should use the built-in mailer.' );
+							$assert( $pending_events === ( $pending ? array( array( $record->get_id(), false, 'unsubscribed' ) ) : array() ), 'Custom confirmation must receive exactly one unconfirmed pending transition.' );
+							$assert( $record->get_first_name() === ( $update ? 'Submitted name' : 'Saved name' ), 'Resubscription must preserve profile fields when updates are disabled.' );
+							$submit( $record->get_email() );
+							$assert( 0 === $mails && count( $pending_events ) === ( $pending ? 1 : 0 ), 'Repeated submissions must not resend built-in or custom confirmation.' );
+							if ( $pending ) {
+								confirm_noptin_subscriber_email( $record->get_id() );
+								$assert( noptin_get_subscriber( $record->get_id() )->is_active(), 'Confirmation must complete resubscription.' );
+							}
+						}
+					}
+				}
+			}
 			$global = false;
 			$custom = true;
 			$configure( 'required' );

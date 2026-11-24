@@ -577,8 +577,8 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscr
 		}
 
 		if ( 'unsubscribed' === $subscriber->get_status() ) {
-			$requires_confirmation  = true === $optin_override;
-			$to_update['status']    = $requires_confirmation ? 'pending' : 'subscribed';
+			$requires_confirmation = $optin_override ?? noptin_has_enabled_double_optin();
+			$to_update['status']   = $requires_confirmation ? 'pending' : 'subscribed';
 			if ( $requires_confirmation ) {
 				$to_update['confirmed'] = false;
 			}

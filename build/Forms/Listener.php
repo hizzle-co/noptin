@@ -328,11 +328,17 @@ class Listener {
 			$subscriber_id       = $subscriber_obj->get_id();
 			$this->subscriber_id = $subscriber_id;
 
-			// Maybe abort...
+			// Resubscription is consent to receive emails, independent of profile updates.
+			$is_resubscription = 'unsubscribed' === $subscriber_obj->get_status();
 			$update_existing = $this->get_cached( 'update_existing' );
-			if ( empty( $update_existing ) ) {
+			if ( empty( $update_existing ) && ! $is_resubscription ) {
 				$this->last_event = 'already_subscribed';
 				return;
+			}
+
+			// Keep saved profile fields when the form only permits resubscription.
+			if ( empty( $update_existing ) ) {
+				$subscriber = array();
 			}
 
 			// The shared updater owns subscription state, source defaults, and confirmation.
@@ -341,7 +347,7 @@ class Listener {
 				return $this->error->add( 'other_error', $result->get_error_message() );
 			}
 
-			$this->last_event = 'updated';
+			$this->last_event = $is_resubscription ? 'subscribed' : 'updated';
 
 			/**
 			 * Fires right after a newsletter form was used to update an existing subscriber.
