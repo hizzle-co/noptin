@@ -385,6 +385,7 @@ class Record {
 	/**
 	 * Set a collection of props in one go, collect any errors, and return the result.
 	 * Only sets known props, ignoring unknown ones.
+	 * Applies removals last so they win over replacements and additions.
 	 *
 	 * @since  1.0.0
 	 *
@@ -394,12 +395,21 @@ class Record {
 	 * @return bool
 	 */
 	public function set_props( $props, $skip_null = false ) {
+		$removals = array();
 
 		foreach ( $props as $prop => $value ) {
 			// Checks if the prop being set is allowed.
 			if ( ! in_array( $prop, array( 'prop', 'date_prop' ), true ) && ! ( $skip_null && null === $value ) ) {
-				$this->set( $prop, $value );
+				if ( is_string( $prop ) && '::remove' === substr( $prop, -8 ) ) {
+					$removals[ $prop ] = $value;
+				} else {
+					$this->set( $prop, $value );
+				}
 			}
+		}
+
+		foreach ( $removals as $prop => $value ) {
+			$this->set( $prop, $value );
 		}
 
 		return true;
@@ -564,14 +574,21 @@ class Record {
 		}
 
 		if ( $prop->is_meta_key && $prop->is_meta_key_multiple ) {
-			$value    = array_values( $this->parse_list( $value, true ) );
+			$value = is_array( $value ) ? array_filter( $value, 'is_scalar' ) : ( is_scalar( $value ) ? (string) $value : '' );
+			$value = array_values( array_unique( self::parse_list( $value, true ) ) );
+
+			// An empty addition or removal is a no-op. An empty replacement clears the field.
+			if ( empty( $value ) && ( $is_adding || $is_removing ) ) {
+				return;
+			}
+
 			$existing = $this->get( $prop );
 			$existing = is_array( $existing ) ? array_values( $existing ) : array();
 
 			if ( $is_adding ) {
 				$value = array_unique( array_merge( $existing, $value ) );
 			} elseif ( $is_removing ) {
-				$value = array_unique( array_diff( $existing, $value ) );
+				$value = array_values( array_unique( array_diff( $existing, $value ) ) );
 			}
 		}
 
@@ -588,13 +605,13 @@ class Record {
 	 *
 	 * @since 0.1.2
 	 *
-	 * @param array|string $list List of values.
+	 * @param array|string $string_or_array List of values.
 	 * @param bool $strict Whether to only split on commas.
-	 * @return array Sanitized array of values.
+	 * @return array Trimmed values without empty strings.
 	 */
-	private function parse_list( $string_or_array, $strict = false ) {
+	public static function parse_list( $string_or_array, $strict = false ) {
 
-		if ( empty( $string_or_array ) ) {
+		if ( empty( $string_or_array ) && '0' !== $string_or_array && 0 !== $string_or_array ) {
 			return array();
 		}
 
@@ -606,7 +623,7 @@ class Record {
 			}
 		}
 
-		return map_deep( $string_or_array, 'trim' );
+		return array_values( array_diff( map_deep( $string_or_array, 'trim' ), array( '' ) ) );
 	}
 
 	/**

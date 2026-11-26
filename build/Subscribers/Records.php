@@ -1089,6 +1089,9 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	 * @return array $actions The actions.
 	 */
 	public function get_actions() {
+		$editable_fields = get_editable_noptin_subscriber_fields();
+		$upsert_settings = $this->get_upsert_multi_value_settings( $editable_fields );
+
 		$actions = array_merge(
 			parent::get_actions(),
 			array(
@@ -1105,7 +1108,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						strtolower( $this->singular_label )
 					),
 					'callback'        => __CLASS__ . '::add_noptin_subscriber',
-					'extra_settings'  => array(
+					'extra_settings'  => $upsert_settings + array(
 						'update_existing' => array(
 							'label'   => __( 'Update existing subscribers', 'newsletter-optin-box' ),
 							'el'      => 'input',
@@ -1113,7 +1116,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 							'default' => true,
 						),
 					),
-					'action_fields'   => array_keys( get_editable_noptin_subscriber_fields() ),
+					'action_fields'   => array_keys( array_diff_key( $editable_fields, $upsert_settings ) ),
 					'advanced_fields' => array( 'confirmed', 'status', 'ip_address', 'conversion_page' ),
 					'callback_args'   => array( 'settings', 'rule' ),
 				),
@@ -1326,6 +1329,54 @@ class Records extends \Hizzle\Noptin\Objects\People {
 		}
 
 		return $actions;
+	}
+
+	/**
+	 * Build add and remove controls for the editable multi-value subscriber fields.
+	 *
+	 * @param array $fields Editable subscriber fields keyed by name.
+	 * @return array Automation field settings.
+	 */
+	private function get_upsert_multi_value_settings( $fields ) {
+		$collection = noptin()->db()->store->get( 'subscribers' );
+		$settings   = array();
+
+		foreach ( $fields as $name => $field ) {
+			$prop = $collection->get_prop( $name );
+			if ( ! $prop || ! $prop->is_meta_key || ! $prop->is_meta_key_multiple ) {
+				continue;
+			}
+
+			$options = $prop->get_choices();
+			$control = array(
+				'el'           => empty( $options ) ? 'input' : 'select',
+				'type'         => 'text',
+				'options'      => $options,
+				'multiple'     => true,
+				'default'      => empty( $options ) ? '' : array(),
+				'map_field'    => true,
+				'show_in_meta' => true,
+			);
+
+			// Preserve the original key so saved rules show their values in the add control.
+			$settings[ $name ] = $control + array(
+				'label' => sprintf(
+					/* translators: %s: Subscriber field label. */
+					__( '%s to add', 'newsletter-optin-box' ),
+					$field['label']
+				),
+			);
+
+			$settings[ $name . '::remove' ] = $control + array(
+				'label' => sprintf(
+					/* translators: %s: Subscriber field label. */
+					__( '%s to remove', 'newsletter-optin-box' ),
+					$field['label']
+				),
+			);
+		}
+
+		return $settings;
 	}
 
 	/**

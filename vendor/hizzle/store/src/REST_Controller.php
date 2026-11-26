@@ -1625,6 +1625,26 @@ class REST_Controller extends \WP_REST_Controller {
 				return array( 'skipped' => true );
 			}
 
+			// Imported tokens are additions. Ordinary batch updates can still replace
+			// the whole field or use the explicit add and remove operations.
+			foreach ( $collection->get_props() as $prop ) {
+				$name = $prop->name;
+				if ( $prop->readonly || ! $prop->is_tokens || ! $prop->is_meta_key || ! $prop->is_meta_key_multiple || ! isset( $item[ $name ] ) ) {
+					continue;
+				}
+
+				$add_key = $name . '::add';
+				if ( isset( $item[ $add_key ] ) ) {
+					// Split string inputs independently so array values retain literal commas.
+					$base = Record::parse_list( $item[ $name ], true );
+					$add  = Record::parse_list( $item[ $add_key ], true );
+					$item[ $add_key ] = array_merge( $base, $add );
+				} else {
+					$item[ $add_key ] = $item[ $name ];
+				}
+				unset( $item[ $name ] );
+			}
+
 			// Update item.
 			$item['id'] = $id;
 			$result     = $this->update_batch_item( $request, $item );

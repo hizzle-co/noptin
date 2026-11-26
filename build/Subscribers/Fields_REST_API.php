@@ -786,8 +786,10 @@ class Fields_REST_API {
 			}
 
 			// 2. Update Action Settings
-			if ( isset( $action_settings[ $field ] ) ) {
-				$action_settings[ $field ] = self::update_value( $action_settings[ $field ], $old_name, $new_name, $needs_saving );
+			foreach ( array( $field, $field . '::remove' ) as $key ) {
+				if ( isset( $action_settings[ $key ] ) ) {
+					$action_settings[ $key ] = self::update_value( $action_settings[ $key ], $old_name, $new_name, $needs_saving );
+				}
 			}
 
 			// 3. Update Conditional Logic

@@ -428,7 +428,7 @@ function add_noptin_subscriber( $fields ) {
 
 		// Allow updating of existing subscribers.
 		if ( apply_filters( 'noptin_update_existing_subscriber', ! empty( $fields['update_existing'] ), $subscriber_id, $fields ) ) {
-			return update_noptin_subscriber( $subscriber_id, $fields );
+			return update_noptin_subscriber( $subscriber_id, $fields, null, true );
 		}
 
 		return (int) $subscriber_id;
@@ -545,10 +545,11 @@ function noptin_is_email_domain_blocked( $email ) {
  * @param int|string|\Hizzle\Noptin\Subscribers\Subscriber $subscriber_id Subscriber ID, email, confirm key, or object.
  * @param array $to_update The subscriber fields to update.
  * @param string|int|null $subscription_source Current subscription request source. Null keeps ordinary update behavior.
+ * @param bool $merge_multi_values Whether to append multi-value fields and apply explicit removals.
  * @access  public
  * @since   1.2.3
  */
-function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscription_source = null ) {
+function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscription_source = null, $merge_multi_values = false ) {
 
 	// Get the subscriber object.
 	$subscriber = noptin_get_subscriber( $subscriber_id );
@@ -576,8 +577,9 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscr
 		unset( $to_update['confirmed'] );
 
 		if ( 'unsubscribed' === $subscriber->get_status() ) {
-			$requires_confirmation  = $optin_override ?? noptin_has_enabled_double_optin();
-			$to_update['status']    = $requires_confirmation ? 'pending' : 'subscribed';
+			$requires_confirmation = $optin_override ?? noptin_has_enabled_double_optin();
+			$to_update['status']   = $requires_confirmation ? 'pending' : 'subscribed';
+
 			if ( $requires_confirmation ) {
 				$to_update['confirmed'] = false;
 			}
@@ -585,7 +587,23 @@ function update_noptin_subscriber( $subscriber_id, $to_update = array(), $subscr
 	}
 
 	// Set the subscriber properties.
-	$subscriber->set_props( wp_unslash( $to_update ) );
+	$to_update = wp_unslash( $to_update );
+	if ( $merge_multi_values ) {
+		foreach ( $subscriber->get_collection()->get_props() as $prop ) {
+			if ( $prop->readonly || ! $prop->is_meta_key || ! $prop->is_meta_key_multiple ) {
+				continue;
+			}
+
+			$name = $prop->name;
+			if ( isset( $to_update[ $name ] ) ) {
+				// Add these values to the subscriber's pending values. The set_props()
+				// call below then adds any explicit ::add values to the same list.
+				$subscriber->set( $name . '::add', $to_update[ $name ] );
+				unset( $to_update[ $name ] );
+			}
+		}
+	}
+	$subscriber->set_props( $to_update );
 
 	if ( null !== $subscription_source ) {
 		foreach ( prepare_noptin_subscriber_source_fields( $subscription_source, array() ) as $merge_tag => $to_add ) {

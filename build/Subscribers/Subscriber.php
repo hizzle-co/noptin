@@ -10,6 +10,7 @@ defined( 'ABSPATH' ) || exit;
  * @version 1.0.0
  */
 class Subscriber extends \Hizzle\Store\Record {
+
 	/**
 	 * Returns the subscriber's full name.
 	 *
