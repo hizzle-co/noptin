@@ -336,7 +336,14 @@ class Merge_Tags extends \Hizzle\Noptin\Core\Dynamic_Content_Tags {
 	public function noptin_url() {
 		return sprintf(
 			'<a target="_blank" href="%s">Noptin</a>',
-			noptin_get_upsell_url( 'https://noptin.com/', 'Powered By', 'Referrals' )
+			esc_url(
+				noptin_get_upsell_url(
+					'https://noptin.com/',
+					'Powered By',
+					'Referrals',
+					'Noptin Email Footer'
+				)
+			)
 		);
 	}
 
