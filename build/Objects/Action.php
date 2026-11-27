@@ -137,6 +137,18 @@ class Action extends \Hizzle\Noptin\Automation_Rules\Actions\Action {
 			}
 		}
 
+		if ( ! empty( $this->action_args['field_order'] ) ) {
+			$ordered = array();
+			foreach ( $this->action_args['field_order'] as $key ) {
+				if ( isset( $prepared[ $key ] ) ) {
+					$ordered[ $key ] = $prepared[ $key ];
+				}
+			}
+
+			// Retain fields added by extensions even when they are absent from the preferred order.
+			$prepared = $ordered + $prepared;
+		}
+
 		return $prepared;
 	}
 

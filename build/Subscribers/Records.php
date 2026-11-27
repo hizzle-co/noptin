@@ -1091,6 +1091,15 @@ class Records extends \Hizzle\Noptin\Objects\People {
 	public function get_actions() {
 		$editable_fields = get_editable_noptin_subscriber_fields();
 		$upsert_settings = $this->get_upsert_multi_value_settings( $editable_fields );
+		$field_order     = array( 'update_existing' );
+
+		// Keep replacement controls at the original field's position, with removal beside addition.
+		foreach ( $editable_fields as $name => $field ) {
+			$field_order[] = $name;
+			if ( isset( $upsert_settings[ $name . '::remove' ] ) ) {
+				$field_order[] = $name . '::remove';
+			}
+		}
 
 		$actions = array_merge(
 			parent::get_actions(),
@@ -1117,6 +1126,7 @@ class Records extends \Hizzle\Noptin\Objects\People {
 						),
 					),
 					'action_fields'   => array_keys( array_diff_key( $editable_fields, $upsert_settings ) ),
+					'field_order'     => $field_order,
 					'advanced_fields' => array( 'confirmed', 'status', 'ip_address', 'conversion_page' ),
 					'callback_args'   => array( 'settings', 'rule' ),
 				),
