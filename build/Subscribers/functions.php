@@ -1309,6 +1309,8 @@ function get_noptin_subscriber_smart_tags() {
 				'example'     => $prop->name . ' default=""',
 				'options'     => false,
 				'is_multiple' => $prop->is_meta_key && $prop->is_meta_key_multiple,
+				// Suggestions must not turn open-ended tags into an enum-backed segment.
+				'suggestions' => $prop->is_tokens ? $prop->get_token_suggestions() : array(),
 				'group'       => __( 'Subscriber', 'newsletter-optin-box' ),
 			);
 
@@ -1373,6 +1375,7 @@ function get_noptin_subscriber_smart_tag( $merge_tag ) {
 		'merge_tag'   => $prop->name,
 		'options'     => false,
 		'is_multiple' => $prop->is_meta_key && $prop->is_meta_key_multiple,
+		'suggestions' => $prop->is_tokens ? $prop->get_token_suggestions() : array(),
 	);
 
 	if ( is_callable( $prop->enum ) ) {
