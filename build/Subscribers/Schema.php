@@ -82,6 +82,7 @@ class Schema {
 						array(
 							'tags'                     => array(
 								'type'                 => 'TEXT',
+								'label'                => __( 'Tags', 'newsletter-optin-box' ),
 								'is_tokens'            => true,
 								'is_meta_key'          => true,
 								'is_meta_key_multiple' => true,
