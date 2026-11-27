@@ -443,6 +443,13 @@ function add_noptin_subscriber( $fields ) {
 	// Set default values.
 	$fields = prepare_noptin_subscriber_source_fields( $fields['source'] ?? 'manual', $fields );
 
+	// Upsert removals only apply to existing subscribers. Keep the initial values on creation.
+	foreach ( array_keys( $fields ) as $key ) {
+		if ( is_string( $key ) && '::remove' === substr( $key, -8 ) ) {
+			unset( $fields[ $key ] );
+		}
+	}
+
 	// Get the subscriber object.
 	$subscriber = noptin_get_subscriber();
 
