@@ -59,13 +59,13 @@ class Fields_REST_API {
 				'validate_callback' => 'rest_validate_request_arg',
 			),
 			'merge_tag'  => array(
-				'description'       => 'The stable field merge tag.',
+				'description'       => 'The stable field merge tag. Required when updating a segment. Should match regex /[^a-z0-9_]/',
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_key',
 				'validate_callback' => 'rest_validate_request_arg',
 			),
 			'type'       => array(
-				'description'       => 'The segment type. Required when creating a segment.',
+				'description'       => 'The segment type. Required when creating a segment. Changing the type of an existing segment changes database storage and may cause data loss.',
 				'type'              => 'string',
 				'enum'              => array( 'dropdown', 'multi_checkbox' ),
 				'sanitize_callback' => 'sanitize_key',
@@ -78,6 +78,7 @@ class Fields_REST_API {
 				'validate_callback' => 'rest_validate_request_arg',
 			),
 			'visible'    => array(
+				'description'       => 'Show this segment on the manage preferences form.',
 				'type'              => 'boolean',
 				'validate_callback' => 'rest_validate_request_arg',
 			),
