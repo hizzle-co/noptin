@@ -87,6 +87,10 @@ class Main {
 	 * @return array
 	 */
 	public static function sanitize_settings( $settings ) {
+		// Keep the built-in destination dynamic instead of persisting a generated token.
+		if ( isset( $settings['manage_preferences_url'] ) && noptin_is_default_manage_preferences_url( $settings['manage_preferences_url'] ) ) {
+			unset( $settings['manage_preferences_url'] );
+		}
 
 		if ( ! empty( $settings['custom_fields'] ) ) {
 			$prepared = array();
