@@ -301,7 +301,7 @@ class Main {
 	/**
 	 * Returns available fields for the field manager navigation menu.
 	 *
-	 * @return array<int, array<string, string>>
+	 * @return array<int, array<string, string|bool>>
 	 */
 	private static function get_field_manager_fields() {
 		$fields   = array();
@@ -316,8 +316,9 @@ class Main {
 			$label = ! empty( $field['label'] ) ? wp_strip_all_tags( $field['label'] ) : $merge_tag;
 
 			$fields[] = array(
-				'value' => (string) $merge_tag,
-				'label' => (string) $label,
+				'value'     => (string) $merge_tag,
+				'label'     => (string) $label,
+				'canManage' => Fields_REST_API::is_manageable_segment( $merge_tag ),
 			);
 		}
 
