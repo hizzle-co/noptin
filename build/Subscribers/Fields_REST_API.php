@@ -46,6 +46,53 @@ class Fields_REST_API {
 	}
 
 	/**
+	 * Returns shared REST and ability input definitions for segment saves.
+	 *
+	 * @return array
+	 */
+	public static function get_custom_field_args() {
+		return array(
+			'label'      => array(
+				'description'       => 'The segment name. Required when creating a segment.',
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'merge_tag'  => array(
+				'description'       => 'The stable field merge tag.',
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'type'       => array(
+				'description'       => 'The segment type. Required when creating a segment.',
+				'type'              => 'string',
+				'enum'              => array( 'dropdown', 'multi_checkbox' ),
+				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'options'    => array(
+				'description'       => 'Replacement options, one per line. Use value|label for a separate display label.',
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_textarea_field',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'visible'    => array(
+				'type'              => 'boolean',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'required'   => array(
+				'type'              => 'boolean',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+			'predefined' => array(
+				'type'              => 'boolean',
+				'validate_callback' => 'rest_validate_request_arg',
+			),
+		);
+	}
+
+	/**
 	 * Registers REST routes for tag management.
 	 */
 	public static function register_routes() {
@@ -58,49 +105,7 @@ class Fields_REST_API {
 				'methods'             => \WP_REST_Server::CREATABLE,
 				'callback'            => array( __CLASS__, 'create_custom_field' ),
 				'permission_callback' => array( __CLASS__, 'check_permission' ),
-				'args'                => array(
-					'label'      => array(
-						'description'       => 'The field label.',
-						'type'              => 'string',
-						'required'          => false,
-						'sanitize_callback' => 'sanitize_text_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'merge_tag'  => array(
-						'description'       => 'The field merge tag.',
-						'type'              => 'string',
-						'required'          => false,
-						'sanitize_callback' => 'sanitize_key',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'type'       => array(
-						'description'       => 'The field type.',
-						'type'              => 'string',
-						'required'          => false,
-						'enum'              => array( 'dropdown', 'multi_checkbox' ),
-						'sanitize_callback' => 'sanitize_key',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'options'    => array(
-						'description'       => 'The field options.',
-						'type'              => 'string',
-						'required'          => false,
-						'sanitize_callback' => 'sanitize_textarea_field',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'visible'    => array(
-						'type'              => 'boolean',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'required'   => array(
-						'type'              => 'boolean',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-					'predefined' => array(
-						'type'              => 'boolean',
-						'validate_callback' => 'rest_validate_request_arg',
-					),
-				),
+				'args'                => self::get_custom_field_args(),
 			)
 		);
 
@@ -235,6 +240,7 @@ class Fields_REST_API {
 			\Hizzle\Noptin\Fields\Main::default_fields()
 		);
 
+		// Check if we're updating a field.
 		$field_index = null;
 		foreach ( $custom_fields as $index => $custom_field ) {
 			if ( is_array( $custom_field ) && ! empty( $custom_field['merge_tag'] ) && sanitize_key( $custom_field['merge_tag'] ) === $merge_tag ) {
@@ -246,6 +252,7 @@ class Fields_REST_API {
 		if ( null !== $field_index && ! self::is_manageable_segment( $merge_tag ) ) {
 			return new \WP_Error( 'noptin_protected_field', 'This field cannot be updated from this screen.', array( 'status' => 400 ) );
 		}
+
 		if ( null === $field_index && isset( Records::subscriber_fields( true )[ $merge_tag ] ) ) {
 			return new \WP_Error( 'noptin_field_exists', 'A field with this merge tag already exists.', array( 'status' => 400 ) );
 		}
@@ -265,6 +272,7 @@ class Fields_REST_API {
 			if ( ! $request->has_param( $key ) ) {
 				continue;
 			}
+
 			$value = $request->get_param( $key );
 			if ( in_array( $key, array( 'visible', 'required', 'predefined' ), true ) ) {
 				$field[ $key ] = rest_sanitize_boolean( $value );
@@ -277,22 +285,30 @@ class Fields_REST_API {
 			}
 		}
 
+		// Validate field label and type.
 		if ( '' === $field['label'] ) {
 			return new \WP_Error( 'noptin_empty_field_label', 'Field label cannot be empty.', array( 'status' => 400 ) );
 		}
+
 		if ( ! in_array( $field['type'], array( 'dropdown', 'multi_checkbox' ), true ) ) {
 			return new \WP_Error( 'noptin_invalid_field_type', 'Invalid field type.', array( 'status' => 400 ) );
 		}
 
+		// Maintain position if updating.
 		if ( null === $field_index ) {
 			$custom_fields[] = $field;
 		} else {
 			$custom_fields[ $field_index ] = $field;
 		}
+
+		// Save the fields.
 		update_noptin_option( 'custom_fields', $custom_fields );
+
+		// Ensure the field was saved.
 		if ( get_noptin_option( 'custom_fields' ) !== $custom_fields ) {
 			return new \WP_Error( 'noptin_segment_save_failed', 'Could not save the segment. Please try again.', array( 'status' => 500 ) );
 		}
+
 		noptin_flush_subscriber_caches();
 
 		return rest_ensure_response(
@@ -339,17 +355,20 @@ class Fields_REST_API {
 			if ( ( $custom_field['merge_tag'] ?? '' ) !== $field ) {
 				continue;
 			}
+
 			// Clear values before removing the definition, while its storage is still known.
 			if ( self::is_multi_value_field( $field, $config ) ) {
 				$result = $wpdb->delete( "{$wpdb->prefix}noptin_subscriber_meta", array( 'meta_key' => $field ), array( '%s' ) );
 			} else {
 				$result = $wpdb->query( $wpdb->prepare( 'UPDATE %i SET %i = %s', "{$wpdb->prefix}noptin_subscribers", $field, '' ) );
 			}
+
 			if ( false === $result ) {
 				return new \WP_Error( 'noptin_segment_delete_failed', 'Could not remove subscriber values. Please try again.', array( 'status' => 500 ) );
 			}
 			unset( $custom_fields[ $index ] );
 		}
+
 		$custom_fields = array_values( $custom_fields );
 		update_noptin_option( 'custom_fields', $custom_fields );
 		if ( get_noptin_option( 'custom_fields' ) !== $custom_fields ) {

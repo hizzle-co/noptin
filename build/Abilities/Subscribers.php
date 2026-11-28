@@ -2,6 +2,8 @@
 
 namespace Hizzle\Noptin\Abilities;
 
+use Hizzle\Noptin\Subscribers\Fields_REST_API;
+
 defined( 'ABSPATH' ) || exit;
 
 /** Exposes subscriber management through the WordPress Abilities API and MCP. */
@@ -122,6 +124,32 @@ class Subscribers {
 			array( 'id', 'action' ),
 			$response_fields
 		);
+
+		$segment_fields = array();
+		foreach ( Fields_REST_API::get_custom_field_args() as $key => $definition ) {
+			// Share the REST constraints without exposing PHP callbacks or injecting defaults.
+			$segment_fields[ $key ] = array_intersect_key( $definition, array_flip( array( 'type', 'description', 'enum', 'items', 'format', 'minLength', 'maxLength', 'pattern' ) ) );
+		}
+		$segment_fields['merge_tag']['minLength'] = 1;
+		$segment_fields['merge_tag']['description'] = 'Stable segment merge tag. The built-in tags field is protected.';
+		self::register_tool(
+			'save-subscriber-segment',
+			'Save newsletter subscriber segment',
+			'Create or update a Noptin email newsletter subscriber segment by merge tag. New segments require label and type. Supplied settings, including type and options, replace saved values; omitted settings are preserved. Options use one value per line or value|label. The built-in tags field cannot be redefined.',
+			'POST',
+			$segment_fields,
+			array( 'merge_tag' ),
+			array()
+		);
+		self::register_tool(
+			'delete-subscriber-segment',
+			'Delete newsletter subscriber segment',
+			'Permanently delete a Noptin email newsletter subscriber segment, its options, and its assigned subscriber values by merge tag. Subscriber records are kept. Update forms, emails, or automations that use this segment. The built-in tags field is protected.',
+			'DELETE',
+			array( 'merge_tag' => $segment_fields['merge_tag'] ),
+			array( 'merge_tag' ),
+			array()
+		);
 	}
 
 	/**
@@ -169,7 +197,7 @@ class Subscribers {
 					'mcp'          => array( 'public' => true ),
 					'annotations'  => array(
 						'readonly'    => false,
-						'destructive' => 'run-subscriber-action' === $name || in_array( $method, array( 'PATCH', 'DELETE' ), true ),
+						'destructive' => in_array( $name, array( 'run-subscriber-action', 'save-subscriber-segment' ), true ) || in_array( $method, array( 'PATCH', 'DELETE' ), true ),
 					),
 				),
 			)
@@ -187,6 +215,13 @@ class Subscribers {
 	 */
 	private static function request( $method, $name, $response_fields, $args ) {
 		$route = '/noptin/v1/subscribers';
+		if ( in_array( $name, array( 'save-subscriber-segment', 'delete-subscriber-segment' ), true ) ) {
+			$route = '/' . Fields_REST_API::REST_NAMESPACE . '/' . Fields_REST_API::REST_BASE;
+			if ( 'delete-subscriber-segment' === $name ) {
+				$route .= '/' . rawurlencode( $args['merge_tag'] );
+				unset( $args['merge_tag'] );
+			}
+		}
 		if ( isset( $args['id'] ) ) {
 			$route .= '/' . (int) $args['id'];
 			unset( $args['id'] );
@@ -210,7 +245,7 @@ class Subscribers {
 		if ( $response->is_error() ) {
 			return $response->as_error();
 		}
-		if ( 'DELETE' === $method ) {
+		if ( 'DELETE' === $method && 'delete-subscriber-segment' !== $name ) {
 			return array( 'deleted' => true );
 		}
 		if ( 'run-subscriber-action' === $name ) {
