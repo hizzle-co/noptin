@@ -151,6 +151,32 @@ function get_noptin_action_url( $action, $value = false, $use_empty_template = f
 }
 
 /**
+ * Check whether a URL is this site's unpersonalized built-in preferences page.
+ *
+ * @param mixed $url Saved preferences URL.
+ * @return bool Whether the URL can be replaced with a fresh recipient action URL.
+ */
+function noptin_is_default_manage_preferences_url( $url ) {
+	if ( ! is_string( $url ) || '' === $url ) {
+		return false;
+	}
+
+	parse_str( (string) wp_parse_url( $url, PHP_URL_QUERY ), $query );
+	$data = isset( $query['nv'] ) && is_string( $query['nv'] ) ? json_decode( noptin_decrypt( $query['nv'] ), true ) : null;
+	if ( ! ( ( 'manage_preferences' === ( $query['noptin_ns'] ?? '' ) && empty( $query['nv'] ) ) || array( 'noptin_ns' => 'manage_preferences' ) === $data ) ) {
+		return false;
+	}
+
+	$action_args  = array( 'noptin_ns', 'nv', 'nte' );
+	$saved_base   = (array) wp_parse_url( remove_query_arg( $action_args, $url ) );
+	$default_base = (array) wp_parse_url( remove_query_arg( $action_args, get_noptin_action_url( 'manage_preferences' ) ) );
+	// Only normalize the root slash. Other hosts, paths, and query arguments remain custom.
+	$saved_base['path']   = $saved_base['path'] ?? '/';
+	$default_base['path'] = $default_base['path'] ?? '/';
+	return $saved_base === $default_base;
+}
+
+/**
  * Checks if this is a noptin actions page
  *
  * @return  bool
